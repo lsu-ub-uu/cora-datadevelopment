@@ -10,10 +10,8 @@ validationType = 'diva-funder'
 WORKERS = 16
 
 
-
-filePath_validateBase = (r"C:\Users\sarto903\Documents\Python\validationOrder_base.xml")
-filePath_sourceXml = (r"C:\Users\sarto903\Documents\Python\db_xml\db_"+validationType+".xml")
-
+filePath_validateBase = (r"validationOrder_base.xml")
+filePath_sourceXml = (r"db_xml\db_"+validationType+".xml")
 
 def start():
     starttime = time.time()
@@ -23,4 +21,3 @@ def start():
         print(data_record)
     print(f'Tidsåtgång: {time.time() - starttime}')
 start()
-
