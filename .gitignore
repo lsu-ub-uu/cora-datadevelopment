@@ -1,5 +1,7 @@
 secrets.txt
-Cora API Via Python/
 secretdata.py
-CSV/
 __pycache__
+Cora API Via Python/
+CSV/
+db_xml/
+sql_script/
