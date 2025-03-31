@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from collections import OrderedDict
 from multiprocessing import Pool
 from secretdata import SecretData
+from commondata import CommonData
 import time
 
 recordContentSource = 'norden'
@@ -12,14 +13,12 @@ recordType = 'diva-series'
 
 def start():
     starttime = time.time()
-    dataList = read_source_xml(filePath_source_xml)
+    dataList = CommonData.read_source_xml(filePath_source_xml)
     for dataRecord in dataList.findall('.//DATA_RECORD'):
         buildedRecord = build_record(dataRecord)
-        # validate_record(dataRecord)
-        createdCoraRecord = create_new_record(buildedRecord)
-        # print(ET.tostring(buildedRecord))
-        relationOldNewIds,linksToPrecedingIds, linksToHostIds = store_ids(dataRecord, createdCoraRecord)
-
+        validate_record(dataRecord)
+        # createdCoraRecord = create_new_record(buildedRecord)
+        # relationOldNewIds,linksToPrecedingIds, linksToHostIds = store_ids(dataRecord, createdCoraRecord)
 
         print(f"relation: {relationOldNewIds}")
         print(f"pre: {linksToPrecedingIds}")
@@ -49,7 +48,7 @@ def loop_id_lists(relationOldNewIds, linksToPrecedingIds, linksToHostIds):
         if newId in linksToPrecedingIds or newId in linksToHostIds:
             repeatId = 0
             newRecord = read_record_as_xml(newId)
-            cleanedRecord = remove_actionLinks_from_record(newRecord)
+            cleanedRecord = CommonData.remove_actionLinks_from_record(newRecord)
             if newId in linksToHostIds:
                 parentOldId = linksToHostIds[newId]
                 parentNewId = relationOldNewIds[parentOldId]
@@ -78,24 +77,6 @@ def read_record_as_xml(id):
     getRecordUrl = base_url[system]+"diva-series/"+id
     response = requests.get(getRecordUrl, headers=headersXml)
     return ET.fromstring(response.text)
-
-def remove_actionLinks_from_record(record):
-    for clean_record in record.findall('.//series'):
-        for validationType in clean_record.findall('.//validationType'):
-            remove_action_link(validationType)
-        for dataDivider in clean_record.findall('.//dataDivider'):
-            remove_action_link(dataDivider)
-        for type in clean_record.findall('.//type'):
-            remove_action_link(type)
-        for createdBy in clean_record.findall('.//createdBy'):
-            remove_action_link(createdBy)
-        for updatedBy in clean_record.findall('.//updatedBy'):
-            remove_action_link(updatedBy)
-    return clean_record
-
-def remove_action_link(element):
-    for actionLinks in element.findall('actionLinks'):
-        element.remove(actionLinks)
 
 def update_new_record(id, recordToUpdate):
     authToken = SecretData.get_authToken(system)
@@ -245,11 +226,6 @@ def create_new_record(recordToCreate):
             log.write(f'{response.status_code}. {response.text}\n\n')
     return response.text
 
-def read_source_xml(filePath_source_xml):
-    sourceFile_xml = ET.parse(filePath_source_xml)
-    dataList = sourceFile_xml.getroot()
-    return dataList
-
 # listor
 relationOldNewIds = OrderedDict()
 linksToPrecedingIds = OrderedDict()  
@@ -265,13 +241,6 @@ base_url = {
     'dev': 'http://130.238.171.238:38082/diva/rest/record/',
     'pre': 'https://pre.diva-portal.org/rest/record/',
     'mig': 'https://mig.diva-portal.org/rest/record/'
-}
-
-# url for get authToken
-token_url = {
-    'preview': 'https://cora.epc.ub.uu.se/diva/',
-    'pre': 'https://pre.diva-portal.org/',
-    'mig': 'https://mig.diva-portal.org/'
 }
 
 # endpoints for url
