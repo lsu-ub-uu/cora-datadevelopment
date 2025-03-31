@@ -8,11 +8,7 @@ from secretdata import SecretData
 from coradata import CoraData
 
 
-
-
 urlSpecificDomain = 'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={"name":"search","children":[{"name":"include","children":[{"name":"includePart","children":[{"name":"divaOrganisationDomainSearchTerm","value":"norden"}]}]}]}'
-
-
 
 
 def start():
@@ -33,7 +29,7 @@ def start():
             workorder = buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren) # skapar workorder och record
             newRecord = workorder["record"] # plockar ut record
         
-            createdCoraRecordResponseText = createRecord(newRecord) # create, makes a request
+            createdCoraRecordResponseText = createRecord(newRecord) # create record, makes a request
             # validateRecord(workorder) # validate, makes a request
 
             # workorders.append(buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren)) # aktiveras för att köra i poolen
@@ -50,15 +46,12 @@ def start():
 
     loopIdLists(relationOldNewIds, linksToEarlierId, linksToParentId)
 
-
-        
-    if __name__ == "__main__":
+    """ if __name__ == "__main__":
         with Pool(WORKERS) as pool:
             pool.map(validateRecord, workorders)
-            # pool.map(createRecord, newRecords)
-            
-
+            # pool.map(createRecord, newRecords) """
     print(f'Tidsåtgång: {time.time() - starttime}')
+
 
 system = "preview"
 WORKERS = 16
@@ -67,7 +60,7 @@ NUMBEROFVALIDATEDRECORDS = 0
 
 def search():
     headers = {'User-Agent': 'Mozilla/5.0'}
-    response = requests.get(urlSpecificDomain, headers=headers) # urlSpecificDomainTop
+    response = requests.get(urlSpecificDomain, headers=headers)
     return(response.text)
 
 def buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren):
@@ -76,7 +69,7 @@ def buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren):
     newAddressList = []
     # recordInfo
     newDomain = checkDomainAndSetNewValue(domain)
-    CoraData.appendValueToList(newDomain, {'name': "recordContentSource", 'value': newDomain}, recordInfoList)
+    CoraData.appendValueToList(newDomain, {'children': [{'name': "linkedRecordType", 'value': "permissionUnit"}, {'name': "linkedRecordId", 'value': newDomain}], 'name': 'permissionUnit'}, recordInfoList)
     id = CoraData.getFirstAtomicValueWithNameInData(recordInfoChildren, 'id')
     CoraData.appendValueToList(id, {'name': "oldId", 'value': id}, recordInfoList)
     validationType = CoraData.getValidationTypeLink(recordInfoChildren)
@@ -173,7 +166,7 @@ def validateRecord(recordToValidate):
     text = response.json()
     if text['record']['data']['children'][1]['name'] == "errorMessages":
         print(text['record']['data']['children'][1]['children'])
-        with open(f'log.txt', 'a', encoding='utf-8') as log:
+        with open(f'errorlog.txt', 'a', encoding='utf-8') as log:
             log.write(f"{response.status_code}. {response.text}\n\n")
     elif text['record']['data']['children'][1]['value'] == "true":
         print(text['record']['data']['children'][1]['value'])
@@ -187,7 +180,7 @@ def createRecord(recordToCreate):
     response = requests.post(create_url, data=output, headers = headers_json)
     print(response.status_code, response.text) #
     if response.status_code not in (200, 201, 409):
-        with open('log.txt', 'a', encoding='utf-8') as log:
+        with open('errorlog.txt', 'a', encoding='utf-8') as log:
             log.write(f'{response.status_code}. {response.text}\n\n')
     return response.text
 
@@ -234,7 +227,7 @@ def updateNewRecord(id, recordToUpdate):
     response = requests.post(recordUrl, data=output, headers = headers_json)
     print(response.status_code, response.text)
     if response.status_code not in (200, 201, 409):
-        with open('log.txt', 'a', encoding='utf-8') as log:
+        with open('errorlog.txt', 'a', encoding='utf-8') as log:
             log.write(f'{response.status_code}. {response.text}\n\n')
     return response.text
 
@@ -262,6 +255,8 @@ def removeActionLinksFromRecord(recordToClean):
     record = recordToClean['record']['data'] # denna nivå ska returneras?
     recordChildren = recordToClean['record']['data']['children']
     recordInfo = CoraData.findChildWithNameInData(recordChildren, 'recordInfo')
+    permissionUnit = CoraData.findChildWithNameInData(recordInfo['children'], 'permissionUnit')
+    del permissionUnit['actionLinks']
     validationType = CoraData.findChildWithNameInData(recordInfo['children'], 'validationType')
     del validationType['actionLinks']
     dataDivider = CoraData.findChildWithNameInData(recordInfo['children'], 'dataDivider')
@@ -339,3 +334,5 @@ def checkDomainAndSetNewValue(domain): # 6 domains that change name
         return newDomain
     else: 
         return domain
+
+start()
