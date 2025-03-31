@@ -8,13 +8,12 @@ from secretdata import SecretData
 from coradata import CoraData
 
 
-urlSpecificDomain = 'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={"name":"search","children":[{"name":"include","children":[{"name":"includePart","children":[{"name":"divaOrganisationDomainSearchTerm","value":"norden"}]}]}]}'
+urlSpecificDomain = 'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={"name":"search","children":[{"name":"include","children":[{"name":"includePart","children":[{"name":"divaOrganisationDomainSearchTerm","value":"polar"}]}]}]}'
 
 
 def start():
     starttime = time.time()
     json_data = json.loads(search()) # converted json to python objects
-
     print(f"Antal sökträffar: {json_data['dataList']['totalNo']}")
     workorders = []
     newRecords = []
@@ -28,16 +27,11 @@ def start():
         if domain != "ntnu" and domain != "hhs" and domain != "hkr" and validationType != "rootOrganisation":
             workorder = buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren) # skapar workorder och record
             newRecord = workorder["record"] # plockar ut record
-        
             createdCoraRecordResponseText = createRecord(newRecord) # create record, makes a request
             # validateRecord(workorder) # validate, makes a request
-
             # workorders.append(buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren)) # aktiveras för att köra i poolen
-            # newRecords.append(newRecord) # aktiveras för att köra i poolen
-
             # print(workorder)
             # print(newRecord)
-            
             relationOldNewIds, linksToEarlierId, linksToParentId = storeIdData(recordChildren, createdCoraRecordResponseText)
 
     print(f"relationOldNewIds: {relationOldNewIds}")
@@ -48,8 +42,7 @@ def start():
 
     """ if __name__ == "__main__":
         with Pool(WORKERS) as pool:
-            pool.map(validateRecord, workorders)
-            # pool.map(createRecord, newRecords) """
+            pool.map(validateRecord, workorders) """
     print(f'Tidsåtgång: {time.time() - starttime}')
 
 
@@ -116,7 +109,7 @@ def storeIdData(recordChildren, createdCoraRecordResponseText):
     coraRecord = json.loads(createdCoraRecordResponseText)
     coraRecordChildren = coraRecord['record']['data']['children']
     coraRecordRecordInfoChild = CoraData.findChildWithNameInData(coraRecordChildren, 'recordInfo')
-    coraRecordRecordInfoChildren = coraRecordRecordInfoChild['children'] # borde kuna slås ihop ovan och använda en av befintliga functionerna istället
+    coraRecordRecordInfoChildren = coraRecordRecordInfoChild['children'] # borde kuna slås ihop ovan och använda en av befintliga funktionerna istället
     newId = (CoraData.getFirstAtomicValueWithNameInData(coraRecordRecordInfoChildren, 'id'))
     oldId = (CoraData.getFirstAtomicValueWithNameInData(coraRecordRecordInfoChildren, 'oldId'))
     earlierLinkOldId = CoraData.getParentEarlierLinks(recordChildren, 'earlierOrganisation')
@@ -269,7 +262,6 @@ def removeActionLinksFromRecord(recordToClean):
     updatedBy = CoraData.findChildWithNameInData(updated['children'], 'updatedBy')
     del updatedBy['actionLinks']
     return record
-   
 
 # basic url for records
 base_url = {
@@ -277,19 +269,6 @@ base_url = {
     'dev': 'http://130.238.171.238:38082/diva/rest/record/',
     'pre': 'https://pre.diva-portal.org/rest/record/',
     'mig': 'https://mig.diva-portal.org/rest/record/'
-}
-
-# url for get authToken
-token_url = {
-    'preview': 'https://cora.epc.ub.uu.se/diva/',
-    'dev': 'http://130.238.171.238:38182/',
-    'pre': 'https://pre.diva-portal.org/',
-    'mig': 'https://mig.diva-portal.org/'
-}
-
-# endpoints for url
-endpoint = {
-    'token_end': 'login/rest/apptoken',
 }
 
 def checkValidationTypeLinkAndGetNewValue(validationType): # behöver skippa posten om den har rot.
