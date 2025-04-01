@@ -6,7 +6,7 @@ from secretdata import SecretData
 from commondata import CommonData
 import time
 
-recordContentSource = 'norden'
+unit = 'norden'
 system = 'preview'
 recordType = 'diva-series'
 
@@ -16,9 +16,10 @@ def start():
     dataList = CommonData.read_source_xml(filePath_source_xml)
     for dataRecord in dataList.findall('.//DATA_RECORD'):
         buildedRecord = build_record(dataRecord)
-        validate_record(dataRecord)
-        # createdCoraRecord = create_new_record(buildedRecord)
-        # relationOldNewIds,linksToPrecedingIds, linksToHostIds = store_ids(dataRecord, createdCoraRecord)
+        # validate_record(dataRecord)
+        createdCoraRecord = create_new_record(buildedRecord)
+        relationOldNewIds,linksToPrecedingIds, linksToHostIds = store_ids(dataRecord, createdCoraRecord)
+
 
         print(f"relation: {relationOldNewIds}")
         print(f"pre: {linksToPrecedingIds}")
@@ -86,7 +87,7 @@ def update_new_record(id, recordToUpdate):
     response = requests.post(recordUrl, data=output, headers = headersXml)
     print(response.status_code, response.text)
     if response.status_code not in (200, 201, 409):
-        with open('log.txt', 'a', encoding='utf-8') as log:
+        with open('errorlog.txt', 'a', encoding='utf-8') as log:
             log.write(f'{response.status_code}. {response.text}\n\n')
     return response.text
 
@@ -94,23 +95,23 @@ def validate_record(dataRecord):
     authToken = SecretData.get_authToken(system)
     validate_headers_xml = {'Content-Type':'application/vnd.uub.workorder+xml', 'Accept':'application/vnd.uub.record+xml','authToken':authToken}
     validate_url = 'https://cora.epc.ub.uu.se/diva/rest/record/workOrder'
-    new_subject_record_toCreate = build_record(dataRecord)
-    record_toValidate = build_validate_record(recordType, filePath_validateBase, new_subject_record_toCreate)
+    new_record_toCreate = build_record(dataRecord)
+    record_toValidate = build_validate_record(recordType, filePath_validateBase, new_record_toCreate)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(record_toValidate).decode("UTF-8")
     response = requests.post(validate_url, data=output, headers = validate_headers_xml)
     print(response.status_code, response.text)
     if '<valid>true</valid>' not in response.text:
-        with open(f'log.txt', 'a', encoding='utf-8') as log:
+        with open(f'errorlog.txt', 'a', encoding='utf-8') as log:
             log.write(f"{response.status_code}. {response.text}\n\n")
 
-def build_validate_record(recordType, filePath_validateBase, new_subject_record_toCreate):
+def build_validate_record(recordType, filePath_validateBase, new_record_toCreate):
     validationOrder_baseFile = ET.parse(filePath_validateBase)
     validationOrder_root = validationOrder_baseFile.getroot()
     validationOrder_root.find('.//recordType/linkedRecordId').text = recordType
     validationOrder_root.find('.//validateLinks').text = 'false'
     validationOrder_root.find('.//metadataToValidate').text = 'new'
     record = validationOrder_root.find('.//record')
-    record.append(new_subject_record_toCreate)
+    record.append(new_record_toCreate)
     return validationOrder_root
 
 def build_record(dataRecord):
@@ -144,7 +145,7 @@ def search_query_org_oldId(orgOldId):
     authToken = SecretData.get_authToken(system)
     search_headers_xml = {'Accept':'application/vnd.uub.recordList+xml','authToken':authToken}
     oldId_search_query = 'searchData={"name":"organisationSearch","children":[{"name":"include","children":[{"name":"includePart","children":[{"name":"genericIdSearchTerm","value":"'+orgOldId+'"}]}]}]}'
-    search_url = base_url[system]+endpoint['diva-organisation_search']+oldId_search_query
+    search_url = base_url[system]+"searchResult/diva-organisationSearch?"+oldId_search_query
     response = requests.get(search_url, headers=search_headers_xml)
     return response.text
 
@@ -204,25 +205,28 @@ def titleInfo_build(seriesRoot, dataRecord):
 
 def recordInfo_build(seriesRoot, dataRecord):
     recordInfo = ET.SubElement(seriesRoot, 'recordInfo')
-    ET.SubElement(recordInfo, 'recordContentSource').text = recordContentSource
+    # ET.SubElement(recordInfo, 'recordContentSource').text = unit
     validationType = ET.SubElement(recordInfo, 'validationType')
     ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
     ET.SubElement(validationType, 'linkedRecordId').text = recordType
     dataDivider = ET.SubElement(recordInfo, 'dataDivider')
     ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
     ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
+    permissionUnit = ET.SubElement(recordInfo, 'permissionUnit')
+    ET.SubElement(permissionUnit, 'linkedRecordType').text = 'permissionUnit'
+    ET.SubElement(permissionUnit, 'linkedRecordId').text= unit
     oldIdFromSource = dataRecord.find('.//old_id')
     ET.SubElement(recordInfo, 'oldId').text = oldIdFromSource.text
 
 def create_new_record(recordToCreate):
     authToken = SecretData.get_authToken(system)
     headersXml = {'Content-Type':'application/vnd.uub.record+xml', 'Accept':'application/vnd.uub.record+xml', 'authToken':authToken}
-    urlCreate = base_url[system]+endpoint[recordType]
+    urlCreate = base_url[system]+recordType
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers = headersXml)
     print(response.status_code, response.text)
     if response.status_code not in (200, 201, 409):
-        with open('log.txt', 'a', encoding='utf-8') as log:
+        with open('errorlog.txt', 'a', encoding='utf-8') as log:
             log.write(f'{response.status_code}. {response.text}\n\n')
     return response.text
 
@@ -233,7 +237,7 @@ linksToHostIds = OrderedDict()
 
 # filer
 filePath_validateBase = (r'validationOrder_base.xml')
-filePath_source_xml = (r"dv_xml\series_"+recordContentSource+"_db.xml")
+filePath_source_xml = (r"db_xml\series_"+unit+"_db.xml")
 
 # basic url for records
 base_url = {
@@ -241,14 +245,6 @@ base_url = {
     'dev': 'http://130.238.171.238:38082/diva/rest/record/',
     'pre': 'https://pre.diva-portal.org/rest/record/',
     'mig': 'https://mig.diva-portal.org/rest/record/'
-}
-
-# endpoints for url
-endpoint = {
-    'diva-series': 'diva-series',
-    'diva-series_search': 'searchResult/diva-seriesSearch?',
-    'diva-organisation_search': 'searchResult/diva-organisationSearch?',
-    'token_end': 'login/rest/apptoken'
 }
 
 publicationMap = {
