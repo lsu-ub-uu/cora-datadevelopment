@@ -6,12 +6,10 @@ class  CommonData:
         sourceFile_xml = ET.parse(filePath_sourceXml)
         root = sourceFile_xml.getroot()
         return root
-    
     @staticmethod
     def remove_action_link(element):
         for actionLinks in element.findall('actionLinks'):
             element.remove(actionLinks)
-
     @staticmethod
     def remove_actionLinks_from_record(record):
         for clean_record in record.findall('.//series'):
@@ -26,4 +24,63 @@ class  CommonData:
             for updatedBy in clean_record.findall('.//updatedBy'):
                 CommonData.remove_action_link(updatedBy)
         return clean_record
-
+    @staticmethod
+    def recordInfo_build(recordType, data_record, newRecordElement):
+        recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
+        validationType = ET.SubElement(recordInfo, 'validationType')
+        ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
+        ET.SubElement(validationType, 'linkedRecordId').text = "diva-"+recordType
+        dataDivider = ET.SubElement(recordInfo, 'dataDivider')
+        ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
+        ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
+        oldId_fromSource = data_record.find('.//old_id')
+        ET.SubElement(recordInfo, 'oldId').text = oldId_fromSource.text
+    @staticmethod
+    def name_build(data_record, newRecordElement):
+        name_fromSource = data_record.find('.//name')
+        if name_fromSource is not None and name_fromSource.text:
+            name = ET.SubElement(newRecordElement, 'name', type = 'corporate')
+            ET.SubElement(name, 'namePart').text = name_fromSource.text
+    @staticmethod
+    def nameAuthorityVariant_build(data_record, newRecordElement, elementName, language):
+        nameLang_fromSource = data_record.find(f'.//name_{language}')
+        if nameLang_fromSource is not None and nameLang_fromSource.text:
+            name = ET.SubElement(newRecordElement, elementName, lang = language)
+            nameType = ET.SubElement(name, 'name', type = 'corporate')
+            ET.SubElement(nameType, 'namePart').text = nameLang_fromSource.text
+    @staticmethod
+    def titleInfo_build(data_record, newRecordElement):
+        title_fromSource = data_record.find(f'.//title')
+        if title_fromSource is not None and title_fromSource.text:
+            titleInfo = ET.SubElement(newRecordElement, 'titleInfo')
+            ET.SubElement(titleInfo, 'title').text = title_fromSource.text
+        subTitle_fromSource = data_record.find(f'.//subTitle')
+        if subTitle_fromSource is not None and subTitle_fromSource.text:
+            ET.SubElement(titleInfo, 'subTitle').text = subTitle_fromSource.text
+    @staticmethod
+    def identifier_build(data_record, newRecordElement, identifierType, counter):
+        identifier_fromSource = data_record.find(f'.//identifier_{identifierType}')
+        if identifier_fromSource is not None and identifier_fromSource.text:
+            if identifierType in ('pissn', 'eissn'):      
+                ET.SubElement(newRecordElement, 'identifier', displayLabel=identifierType, repeatId=str(counter), type = 'issn').text = identifier_fromSource.text
+                counter += 1
+            else:
+                ET.SubElement(newRecordElement, 'identifier', type=identifierType).text = identifier_fromSource.text
+        return counter
+    @staticmethod
+    def endDate_build(data_record, newRecordElement, originType):
+        date_fromSource = data_record.find('.//end_date')
+        if date_fromSource is not None and date_fromSource.text:
+            year, month, day = map(str.strip, date_fromSource.text.split('-'))
+            if originType == 'originInfo':
+                originInfo = ET.SubElement(newRecordElement, originType)
+                dateIssued = ET.SubElement(originInfo, 'dateIssued', point = 'end')
+                ET.SubElement(dateIssued, 'year').text = year
+                ET.SubElement(dateIssued, 'month').text = month
+                ET.SubElement(dateIssued, 'day').text = day
+            else:
+                organisationInfo = ET.SubElement(newRecordElement, originType)
+                endDate = ET.SubElement(organisationInfo, 'endDate')
+                ET.SubElement(endDate, 'year').text = year
+                ET.SubElement(endDate, 'month').text = month
+                ET.SubElement(endDate, 'day').text = day
