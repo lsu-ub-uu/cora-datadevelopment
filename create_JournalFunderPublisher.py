@@ -18,16 +18,15 @@ def start():
     for data_record in dataList.findall('.//DATA_RECORD'):
         list_dataRecord.append(data_record)
         
-        test = new_funder_build(data_record)
-        print(ET.tostring(test))
+        """ test = new_funder_build(data_record)
+        print(ET.tostring(test)) """
 
     if __name__ == "__main__":
         with Pool(WORKERS) as pool:
-            # pool.map(validate_record, list_dataRecord)
-            pool.map(new_funder_build, list_dataRecord)
+            pool.map(validate_record, list_dataRecord)
+            # pool.map(new_funder_build, list_dataRecord)
 
     print(f'Tidsåtgång: {time.time() - starttime}')
-
 
 
 def new_journal_build(data_record):
@@ -45,9 +44,9 @@ def new_funder_build(data_record):
         recordInfo_build(recordType, data_record, newRecord)
         nameAuthorityVariant_build(data_record, newRecord, 'authority', 'swe')
         nameAuthorityVariant_build(data_record, newRecord, 'variant', 'eng')
-        # identifier_build(data_record, newRecord, 'doi')
-        # identifier_build(data_record, newRecord, 'organisationNumber')
-        # endDate_build(data_record, newRecord)
+        identifier_build(data_record, newRecord, 'doi')
+        identifier_build(data_record, newRecord, 'organisationNumber')
+        endDate_build(data_record, newRecord, 'organisationInfo')
         return newRecord
 
 def new_publisher_build(data_record):
@@ -80,6 +79,28 @@ def nameAuthorityVariant_build(data_record, newRecordElement, elementName, langu
         nameType = ET.SubElement(name, 'name', type = 'corporate')
         ET.SubElement(nameType, 'namePart').text = nameLang_fromSource.text
 
+def identifier_build(data_record, newRecordElement, identifierType):
+    identifier_fromSource = data_record.find(f'.//identifier_{identifierType}')
+    if identifier_fromSource is not None and identifier_fromSource.text:
+        ET.SubElement(newRecordElement, 'identifier', type=identifierType).text = identifier_fromSource.text
+
+def endDate_build(data_record, newRecordElement, originType):
+    date_fromSource = data_record.find('.//end_date')
+    if date_fromSource is not None and date_fromSource.text:
+        year, month, day = map(str.strip, date_fromSource.text.split('-'))
+        if originType == 'originInfo':
+            originInfo = ET.SubElement(newRecordElement, originType)
+            dateIssued = ET.SubElement(originInfo, 'dateIssued', point = 'end')
+            ET.SubElement(dateIssued, 'year').text = year
+            ET.SubElement(dateIssued, 'month').text = month
+            ET.SubElement(dateIssued, 'day').text = day
+        else:
+            organisationInfo = ET.SubElement(newRecordElement, originType)
+            endDate = ET.SubElement(organisationInfo, 'endDate')
+            ET.SubElement(endDate, 'year').text = year
+            ET.SubElement(endDate, 'month').text = month
+            ET.SubElement(endDate, 'day').text = day
+
 def validateRecord_build(recordType, filePath_validateBase, newRecordToCreate):
     validationOrder_root = CommonData.read_source_xml(filePath_validateBase)
     validationOrder_root.find('.//recordType/linkedRecordId').text = "diva-"+recordType
@@ -93,7 +114,7 @@ def validate_record(data_record):
     authToken = SecretData.get_authToken(system)
     validate_headers_xml = {'Content-Type':'application/vnd.uub.workorder+xml', 'Accept':'application/vnd.uub.record+xml','authToken':authToken}
     validate_url = 'https://cora.epc.ub.uu.se/diva/rest/record/workOrder'
-    newRecordToCreate = new_publisher_build(data_record) # <-- FIXA
+    newRecordToCreate = new_funder_build(data_record) # <-- FIXA !
     newRecordToValidate = validateRecord_build(recordType, filePath_validateBase, newRecordToCreate)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(newRecordToValidate).decode("UTF-8")
     response = requests.post(validate_url, data=output, headers = validate_headers_xml)
