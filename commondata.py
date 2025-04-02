@@ -25,6 +25,15 @@ class  CommonData:
                 CommonData.remove_action_link(updatedBy)
         return clean_record
     @staticmethod
+    def validateRecord_build(recordType, filePath_validateBase, newRecordToCreate):
+        validationOrder_root = CommonData.read_source_xml(filePath_validateBase)
+        validationOrder_root.find('.//recordType/linkedRecordId').text = "diva-"+recordType
+        validationOrder_root.find('.//validateLinks').text = 'false'
+        validationOrder_root.find('.//metadataToValidate').text = 'new'
+        record = validationOrder_root.find('.//record')
+        record.append(newRecordToCreate)
+        return validationOrder_root
+    @staticmethod
     def recordInfo_build(recordType, data_record, newRecordElement):
         recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
         validationType = ET.SubElement(recordInfo, 'validationType')
