@@ -11,12 +11,14 @@ class  CommonData:
         for actionLinks in element.findall('actionLinks'):
             element.remove(actionLinks)
     @staticmethod
-    def remove_actionLinks_from_record(record):
-        for clean_record in record.findall('.//series'):
+    def remove_actionLinks_from_record(record, recordType):
+        for clean_record in record.findall(f".//{recordType}"):
             for validationType in clean_record.findall('.//validationType'):
                 CommonData.remove_action_link(validationType)
             for dataDivider in clean_record.findall('.//dataDivider'):
                 CommonData.remove_action_link(dataDivider)
+            for permissionUnit in clean_record.findall('.//permissionUnit'):
+                CommonData.remove_action_link(permissionUnit)
             for type in clean_record.findall('.//type'):
                 CommonData.remove_action_link(type)
             for createdBy in clean_record.findall('.//createdBy'):
@@ -38,12 +40,27 @@ class  CommonData:
         recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
         validationType = ET.SubElement(recordInfo, 'validationType')
         ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
-        ET.SubElement(validationType, 'linkedRecordId').text = "diva-"+recordType
+        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-'+recordType
         dataDivider = ET.SubElement(recordInfo, 'dataDivider')
         ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
         ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
         oldId_fromSource = data_record.find('.//old_id')
         ET.SubElement(recordInfo, 'oldId').text = oldId_fromSource.text
+    @staticmethod
+    def recordInfoUnit_build(recordType, unit, data_record, newRecordElement):
+        recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
+        validationType = ET.SubElement(recordInfo, 'validationType')
+        ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
+        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-'+recordType
+        dataDivider = ET.SubElement(recordInfo, 'dataDivider')
+        ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
+        ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
+        if unit is not None:
+            permissionUnit = ET.SubElement(recordInfo, 'permissionUnit')
+            ET.SubElement(permissionUnit, 'linkedRecordType').text = 'permissionUnit'
+            ET.SubElement(permissionUnit, 'linkedRecordId').text= unit
+        oldIdFromSource = data_record.find('.//old_id')
+        ET.SubElement(recordInfo, 'oldId').text = oldIdFromSource.text
     @staticmethod
     def name_build(data_record, newRecordElement):
         name_fromSource = data_record.find('.//name')
@@ -57,6 +74,11 @@ class  CommonData:
             name = ET.SubElement(newRecordElement, elementName, lang = language)
             nameType = ET.SubElement(name, 'name', type = 'corporate')
             ET.SubElement(nameType, 'namePart').text = nameLang_fromSource.text
+    @staticmethod
+    def topicAuthorityVariant_build(data_record, newRecordElement, elementName, language):
+        topicLang_fromSource = data_record.find(f'.//topic_{language}')
+        topic = ET.SubElement(newRecordElement, elementName, lang = language)
+        ET.SubElement(topic, 'topic').text = topicLang_fromSource.text
     @staticmethod
     def titleInfo_build(data_record, newRecordElement):
         title_fromSource = data_record.find(f'.//title')
@@ -87,9 +109,14 @@ class  CommonData:
                 ET.SubElement(dateIssued, 'year').text = year
                 ET.SubElement(dateIssued, 'month').text = month
                 ET.SubElement(dateIssued, 'day').text = day
-            else:
+            elif originType == 'organisationInfo':
                 organisationInfo = ET.SubElement(newRecordElement, originType)
                 endDate = ET.SubElement(organisationInfo, 'endDate')
+                ET.SubElement(endDate, 'year').text = year
+                ET.SubElement(endDate, 'month').text = month
+                ET.SubElement(endDate, 'day').text = day
+            else:
+                endDate = ET.SubElement(newRecordElement, 'endDate')
                 ET.SubElement(endDate, 'year').text = year
                 ET.SubElement(endDate, 'month').text = month
                 ET.SubElement(endDate, 'day').text = day
