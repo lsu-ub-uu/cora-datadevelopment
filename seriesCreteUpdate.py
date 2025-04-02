@@ -1,10 +1,10 @@
 import requests
 import xml.etree.ElementTree as ET
+import time
 from collections import OrderedDict
 from multiprocessing import Pool
-from secretdata import SecretData
 from commondata import CommonData
-import time
+from secretdata import SecretData
 
 unit = 'norden'
 system = 'preview'
@@ -27,6 +27,7 @@ def start():
 
     loop_id_lists(relationOldNewIds, linksToPrecedingIds, linksToHostIds)
 
+    print(f'Tidsåtgång: {time.time() - starttime}')
 
 def store_ids(dataRecord, createdCoraRecord):
     createdRecords = ET.fromstring(createdCoraRecord)
@@ -49,7 +50,7 @@ def loop_id_lists(relationOldNewIds, linksToPrecedingIds, linksToHostIds):
         if newId in linksToPrecedingIds or newId in linksToHostIds:
             repeatId = 0
             newRecord = read_record_as_xml(newId)
-            cleanedRecord = CommonData.remove_actionLinks_from_record(newRecord)
+            cleanedRecord = CommonData.remove_actionLinks_from_record(newRecord, recordType)
             if newId in linksToHostIds:
                 parentOldId = linksToHostIds[newId]
                 parentNewId = relationOldNewIds[parentOldId]
@@ -61,9 +62,10 @@ def loop_id_lists(relationOldNewIds, linksToPrecedingIds, linksToHostIds):
                     earlierNewId = relationOldNewIds[earlierOldId]
                     related_subject_build(recordType, cleanedRecord, 'preceding', repeatId, earlierNewId)
                     repeatId +=1
+            update_new_record(newId, cleanedRecord)
             print()
             print(newId, earlierOldId)
-            update_new_record(newId, cleanedRecord)
+            
     print(f'Tidsåtgång: {time.time() - starttime}')
 
 def related_subject_build(recordType, cleanedRecord, relatedType, counter, value): 
