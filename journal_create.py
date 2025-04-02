@@ -21,7 +21,7 @@ def start():
 
     if __name__ == "__main__":
         with Pool(WORKERS) as pool:
-            pool.map(validate_record, list_dataRecord)
+            # pool.map(validate_record, list_dataRecord)
             # pool.map(create_record, list_dataRecord)
 
     print(f'Tidsåtgång: {time.time() - starttime}')
@@ -35,6 +35,7 @@ def new_record_build(data_record):
         counter = CommonData.identifier_build(data_record, newRecordElement, 'pissn', counter)
         counter = CommonData.identifier_build(data_record, newRecordElement, 'eissn', counter)
         CommonData.endDate_build(data_record, newRecordElement, 'originInfo')
+        CommonData.location_build(data_record, newRecordElement)
         return newRecordElement
 
 def validate_record(data_record):
@@ -60,7 +61,7 @@ def create_record(data_record):
     print(response.status_code, response.text)
     if response.status_code not in (200, 201, 409):
         with open('errorlog.txt', 'a', encoding='utf-8') as log:
-            log.write(f'{response.status_code}. {response.text}\n\n')
+            log.write(f'{response.status_code}. {response.text}. {recordToCreate}\n\n')
 
 
 start()

@@ -22,7 +22,7 @@ def start():
     if __name__ == "__main__":
         with Pool(WORKERS) as pool:
             # pool.map(validate_record, list_dataRecord)
-            pool.map(create_record, list_dataRecord)
+            # pool.map(create_record, list_dataRecord)
             
     print(f'Tidsåtgång: {time.time() - starttime}')
 
