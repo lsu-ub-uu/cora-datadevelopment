@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from multiprocessing import Pool
 import time
 from commondata import CommonData
+from constantsdata import ConstantsData
 from secretdata import SecretData
 
 system = 'preview'
@@ -17,14 +18,11 @@ def start():
     list_dataRecord = []
     for data_record in dataList.findall('.//DATA_RECORD'):
         list_dataRecord.append(data_record)
-        
-        test = new_record_build(data_record)
-        print(ET.tostring(test))
 
-    """ if __name__ == "__main__":
+    if __name__ == "__main__":
         with Pool(WORKERS) as pool:
             pool.map(validate_record, list_dataRecord)
-            pool.map(create_record, list_dataRecord) """
+            # pool.map(create_record, list_dataRecord)
 
     print(f'Tidsåtgång: {time.time() - starttime}')
 
@@ -55,7 +53,7 @@ def validate_record(data_record):
 def create_record(data_record):
     authToken = SecretData.get_authToken(system)
     headersXml = {'Content-Type':'application/vnd.uub.record+xml', 'Accept':'application/vnd.uub.record+xml', 'authToken':authToken}
-    urlCreate = base_url[system]+"diva-"+recordType
+    urlCreate = ConstantsData.BASE_URL[system]+"diva-"+recordType
     recordToCreate = new_record_build(data_record)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers = headersXml)
@@ -63,13 +61,6 @@ def create_record(data_record):
     if response.status_code not in (200, 201, 409):
         with open('errorlog.txt', 'a', encoding='utf-8') as log:
             log.write(f'{response.status_code}. {response.text}\n\n')
- 
 
-base_url = {
-    'preview': 'https://cora.epc.ub.uu.se/diva/rest/record/',
-    'dev': 'http://130.238.171.238:38082/diva/rest/record/',
-    'pre': 'https://pre.diva-portal.org/rest/record/',
-    'mig': 'https://mig.diva-portal.org/rest/record/'
-}
 
 start()

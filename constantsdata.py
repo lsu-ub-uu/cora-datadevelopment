@@ -1,0 +1,7 @@
+class  ConstantsData:
+    BASE_URL = {
+    "preview": "https://cora.epc.ub.uu.se/diva/rest/record/",
+    "dev": "http://130.238.171.238:38082/diva/rest/record/",
+    "pre": "https://pre.diva-portal.org/rest/record/",
+    "mig": "https://mig.diva-portal.org/rest/record/"
+    }
