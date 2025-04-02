@@ -93,3 +93,9 @@ class  CommonData:
                 ET.SubElement(endDate, 'year').text = year
                 ET.SubElement(endDate, 'month').text = month
                 ET.SubElement(endDate, 'day').text = day
+    @staticmethod
+    def location_build(data_record, newRecordElement):
+        url_fromSource = data_record.find('.//url')
+        if url_fromSource is not None and url_fromSource.text:
+            location = ET.SubElement(newRecordElement, 'location')
+            ET.SubElement(location, 'url').text = url_fromSource.text
