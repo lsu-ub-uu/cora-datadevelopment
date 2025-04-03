@@ -1,16 +1,21 @@
-import requests
 import xml.etree.ElementTree as ET
-from multiprocessing import Pool
+import requests
 import time
+from multiprocessing import Pool
+from secretdata import SecretData
 from commondata import CommonData
 from constantsdata import ConstantsData
-from secretdata import SecretData
+from serversidedata import ServersideData
+
 
 system = 'preview'
 recordType = 'journal'
 WORKERS = 16
 filePath_validateBase = (r"validationOrder_base.xml")
-filePath_sourceXml = (r"db_xml\db_diva-"+recordType+".xml")
+# filePath_sourceXml = (r"db_xml\db_diva-"+recordType+".xml")
+filePath_sourceXml = (r"db_xml\output.xml")
+
+request_counter = 0
 
 def start():
     starttime = time.time()
@@ -21,8 +26,10 @@ def start():
 
     if __name__ == "__main__":
         with Pool(WORKERS) as pool:
-            # pool.map(validate_record, list_dataRecord)
-            # pool.map(create_record, list_dataRecord)
+            test = pool.map(new_record_build, list_dataRecord)
+            print(test)
+            pool.map(validate_record, list_dataRecord)
+            # pool.map(ServersideData.create_record, list_dataRecord)
 
     print(f'Tidsåtgång: {time.time() - starttime}')
 
@@ -41,15 +48,19 @@ def new_record_build(data_record):
 def validate_record(data_record):
     authToken = SecretData.get_authToken(system)
     validate_headers_xml = {'Content-Type':'application/vnd.uub.workorder+xml', 'Accept':'application/vnd.uub.record+xml','authToken':authToken}
-    validate_url = 'https://cora.epc.ub.uu.se/diva/rest/record/workOrder'
+    validate_url = ConstantsData.BASE_URL[system]+'workOrder'
     newRecordToCreate = new_record_build(data_record)
+    oldId_fromSource = CommonData.get_oldId(data_record)
     newRecordToValidate = CommonData.validateRecord_build(recordType, filePath_validateBase, newRecordToCreate)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(newRecordToValidate).decode("UTF-8")
     response = requests.post(validate_url, data=output, headers = validate_headers_xml)
     print(response.status_code, response.text)
     if '<valid>true</valid>' not in response.text:
         with open(f'errorlog.txt', 'a', encoding='utf-8') as log:
-            log.write(f"{response.status_code}. {response.text}\n\n")
+            log.write(f"{oldId_fromSource}: {response.status_code}. {response.text}\n\n")
+    if response.text:
+        with open(f'log.txt', 'a', encoding='utf-8') as log:
+            log.write(f"{oldId_fromSource}: {response.status_code}. {response.text}\n\n")
 
 def create_record(data_record):
     authToken = SecretData.get_authToken(system)
@@ -61,7 +72,7 @@ def create_record(data_record):
     print(response.status_code, response.text)
     if response.status_code not in (200, 201, 409):
         with open('errorlog.txt', 'a', encoding='utf-8') as log:
-            log.write(f'{response.status_code}. {response.text}. {recordToCreate}\n\n')
-
+            log.write(f'{response.status_code}. {response.text}\n\n')
+    return response.text
 
 start()
