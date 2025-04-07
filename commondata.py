@@ -6,10 +6,12 @@ class  CommonData:
         sourceFile_xml = ET.parse(filePath_sourceXml)
         root = sourceFile_xml.getroot()
         return root
+    
     @staticmethod
     def remove_action_link(element):
         for actionLinks in element.findall('actionLinks'):
             element.remove(actionLinks)
+
     @staticmethod
     def remove_actionLinks_from_record(record, recordType):
         for clean_record in record.findall(f".//{recordType}"):
@@ -26,6 +28,7 @@ class  CommonData:
             for updatedBy in clean_record.findall('.//updatedBy'):
                 CommonData.remove_action_link(updatedBy)
         return clean_record
+    
     @staticmethod
     def validateRecord_build(recordType, filePath_validateBase, newRecordToCreate):
         validationOrder_root = CommonData.read_source_xml(filePath_validateBase)
@@ -35,6 +38,7 @@ class  CommonData:
         record = validationOrder_root.find('.//record')
         record.append(newRecordToCreate)
         return validationOrder_root
+    
     @staticmethod
     def recordInfo_build(recordType, data_record, newRecordElement):
         recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
@@ -46,6 +50,7 @@ class  CommonData:
         ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
         oldId_fromSource = data_record.find('.//old_id')
         ET.SubElement(recordInfo, 'oldId').text = oldId_fromSource.text
+
     @staticmethod
     def recordInfoUnit_build(recordType, unit, data_record, newRecordElement):
         recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
@@ -61,12 +66,20 @@ class  CommonData:
             ET.SubElement(permissionUnit, 'linkedRecordId').text= unit
         oldIdFromSource = data_record.find('.//old_id')
         ET.SubElement(recordInfo, 'oldId').text = oldIdFromSource.text
+    
+    @staticmethod
+    def get_oldId(data_record):
+        oldId_fromSource = data_record.find('.//old_id')
+        # print(oldId_fromSource.text)
+        return oldId_fromSource.text
+
     @staticmethod
     def name_build(data_record, newRecordElement):
         name_fromSource = data_record.find('.//name')
         if name_fromSource is not None and name_fromSource.text:
             name = ET.SubElement(newRecordElement, 'name', type = 'corporate')
             ET.SubElement(name, 'namePart').text = name_fromSource.text
+
     @staticmethod
     def nameAuthorityVariant_build(data_record, newRecordElement, elementName, language):
         nameLang_fromSource = data_record.find(f'.//name_{language}')
@@ -74,11 +87,13 @@ class  CommonData:
             name = ET.SubElement(newRecordElement, elementName, lang = language)
             nameType = ET.SubElement(name, 'name', type = 'corporate')
             ET.SubElement(nameType, 'namePart').text = nameLang_fromSource.text
+
     @staticmethod
     def topicAuthorityVariant_build(data_record, newRecordElement, elementName, language):
         topicLang_fromSource = data_record.find(f'.//topic_{language}')
         topic = ET.SubElement(newRecordElement, elementName, lang = language)
         ET.SubElement(topic, 'topic').text = topicLang_fromSource.text
+
     @staticmethod
     def titleInfo_build(data_record, newRecordElement):
         title_fromSource = data_record.find(f'.//title')
@@ -88,6 +103,7 @@ class  CommonData:
         subTitle_fromSource = data_record.find(f'.//subTitle')
         if subTitle_fromSource is not None and subTitle_fromSource.text:
             ET.SubElement(titleInfo, 'subTitle').text = subTitle_fromSource.text
+
     @staticmethod
     def identifier_build(data_record, newRecordElement, identifierType, counter):
         identifier_fromSource = data_record.find(f'.//identifier_{identifierType}')
@@ -98,6 +114,7 @@ class  CommonData:
             else:
                 ET.SubElement(newRecordElement, 'identifier', type=identifierType).text = identifier_fromSource.text
         return counter
+    
     @staticmethod
     def endDate_build(data_record, newRecordElement, originType):
         date_fromSource = data_record.find('.//end_date')
@@ -106,20 +123,21 @@ class  CommonData:
             if originType == 'originInfo':
                 originInfo = ET.SubElement(newRecordElement, originType)
                 dateIssued = ET.SubElement(originInfo, 'dateIssued', point = 'end')
-                ET.SubElement(dateIssued, 'year').text = year
-                ET.SubElement(dateIssued, 'month').text = month
-                ET.SubElement(dateIssued, 'day').text = day
+                CommonData.endDate_yearMonthDay(year, month, day, dateIssued)
             elif originType == 'organisationInfo':
                 organisationInfo = ET.SubElement(newRecordElement, originType)
                 endDate = ET.SubElement(organisationInfo, 'endDate')
-                ET.SubElement(endDate, 'year').text = year
-                ET.SubElement(endDate, 'month').text = month
-                ET.SubElement(endDate, 'day').text = day
+                CommonData.endDate_yearMonthDay(year, month, day, organisationInfo)
             else:
                 endDate = ET.SubElement(newRecordElement, 'endDate')
-                ET.SubElement(endDate, 'year').text = year
-                ET.SubElement(endDate, 'month').text = month
-                ET.SubElement(endDate, 'day').text = day
+                CommonData.endDate_yearMonthDay(year, month, day, endDate)
+
+    @staticmethod
+    def endDate_yearMonthDay(year, month, day, rootElement):
+        ET.SubElement(rootElement, 'year').text = year
+        ET.SubElement(rootElement, 'month').text = month
+        ET.SubElement(rootElement, 'day').text = day
+
     @staticmethod
     def location_build(data_record, newRecordElement):
         url_fromSource = data_record.find('.//url')

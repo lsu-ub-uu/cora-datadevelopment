@@ -48,6 +48,7 @@ def new_record_build(data_record):
 def validate_record(data_record):
     authToken = SecretData.get_authToken(system)
     validate_headers_xml = {'Content-Type':'application/vnd.uub.workorder+xml', 'Accept':'application/vnd.uub.record+xml','authToken':authToken}
+    # validate_order = 'https://cora.epc.ub.uu.se/diva/rest/record/workOrder'
     validate_url = ConstantsData.BASE_URL[system]+'workOrder'
     newRecordToCreate = new_record_build(data_record)
     oldId_fromSource = CommonData.get_oldId(data_record)
@@ -61,6 +62,7 @@ def validate_record(data_record):
     if response.text:
         with open(f'log.txt', 'a', encoding='utf-8') as log:
             log.write(f"{oldId_fromSource}: {response.status_code}. {response.text}\n\n")
+
 
 def create_record(data_record):
     authToken = SecretData.get_authToken(system)
