@@ -14,7 +14,7 @@ class  CommonData:
 
     @staticmethod
     def remove_actionLinks_from_record(record, recordType):
-        for clean_record in record.findall(f".//{recordType}"):
+        for clean_record in record.findall(f'.//{recordType}'):
             for validationType in clean_record.findall('.//validationType'):
                 CommonData.remove_action_link(validationType)
             for dataDivider in clean_record.findall('.//dataDivider'):
