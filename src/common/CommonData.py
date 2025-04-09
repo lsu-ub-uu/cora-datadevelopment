@@ -145,14 +145,14 @@ class  CommonData:
             location = ET.SubElement(newRecordElement, 'location')
             ET.SubElement(location, 'url').text = url_fromSource.text
     
-    def create_record_info(self, record_info):
+    def create_record_info(self, record_type):
         record_info = ET.Element("recordInfo")
-#        validationType = ET.SubElement(recordInfo, 'validationType')
-#        ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
-#        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-'+recordType
-#        dataDivider = ET.SubElement(recordInfo, 'dataDivider')
-#        ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
-#        ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
+        validation_type = ET.SubElement(record_info, 'validationType')
+        ET.SubElement(validation_type, 'linkedRecordType').text = 'validationType'
+        ET.SubElement(validation_type, 'linkedRecordId').text = 'diva-'+record_type
+        data_divider = ET.SubElement(record_info, 'dataDivider')
+        ET.SubElement(data_divider, 'linkedRecordType').text = 'system'
+        ET.SubElement(data_divider, 'linkedRecordId').text = 'divaData'
 #        oldId_fromSource = data_record.find('.//old_id')
 #        ET.SubElement(recordInfo, 'oldId').text = oldId_fromSource.text
 
