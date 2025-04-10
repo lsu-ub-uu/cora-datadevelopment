@@ -144,12 +144,15 @@ class  CommonData:
         if url_fromSource is not None and url_fromSource.text:
             location = ET.SubElement(newRecordElement, 'location')
             ET.SubElement(location, 'url').text = url_fromSource.text
-    
-    def create_record_info(self, record_type):
+            
+    @staticmethod
+    def create_record_info_for_record_type(record_type):
         record_info = ET.Element("recordInfo")
+        
         validation_type = ET.SubElement(record_info, 'validationType')
         ET.SubElement(validation_type, 'linkedRecordType').text = 'validationType'
         ET.SubElement(validation_type, 'linkedRecordId').text = 'diva-'+record_type
+        
         data_divider = ET.SubElement(record_info, 'dataDivider')
         ET.SubElement(data_divider, 'linkedRecordType').text = 'system'
         ET.SubElement(data_divider, 'linkedRecordId').text = 'divaData'
