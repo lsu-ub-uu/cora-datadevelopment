@@ -6,3 +6,4 @@ CSV/
 db_xml/
 sql_script/
 /.project
+/.pydevproject
