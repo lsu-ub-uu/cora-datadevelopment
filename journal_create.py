@@ -5,15 +5,16 @@ from multiprocessing import Pool
 from secretdata import SecretData
 from commondata import CommonData
 from constantsdata import ConstantsData
-from serversidedata import ServersideData
+#from serversidedata import ServersideData
+from tqdm import tqdm
 
-
-system = 'preview'
+#system = 'preview'
+system = 'local'
 recordType = 'journal'
 WORKERS = 16
 filePath_validateBase = (r"validationOrder_base.xml")
 # filePath_sourceXml = (r"db_xml\db_diva-"+recordType+".xml")
-filePath_sourceXml = (r"db_xml\output.xml")
+filePath_sourceXml = (r"db_xml/journal_from_db.xml")
 
 request_counter = 0
 
@@ -23,13 +24,20 @@ def start():
     list_dataRecord = []
     for data_record in dataList.findall('.//DATA_RECORD'):
         list_dataRecord.append(data_record)
+    
+    print(f'Number of records read: {len(list_dataRecord)}')
 
-    if __name__ == "__main__":
-        with Pool(WORKERS) as pool:
-            test = pool.map(new_record_build, list_dataRecord)
-            print(test)
-            pool.map(validate_record, list_dataRecord)
-            # pool.map(ServersideData.create_record, list_dataRecord)
+    
+    with Pool(WORKERS) as pool:
+#        test = pool.map(new_record_build, list_dataRecord)
+#            print(test)
+#        pool.map(validate_record, list_dataRecord)
+        list(tqdm(
+            pool.imap_unordered(validate_record, list_dataRecord),
+            total=len(list_dataRecord),
+            desc="Validating records"
+        ))
+        # pool.map(ServersideData.create_record, list_dataRecord)
 
     print(f'Tidsåtgång: {time.time() - starttime}')
 
@@ -48,14 +56,13 @@ def new_record_build(data_record):
 def validate_record(data_record):
     authToken = SecretData.get_authToken(system)
     validate_headers_xml = {'Content-Type':'application/vnd.uub.workorder+xml', 'Accept':'application/vnd.uub.record+xml','authToken':authToken}
-    # validate_order = 'https://cora.epc.ub.uu.se/diva/rest/record/workOrder'
     validate_url = ConstantsData.BASE_URL[system]+'workOrder'
     newRecordToCreate = new_record_build(data_record)
     oldId_fromSource = CommonData.get_oldId(data_record)
     newRecordToValidate = CommonData.validateRecord_build(recordType, filePath_validateBase, newRecordToCreate)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(newRecordToValidate).decode("UTF-8")
     response = requests.post(validate_url, data=output, headers = validate_headers_xml)
-    print(response.status_code, response.text)
+#    print(response.status_code, response.text)
     if '<valid>true</valid>' not in response.text:
         with open(f'errorlog.txt', 'a', encoding='utf-8') as log:
             log.write(f"{oldId_fromSource}: {response.status_code}. {response.text}\n\n")
@@ -77,4 +84,5 @@ def create_record(data_record):
             log.write(f'{response.status_code}. {response.text}\n\n')
     return response.text
 
-start()
+if __name__ == "__main__":
+    start()
