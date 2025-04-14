@@ -149,15 +149,23 @@ class  CommonData:
     def create_record_info_for_record_type(record_type):
         record_info = ET.Element("recordInfo")
         
-        validation_type = ET.SubElement(record_info, 'validationType')
-        ET.SubElement(validation_type, 'linkedRecordType').text = 'validationType'
-        ET.SubElement(validation_type, 'linkedRecordId').text = 'diva-'+record_type
+        validation_type = CommonData.create_record_link_using_name_type_id(
+            'validationType', 'validationType', 'diva-'+record_type)
+        record_info.append(validation_type)                             
         
-        data_divider = ET.SubElement(record_info, 'dataDivider')
-        ET.SubElement(data_divider, 'linkedRecordType').text = 'system'
-        ET.SubElement(data_divider, 'linkedRecordId').text = 'divaData'
+        data_divider = CommonData.create_record_link_using_name_type_id(
+            'dataDivider', 'system', 'divaData')
+        record_info.append(data_divider)                             
+
 #        oldId_fromSource = data_record.find('.//old_id')
 #        ET.SubElement(recordInfo, 'oldId').text = oldId_fromSource.text
-
         return record_info
+    
+    @staticmethod
+    def create_record_link_using_name_type_id(name_in_data, record_type, record_id):
+        link = ET.Element(name_in_data)
+        ET.SubElement(link, 'linkedRecordType').text = record_type
+        ET.SubElement(link, 'linkedRecordId').text = record_id
+        return link
+    
     
