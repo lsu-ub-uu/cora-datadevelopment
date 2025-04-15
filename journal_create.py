@@ -8,8 +8,8 @@ from constantsdata import ConstantsData
 #from serversidedata import ServersideData
 from tqdm import tqdm
 
-#system = 'preview'
-system = 'local'
+system = 'preview'
+#system = 'local'
 recordType = 'journal'
 WORKERS = 16
 filePath_validateBase = (r"validationOrder_base.xml")
