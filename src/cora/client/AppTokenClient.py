@@ -34,7 +34,7 @@ class  AppTokenClient:
 #    'preview': 'https://cora.epc.ub.uu.se/diva/',
 #    'mig': 'https://mig.diva-portal.org/',
 #    'pre': 'https://pre.diva-portal.org/',
-}
+#}
     
    
     

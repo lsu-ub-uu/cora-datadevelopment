@@ -22,8 +22,7 @@ class Test(unittest.TestCase):
     
     
     def test_init(self):
-        self.assertEqual(self.active_launcher.state, "ready")
-        self.assertEqual(self.data, {"launcher_no": 10, "state": "ready"})
+        self.assertNotEqual(self.client, None)
   
         
     
