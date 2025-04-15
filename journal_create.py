@@ -31,7 +31,7 @@ def start():
     with Pool(WORKERS) as pool:
 #        test = pool.map(new_record_build, list_dataRecord)
 #            print(test)
-#        pool.map(validate_record, list_dataRecord)
+        pool.map(validate_record, list_dataRecord)
         list(tqdm(
             pool.imap_unordered(validate_record, list_dataRecord),
             total=len(list_dataRecord),
