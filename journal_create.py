@@ -11,7 +11,7 @@ from tqdm import tqdm
 system = 'preview'
 #system = 'local'
 recordType = 'journal'
-WORKERS = 16
+WORKERS = 4
 filePath_validateBase = (r"validationOrder_base.xml")
 # filePath_sourceXml = (r"db_xml\db_diva-"+recordType+".xml")
 filePath_sourceXml = (r"db_xml/journal_from_db.xml")
@@ -31,7 +31,7 @@ def start():
     with Pool(WORKERS) as pool:
 #        test = pool.map(new_record_build, list_dataRecord)
 #            print(test)
-        pool.map(validate_record, list_dataRecord)
+#        pool.map(validate_record, list_dataRecord)
         list(tqdm(
             pool.imap_unordered(validate_record, list_dataRecord),
             total=len(list_dataRecord),
