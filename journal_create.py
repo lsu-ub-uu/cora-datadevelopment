@@ -1,12 +1,19 @@
 import xml.etree.ElementTree as ET
 import requests
 import time
+import threading
 from multiprocessing import Pool
 from secretdata import SecretData
 from commondata import CommonData
 from constantsdata import ConstantsData
 #from serversidedata import ServersideData
 from tqdm import tqdm
+import sys
+import os
+
+
+sys.path.append(os.path.abspath('src'))
+from cora.client.AppTokenClient import AppTokenClient
 
 system = 'preview'
 #system = 'local'
@@ -17,9 +24,12 @@ filePath_validateBase = (r"validationOrder_base.xml")
 filePath_sourceXml = (r"db_xml/journal_from_db.xml")
 
 request_counter = 0
+app_token_client = None
 
 def start():
     starttime = time.time()
+    start_app_token_client()
+    
     dataList = CommonData.read_source_xml(filePath_sourceXml)
     list_dataRecord = []
     for data_record in dataList.findall('.//DATA_RECORD'):
@@ -45,7 +55,24 @@ def start():
         # pool.map(ServersideData.create_record, list_dataRecord)
 
     print(f'Tidsåtgång: {time.time() - starttime}')
+    
+def start_app_token_client():
+    global app_token_client
+    login_urls = {
+        'local': 'http://localhost:8182/',
+        'preview': 'https://cora.epc.ub.uu.se/diva/',
+        'mig': 'https://mig.diva-portal.org/',
+        'pre': 'https://pre.diva-portal.org/',
+    }
+    dependencies = {"requests": requests,
+                             "time": time,
+                             "threading": threading}
+    app_token_client = AppTokenClient(dependencies)
 
+    login_spec = {"login_url": login_urls[system]+'login/rest/apptoken',
+            "login_id": 'divaAdmin@cora.epc.ub.uu.se',
+            "app_token": "49ce00fb-68b5-4089-a5f7-1c225d3cf156"}
+    app_token_client.login(login_spec)
 
 def new_record_build(data_record):
         newRecordElement = ET.Element(recordType)
@@ -59,7 +86,9 @@ def new_record_build(data_record):
         return newRecordElement
 
 def validate_record(data_record):
-    authToken = SecretData.get_authToken(system)
+#    authToken = SecretData.get_authToken(system)
+    global app_token_client
+    authToken = app_token_client.get_auth_token()
     validate_headers_xml = {'Content-Type':'application/vnd.uub.workorder+xml',
                             'Accept':'application/vnd.uub.record+xml','authToken':authToken}
     validate_url = ConstantsData.BASE_URL[system]+'workOrder'
@@ -78,7 +107,9 @@ def validate_record(data_record):
 
 
 def create_record(data_record):
-    authToken = SecretData.get_authToken(system)
+#    authToken = SecretData.get_authToken(system)
+    global app_token_client
+    authToken = app_token_client.get_auth_token()
     headersXml = {'Content-Type':'application/vnd.uub.record+xml',
                   'Accept':'application/vnd.uub.record+xml', 'authToken':authToken}
     urlCreate = ConstantsData.BASE_URL[system]+"diva-"+recordType

@@ -8,7 +8,7 @@ def load_tests(loader, tests, pattern):
     return all_tests
 
 def load_test(loader, package_name):
-    return loader.discover(package_name, pattern='*Test.py')
+    return loader.discover(package_name, pattern='*Test*.py')
 
 if __name__ == "__main__":
     unittest.main()
