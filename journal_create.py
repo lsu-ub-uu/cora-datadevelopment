@@ -10,6 +10,7 @@ from constantsdata import ConstantsData
 from tqdm import tqdm
 import sys
 import os
+from multiprocessing.pool import ThreadPool
 
 
 sys.path.append(os.path.abspath('src'))
@@ -17,10 +18,11 @@ from cora.client.AppTokenClient import AppTokenClient
 
 system = 'preview'
 #system = 'local'
-recordType = 'journal'
-WORKERS = 4
+recordType = 'diva-journal'
+nameInData = 'journal'
+WORKERS = 16
 filePath_validateBase = (r"validationOrder_base.xml")
-# filePath_sourceXml = (r"db_xml\db_diva-"+recordType+".xml")
+# filePath_sourceXml = (r"db_xml\db_diva-"+nameInData+".xml")
 filePath_sourceXml = (r"db_xml/journal_from_db.xml")
 
 request_counter = 0
@@ -38,7 +40,8 @@ def start():
     print(f'Number of records read: {len(list_dataRecord)}')
 
     
-    with Pool(WORKERS) as pool:
+#    with Pool(WORKERS) as pool:
+    with ThreadPool(WORKERS) as pool:
 #        test = pool.map(new_record_build, list_dataRecord)
 #            print(test)
 #        pool.map(validate_record, list_dataRecord)
@@ -53,7 +56,8 @@ def start():
 #            desc="Validating records"
 #        ))
         # pool.map(ServersideData.create_record, list_dataRecord)
-
+#    global app_token_client
+    
     print(f'Tidsåtgång: {time.time() - starttime}')
     
 def start_app_token_client():
@@ -75,8 +79,8 @@ def start_app_token_client():
     app_token_client.login(login_spec)
 
 def new_record_build(data_record):
-        newRecordElement = ET.Element(recordType)
-        CommonData.recordInfo_build(recordType, data_record, newRecordElement)
+        newRecordElement = ET.Element(nameInData)
+        CommonData.recordInfo_build(nameInData, data_record, newRecordElement)
         CommonData.titleInfo_build(data_record, newRecordElement)
         counter = 0
         counter = CommonData.identifier_build(data_record, newRecordElement, 'pissn', counter)
@@ -94,7 +98,7 @@ def validate_record(data_record):
     validate_url = ConstantsData.BASE_URL[system]+'workOrder'
     newRecordToCreate = new_record_build(data_record)
     oldId_fromSource = CommonData.get_oldId(data_record)
-    newRecordToValidate = CommonData.validateRecord_build(recordType, filePath_validateBase, newRecordToCreate)
+    newRecordToValidate = CommonData.validateRecord_build(nameInData, filePath_validateBase, newRecordToCreate)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(newRecordToValidate).decode("UTF-8")
     response = requests.post(validate_url, data=output, headers = validate_headers_xml)
 #    print(response.status_code, response.text)
@@ -112,7 +116,7 @@ def create_record(data_record):
     authToken = app_token_client.get_auth_token()
     headersXml = {'Content-Type':'application/vnd.uub.record+xml',
                   'Accept':'application/vnd.uub.record+xml', 'authToken':authToken}
-    urlCreate = ConstantsData.BASE_URL[system]+"diva-"+recordType
+    urlCreate = ConstantsData.BASE_URL[system]+recordType
     recordToCreate = new_record_build(data_record)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers = headersXml)

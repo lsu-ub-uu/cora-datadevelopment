@@ -45,17 +45,21 @@ class Test(unittest.TestCase):
     def test_login_schedule_token_refresh(self):
         self.set_up_response_answer(201, self.get_ok_login_answer())
         self.set_up_mock_time_for_ten_minutes_before_renew_until()
+        mock_timer = MagicMock()
+        self.mock_threading.Timer.return_value = mock_timer
+        login_renew_before_expires_time = 20
         
         self.client.login(self.login_spec)
  
-        ten_minutes_minus_10_seconds = 10 * 60 - 10
+        ten_minutes_minus_20_seconds = 10 * 60 - login_renew_before_expires_time
         self.mock_threading.Timer.assert_called_once_with(
-            ten_minutes_minus_10_seconds,
+            ten_minutes_minus_20_seconds,
             self.client._get_new_token,
             args = [self.get_ok_login_answer()["authentication"]["actionLinks"]["renew"]])
+        mock_timer.start.assert_called_once()
     
     def test__get_new_token(self):
-        self.set_up_response_answer(201, self.get_ok_login_answer())
+        self.set_up_response_answer(200, self.get_ok_login_answer())
         captured = {}
 
         def fake_handle(captured_response):
@@ -75,8 +79,15 @@ class Test(unittest.TestCase):
         self.mock_requests.post.assert_called_once_with(url, headers=headers)
         self.assertEqual(captured["response"], self.mock_requests.post.return_value)
     
-    def test_get_auth_token(self):
+    def test_get_auth_token_create(self):
         self.set_up_response_answer(201, self.get_ok_login_answer()) 
+
+        self.client.login(self.login_spec)
+
+        self.assertEqual(self.client.get_auth_token(), '5545e11c-7e90-4289-87d0-155bb2078f85')
+
+    def test_get_auth_token_renew(self):
+        self.set_up_response_answer(200, self.get_ok_login_answer()) 
 
         self.client.login(self.login_spec)
 
