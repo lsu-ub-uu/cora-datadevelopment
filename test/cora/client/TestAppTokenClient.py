@@ -3,14 +3,14 @@ import unittest
 from cora.client.AppTokenClient import AppTokenClient
 from unittest.mock import MagicMock
 from cora.client.LoginError import LoginError
-from time import time
+
 
 class Test(unittest.TestCase):
+
     def setUp(self):
         self.mock_time = MagicMock()
         self.mock_threading = MagicMock()
         self.mock_requests = MagicMock()
-        
 
         self.login_url = 'https://cora.epc.ub.uu.se/diva/login/rest/apptoken'
         self.login_id = 'divaAdmin@cora.epc.ub.uu.se'
@@ -27,7 +27,6 @@ class Test(unittest.TestCase):
     def tearDown(self):
         pass
     
-    
     def test_init(self):
         self.assertIsNotNone(self.client)
     
@@ -38,7 +37,7 @@ class Test(unittest.TestCase):
         
         self.client.login(self.login_spec)
         
-        combined_login_id_app_token = self.login_id+'\n'+self.app_token
+        combined_login_id_app_token = self.login_id + '\n' + self.app_token
         self.mock_requests.post.assert_called_once_with(
             self.login_url, data=combined_login_id_app_token, headers=login_headers)
     
@@ -55,7 +54,7 @@ class Test(unittest.TestCase):
         self.mock_threading.Timer.assert_called_once_with(
             ten_minutes_minus_20_seconds,
             self.client._get_new_token,
-            args = [self.get_ok_login_answer()["authentication"]["actionLinks"]["renew"]])
+            args=[self.get_ok_login_answer()["authentication"]["actionLinks"]["renew"]])
         mock_timer.start.assert_called_once()
     
     def test__get_new_token(self):
@@ -215,5 +214,7 @@ class Test(unittest.TestCase):
                 }
             }
         }
+
+
 if __name__ == "__main__":
     unittest.main()

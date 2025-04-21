@@ -1,4 +1,6 @@
 import xml.etree.ElementTree as ET
+
+
 class  CommonData:
 
     @staticmethod
@@ -32,7 +34,7 @@ class  CommonData:
     @staticmethod
     def validateRecord_build(recordType, filePath_validateBase, newRecordToCreate):
         validationOrder_root = CommonData.read_source_xml(filePath_validateBase)
-        validationOrder_root.find('.//recordType/linkedRecordId').text = "diva-"+recordType
+        validationOrder_root.find('.//recordType/linkedRecordId').text = "diva-" + recordType
         validationOrder_root.find('.//validateLinks').text = 'false'
         validationOrder_root.find('.//metadataToValidate').text = 'new'
         record = validationOrder_root.find('.//record')
@@ -44,7 +46,7 @@ class  CommonData:
         recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
         validationType = ET.SubElement(recordInfo, 'validationType')
         ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
-        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-'+recordType
+        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-' + recordType
         dataDivider = ET.SubElement(recordInfo, 'dataDivider')
         ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
         ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
@@ -56,14 +58,14 @@ class  CommonData:
         recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
         validationType = ET.SubElement(recordInfo, 'validationType')
         ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
-        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-'+recordType
+        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-' + recordType
         dataDivider = ET.SubElement(recordInfo, 'dataDivider')
         ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
         ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
         if unit is not None:
             permissionUnit = ET.SubElement(recordInfo, 'permissionUnit')
             ET.SubElement(permissionUnit, 'linkedRecordType').text = 'permissionUnit'
-            ET.SubElement(permissionUnit, 'linkedRecordId').text= unit
+            ET.SubElement(permissionUnit, 'linkedRecordId').text = unit
         oldIdFromSource = data_record.find('.//old_id')
         ET.SubElement(recordInfo, 'oldId').text = oldIdFromSource.text
     
@@ -77,21 +79,21 @@ class  CommonData:
     def name_build(data_record, newRecordElement):
         name_fromSource = data_record.find('.//name')
         if name_fromSource is not None and name_fromSource.text:
-            name = ET.SubElement(newRecordElement, 'name', type = 'corporate')
+            name = ET.SubElement(newRecordElement, 'name', type='corporate')
             ET.SubElement(name, 'namePart').text = name_fromSource.text
 
     @staticmethod
     def nameAuthorityVariant_build(data_record, newRecordElement, elementName, language):
         nameLang_fromSource = data_record.find(f'.//name_{language}')
         if nameLang_fromSource is not None and nameLang_fromSource.text:
-            name = ET.SubElement(newRecordElement, elementName, lang = language)
-            nameType = ET.SubElement(name, 'name', type = 'corporate')
+            name = ET.SubElement(newRecordElement, elementName, lang=language)
+            nameType = ET.SubElement(name, 'name', type='corporate')
             ET.SubElement(nameType, 'namePart').text = nameLang_fromSource.text
 
     @staticmethod
     def topicAuthorityVariant_build(data_record, newRecordElement, elementName, language):
         topicLang_fromSource = data_record.find(f'.//topic_{language}')
-        topic = ET.SubElement(newRecordElement, elementName, lang = language)
+        topic = ET.SubElement(newRecordElement, elementName, lang=language)
         ET.SubElement(topic, 'topic').text = topicLang_fromSource.text
 
     @staticmethod
@@ -108,8 +110,8 @@ class  CommonData:
     def identifier_build(data_record, newRecordElement, identifierType, counter):
         identifier_fromSource = data_record.find(f'.//identifier_{identifierType}')
         if identifier_fromSource is not None and identifier_fromSource.text:
-            if identifierType in ('pissn', 'eissn'):      
-                ET.SubElement(newRecordElement, 'identifier', displayLabel=identifierType, repeatId=str(counter), type = 'issn').text = identifier_fromSource.text
+            if identifierType in ('pissn', 'eissn'): 
+                ET.SubElement(newRecordElement, 'identifier', displayLabel=identifierType, repeatId=str(counter), type='issn').text = identifier_fromSource.text
                 counter += 1
             else:
                 ET.SubElement(newRecordElement, 'identifier', type=identifierType).text = identifier_fromSource.text
@@ -122,7 +124,7 @@ class  CommonData:
             year, month, day = map(str.strip, date_fromSource.text.split('-'))
             if originType == 'originInfo':
                 originInfo = ET.SubElement(newRecordElement, originType)
-                dateIssued = ET.SubElement(originInfo, 'dateIssued', point = 'end')
+                dateIssued = ET.SubElement(originInfo, 'dateIssued', point='end')
                 CommonData.endDate_yearMonthDay(year, month, day, dateIssued)
             elif originType == 'organisationInfo':
                 organisationInfo = ET.SubElement(newRecordElement, originType)
@@ -150,7 +152,7 @@ class  CommonData:
         record_info = ET.Element("recordInfo")
         
         validation_type = CommonData.create_record_link_using_name_type_id(
-            'validationType', 'validationType', 'diva-'+record_type)
+            'validationType', 'validationType', 'diva-' + record_type)
         record_info.append(validation_type)                             
         
         data_divider = CommonData.create_record_link_using_name_type_id(
@@ -167,5 +169,4 @@ class  CommonData:
         ET.SubElement(link, 'linkedRecordType').text = record_type
         ET.SubElement(link, 'linkedRecordId').text = record_id
         return link
-    
     

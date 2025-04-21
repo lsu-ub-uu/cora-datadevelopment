@@ -1,4 +1,6 @@
 from cora.client.LoginError import LoginError
+
+
 class  AppTokenClient:
     LOGIN_HEADERS = {'Content-Type':'application/vnd.uub.login',
                       'Accept':'application/vnd.uub.authentication+json'}
@@ -42,7 +44,7 @@ class  AppTokenClient:
         delay = self.calculate_delay_based_on_valid_until(valid_until)
         renew = self.get_renew_from_response(response)
         timer = self.threading.Timer
-        self.timer = timer(delay, self._get_new_token, args =[renew])
+        self.timer = timer(delay, self._get_new_token, args=[renew])
         self.timer.start()
         
     def calculate_delay_based_on_valid_until(self, valid_until):
