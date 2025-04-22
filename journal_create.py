@@ -1,21 +1,20 @@
+
 from multiprocessing import Pool
 from multiprocessing.pool import ThreadPool
 import os
 import sys
 import threading
 import time
+sys.path.append(os.path.abspath('src'))
 
 import requests
+from common.RunRotatingLogger import RunRotatingLogger
 
 from commondata import CommonData
 from constantsdata import ConstantsData
 from cora.client.AppTokenClient import AppTokenClient
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
-
-
-# from serversidedata import ServersideData
-sys.path.append(os.path.abspath('src'))
 
 system = 'preview'
 # system = 'local'
@@ -28,9 +27,18 @@ filePath_sourceXml = (r"db_xml/journal_from_db.xml")
 
 request_counter = 0
 app_token_client = None
+data_logger = None
 
 
 def start():
+    global data_logger
+#    login_logger = RunRotatingLogger('login', 'logs/apptokenlog.txt').get()
+#    login_logger.info(f"_handle_login_response:{response}")
+    
+    data_logger = RunRotatingLogger('data', 'logs/data_processing.txt').get()
+    data_logger.info("Data processing started")
+    
+    
     starttime = time.time()
     start_app_token_client()
     
@@ -64,18 +72,12 @@ def start():
     
 def start_app_token_client():
     global app_token_client
-    login_urls = {
-        'local': 'http://localhost:8182/',
-        'preview': 'https://cora.epc.ub.uu.se/diva/',
-        'mig': 'https://mig.diva-portal.org/',
-        'pre': 'https://pre.diva-portal.org/',
-    }
     dependencies = {"requests": requests,
-                             "time": time,
-                             "threading": threading}
+                    "time": time,
+                    "threading": threading}
     app_token_client = AppTokenClient(dependencies)
 
-    login_spec = {"login_url": login_urls[system] + 'login/rest/apptoken',
+    login_spec = {"login_url": ConstantsData.LOGIN_URLS[system],
             "login_id": 'divaAdmin@cora.epc.ub.uu.se',
             "app_token": "49ce00fb-68b5-4089-a5f7-1c225d3cf156"}
     app_token_client.login(login_spec)
@@ -95,6 +97,8 @@ def new_record_build(data_record):
 
 def validate_record(data_record):
     global app_token_client
+    global data_logger
+    
     auth_token = app_token_client.get_auth_token()
     validate_headers_xml = {'Content-Type':'application/vnd.uub.workorder+xml',
                             'Accept':'application/vnd.uub.record+xml', 'authToken':auth_token}
@@ -109,6 +113,7 @@ def validate_record(data_record):
         with open(f'errorlog.txt', 'a', encoding='utf-8') as log:
             log.write(f"{oldId_fromSource}: {response.status_code}. {response.text}\n\n")
     if response.text:
+        data_logger.info(f"{oldId_fromSource}: {response.status_code}. {response.text}")
         with open(f'log.txt', 'a', encoding='utf-8') as log:
             log.write(f"{oldId_fromSource}: {response.status_code}. {response.text}\n\n")
 
