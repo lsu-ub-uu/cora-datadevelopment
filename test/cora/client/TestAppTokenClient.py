@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 from cora.client.LoginError import LoginError
 
 
-class Test(unittest.TestCase):
+class TestAppTokenClient(unittest.TestCase):
 
     def setUp(self):
         self.mock_time = MagicMock()
