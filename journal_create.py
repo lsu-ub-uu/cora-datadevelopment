@@ -54,16 +54,16 @@ def start():
 #        test = pool.map(new_record_build, list_dataRecord)
 #            print(test)
 #        pool.map(validate_record, list_dataRecord)
-        list(tqdm(
-            pool.imap_unordered(validate_record, list_dataRecord),
-            total=len(list_dataRecord),
-            desc="Validating records"
-        ))
 #        list(tqdm(
-#            pool.imap_unordered(create_record, list_dataRecord),
+#            pool.imap_unordered(validate_record, list_dataRecord),
 #            total=len(list_dataRecord),
 #            desc="Validating records"
 #        ))
+        list(tqdm(
+            pool.imap_unordered(create_record, list_dataRecord),
+            total=len(list_dataRecord),
+            desc="Created records"
+        ))
         # pool.map(ServersideData.create_record, list_dataRecord)
 #    global app_token_client
     
@@ -120,6 +120,8 @@ def validate_record(data_record):
 
 def create_record(data_record):
     global app_token_client
+    global data_logger
+    
     auth_token = app_token_client.get_auth_token()
     headersXml = {'Content-Type':'application/vnd.uub.record+xml',
                   'Accept':'application/vnd.uub.record+xml', 'authToken':auth_token}
@@ -130,7 +132,7 @@ def create_record(data_record):
 #    print(response.status_code, response.text)
     if response.status_code not in (200, 201, 409):
         with open('errorlog.txt', 'a', encoding='utf-8') as log:
-            log.write(f'{response.status_code}. {response.text}\n\n')
+            log.write(f'{response.status_code}. {response.text}\n')
     return response.text
 
 
