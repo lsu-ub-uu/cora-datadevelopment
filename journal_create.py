@@ -127,12 +127,14 @@ def create_record(data_record):
                   'Accept':'application/vnd.uub.record+xml', 'authToken':auth_token}
     urlCreate = ConstantsData.BASE_URL[system] + recordType
     recordToCreate = new_record_build(data_record)
+    oldId_fromSource = CommonData.get_oldId(data_record)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers=headersXml)
 #    print(response.status_code, response.text)
-    if response.status_code not in (200, 201, 409):
-        with open('errorlog.txt', 'a', encoding='utf-8') as log:
-            log.write(f'{response.status_code}. {response.text}\n')
+    if response.text:
+        data_logger.info(f"{oldId_fromSource}: {response.status_code}. {response.text}")
+    if response.status_code not in ([201]):
+        data_logger.error(f"{oldId_fromSource}: {response.status_code}. {response.text}")
     return response.text
 
 
