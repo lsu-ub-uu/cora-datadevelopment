@@ -100,8 +100,8 @@ def validate_record(data_record):
     global data_logger
     
     auth_token = app_token_client.get_auth_token()
-    validate_headers_xml = {'Content-Type':'application/vnd.uub.workorder+xml',
-                            'Accept':'application/vnd.uub.record+xml', 'authToken':auth_token}
+    validate_headers_xml = {'Content-Type':'application/vnd.cora.workorder+xml',
+                            'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
     validate_url = ConstantsData.BASE_URL[system] + 'workOrder'
     newRecordToCreate = new_record_build(data_record)
     oldId_fromSource = CommonData.get_oldId(data_record)
@@ -123,8 +123,8 @@ def create_record(data_record):
     global data_logger
     
     auth_token = app_token_client.get_auth_token()
-    headersXml = {'Content-Type':'application/vnd.uub.record+xml',
-                  'Accept':'application/vnd.uub.record+xml', 'authToken':auth_token}
+    headersXml = {'Content-Type':'application/vnd.cora.record+xml',
+                  'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
     urlCreate = ConstantsData.BASE_URL[system] + recordType
     recordToCreate = new_record_build(data_record)
     oldId_fromSource = CommonData.get_oldId(data_record)

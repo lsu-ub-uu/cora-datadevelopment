@@ -2,8 +2,8 @@ from cora.client.LoginError import LoginError
 
 
 class  AppTokenClient:
-    LOGIN_HEADERS = {'Content-Type':'application/vnd.uub.login',
-                      'Accept':'application/vnd.uub.authentication+json'}
+    LOGIN_HEADERS = {'Content-Type':'application/vnd.cora.login',
+                      'Accept':'application/vnd.cora.authentication+json'}
     LOGIN_RENEW_BEFORE_EXPIRES_TIME = 20
     CREATE = 201
     OK = 200

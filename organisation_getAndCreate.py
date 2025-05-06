@@ -151,7 +151,7 @@ metadataToValidate = "new" # "new || existing"
 
 def validateRecord(recordToValidate):
     authToken = SecretData.get_authToken(system)
-    validate_headers_json = {'Content-Type':'application/vnd.uub.workorder+json', 'Accept':'application/vnd.uub.record+json', 'authToken':authToken}
+    validate_headers_json = {'Content-Type':'application/vnd.cora.workorder+json', 'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
     validate_url = base_url[system]+"workOrder"
     output = json.dumps(recordToValidate)
     response = requests.post(validate_url, data=output, headers = validate_headers_json)
@@ -167,7 +167,7 @@ def validateRecord(recordToValidate):
 # CREATE
 def createRecord(recordToCreate):
     authToken = SecretData.get_authToken(system)
-    headers_json = {'Content-Type':'application/vnd.uub.record+json', 'Accept':'application/vnd.uub.record+json', 'authToken':authToken}
+    headers_json = {'Content-Type':'application/vnd.cora.record+json', 'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
     create_url = base_url[system]+'diva-organisation/'
     output = json.dumps(recordToCreate)
     response = requests.post(create_url, data=output, headers = headers_json)
@@ -180,7 +180,7 @@ def createRecord(recordToCreate):
 ### UPDATE
 def readRecordAsJson(id):
     authToken = SecretData.get_authToken(system)
-    headers_json = {'Accept':'application/vnd.uub.record+json', 'authToken':authToken}
+    headers_json = {'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
     getRecordUrl = base_url[system]+"diva-organisation/"+id
     response = requests.get(getRecordUrl, headers=headers_json)
     return json.loads(response.text)
@@ -214,7 +214,7 @@ def loopIdLists(relationOldNewIds, linksToEarlierId, linksToParentId):
 
 def updateNewRecord(id, recordToUpdate):
     authToken = SecretData.get_authToken(system)
-    headers_json = {'Content-Type':'application/vnd.uub.record+json', 'Accept':'application/vnd.uub.record+json', 'authToken':authToken}
+    headers_json = {'Content-Type':'application/vnd.cora.record+json', 'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
     recordUrl = base_url[system]+"diva-organisation/"+id
     output = json.dumps(recordToUpdate)
     response = requests.post(recordUrl, data=output, headers = headers_json)

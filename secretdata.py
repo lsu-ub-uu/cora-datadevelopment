@@ -9,7 +9,7 @@ class  SecretData:
         try:
             getAuthTokenUrl = SecretData.token_url[system]+'login/rest/apptoken'
             appToken = 'divaAdmin@cora.epc.ub.uu.se\n49ce00fb-68b5-4089-a5f7-1c225d3cf156'
-            json_headers = {'Content-Type':'application/vnd.uub.login', 'Accept':'application/vnd.uub.authentication+json'}
+            json_headers = {'Content-Type':'application/vnd.cora.login', 'Accept':'application/vnd.cora.authentication+json'}
             response = requests.post(getAuthTokenUrl, data=appToken, headers=json_headers)
             response_json = response.json()
             authToken = response_json['authentication']['data']['children'][0]['value']

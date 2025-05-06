@@ -23,7 +23,7 @@ def get_authToken():
     #getAuthTokenUrl = 'https://cora.epc.ub.uu.se/diva/login/rest/apptoken' #<-- behöver ändra miljö manuellt just nu!
     getAuthTokenUrl = 'http://130.238.171.238:38182/login/rest/apptoken' 
     appToken = 'divaAdmin@cora.epc.ub.uu.se\nAPPTOKEN_HERE'
-    json_headers = {'Content-Type':'application/vnd.uub.login', 'Accept':'application/vnd.uub.authentication+json'}
+    json_headers = {'Content-Type':'application/vnd.cora.login', 'Accept':'application/vnd.cora.authentication+json'}
     response = requests.post(getAuthTokenUrl, data=appToken, headers=json_headers)
     response_json = response.json()
     authToken = response_json['authentication']['data']['children'][0]['value']
@@ -32,8 +32,8 @@ def get_authToken():
 authToken = get_authToken()
 #authToken = "19159f7c-9082-4fa5-8393-f2d4d958aeee"
 
-xml_headers = {'Content-Type':'application/vnd.uub.record+xml', 'Accept':'application/vnd.uub.record+xml', 'authToken':authToken}
-xml_validateHeaders = {'Content-Type':'application/vnd.uub.workorder+xml', 'Accept':'application/vnd.uub.record+xml','authToken':authToken}
+xml_headers = {'Content-Type':'application/vnd.cora.record+xml', 'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
+xml_validateHeaders = {'Content-Type':'application/vnd.cora.workorder+xml', 'Accept':'application/vnd.cora.record+xml','authToken':authToken}
 
 # basic url for record
 basic_urls = {

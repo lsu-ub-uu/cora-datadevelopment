@@ -32,8 +32,8 @@ class TestAppTokenClient(unittest.TestCase):
     
     def test_login(self):
         self.set_up_response_answer(201, self.get_ok_login_answer()) 
-        login_headers = {'Content-Type':'application/vnd.uub.login',
-                         'Accept':'application/vnd.uub.authentication+json'}
+        login_headers = {'Content-Type':'application/vnd.cora.login',
+                         'Accept':'application/vnd.cora.authentication+json'}
         
         self.client.login(self.login_spec)
         
@@ -204,7 +204,7 @@ class TestAppTokenClient(unittest.TestCase):
                         "requestMethod": "POST",
                         "rel": "renew",
                         "url": "http://localhost:38182/login/rest/authToken/39d029d1-1262-42a7-82df-a0e64daeb3ec",
-                        "accept": "application/vnd.uub.authentication+json"
+                        "accept": "application/vnd.cora.authentication+json"
                     },
                     "delete": {
                         "requestMethod": "DELETE",

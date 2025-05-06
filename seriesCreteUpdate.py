@@ -76,14 +76,14 @@ def related_subject_build(recordType, cleanedRecord, relatedType, counter, value
 
 def read_record_as_xml(id):
     authToken = SecretData.get_authToken(system)
-    headersXml = {'Content-Type':'application/vnd.uub.record+xml', 'Accept':'application/vnd.uub.record+xml', 'authToken':authToken}
+    headersXml = {'Content-Type':'application/vnd.cora.record+xml', 'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
     getRecordUrl = base_url[system]+"diva-series/"+id
     response = requests.get(getRecordUrl, headers=headersXml)
     return ET.fromstring(response.text)
 
 def update_new_record(id, recordToUpdate):
     authToken = SecretData.get_authToken(system)
-    headersXml = {'Content-Type':'application/vnd.uub.record+xml', 'Accept':'application/vnd.uub.record+xml', 'authToken':authToken}
+    headersXml = {'Content-Type':'application/vnd.cora.record+xml', 'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
     recordUrl = base_url[system]+"diva-series/"+id
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToUpdate).decode("UTF-8")
     response = requests.post(recordUrl, data=output, headers = headersXml)
@@ -95,7 +95,7 @@ def update_new_record(id, recordToUpdate):
 
 def validate_record(dataRecord):
     authToken = SecretData.get_authToken(system)
-    validate_headers_xml = {'Content-Type':'application/vnd.uub.workorder+xml', 'Accept':'application/vnd.uub.record+xml','authToken':authToken}
+    validate_headers_xml = {'Content-Type':'application/vnd.cora.workorder+xml', 'Accept':'application/vnd.cora.record+xml','authToken':authToken}
     validate_url = 'https://cora.epc.ub.uu.se/diva/rest/record/workOrder'
     new_record_toCreate = build_record(dataRecord)
     record_toValidate = build_validate_record(recordType, filePath_validateBase, new_record_toCreate)
@@ -145,7 +145,7 @@ def orgLink_build(seriesRoot, dataRecord):
 
 def search_query_org_oldId(orgOldId):
     authToken = SecretData.get_authToken(system)
-    search_headers_xml = {'Accept':'application/vnd.uub.recordList+xml','authToken':authToken}
+    search_headers_xml = {'Accept':'application/vnd.cora.recordList+xml','authToken':authToken}
     oldId_search_query = 'searchData={"name":"organisationSearch","children":[{"name":"include","children":[{"name":"includePart","children":[{"name":"genericIdSearchTerm","value":"'+orgOldId+'"}]}]}]}'
     search_url = base_url[system]+"searchResult/diva-organisationSearch?"+oldId_search_query
     response = requests.get(search_url, headers=search_headers_xml)
@@ -222,7 +222,7 @@ def recordInfo_build(seriesRoot, dataRecord):
 
 def create_new_record(recordToCreate):
     authToken = SecretData.get_authToken(system)
-    headersXml = {'Content-Type':'application/vnd.uub.record+xml', 'Accept':'application/vnd.uub.record+xml', 'authToken':authToken}
+    headersXml = {'Content-Type':'application/vnd.cora.record+xml', 'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
     urlCreate = base_url[system]+recordType
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers = headersXml)

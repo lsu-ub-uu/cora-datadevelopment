@@ -40,7 +40,7 @@ def new_record_build(data_record):
 
 def validate_record(data_record):
     authToken = SecretData.get_authToken(system)
-    validate_headers_xml = {'Content-Type':'application/vnd.uub.workorder+xml', 'Accept':'application/vnd.uub.record+xml','authToken':authToken}
+    validate_headers_xml = {'Content-Type':'application/vnd.cora.workorder+xml', 'Accept':'application/vnd.cora.record+xml','authToken':authToken}
     validate_url = 'https://cora.epc.ub.uu.se/diva/rest/record/workOrder'
     newRecordToCreate = new_record_build(data_record)
     newRecordToValidate = CommonData.validateRecord_build(recordType, filePath_validateBase, newRecordToCreate)
@@ -53,7 +53,7 @@ def validate_record(data_record):
 
 def create_record(data_record):
     authToken = SecretData.get_authToken(system)
-    headersXml = {'Content-Type':'application/vnd.uub.record+xml', 'Accept':'application/vnd.uub.record+xml', 'authToken':authToken}
+    headersXml = {'Content-Type':'application/vnd.cora.record+xml', 'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
     urlCreate = ConstantsData.BASE_URL[system]+"diva-"+recordType
     recordToCreate = new_record_build(data_record)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToCreate).decode("UTF-8")
