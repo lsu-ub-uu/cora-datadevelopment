@@ -1,0 +1,2653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SELECT_s_domain_s_closed_Date_as_end_date_s_subject_id_as_old_id_sn_sv_subject_name_as_topic_swe_sn_en_subject_name_as_topic_eng_sp_subject_id_as_broader_id_sp_parent_subject_id_anv_nds_inte_enbart_f_r_att_h_mta_och_l_sa_data_r_tt_till_broader_id_string_agg_pre_subject_id_text_as_earlier_id_from_subject_s_left_join_subject_name_sn_sv_on_s_subject_id_sn_sv_subject_id_and_sn_sv_locale_sv_l_gger_p_en_rad_left_join_subject_name_sn_en_on_s_subject_id_sn_en_subject_id_and_sn_en_locale_en_l_gger_p_en_rad_left_join_subject_parent_sp_on_s_subject_id_sp_parent_subject_id_left_join_subject_predecessor_pre_on_s_subject_id_pre_predecessor_subject_id_where_s_subject_type_id_53_and_s_domain_polar_group_by_s_domain_s_subject_type_id_s_closed_date_s_not_eligible_sn_sv_subject_name_sn_en_subject_name_s_subject_id_sp_subject_id_sp_parent_subject_id>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>41405</old_id>
+    <topic_swe>GEOEO</topic_swe>
+    <topic_eng>GEOEO</topic_eng>
+    <broader_id>41403</broader_id>
+    <parent_subject_id>41405</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23206</old_id>
+    <topic_swe>Forskningsstationernas betydelse för närvaron i Arktis</topic_swe>
+    <topic_eng>Forskningsstationernas betydelse för närvaron i Arktis</topic_eng>
+    <broader_id>23155</broader_id>
+    <parent_subject_id>23206</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23175</old_id>
+    <topic_swe>SWEDARP 2008/09</topic_swe>
+    <topic_eng>SWEDARP 2008/09</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23175</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23259</old_id>
+    <topic_swe>MARA 2010/11</topic_swe>
+    <topic_eng>MARA 2010/11</topic_eng>
+    <broader_id>23174</broader_id>
+    <parent_subject_id>23259</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23183</old_id>
+    <topic_swe>SWEDARP 2000/01</topic_swe>
+    <topic_eng>SWEDARP 2000/01</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23183</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>27202</old_id>
+    <topic_swe>Östra Grönland 2016</topic_swe>
+    <topic_eng>Östra Grönland 2016</topic_eng>
+    <broader_id>27200</broader_id>
+    <parent_subject_id>27202</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31964</old_id>
+    <topic_swe>MAGIC-DML 2017/18</topic_swe>
+    <topic_eng>MAGIC-DML 2017/18</topic_eng>
+    <broader_id>31955</broader_id>
+    <parent_subject_id>31964</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23712</old_id>
+    <topic_swe>JUGORSKI 1998</topic_swe>
+    <topic_eng>JUGORSKI 1998</topic_eng>
+    <broader_id>23188</broader_id>
+    <parent_subject_id>23712</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24862</old_id>
+    <topic_swe>SWEDARCTIC 1992</topic_swe>
+    <topic_eng>SWEDARCTIC 1992</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>24862</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>27203</old_id>
+    <topic_swe>GRIFF</topic_swe>
+    <topic_eng>GRIFF</topic_eng>
+    <broader_id>27200</broader_id>
+    <parent_subject_id>27203</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23163</old_id>
+    <topic_swe>SWEDARCTIC 2005</topic_swe>
+    <topic_eng>SWEDARCTIC 2005</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23163</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23380</old_id>
+    <topic_swe>Utvärderingsflygning 2001/02</topic_swe>
+    <topic_eng>Utvärderingsflygning 2001/02</topic_eng>
+    <broader_id>23182</broader_id>
+    <parent_subject_id>23380</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23556</old_id>
+    <topic_swe>Bäckraviner 2008</topic_swe>
+    <topic_eng>Bäckraviner 2008</topic_eng>
+    <broader_id>23160</broader_id>
+    <parent_subject_id>23556</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23152</old_id>
+    <topic_swe>SWEDARCTIC</topic_swe>
+    <topic_eng>SWEDARCTIC</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23254</old_id>
+    <topic_swe>EAGER</topic_swe>
+    <topic_eng>EAGER</topic_eng>
+    <broader_id>23157</broader_id>
+    <parent_subject_id>23254</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23269</old_id>
+    <topic_swe>Kinnvika 2009</topic_swe>
+    <topic_eng>Kinnvika 2009</topic_eng>
+    <broader_id>23159</broader_id>
+    <parent_subject_id>23269</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23291</old_id>
+    <topic_swe>LongTerm 2006</topic_swe>
+    <topic_eng>LongTerm 2006</topic_eng>
+    <broader_id>23162</broader_id>
+    <parent_subject_id>23291</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24853</old_id>
+    <topic_swe>Petermann 2015</topic_swe>
+    <topic_eng>Petermann 2015</topic_eng>
+    <broader_id>23153</broader_id>
+    <parent_subject_id>24853</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23366</old_id>
+    <topic_swe>Sibirien 2003</topic_swe>
+    <topic_eng>Sibirien 2003</topic_eng>
+    <broader_id>23165</broader_id>
+    <parent_subject_id>23366</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23356</old_id>
+    <topic_swe>Grönland 2004</topic_swe>
+    <topic_eng>Grönland 2004</topic_eng>
+    <broader_id>23164</broader_id>
+    <parent_subject_id>23356</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23555</old_id>
+    <topic_swe>Projekt fjällräv</topic_swe>
+    <topic_eng>Projekt fjällräv</topic_eng>
+    <broader_id>23159</broader_id>
+    <parent_subject_id>23555</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23569</old_id>
+    <topic_swe>CASP</topic_swe>
+    <topic_eng>CASP</topic_eng>
+    <broader_id>23162</broader_id>
+    <parent_subject_id>23569</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23706</old_id>
+    <topic_swe>Arctic Ocean 1991</topic_swe>
+    <topic_eng>Arctic Ocean 1991</topic_eng>
+    <broader_id>23705</broader_id>
+    <parent_subject_id>23706</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23160</old_id>
+    <topic_swe>SWEDARCTIC 2008</topic_swe>
+    <topic_eng>SWEDARCTIC 2008</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23160</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23353</old_id>
+    <topic_swe>UV-strålningens effekter på bentiska primärproducenter i Antarktis</topic_swe>
+    <topic_eng>UV-strålningens effekter på bentiska primärproducenter i Antarktis</topic_eng>
+    <broader_id>23179</broader_id>
+    <parent_subject_id>23353</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23559</old_id>
+    <topic_swe>RINK 2008</topic_swe>
+    <topic_eng>RINK 2008</topic_eng>
+    <broader_id>23160</broader_id>
+    <parent_subject_id>23559</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23358</old_id>
+    <topic_swe>NordGRIP 2004</topic_swe>
+    <topic_eng>NordGRIP 2004</topic_eng>
+    <broader_id>23164</broader_id>
+    <parent_subject_id>23358</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23372</old_id>
+    <topic_swe>Sydgeorgien 2002/03</topic_swe>
+    <topic_eng>Sydgeorgien 2002/03</topic_eng>
+    <broader_id>23181</broader_id>
+    <parent_subject_id>23372</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23392</old_id>
+    <topic_swe>DML 1999/2000</topic_swe>
+    <topic_eng>DML 1999/2000</topic_eng>
+    <broader_id>23184</broader_id>
+    <parent_subject_id>23392</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23402</old_id>
+    <topic_swe>Tajmyr 1998</topic_swe>
+    <topic_eng>Tajmyr 1998</topic_eng>
+    <broader_id>23188</broader_id>
+    <parent_subject_id>23402</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23278</old_id>
+    <topic_swe>LASHIPA 5</topic_swe>
+    <topic_eng>LASHIPA 5</topic_eng>
+    <broader_id>23160</broader_id>
+    <parent_subject_id>23278</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>27204</old_id>
+    <topic_swe>Arktiska öar 2016</topic_swe>
+    <topic_eng>Arktiska öar 2016</topic_eng>
+    <broader_id>27200</broader_id>
+    <parent_subject_id>27204</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23391</old_id>
+    <topic_swe>NordGRIP 2000</topic_swe>
+    <topic_eng>NordGRIP 2000</topic_eng>
+    <broader_id>23168</broader_id>
+    <parent_subject_id>23391</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23371</old_id>
+    <topic_swe>AMANDA 2002/03</topic_swe>
+    <topic_eng>AMANDA 2002/03</topic_eng>
+    <broader_id>23181</broader_id>
+    <parent_subject_id>23371</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23186</old_id>
+    <topic_swe>SWEDARP 1997/98</topic_swe>
+    <topic_eng>SWEDARP 1997/98</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23186</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23168</old_id>
+    <topic_swe>SWEDARCTIC 2000</topic_swe>
+    <topic_eng>SWEDARCTIC 2000</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23168</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23207</old_id>
+    <topic_swe>Jämförelser av landformer på Svalbard och Mars</topic_swe>
+    <topic_eng>Jämförelser av landformer på Svalbard och Mars</topic_eng>
+    <broader_id>23155</broader_id>
+    <parent_subject_id>23207</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>36503</old_id>
+    <topic_swe>Ryder 2019</topic_swe>
+    <topic_eng>Ryder 2019</topic_eng>
+    <broader_id>36502</broader_id>
+    <parent_subject_id>36503</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23386</old_id>
+    <topic_swe>AMANDA 2000/01</topic_swe>
+    <topic_eng>AMANDA 2000/01</topic_eng>
+    <broader_id>23183</broader_id>
+    <parent_subject_id>23386</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23250</old_id>
+    <topic_swe>Victoria Land</topic_swe>
+    <topic_eng>Victoria Land</topic_eng>
+    <broader_id>23173</broader_id>
+    <parent_subject_id>23250</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23572</old_id>
+    <topic_swe>Tundra Ecology 1994</topic_swe>
+    <topic_eng>Tundra Ecology 1994</topic_eng>
+    <broader_id>23571</broader_id>
+    <parent_subject_id>23572</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23214</old_id>
+    <topic_swe>Fjällrävens populationsdynamik</topic_swe>
+    <topic_eng>Fjällrävens populationsdynamik</topic_eng>
+    <broader_id>23156</broader_id>
+    <parent_subject_id>23214</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23702</old_id>
+    <topic_swe>ANT VIII/5</topic_swe>
+    <topic_eng>ANT VIII/5</topic_eng>
+    <broader_id>23701</broader_id>
+    <parent_subject_id>23702</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>28553</old_id>
+    <topic_swe>MAGIC-DML</topic_swe>
+    <topic_eng>MAGIC-DML</topic_eng>
+    <broader_id>28552</broader_id>
+    <parent_subject_id>28553</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23364</old_id>
+    <topic_swe>King George Island</topic_swe>
+    <topic_eng>King George Island</topic_eng>
+    <broader_id>23180</broader_id>
+    <parent_subject_id>23364</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23397</old_id>
+    <topic_swe>SCICEX</topic_swe>
+    <topic_eng>SCICEX</topic_eng>
+    <broader_id>23187</broader_id>
+    <parent_subject_id>23397</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23554</old_id>
+    <topic_swe>RINK 2009</topic_swe>
+    <topic_eng>RINK 2009</topic_eng>
+    <broader_id>23159</broader_id>
+    <parent_subject_id>23554</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23558</old_id>
+    <topic_swe>Valhallfonna</topic_swe>
+    <topic_eng>Valhallfonna</topic_eng>
+    <broader_id>23160</broader_id>
+    <parent_subject_id>23558</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24863</old_id>
+    <topic_swe>SWEDARCTIC 1993</topic_swe>
+    <topic_eng>SWEDARCTIC 1993</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>24863</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31960</old_id>
+    <topic_swe>Arktiska öar 2017</topic_swe>
+    <topic_eng>Arctic islands 2017</topic_eng>
+    <broader_id>31953</broader_id>
+    <parent_subject_id>31960</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23701</old_id>
+    <topic_swe>SWEDARP 1989/90</topic_swe>
+    <topic_eng>SWEDARP 1989/90</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23701</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23709</old_id>
+    <topic_swe>SWEDARP 1994/95</topic_swe>
+    <topic_eng>SWEDARP 1994/95</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23709</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23198</old_id>
+    <topic_swe>Araon Amundsenhavet 2013/14</topic_swe>
+    <topic_eng>Araon Amundsenhavet 2013/14</topic_eng>
+    <broader_id>23171</broader_id>
+    <parent_subject_id>23198</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23395</old_id>
+    <topic_swe>Tundra nordväst 1999</topic_swe>
+    <topic_eng>Tundra nordväst 1999</topic_eng>
+    <broader_id>23187</broader_id>
+    <parent_subject_id>23395</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23571</old_id>
+    <topic_swe>SWEDARCTIC 1994</topic_swe>
+    <topic_eng>SWEDARCTIC 1994</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23571</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23577</old_id>
+    <topic_swe>NordGRIP 1999</topic_swe>
+    <topic_eng>NordGRIP 1999</topic_eng>
+    <broader_id>23187</broader_id>
+    <parent_subject_id>23577</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23557</old_id>
+    <topic_swe>Nordenskiöld Land</topic_swe>
+    <topic_eng>Nordenskiöld Land</topic_eng>
+    <broader_id>23160</broader_id>
+    <parent_subject_id>23557</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23389</old_id>
+    <topic_swe>Sibirien 2000</topic_swe>
+    <topic_eng>Sibirien 2000</topic_eng>
+    <broader_id>23168</broader_id>
+    <parent_subject_id>23389</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23707</old_id>
+    <topic_swe>SWEDARP 1991/92</topic_swe>
+    <topic_eng>SWEDARP 1991/92</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23707</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23580</old_id>
+    <topic_swe>EPICA 1997/98</topic_swe>
+    <topic_eng>EPICA 1997/98</topic_eng>
+    <broader_id>23186</broader_id>
+    <parent_subject_id>23580</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23296</old_id>
+    <topic_swe>Isla de los Estados</topic_swe>
+    <topic_eng>Isla de los Estados</topic_eng>
+    <broader_id>23178</broader_id>
+    <parent_subject_id>23296</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23180</old_id>
+    <topic_swe>SWEDARP 2003/04</topic_swe>
+    <topic_eng>SWEDARP 2003/04</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23180</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23270</old_id>
+    <topic_swe>LOMROG II</topic_swe>
+    <topic_eng>LOMROG II</topic_eng>
+    <broader_id>23159</broader_id>
+    <parent_subject_id>23270</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23153</old_id>
+    <topic_swe>SWEDARCTIC 2015</topic_swe>
+    <topic_eng>SWEDARCTIC 2015</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23153</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23284</old_id>
+    <topic_swe>AGAVE</topic_swe>
+    <topic_eng>AGAVE</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23284</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23263</old_id>
+    <topic_swe>LASHIPA 9</topic_swe>
+    <topic_eng>LASHIPA 9</topic_eng>
+    <broader_id>23158</broader_id>
+    <parent_subject_id>23263</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23579</old_id>
+    <topic_swe>NordGRIP 2002</topic_swe>
+    <topic_eng>NordGRIP 2002</topic_eng>
+    <broader_id>23166</broader_id>
+    <parent_subject_id>23579</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23562</old_id>
+    <topic_swe>Rovfåglar och klimat</topic_swe>
+    <topic_eng>Rovfåglar och klimat</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23562</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23164</old_id>
+    <topic_swe>SWEDARCTIC 2004</topic_swe>
+    <topic_eng>SWEDARCTIC 2004</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23164</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23368</old_id>
+    <topic_swe>Svalbard 2003</topic_swe>
+    <topic_eng>Svalbard 2003</topic_eng>
+    <broader_id>23165</broader_id>
+    <parent_subject_id>23368</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23191</old_id>
+    <topic_swe>Västra Rosshavet</topic_swe>
+    <topic_eng>Västra Rosshavet</topic_eng>
+    <broader_id>23170</broader_id>
+    <parent_subject_id>23191</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>41401</old_id>
+    <topic_swe>SAS 2021</topic_swe>
+    <topic_eng>SAS 2021</topic_eng>
+    <broader_id>41400</broader_id>
+    <parent_subject_id>41401</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23398</old_id>
+    <topic_swe>Svalbard 1999</topic_swe>
+    <topic_eng>Svalbard 1999</topic_eng>
+    <broader_id>23187</broader_id>
+    <parent_subject_id>23398</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23265</old_id>
+    <topic_swe>DML 2009/10</topic_swe>
+    <topic_eng>DML 2009/10</topic_eng>
+    <broader_id>23151</broader_id>
+    <parent_subject_id>23265</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23162</old_id>
+    <topic_swe>SWEDARCTIC 2006</topic_swe>
+    <topic_eng>SWEDARCTIC 2006</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23162</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23570</old_id>
+    <topic_swe>IceCube 2005/06</topic_swe>
+    <topic_eng>IceCube 2005/06</topic_eng>
+    <broader_id>23178</broader_id>
+    <parent_subject_id>23570</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>28554</old_id>
+    <topic_swe>ACE</topic_swe>
+    <topic_eng>ACE</topic_eng>
+    <broader_id>28552</broader_id>
+    <parent_subject_id>28554</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23161</old_id>
+    <topic_swe>SWEDARCTIC 2007</topic_swe>
+    <topic_eng>SWEDARCTIC 2007</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23161</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23177</old_id>
+    <topic_swe>SWEDARP 2006/07</topic_swe>
+    <topic_eng>SWEDARP 2006/07</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23177</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23208</old_id>
+    <topic_swe>DML 2012/13</topic_swe>
+    <topic_eng>DML 2012/13</topic_eng>
+    <broader_id>23172</broader_id>
+    <parent_subject_id>23208</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23192</old_id>
+    <topic_swe>SWERUS-C3</topic_swe>
+    <topic_eng>SWERUS-C3</topic_eng>
+    <broader_id>23154</broader_id>
+    <parent_subject_id>23192</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23280</old_id>
+    <topic_swe>IceCube 2007/08</topic_swe>
+    <topic_eng>IceCube 2007/08</topic_eng>
+    <broader_id>23176</broader_id>
+    <parent_subject_id>23280</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23367</old_id>
+    <topic_swe>NordGRIP 2003</topic_swe>
+    <topic_eng>NordGRIP 2003</topic_eng>
+    <broader_id>23165</broader_id>
+    <parent_subject_id>23367</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23274</old_id>
+    <topic_swe>Arktiska Sverige</topic_swe>
+    <topic_eng>Arktiska Sverige</topic_eng>
+    <broader_id>23160</broader_id>
+    <parent_subject_id>23274</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31962</old_id>
+    <topic_swe>Arctic Ocean 2018</topic_swe>
+    <topic_eng>Arctic Ocean 2018</topic_eng>
+    <broader_id>31954</broader_id>
+    <parent_subject_id>31962</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>25700</old_id>
+    <topic_swe>GANOVEX XI</topic_swe>
+    <topic_eng>GANOVEX XI</topic_eng>
+    <broader_id>23169</broader_id>
+    <parent_subject_id>25700</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23267</old_id>
+    <topic_swe>LASHIPA 8</topic_swe>
+    <topic_eng>LASHIPA 8</topic_eng>
+    <broader_id>23151</broader_id>
+    <parent_subject_id>23267</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23359</old_id>
+    <topic_swe>Spetsbergen</topic_swe>
+    <topic_eng>Spetsbergen</topic_eng>
+    <broader_id>23164</broader_id>
+    <parent_subject_id>23359</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24860</old_id>
+    <topic_swe>Kardiovaskulära och gastrointestinala kontrollmekanismer</topic_swe>
+    <topic_eng>Cardiovascular and gastrointestinal control mechanisms</topic_eng>
+    <broader_id>23173</broader_id>
+    <parent_subject_id>24860</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23167</old_id>
+    <topic_swe>SWEDARCTIC 2001</topic_swe>
+    <topic_eng>SWEDARCTIC 2001</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23167</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23169</old_id>
+    <topic_swe>SWEDARP 2015/16</topic_swe>
+    <topic_eng>SWEDARP 2015/16</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23169</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23155</old_id>
+    <topic_swe>SWEDARCTIC 2013</topic_swe>
+    <topic_eng>SWEDARCTIC 2013</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23155</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23255</old_id>
+    <topic_swe>NOA-Svalbard 2011</topic_swe>
+    <topic_eng>NOA-Svalbard 2011</topic_eng>
+    <broader_id>23157</broader_id>
+    <parent_subject_id>23255</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23283</old_id>
+    <topic_swe>Kinnvika 2007</topic_swe>
+    <topic_eng>Kinnvika 2007</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23283</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23193</old_id>
+    <topic_swe>Glaciologi</topic_swe>
+    <topic_eng>Glaciologi</topic_eng>
+    <broader_id>23154</broader_id>
+    <parent_subject_id>23193</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23396</old_id>
+    <topic_swe>Tajmyr 1999</topic_swe>
+    <topic_eng>Tajmyr 1999</topic_eng>
+    <broader_id>23187</broader_id>
+    <parent_subject_id>23396</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23388</old_id>
+    <topic_swe>Svalbard 2000</topic_swe>
+    <topic_eng>Svalbard 2000</topic_eng>
+    <broader_id>23168</broader_id>
+    <parent_subject_id>23388</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31955</old_id>
+    <topic_swe>SWEDARP 2017/18</topic_swe>
+    <topic_eng>SWEDARP 2017/18</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>31955</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23197</old_id>
+    <topic_swe>ICEBOUND</topic_swe>
+    <topic_eng>ICEBOUND</topic_eng>
+    <broader_id>23154</broader_id>
+    <parent_subject_id>23197</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23705</old_id>
+    <topic_swe>SWEDARCTIC 1991</topic_swe>
+    <topic_eng>SWEDARCTIC 1991</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23705</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23375</old_id>
+    <topic_swe>TripleJunction 2002</topic_swe>
+    <topic_eng>TripleJunction 2002</topic_eng>
+    <broader_id>23166</broader_id>
+    <parent_subject_id>23375</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23567</old_id>
+    <topic_swe>LASHIPA 4</topic_swe>
+    <topic_eng>LASHIPA 4</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23567</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23151</old_id>
+    <topic_swe>SWEDARP 2009/10</topic_swe>
+    <topic_eng>SWEDARP 2009/10</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23151</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24852</old_id>
+    <topic_swe>Östra Grönland 2015</topic_swe>
+    <topic_eng>East Greenland 2015</topic_eng>
+    <broader_id>23153</broader_id>
+    <parent_subject_id>24852</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23369</old_id>
+    <topic_swe>Beringia rekognosering 2003</topic_swe>
+    <topic_eng>Beringia rekognosering 2003</topic_eng>
+    <broader_id>23165</broader_id>
+    <parent_subject_id>23369</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23384</old_id>
+    <topic_swe>TripleJunction 2001</topic_swe>
+    <topic_eng>TripleJunction 2001</topic_eng>
+    <broader_id>23167</broader_id>
+    <parent_subject_id>23384</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>27200</old_id>
+    <topic_swe>SWEDARCTIC 2016</topic_swe>
+    <topic_eng>SWEDARCTIC 2016</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>27200</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23361</old_id>
+    <topic_swe>DML 2003/04</topic_swe>
+    <topic_eng>DML 2003/04</topic_eng>
+    <broader_id>23180</broader_id>
+    <parent_subject_id>23361</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23355</old_id>
+    <topic_swe>Ryssland</topic_swe>
+    <topic_eng>Ryssland</topic_eng>
+    <broader_id>23164</broader_id>
+    <parent_subject_id>23355</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23379</old_id>
+    <topic_swe>EPICA 2001/02</topic_swe>
+    <topic_eng>EPICA 2001/02</topic_eng>
+    <broader_id>23182</broader_id>
+    <parent_subject_id>23379</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23708</old_id>
+    <topic_swe>SWEDARP 1996/97</topic_swe>
+    <topic_eng>SWEDARP 1996/97</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23708</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23357</old_id>
+    <topic_swe>Internationell forskarskola</topic_swe>
+    <topic_eng>Internationell forskarskola</topic_eng>
+    <broader_id>23164</broader_id>
+    <parent_subject_id>23357</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23275</old_id>
+    <topic_swe>ASCOS</topic_swe>
+    <topic_eng>ASCOS</topic_eng>
+    <broader_id>23160</broader_id>
+    <parent_subject_id>23275</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23710</old_id>
+    <topic_swe>SWEDARP 1993/94</topic_swe>
+    <topic_eng>SWEDARP 1993/94</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23710</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23381</old_id>
+    <topic_swe>DML 2001/02</topic_swe>
+    <topic_eng>DML 2001/02</topic_eng>
+    <broader_id>23182</broader_id>
+    <parent_subject_id>23381</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23199</old_id>
+    <topic_swe>MARA 2013/14</topic_swe>
+    <topic_eng>MARA 2013/14</topic_eng>
+    <broader_id>23171</broader_id>
+    <parent_subject_id>23199</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23711</old_id>
+    <topic_swe>SWEDARP 1992/93</topic_swe>
+    <topic_eng>SWEDARP 1992/93</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23711</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23370</old_id>
+    <topic_swe>EPICA 2002/03</topic_swe>
+    <topic_eng>EPICA 2002/03</topic_eng>
+    <broader_id>23181</broader_id>
+    <parent_subject_id>23370</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23157</old_id>
+    <topic_swe>SWEDARCTIC 2011</topic_swe>
+    <topic_eng>SWEDARCTIC 2011</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23157</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23170</old_id>
+    <topic_swe>SWEDARP 2014/15</topic_swe>
+    <topic_eng>SWEDARP 2014/15</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23170</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23156</old_id>
+    <topic_swe>SWEDARCTIC 2012</topic_swe>
+    <topic_eng>SWEDARCTIC 2012</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23156</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24861</old_id>
+    <topic_swe>Araon Amundsenhavet 2015/16</topic_swe>
+    <topic_eng>Araon Amundsenhavet 2015/16</topic_eng>
+    <broader_id>23169</broader_id>
+    <parent_subject_id>24861</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23166</old_id>
+    <topic_swe>SWEDARCTIC 2002</topic_swe>
+    <topic_eng>SWEDARCTIC 2002</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23166</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23187</old_id>
+    <topic_swe>SWEDARCTIC 1999</topic_swe>
+    <topic_eng>SWEDARCTIC 1999</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23187</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23205</old_id>
+    <topic_swe>Lena River Study 2013</topic_swe>
+    <topic_eng>Lena River Study 2013</topic_eng>
+    <broader_id>23155</broader_id>
+    <parent_subject_id>23205</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24856</old_id>
+    <topic_swe>TransArc II</topic_swe>
+    <topic_eng>TransArc II</topic_eng>
+    <broader_id>23153</broader_id>
+    <parent_subject_id>24856</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>41403</old_id>
+    <topic_swe>SWEDARCTIC 2024</topic_swe>
+    <topic_eng>SWEDARCTIC 2024</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>41403</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23352</old_id>
+    <topic_swe>AMANDA 2004/05</topic_swe>
+    <topic_eng>AMANDA 2004/05</topic_eng>
+    <broader_id>23179</broader_id>
+    <parent_subject_id>23352</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23294</old_id>
+    <topic_swe>Zeppelin</topic_swe>
+    <topic_eng>Zeppelin</topic_eng>
+    <broader_id>23162</broader_id>
+    <parent_subject_id>23294</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23260</old_id>
+    <topic_swe>IceCube 2010/11</topic_swe>
+    <topic_eng>IceCube 2010/11</topic_eng>
+    <broader_id>23174</broader_id>
+    <parent_subject_id>23260</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23182</old_id>
+    <topic_swe>SWEDARP 2001/02</topic_swe>
+    <topic_eng>SWEDARP 2001/02</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23182</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23184</old_id>
+    <topic_swe>SWEDARP 1999/2000</topic_swe>
+    <topic_eng>SWEDARP 1999/2000</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23184</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23200</old_id>
+    <topic_swe>Turism i polarområden</topic_swe>
+    <topic_eng>Turism i polarområden</topic_eng>
+    <broader_id>23171</broader_id>
+    <parent_subject_id>23200</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24854</old_id>
+    <topic_swe>Arktiska öar</topic_swe>
+    <topic_eng>Arctic islands</topic_eng>
+    <broader_id>23153</broader_id>
+    <parent_subject_id>24854</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23362</old_id>
+    <topic_swe>AMANDA 2003/04</topic_swe>
+    <topic_eng>AMANDA 2003/04</topic_eng>
+    <broader_id>23180</broader_id>
+    <parent_subject_id>23362</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24850</old_id>
+    <topic_swe>Glaciologi 2015</topic_swe>
+    <topic_eng>Glaciology 2015</topic_eng>
+    <broader_id>23153</broader_id>
+    <parent_subject_id>24850</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23194</old_id>
+    <topic_swe>Turism</topic_swe>
+    <topic_eng>Turism</topic_eng>
+    <broader_id>23154</broader_id>
+    <parent_subject_id>23194</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23373</old_id>
+    <topic_swe>Arctic Ocean 2002</topic_swe>
+    <topic_eng>Arctic Ocean 2002</topic_eng>
+    <broader_id>23166</broader_id>
+    <parent_subject_id>23373</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23295</old_id>
+    <topic_swe>EPICA 2005/06</topic_swe>
+    <topic_eng>EPICA 2005/06</topic_eng>
+    <broader_id>23178</broader_id>
+    <parent_subject_id>23295</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23385</old_id>
+    <topic_swe>Grönland 2001</topic_swe>
+    <topic_eng>Grönland 2001</topic_eng>
+    <broader_id>23167</broader_id>
+    <parent_subject_id>23385</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23552</old_id>
+    <topic_swe>Antibiotikaresistens hos fåglar 2009/10</topic_swe>
+    <topic_eng>Antibiotikaresistens hos fåglar 2009/10</topic_eng>
+    <broader_id>23151</broader_id>
+    <parent_subject_id>23552</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23363</old_id>
+    <topic_swe>EPICA 2003/04</topic_swe>
+    <topic_eng>EPICA 2003/04</topic_eng>
+    <broader_id>23180</broader_id>
+    <parent_subject_id>23363</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24851</old_id>
+    <topic_swe>TRANSSIZ</topic_swe>
+    <topic_eng>TRANSSIZ</topic_eng>
+    <broader_id>23153</broader_id>
+    <parent_subject_id>24851</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>41600</old_id>
+    <topic_swe>NWP 2019</topic_swe>
+    <topic_eng>NWP 2019</topic_eng>
+    <broader_id>36502</broader_id>
+    <parent_subject_id>41600</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31958</old_id>
+    <topic_swe>Sorgfjordenprojektet</topic_swe>
+    <topic_eng>The Sorgfjorden project</topic_eng>
+    <broader_id>31953</broader_id>
+    <parent_subject_id>31958</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23185</old_id>
+    <topic_swe>SWEDARP 1998/99</topic_swe>
+    <topic_eng>SWEDARP 1998/99</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23185</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23351</old_id>
+    <topic_swe>DML 2004/05</topic_swe>
+    <topic_eng>DML 2004/05</topic_eng>
+    <broader_id>23179</broader_id>
+    <parent_subject_id>23351</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23150</old_id>
+    <topic_swe>SWEDARP</topic_swe>
+    <topic_eng>SWEDARP</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23376</old_id>
+    <topic_swe>Kap Farvel</topic_swe>
+    <topic_eng>Kap Farvel</topic_eng>
+    <broader_id>23166</broader_id>
+    <parent_subject_id>23376</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23576</old_id>
+    <topic_swe>NordGRIP 1998</topic_swe>
+    <topic_eng>NordGRIP 1998</topic_eng>
+    <broader_id>23188</broader_id>
+    <parent_subject_id>23576</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23188</old_id>
+    <topic_swe>SWEDARCTIC 1998</topic_swe>
+    <topic_eng>SWEDARCTIC 1998</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23188</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23176</old_id>
+    <topic_swe>SWEDARP 2007/08</topic_swe>
+    <topic_eng>SWEDARP 2007/08</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23176</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23568</old_id>
+    <topic_swe>Berggrundsgeologi 2007</topic_swe>
+    <topic_eng>Berggrundsgeologi 2007</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23568</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23282</old_id>
+    <topic_swe>Oden Southern Ocean 2007/08</topic_swe>
+    <topic_eng>Oden Southern Ocean 2007/08</topic_eng>
+    <broader_id>23176</broader_id>
+    <parent_subject_id>23282</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23212</old_id>
+    <topic_swe>Tajmyr 2012</topic_swe>
+    <topic_eng>Tajmyr 2012</topic_eng>
+    <broader_id>23156</broader_id>
+    <parent_subject_id>23212</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23213</old_id>
+    <topic_swe>NOA-Svalbard 2012</topic_swe>
+    <topic_eng>NOA-Svalbard 2012</topic_eng>
+    <broader_id>23156</broader_id>
+    <parent_subject_id>23213</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23292</old_id>
+    <topic_swe>LASHIPA 3</topic_swe>
+    <topic_eng>LASHIPA 3</topic_eng>
+    <broader_id>23162</broader_id>
+    <parent_subject_id>23292</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23393</old_id>
+    <topic_swe>AMANDA 1999/2000</topic_swe>
+    <topic_eng>AMANDA 1999/2000</topic_eng>
+    <broader_id>23184</broader_id>
+    <parent_subject_id>23393</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31953</old_id>
+    <topic_swe>SWEDARCTIC 2017</topic_swe>
+    <topic_eng>SWEDARCTIC 2017</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>31953</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>41400</old_id>
+    <topic_swe>SWEDARCTIC 2021</topic_swe>
+    <topic_eng>SWEDARCTIC 2021</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>41400</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23403</old_id>
+    <topic_swe>IceCube</topic_swe>
+    <topic_eng>IceCube</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23403</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31956</old_id>
+    <topic_swe>Pan-arktisk studie av renars påverkan på tundravegetation 2017</topic_swe>
+    <topic_eng>Pan-Arctic study of the effects of reindeer on tundra vegetation 2017</topic_eng>
+    <broader_id>31953</broader_id>
+    <parent_subject_id>31956</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31963</old_id>
+    <topic_swe>Pan-arktisk studie av renars påverkan på tundravegetation 2018</topic_swe>
+    <topic_eng>Pan-Arctic study of the effects of reindeer on tundra vegetation 2018</topic_eng>
+    <broader_id>31954</broader_id>
+    <parent_subject_id>31963</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23350</old_id>
+    <topic_swe>Berggrundsgeologi</topic_swe>
+    <topic_eng>Berggrundsgeologi</topic_eng>
+    <broader_id>23163</broader_id>
+    <parent_subject_id>23350</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31954</old_id>
+    <topic_swe>SWEDARCTIC 2018</topic_swe>
+    <topic_eng>SWEDARCTIC 2018</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>31954</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23383</old_id>
+    <topic_swe>Arctic Ocean 2001</topic_swe>
+    <topic_eng>Arctic Ocean 2001</topic_eng>
+    <broader_id>23167</broader_id>
+    <parent_subject_id>23383</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23173</old_id>
+    <topic_swe>SWEDARP 2011/12</topic_swe>
+    <topic_eng>SWEDARP 2011/12</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23173</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23179</old_id>
+    <topic_swe>SWEDARP 2004/05</topic_swe>
+    <topic_eng>SWEDARP 2004/05</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23179</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>27201</old_id>
+    <topic_swe>Arctic Ocean 2016</topic_swe>
+    <topic_eng>Arctic Ocean 2016</topic_eng>
+    <broader_id>27200</broader_id>
+    <parent_subject_id>27201</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23202</old_id>
+    <topic_swe>OATRC 2013</topic_swe>
+    <topic_eng>OATRC 2013</topic_eng>
+    <broader_id>23155</broader_id>
+    <parent_subject_id>23202</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23382</old_id>
+    <topic_swe>DML 2002/03</topic_swe>
+    <topic_eng>DML 2002/03</topic_eng>
+    <broader_id>23181</broader_id>
+    <parent_subject_id>23382</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24859</old_id>
+    <topic_swe>Potter Cove</topic_swe>
+    <topic_eng>Potter Cove</topic_eng>
+    <broader_id>23169</broader_id>
+    <parent_subject_id>24859</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>25600</old_id>
+    <topic_swe>SWEDARP 1987/88</topic_swe>
+    <topic_eng>SWEDARP 1987/88</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>25600</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23703</old_id>
+    <topic_swe>SWEDARCTIC 1996</topic_swe>
+    <topic_eng>SWEDARCTIC 1996</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23703</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23293</old_id>
+    <topic_swe>Sassendalen</topic_swe>
+    <topic_eng>Sassendalen</topic_eng>
+    <broader_id>23162</broader_id>
+    <parent_subject_id>23293</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23561</old_id>
+    <topic_swe>Sydgrönlands glaciationshistoria</topic_swe>
+    <topic_eng>Sydgrönlands glaciationshistoria</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23561</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23279</old_id>
+    <topic_swe>JASE</topic_swe>
+    <topic_eng>JASE</topic_eng>
+    <broader_id>23176</broader_id>
+    <parent_subject_id>23279</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23553</old_id>
+    <topic_swe>Isdynamik och massbalans</topic_swe>
+    <topic_eng>Isdynamik och massbalans</topic_eng>
+    <broader_id>23159</broader_id>
+    <parent_subject_id>23553</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23268</old_id>
+    <topic_swe>IceCube 2009/10</topic_swe>
+    <topic_eng>IceCube 2009/10</topic_eng>
+    <broader_id>23151</broader_id>
+    <parent_subject_id>23268</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23276</old_id>
+    <topic_swe>Kinnvika 2008</topic_swe>
+    <topic_eng>Kinnvika 2008</topic_eng>
+    <broader_id>23160</broader_id>
+    <parent_subject_id>23276</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23298</old_id>
+    <topic_swe>Beringia 2005</topic_swe>
+    <topic_eng>Beringia 2005</topic_eng>
+    <broader_id>23163</broader_id>
+    <parent_subject_id>23298</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23299</old_id>
+    <topic_swe>Grönland 2005</topic_swe>
+    <topic_eng>Grönland 2005</topic_eng>
+    <broader_id>23163</broader_id>
+    <parent_subject_id>23299</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24855</old_id>
+    <topic_swe>Qullissat</topic_swe>
+    <topic_eng>Qullissat</topic_eng>
+    <broader_id>23153</broader_id>
+    <parent_subject_id>24855</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23201</old_id>
+    <topic_swe>Vinteris</topic_swe>
+    <topic_eng>Vinteris</topic_eng>
+    <broader_id>23171</broader_id>
+    <parent_subject_id>23201</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23266</old_id>
+    <topic_swe>MARA 2009/10</topic_swe>
+    <topic_eng>MARA 2009/10</topic_eng>
+    <broader_id>23151</broader_id>
+    <parent_subject_id>23266</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23251</old_id>
+    <topic_swe>MARA 2011/12</topic_swe>
+    <topic_eng>MARA 2011/12</topic_eng>
+    <broader_id>23173</broader_id>
+    <parent_subject_id>23251</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23217</old_id>
+    <topic_swe>Lena River Study 2012</topic_swe>
+    <topic_eng>Lena River Study 2012</topic_eng>
+    <broader_id>23156</broader_id>
+    <parent_subject_id>23217</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23360</old_id>
+    <topic_swe>Beringia rekognosering 2004</topic_swe>
+    <topic_eng>Beringia rekognosering 2004</topic_eng>
+    <broader_id>23164</broader_id>
+    <parent_subject_id>23360</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23190</old_id>
+    <topic_swe>MARA 2014/15</topic_swe>
+    <topic_eng>MARA 2014/15</topic_eng>
+    <broader_id>23170</broader_id>
+    <parent_subject_id>23190</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23203</old_id>
+    <topic_swe>De Long</topic_swe>
+    <topic_eng>De Long</topic_eng>
+    <broader_id>23155</broader_id>
+    <parent_subject_id>23203</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23211</old_id>
+    <topic_swe>LOMROG III</topic_swe>
+    <topic_eng>LOMROG III</topic_eng>
+    <broader_id>23156</broader_id>
+    <parent_subject_id>23211</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23258</old_id>
+    <topic_swe>Edens frusna lustgård</topic_swe>
+    <topic_eng>Edens frusna lustgård</topic_eng>
+    <broader_id>23174</broader_id>
+    <parent_subject_id>23258</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23377</old_id>
+    <topic_swe>Antarktiska halvön: Biomedicin</topic_swe>
+    <topic_eng>Antarktiska halvön: Biomedicin</topic_eng>
+    <broader_id>23182</broader_id>
+    <parent_subject_id>23377</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23387</old_id>
+    <topic_swe>Utvärderingsflygning 2000/01</topic_swe>
+    <topic_eng>Utvärderingsflygning 2000/01</topic_eng>
+    <broader_id>23183</broader_id>
+    <parent_subject_id>23387</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23550</old_id>
+    <topic_swe>Antibiotikaresistens hos fåglar 2012/13</topic_swe>
+    <topic_eng>Antibiotikaresistens hos fåglar 2012/13</topic_eng>
+    <broader_id>23172</broader_id>
+    <parent_subject_id>23550</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>38451</old_id>
+    <topic_swe>SIOS</topic_swe>
+    <topic_eng>SIOS</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>41402</old_id>
+    <topic_swe>SWEDARCTIC 2023</topic_swe>
+    <topic_eng>SWEDARCTIC 2023</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>41402</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23390</old_id>
+    <topic_swe>Grönland 2000</topic_swe>
+    <topic_eng>Grönland 2000</topic_eng>
+    <broader_id>23168</broader_id>
+    <parent_subject_id>23390</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23394</old_id>
+    <topic_swe>Alexander Island</topic_swe>
+    <topic_eng>Alexander Island</topic_eng>
+    <broader_id>23184</broader_id>
+    <parent_subject_id>23394</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23218</old_id>
+    <topic_swe>Kartering av permafrost</topic_swe>
+    <topic_eng>Kartering av permafrost</topic_eng>
+    <broader_id>23156</broader_id>
+    <parent_subject_id>23218</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23700</old_id>
+    <topic_swe>EPICA 2004/05</topic_swe>
+    <topic_eng>EPICA 2004/05</topic_eng>
+    <broader_id>23179</broader_id>
+    <parent_subject_id>23700</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23286</old_id>
+    <topic_swe>Oden Southern Ocean 2006/07</topic_swe>
+    <topic_eng>Oden Southern Ocean 2006/07</topic_eng>
+    <broader_id>23177</broader_id>
+    <parent_subject_id>23286</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23216</old_id>
+    <topic_swe>Refotografi</topic_swe>
+    <topic_eng>Refotografi</topic_eng>
+    <broader_id>23156</broader_id>
+    <parent_subject_id>23216</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23374</old_id>
+    <topic_swe>Sibirien 2002</topic_swe>
+    <topic_eng>Sibirien 2002</topic_eng>
+    <broader_id>23166</broader_id>
+    <parent_subject_id>23374</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24300</old_id>
+    <topic_swe>James Ross Island</topic_swe>
+    <topic_eng>James Ross Island</topic_eng>
+    <broader_id>23711</broader_id>
+    <parent_subject_id>24300</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23210</old_id>
+    <topic_swe>MARA 2012/13</topic_swe>
+    <topic_eng>MARA 2012/13</topic_eng>
+    <broader_id>23172</broader_id>
+    <parent_subject_id>23210</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23563</old_id>
+    <topic_swe>LongTerm 2007</topic_swe>
+    <topic_eng>LongTerm 2007</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23563</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23281</old_id>
+    <topic_swe>MARA 2007/08</topic_swe>
+    <topic_eng>MARA 2007/08</topic_eng>
+    <broader_id>23176</broader_id>
+    <parent_subject_id>23281</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23401</old_id>
+    <topic_swe>Svalbard geologi 1998</topic_swe>
+    <topic_eng>Svalbard geologi 1998</topic_eng>
+    <broader_id>23188</broader_id>
+    <parent_subject_id>23401</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>36502</old_id>
+    <topic_swe>SWEDARCTIC 2019</topic_swe>
+    <topic_eng>SWEDARCTIC 2019</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>36502</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23171</old_id>
+    <topic_swe>SWEDARP 2013/14</topic_swe>
+    <topic_eng>SWEDARP 2013/14</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23171</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23713</old_id>
+    <topic_swe>SWEDARP 1988/89</topic_swe>
+    <topic_eng>SWEDARP 1988/89</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23713</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23573</old_id>
+    <topic_swe>SWEDARP 1995/96</topic_swe>
+    <topic_eng>SWEDARP 1995/96</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23573</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23578</old_id>
+    <topic_swe>NordGRIP 2001</topic_swe>
+    <topic_eng>NordGRIP 2001</topic_eng>
+    <broader_id>23167</broader_id>
+    <parent_subject_id>23578</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23574</old_id>
+    <topic_swe>Sydgeorgien 1995/96</topic_swe>
+    <topic_eng>Sydgeorgien 1995/96</topic_eng>
+    <broader_id>23573</broader_id>
+    <parent_subject_id>23574</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23704</old_id>
+    <topic_swe>Arctic Ocean 1996</topic_swe>
+    <topic_eng>Arctic Ocean 1996</topic_eng>
+    <broader_id>23703</broader_id>
+    <parent_subject_id>23704</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23189</old_id>
+    <topic_swe>SWEDARCTIC 1997</topic_swe>
+    <topic_eng>SWEDARCTIC 1997</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23189</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23272</old_id>
+    <topic_swe>LASHIPA 6</topic_swe>
+    <topic_eng>LASHIPA 6</topic_eng>
+    <broader_id>23175</broader_id>
+    <parent_subject_id>23272</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23178</old_id>
+    <topic_swe>SWEDARP 2005/06</topic_swe>
+    <topic_eng>SWEDARP 2005/06</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23178</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23271</old_id>
+    <topic_swe>Oden Southern Ocean 2008/09</topic_swe>
+    <topic_eng>Oden Southern Ocean 2008/09</topic_eng>
+    <broader_id>23175</broader_id>
+    <parent_subject_id>23271</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23365</old_id>
+    <topic_swe>Grönland 2003</topic_swe>
+    <topic_eng>Grönland 2003</topic_eng>
+    <broader_id>23165</broader_id>
+    <parent_subject_id>23365</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23158</old_id>
+    <topic_swe>SWEDARCTIC 2010</topic_swe>
+    <topic_eng>SWEDARCTIC 2010</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23158</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23273</old_id>
+    <topic_swe>IceCube 2008/09</topic_swe>
+    <topic_eng>IceCube 2008/09</topic_eng>
+    <broader_id>23175</broader_id>
+    <parent_subject_id>23273</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23289</old_id>
+    <topic_swe>MARA 2006/07</topic_swe>
+    <topic_eng>MARA 2006/07</topic_eng>
+    <broader_id>23177</broader_id>
+    <parent_subject_id>23289</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23378</old_id>
+    <topic_swe>AMANDA 2001/02</topic_swe>
+    <topic_eng>AMANDA 2001/02</topic_eng>
+    <broader_id>23182</broader_id>
+    <parent_subject_id>23378</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23252</old_id>
+    <topic_swe>Araon Amundsenhavet</topic_swe>
+    <topic_eng>Araon Amundsenhavet</topic_eng>
+    <broader_id>23173</broader_id>
+    <parent_subject_id>23252</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23174</old_id>
+    <topic_swe>SWEDARP 2010/11</topic_swe>
+    <topic_eng>SWEDARP 2010/11</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23174</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23154</old_id>
+    <topic_swe>SWEDARCTIC 2014</topic_swe>
+    <topic_eng>SWEDARCTIC 2014</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23154</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23297</old_id>
+    <topic_swe>DML 2005/06</topic_swe>
+    <topic_eng>DML 2005/06</topic_eng>
+    <broader_id>23178</broader_id>
+    <parent_subject_id>23297</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23262</old_id>
+    <topic_swe>Tajmyr 2010</topic_swe>
+    <topic_eng>Tajmyr 2010</topic_eng>
+    <broader_id>23158</broader_id>
+    <parent_subject_id>23262</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23181</old_id>
+    <topic_swe>SWEDARP 2002/03</topic_swe>
+    <topic_eng>SWEDARP 2002/03</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23181</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23257</old_id>
+    <topic_swe>Oden Southern Ocean 2010/11</topic_swe>
+    <topic_eng>Oden Southern Ocean 2010/11</topic_eng>
+    <broader_id>23174</broader_id>
+    <parent_subject_id>23257</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23714</old_id>
+    <topic_swe>SWEDARP 1990/91</topic_swe>
+    <topic_eng>SWEDARP 1990/91</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23714</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23285</old_id>
+    <topic_swe>LOMROG</topic_swe>
+    <topic_eng>LOMROG</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23285</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23565</old_id>
+    <topic_swe>Zeppelin 2007</topic_swe>
+    <topic_eng>Zeppelin 2007</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23565</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23196</old_id>
+    <topic_swe>Alaska</topic_swe>
+    <topic_eng>Alaska</topic_eng>
+    <broader_id>23154</broader_id>
+    <parent_subject_id>23196</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23215</old_id>
+    <topic_swe>OATRC 2012</topic_swe>
+    <topic_eng>OATRC 2012</topic_eng>
+    <broader_id>23156</broader_id>
+    <parent_subject_id>23215</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23277</old_id>
+    <topic_swe>ISSS-08</topic_swe>
+    <topic_eng>ISSS-08</topic_eng>
+    <broader_id>23160</broader_id>
+    <parent_subject_id>23277</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23566</old_id>
+    <topic_swe>SOAP</topic_swe>
+    <topic_eng>SOAP</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23566</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23575</old_id>
+    <topic_swe>NordGRIP 1997</topic_swe>
+    <topic_eng>NordGRIP 1997</topic_eng>
+    <broader_id>23189</broader_id>
+    <parent_subject_id>23575</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23195</old_id>
+    <topic_swe>PREPARED</topic_swe>
+    <topic_eng>PREPARED</topic_eng>
+    <broader_id>23154</broader_id>
+    <parent_subject_id>23195</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23354</old_id>
+    <topic_swe>ACEX</topic_swe>
+    <topic_eng>ACEX</topic_eng>
+    <broader_id>23164</broader_id>
+    <parent_subject_id>23354</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>41404</old_id>
+    <topic_swe>ARTofMELT</topic_swe>
+    <topic_eng>ARTofMELT</topic_eng>
+    <broader_id>41402</broader_id>
+    <parent_subject_id>41404</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23159</old_id>
+    <topic_swe>SWEDARCTIC 2009</topic_swe>
+    <topic_eng>SWEDARCTIC 2009</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23159</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23204</old_id>
+    <topic_swe>Fältkursen Miljö och samhälle i ett föränderligt Arktis</topic_swe>
+    <topic_eng>Fältkursen Miljö och samhälle i ett föränderligt Arktis</topic_eng>
+    <broader_id>23155</broader_id>
+    <parent_subject_id>23204</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23564</old_id>
+    <topic_swe>Bäckraviner 2007</topic_swe>
+    <topic_eng>Bäckraviner 2007</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23564</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31961</old_id>
+    <topic_swe>PS106 fysisk oceanografi</topic_swe>
+    <topic_eng>PS106 physical oceanography</topic_eng>
+    <broader_id>31953</broader_id>
+    <parent_subject_id>31961</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23400</old_id>
+    <topic_swe>AMANDA 1998/99</topic_swe>
+    <topic_eng>AMANDA 1998/99</topic_eng>
+    <broader_id>23185</broader_id>
+    <parent_subject_id>23400</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23165</old_id>
+    <topic_swe>SWEDARCTIC 2003</topic_swe>
+    <topic_eng>SWEDARCTIC 2003</topic_eng>
+    <broader_id>23152</broader_id>
+    <parent_subject_id>23165</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23551</old_id>
+    <topic_swe>RINK 2010</topic_swe>
+    <topic_eng>RINK 2010</topic_eng>
+    <broader_id>23158</broader_id>
+    <parent_subject_id>23551</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23253</old_id>
+    <topic_swe>IceCube 2011/12</topic_swe>
+    <topic_eng>IceCube 2011/12</topic_eng>
+    <broader_id>23173</broader_id>
+    <parent_subject_id>23253</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23264</old_id>
+    <topic_swe>Oden Southern Ocean 2009/10</topic_swe>
+    <topic_eng>Oden Southern Ocean 2009/10</topic_eng>
+    <broader_id>23151</broader_id>
+    <parent_subject_id>23264</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>24857</old_id>
+    <topic_swe>OATRC 2015</topic_swe>
+    <topic_eng>OATRC 2015</topic_eng>
+    <broader_id>23153</broader_id>
+    <parent_subject_id>24857</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>28552</old_id>
+    <topic_swe>SWEDARP 2016/17</topic_swe>
+    <topic_eng>SWEDARP 2016/17</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>28552</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23399</old_id>
+    <topic_swe>Jugorski 1999</topic_swe>
+    <topic_eng>Jugorski 1999</topic_eng>
+    <broader_id>23187</broader_id>
+    <parent_subject_id>23399</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23261</old_id>
+    <topic_swe>Edens frusna lustgård 2012/13</topic_swe>
+    <topic_eng>Edens frusna lustgård 2012/13</topic_eng>
+    <broader_id>23172</broader_id>
+    <parent_subject_id>23261</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31959</old_id>
+    <topic_swe>Brooks Range</topic_swe>
+    <topic_eng>Brooks Range</topic_eng>
+    <broader_id>31953</broader_id>
+    <parent_subject_id>31959</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23172</old_id>
+    <topic_swe>SWEDARP 2012/13</topic_swe>
+    <topic_eng>SWEDARP 2012/13</topic_eng>
+    <broader_id>23150</broader_id>
+    <parent_subject_id>23172</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23209</old_id>
+    <topic_swe>IceCube 2012/13</topic_swe>
+    <topic_eng>IceCube 2012/13</topic_eng>
+    <broader_id>23172</broader_id>
+    <parent_subject_id>23209</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23288</old_id>
+    <topic_swe>IceCube 2006/07</topic_swe>
+    <topic_eng>IceCube 2006/07</topic_eng>
+    <broader_id>23177</broader_id>
+    <parent_subject_id>23288</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>31957</old_id>
+    <topic_swe>Ellesmereön</topic_swe>
+    <topic_eng>Ellesmere Island</topic_eng>
+    <broader_id>31953</broader_id>
+    <parent_subject_id>31957</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23560</old_id>
+    <topic_swe>Kommendörsöarna</topic_swe>
+    <topic_eng>Kommendörsöarna</topic_eng>
+    <broader_id>23161</broader_id>
+    <parent_subject_id>23560</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23290</old_id>
+    <topic_swe>Grönland 2006</topic_swe>
+    <topic_eng>Grönland 2006</topic_eng>
+    <broader_id>23162</broader_id>
+    <parent_subject_id>23290</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23256</old_id>
+    <topic_swe>DML 2011/12</topic_swe>
+    <topic_eng>DML 2011/12</topic_eng>
+    <broader_id>23173</broader_id>
+    <parent_subject_id>23256</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>polar</domain>
+    <end_date></end_date>
+    <old_id>23287</old_id>
+    <topic_swe>DML 2006/07</topic_swe>
+    <topic_eng>DML 2006/07</topic_eng>
+    <broader_id>23177</broader_id>
+    <parent_subject_id>23287</parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+</SELECT_s_domain_s_closed_Date_as_end_date_s_subject_id_as_old_id_sn_sv_subject_name_as_topic_swe_sn_en_subject_name_as_topic_eng_sp_subject_id_as_broader_id_sp_parent_subject_id_anv_nds_inte_enbart_f_r_att_h_mta_och_l_sa_data_r_tt_till_broader_id_string_agg_pre_subject_id_text_as_earlier_id_from_subject_s_left_join_subject_name_sn_sv_on_s_subject_id_sn_sv_subject_id_and_sn_sv_locale_sv_l_gger_p_en_rad_left_join_subject_name_sn_en_on_s_subject_id_sn_en_subject_id_and_sn_en_locale_en_l_gger_p_en_rad_left_join_subject_parent_sp_on_s_subject_id_sp_parent_subject_id_left_join_subject_predecessor_pre_on_s_subject_id_pre_predecessor_subject_id_where_s_subject_type_id_53_and_s_domain_polar_group_by_s_domain_s_subject_type_id_s_closed_date_s_not_eligible_sn_sv_subject_name_sn_en_subject_name_s_subject_id_sp_subject_id_sp_parent_subject_id>

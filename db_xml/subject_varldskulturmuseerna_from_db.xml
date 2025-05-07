@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SELECT_s_domain_s_closed_Date_as_end_date_s_subject_id_as_old_id_sn_sv_subject_name_as_topic_swe_sn_en_subject_name_as_topic_eng_sp_subject_id_as_broader_id_sp_parent_subject_id_anv_nds_inte_enbart_f_r_att_h_mta_och_l_sa_data_r_tt_till_broader_id_string_agg_pre_subject_id_text_as_earlier_id_from_subject_s_left_join_subject_name_sn_sv_on_s_subject_id_sn_sv_subject_id_and_sn_sv_locale_sv_l_gger_p_en_rad_left_join_subject_name_sn_en_on_s_subject_id_sn_en_subject_id_and_sn_en_locale_en_l_gger_p_en_rad_left_join_subject_parent_sp_on_s_subject_id_sp_parent_subject_id_left_join_subject_predecessor_pre_on_s_subject_id_pre_predecessor_subject_id_where_s_subject_type_id_53_and_s_domain_varldskulturmuseerna_group_by_s_domain_s_subject_type_id_s_closed_date_s_not_eligible_sn_sv_subject_name_sn_en_subject_name_s_subject_id_sp_subject_id_sp_parent_subject_id>
+  <DATA_RECORD>
+    <domain>varldskulturmuseerna</domain>
+    <end_date></end_date>
+    <old_id>40102</old_id>
+    <topic_swe>Miljöhistoria, Museipedagogik och -didaktik</topic_swe>
+    <topic_eng>Miljöhistoria, Museipedagogik och -didaktik</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>varldskulturmuseerna</domain>
+    <end_date></end_date>
+    <old_id>40100</old_id>
+    <topic_swe>Hotade kulturarv</topic_swe>
+    <topic_eng>Hotade kulturarv</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>varldskulturmuseerna</domain>
+    <end_date></end_date>
+    <old_id>40101</old_id>
+    <topic_swe>Proveniens och repatriering</topic_swe>
+    <topic_eng>Proveniens och repatriering</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>varldskulturmuseerna</domain>
+    <end_date></end_date>
+    <old_id>40103</old_id>
+    <topic_swe>Digital humaniora</topic_swe>
+    <topic_eng>Digital humaniora</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+</SELECT_s_domain_s_closed_Date_as_end_date_s_subject_id_as_old_id_sn_sv_subject_name_as_topic_swe_sn_en_subject_name_as_topic_eng_sp_subject_id_as_broader_id_sp_parent_subject_id_anv_nds_inte_enbart_f_r_att_h_mta_och_l_sa_data_r_tt_till_broader_id_string_agg_pre_subject_id_text_as_earlier_id_from_subject_s_left_join_subject_name_sn_sv_on_s_subject_id_sn_sv_subject_id_and_sn_sv_locale_sv_l_gger_p_en_rad_left_join_subject_name_sn_en_on_s_subject_id_sn_en_subject_id_and_sn_en_locale_en_l_gger_p_en_rad_left_join_subject_parent_sp_on_s_subject_id_sp_parent_subject_id_left_join_subject_predecessor_pre_on_s_subject_id_pre_predecessor_subject_id_where_s_subject_type_id_53_and_s_domain_varldskulturmuseerna_group_by_s_domain_s_subject_type_id_s_closed_date_s_not_eligible_sn_sv_subject_name_sn_en_subject_name_s_subject_id_sp_subject_id_sp_parent_subject_id>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SELECT_s_domain_s_closed_Date_as_end_date_s_subject_id_as_old_id_sn_sv_subject_name_as_topic_swe_sn_en_subject_name_as_topic_eng_sp_subject_id_as_broader_id_sp_parent_subject_id_anv_nds_inte_enbart_f_r_att_h_mta_och_l_sa_data_r_tt_till_broader_id_string_agg_pre_subject_id_text_as_earlier_id_from_subject_s_left_join_subject_name_sn_sv_on_s_subject_id_sn_sv_subject_id_and_sn_sv_locale_sv_l_gger_p_en_rad_left_join_subject_name_sn_en_on_s_subject_id_sn_en_subject_id_and_sn_en_locale_en_l_gger_p_en_rad_left_join_subject_parent_sp_on_s_subject_id_sp_parent_subject_id_left_join_subject_predecessor_pre_on_s_subject_id_pre_predecessor_subject_id_where_s_subject_type_id_53_and_s_domain_nordiskamuseet_group_by_s_domain_s_subject_type_id_s_closed_date_s_not_eligible_sn_sv_subject_name_sn_en_subject_name_s_subject_id_sp_subject_id_sp_parent_subject_id>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29005</old_id>
+    <topic_swe>Mat och dryck</topic_swe>
+    <topic_eng>Mat och dryck</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29006</old_id>
+    <topic_swe>Livets och årets högtider</topic_swe>
+    <topic_eng>Livets och årets högtider</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>30203</old_id>
+    <topic_swe>Insamling och samlingsvård: Konservering</topic_swe>
+    <topic_eng>Insamling och samlingsvård: Konservering</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29007</old_id>
+    <topic_swe>Kulturväxter och genetisk mångfald</topic_swe>
+    <topic_eng>Kulturväxter och genetisk mångfald</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>30201</old_id>
+    <topic_swe>Nordiska museet: Utställningskataloger</topic_swe>
+    <topic_eng>Nordiska museet: Utställningskataloger</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29902</old_id>
+    <topic_swe>Nordiska museet</topic_swe>
+    <topic_eng>Nordiska museet</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>30202</old_id>
+    <topic_swe>Insamling och samlingsvård: Metod</topic_swe>
+    <topic_eng>Insamling och samlingsvård: Metod</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>32901</old_id>
+    <topic_swe>Byggnader och bebyggelse</topic_swe>
+    <topic_eng>Byggnader och bebyggelse</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29001</old_id>
+    <topic_swe>Sociala och kulturella identiteter</topic_swe>
+    <topic_eng>Sociala och kulturella identiteter</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>30200</old_id>
+    <topic_swe>Nordiska museet: Historia</topic_swe>
+    <topic_eng>Nordiska museet: Historia</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>31400</old_id>
+    <topic_swe>Historia</topic_swe>
+    <topic_eng>Historia</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>32902</old_id>
+    <topic_swe>Materiell kultur</topic_swe>
+    <topic_eng>Materiell kultur</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29901</old_id>
+    <topic_swe>Naturbruk och agrarhistoria</topic_swe>
+    <topic_eng>Naturbruk och agrarhistoria</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29002</old_id>
+    <topic_swe>Seder och bruk</topic_swe>
+    <topic_eng>Seder och bruk</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29003</old_id>
+    <topic_swe>Näringar och arbetsliv</topic_swe>
+    <topic_eng>Näringar och arbetsliv</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>31850</old_id>
+    <topic_swe>Skansen</topic_swe>
+    <topic_eng>Skansen</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>32903</old_id>
+    <topic_swe>Museologi</topic_swe>
+    <topic_eng>Museologi</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29010</old_id>
+    <topic_swe>Hem och bostad</topic_swe>
+    <topic_eng>Hem och bostad</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29000</old_id>
+    <topic_swe>Vardagsliv och berättande</topic_swe>
+    <topic_eng>Vardagsliv och berättande</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29008</old_id>
+    <topic_swe>Kulturhistoria</topic_swe>
+    <topic_eng>Kulturhistoria</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29009</old_id>
+    <topic_swe>Dräkt och textil</topic_swe>
+    <topic_eng>Dräkt och textil</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>29900</old_id>
+    <topic_swe>Insamling och samlingsvård</topic_swe>
+    <topic_eng>Insamling och samlingsvård</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+  <DATA_RECORD>
+    <domain>nordiskamuseet</domain>
+    <end_date></end_date>
+    <old_id>30350</old_id>
+    <topic_swe>Etnologi</topic_swe>
+    <topic_eng>Etnologi</topic_eng>
+    <broader_id></broader_id>
+    <parent_subject_id></parent_subject_id>
+    <earlier_id></earlier_id>
+  </DATA_RECORD>
+</SELECT_s_domain_s_closed_Date_as_end_date_s_subject_id_as_old_id_sn_sv_subject_name_as_topic_swe_sn_en_subject_name_as_topic_eng_sp_subject_id_as_broader_id_sp_parent_subject_id_anv_nds_inte_enbart_f_r_att_h_mta_och_l_sa_data_r_tt_till_broader_id_string_agg_pre_subject_id_text_as_earlier_id_from_subject_s_left_join_subject_name_sn_sv_on_s_subject_id_sn_sv_subject_id_and_sn_sv_locale_sv_l_gger_p_en_rad_left_join_subject_name_sn_en_on_s_subject_id_sn_en_subject_id_and_sn_en_locale_en_l_gger_p_en_rad_left_join_subject_parent_sp_on_s_subject_id_sp_parent_subject_id_left_join_subject_predecessor_pre_on_s_subject_id_pre_predecessor_subject_id_where_s_subject_type_id_53_and_s_domain_nordiskamuseet_group_by_s_domain_s_subject_type_id_s_closed_date_s_not_eligible_sn_sv_subject_name_sn_en_subject_name_s_subject_id_sp_subject_id_sp_parent_subject_id>
