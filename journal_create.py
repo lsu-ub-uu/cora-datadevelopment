@@ -20,7 +20,7 @@ system = 'preview'
 # system = 'local'
 recordType = 'diva-journal'
 nameInData = 'journal'
-WORKERS = 8
+WORKERS = 16
 filePath_validateBase = (r"validationOrder_base.xml")
 # filePath_sourceXml = (r"db_xml\db_diva-"+nameInData+".xml")
 filePath_sourceXml = (r"db_xml/journal_from_db.xml")
@@ -54,20 +54,21 @@ def start():
 #        test = pool.map(new_record_build, list_dataRecord)
 #            print(test)
 #        pool.map(validate_record, list_dataRecord)
-        list(tqdm(
-            pool.imap_unordered(validate_record, list_dataRecord),
-            total=len(list_dataRecord),
-            desc="Validating records"
-        ))
 #        list(tqdm(
-#            pool.imap_unordered(create_record, list_dataRecord),
+#            pool.imap_unordered(validate_record, list_dataRecord),
 #            total=len(list_dataRecord),
-#            desc="Created records"
+#            desc="Validating records"
 #        ))
+        list(tqdm(
+            pool.imap_unordered(create_record, list_dataRecord),
+            total=len(list_dataRecord),
+            desc="Created records"
+        ))
         # pool.map(ServersideData.create_record, list_dataRecord)
 #    global app_token_client
     
     print(f'Tidsåtgång: {time.time() - starttime}')
+    
 
     
 def start_app_token_client():
@@ -123,7 +124,7 @@ def create_record(data_record):
     global data_logger
     
     auth_token = app_token_client.get_auth_token()
-    headersXml = {'Content-Type':'application/vnd.cora.record+xml',
+    headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml',
                   'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
     urlCreate = ConstantsData.BASE_URL[system] + recordType
     recordToCreate = new_record_build(data_record)
@@ -140,3 +141,5 @@ def create_record(data_record):
 
 if __name__ == "__main__":
     start()
+
+    

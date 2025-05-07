@@ -118,4 +118,9 @@ def create_record(data_record):
         data_logger.error(f"{oldId_fromSource}: {response.status_code}. {response.text}")
     return response.text
 
-start()
+
+if __name__ == "__main__":
+    start()
+    
+    
+    

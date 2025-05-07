@@ -44,17 +44,17 @@ def start():
 #    with Pool(WORKERS) as pool:
     with ThreadPool(WORKERS) as pool:
 #    validate
-#        list(tqdm(
-#            pool.imap_unordered(validate_record, list_dataRecord),
-#            total=len(list_dataRecord),
-#            desc="Validating records"
-#        ))
-#    create
         list(tqdm(
-            pool.imap_unordered(create_record, list_dataRecord),
+            pool.imap_unordered(validate_record, list_dataRecord),
             total=len(list_dataRecord),
-            desc="Created records"
+            desc="Validating records"
         ))
+#    create
+#        list(tqdm(
+#            pool.imap_unordered(create_record, list_dataRecord),
+#            total=len(list_dataRecord),
+#            desc="Created records"
+#        ))
     print(f"Tidsåtgång: {time.time() - starttime}")
 
 def start_app_token_client():
@@ -118,5 +118,8 @@ def create_record(data_record):
         data_logger.error(f"{oldId_fromSource}: {response.status_code}. {response.text}")
     return response.text
 
-start()
+
+if __name__ == "__main__":
+    start()
+
 

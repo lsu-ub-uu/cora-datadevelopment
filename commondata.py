@@ -109,8 +109,9 @@ class  CommonData:
         identifier_fromSource = data_record.find(f'.//identifier_{identifierType}')
         if identifier_fromSource is not None and identifier_fromSource.text:
             if identifierType in ('pissn', 'eissn'):      
-                ET.SubElement(newRecordElement, 'identifier', displayLabel=identifierType, repeatId=str(counter), type = 'issn').text = identifier_fromSource.text
-                counter += 1
+                ET.SubElement(newRecordElement, 'identifier', displayLabel=identifierType, type = 'issn').text = identifier_fromSource.text
+#                ET.SubElement(newRecordElement, 'identifier', displayLabel=identifierType, repeatId=str(counter), type = 'issn').text = identifier_fromSource.text
+#                counter += 1
             else:
                 ET.SubElement(newRecordElement, 'identifier', type=identifierType).text = identifier_fromSource.text
         return counter

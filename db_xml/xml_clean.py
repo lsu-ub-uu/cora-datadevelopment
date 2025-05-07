@@ -45,4 +45,8 @@ def clean_xml(input_file, output_file):
 
 
 # Exempel på användning
-clean_xml("/home/sarto903/cora_python/db_xml/_SELECT_j_journal_id_AS_old_id_jt_main_title_AS_title_jt_sub_tit_202504240921.xml", "/home/sarto903/git/cora-datadevelopment/db_xml/journal_from_db.xml")
+clean_xml("/home/sarto903/git/cora-datadevelopment/db_xml/_SELECT_j_journal_id_AS_old_id_jt_main_title_AS_title_jt_sub_tit_202505071826.xml", "/home/sarto903/git/cora-datadevelopment/db_xml/journal_from_db.xml")
+print("clean_xml done")
+
+
+
