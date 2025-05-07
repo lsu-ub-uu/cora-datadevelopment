@@ -126,10 +126,10 @@ class  CommonData:
                 originInfo = ET.SubElement(newRecordElement, originType)
                 dateIssued = ET.SubElement(originInfo, 'dateIssued', point='end')
                 CommonData.endDate_yearMonthDay(year, month, day, dateIssued)
-            elif originType == 'organisationInfo':
-                organisationInfo = ET.SubElement(newRecordElement, originType)
-                endDate = ET.SubElement(organisationInfo, 'endDate')
-                CommonData.endDate_yearMonthDay(year, month, day, organisationInfo)
+#            elif originType == 'organisationInfo':
+#                organisationInfo = ET.SubElement(newRecordElement, originType)
+#                endDate = ET.SubElement(organisationInfo, 'endDate')
+#                CommonData.endDate_yearMonthDay(year, month, day, organisationInfo)
             else:
                 endDate = ET.SubElement(newRecordElement, 'endDate')
                 CommonData.endDate_yearMonthDay(year, month, day, endDate)
