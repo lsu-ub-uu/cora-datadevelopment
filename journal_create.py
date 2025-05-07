@@ -54,16 +54,16 @@ def start():
 #        test = pool.map(new_record_build, list_dataRecord)
 #            print(test)
 #        pool.map(validate_record, list_dataRecord)
-#        list(tqdm(
-#            pool.imap_unordered(validate_record, list_dataRecord),
-#            total=len(list_dataRecord),
-#            desc="Validating records"
-#        ))
         list(tqdm(
-            pool.imap_unordered(create_record, list_dataRecord),
+            pool.imap_unordered(validate_record, list_dataRecord),
             total=len(list_dataRecord),
-            desc="Created records"
+            desc="Validating records"
         ))
+#        list(tqdm(
+#            pool.imap_unordered(create_record, list_dataRecord),
+#            total=len(list_dataRecord),
+#            desc="Created records"
+#        ))
         # pool.map(ServersideData.create_record, list_dataRecord)
 #    global app_token_client
     
