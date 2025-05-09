@@ -18,6 +18,7 @@ import xml.etree.ElementTree as ET
 system = 'preview'
 recordType = 'diva-publisher'
 nameInData = 'publisher'
+permission_unit = None
 WORKERS = 16
 filePath_validateBase = (r"validationOrder_base.xml")
 filePath_sourceXml = (r"db_xml/publisher_from_db.xml")
@@ -44,17 +45,17 @@ def start():
 #    with Pool(WORKERS) as pool:
     with ThreadPool(WORKERS) as pool:
 #    validate
-#        list(tqdm(
-#            pool.imap_unordered(validate_record, list_dataRecord),
-#            total=len(list_dataRecord),
-#            desc="Validating records"
-#        ))
-#    create
         list(tqdm(
-            pool.imap_unordered(create_record, list_dataRecord),
+            pool.imap_unordered(validate_record, list_dataRecord),
             total=len(list_dataRecord),
-            desc="Created records"
+            desc="Validating records"
         ))
+#    create
+#        list(tqdm(
+#            pool.imap_unordered(create_record, list_dataRecord),
+#            total=len(list_dataRecord),
+#            desc="Created records"
+#        ))
     print(f"Tidsåtgång: {time.time() - starttime}")
 
 def start_app_token_client():
@@ -72,13 +73,9 @@ def start_app_token_client():
 
 def new_record_build(data_record):
         newRecordElement = ET.Element(nameInData)
-        CommonData.recordInfo_build(nameInData, data_record, newRecordElement)
+        CommonData.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
         CommonData.name_build(data_record, newRecordElement)
         return newRecordElement
-
-
-
-
 
 
 def validate_record(data_record):

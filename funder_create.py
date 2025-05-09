@@ -18,6 +18,7 @@ import xml.etree.ElementTree as ET
 system = "preview"
 recordType = "diva-funder"
 nameInData = "funder"
+permission_unit = None
 WORKERS = 8
 filePath_validateBase = (r"validationOrder_base.xml")
 filePath_sourceXml = (r"db_xml/funder_from_db.xml")
@@ -72,7 +73,7 @@ def start_app_token_client():
     
 def new_record_build(data_record):
         newRecordElement = ET.Element(nameInData)
-        CommonData.recordInfo_build(nameInData, data_record, newRecordElement)
+        CommonData.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
         CommonData.nameAuthorityVariant_build(data_record, newRecordElement, 'authority', 'swe')
         CommonData.nameAuthorityVariant_build(data_record, newRecordElement, 'variant', 'eng')
         counter = 0
