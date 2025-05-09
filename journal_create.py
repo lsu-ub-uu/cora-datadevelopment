@@ -16,11 +16,13 @@ from cora.client.AppTokenClient import AppTokenClient
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
 
-system = 'preview'
+
+system = 'mig'
 # system = 'local'
 recordType = 'diva-journal'
 nameInData = 'journal'
-WORKERS = 8
+permission_unit = None
+WORKERS = 16
 filePath_validateBase = (r"validationOrder_base.xml")
 # filePath_sourceXml = (r"db_xml\db_diva-"+nameInData+".xml")
 filePath_sourceXml = (r"db_xml/journal_from_db.xml")
@@ -86,7 +88,7 @@ def start_app_token_client():
 
 def new_record_build(data_record):
         newRecordElement = ET.Element(nameInData)
-        CommonData.recordInfo_build(nameInData, data_record, newRecordElement)
+        CommonData.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
         CommonData.titleInfo_build(data_record, newRecordElement)
         counter = 0
         counter = CommonData.identifier_build(data_record, newRecordElement, 'pissn', counter)
