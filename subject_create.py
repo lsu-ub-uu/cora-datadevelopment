@@ -5,16 +5,17 @@ from collections import OrderedDict
 from multiprocessing import Pool
 from commondata import CommonData
 from constantsdata import ConstantsData
-from serversidedata import ServersideData
+#from serversidedata import ServersideData
 from secretdata import SecretData
 
-unit = 'norden'
-system = 'preview'
+
+system = 'mig'
 recordType = 'diva-subject'
 nameInData = 'subject'
+permission_unit = 'polar'
 WORKERS = 8
 filePath_validateBase = (r"validationOrder_base.xml")
-filePath_sourceXml = (r"db_xml\subject_"+unit+"_from_db.xml")
+filePath_sourceXml = (r"db_xml/subject_"+permission_unit+"_from_db.xml")
 
 def start():
     starttime = time.time()
@@ -31,15 +32,15 @@ def start():
 
     loop_id_lists(relationOldNewIds, linksToEarlierIds, linksToBroaderIds)
 
-    """ if __name__ == "__main__":
-        with Pool(WORKERS) as pool:
-            pool.map(validate_record, list_dataRecord) """
+#    if __name__ == "__main__":
+#        with Pool(WORKERS) as pool:
+#            pool.map(validate_record, list_dataRecord)
 
     print(f'Tidsåtgång: {time.time() - starttime}')
 
 def new_record_build(data_record):
         newRecordElement = ET.Element(nameInData)
-        CommonData.recordInfoUnit_build(nameInData, unit, data_record, newRecordElement)
+        CommonData.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
         CommonData.topicAuthorityVariant_build(data_record, newRecordElement, 'authority', 'swe')
         CommonData.topicAuthorityVariant_build(data_record, newRecordElement, 'variant', 'eng')
         CommonData.endDate_build(data_record, newRecordElement, None)
@@ -47,7 +48,8 @@ def new_record_build(data_record):
 
 def validate_record(data_record):
     authToken = SecretData.get_authToken(system)
-    validate_headers_xml = {'Content-Type':'application/vnd.cora.workorder+xml', 'Accept':'application/vnd.cora.record+xml','authToken':authToken}
+    validate_headers_xml = {'Content-Type':'application/vnd.cora.workorder+xml',
+                            'Accept':'application/vnd.cora.record+xml','authToken':authToken}
     validate_url = 'https://cora.epc.ub.uu.se/diva/rest/record/workOrder'
     newRecordToCreate = new_record_build(data_record)
     newRecordToValidate = CommonData.validateRecord_build(nameInData, filePath_validateBase, newRecordToCreate)
@@ -60,7 +62,8 @@ def validate_record(data_record):
 
 def create_record(data_record):
     authToken = SecretData.get_authToken(system)
-    headersXml = {'Content-Type':'application/vnd.cora.record+xml', 'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
+    headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml',
+                  'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
     urlCreate = ConstantsData.BASE_URL[system]+"diva-"+nameInData
     recordToCreate = new_record_build(data_record)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToCreate).decode("UTF-8")
@@ -112,7 +115,8 @@ def loop_id_lists(relationOldNewIds, linksToEarlierIds, linksToBroaderIds):
             
 def read_record_as_xml(id):
     authToken = SecretData.get_authToken(system)
-    headersXml = {'Content-Type':'application/vnd.cora.record+xml', 'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
+    headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml', 
+                  'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
     getRecordUrl = ConstantsData.BASE_URL[system]+"diva-"+nameInData+"/"+id
     response = requests.get(getRecordUrl, headers=headersXml)
     return ET.fromstring(response.text)
@@ -125,7 +129,8 @@ def related_record_build(nameInData, cleanedRecord, relatedType, counter, value)
 
 def update_record(id, recordToUpdate):
     authToken = SecretData.get_authToken(system)
-    headersXml = {'Content-Type':'application/vnd.cora.record+xml', 'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
+    headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml', 
+                  'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
     recordUrl = ConstantsData.BASE_URL[system]+"diva-"+nameInData+"/"+id
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToUpdate).decode("UTF-8")
     response = requests.post(recordUrl, data=output, headers = headersXml)
