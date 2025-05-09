@@ -8,7 +8,7 @@ from secretdata import SecretData
 from coradata import CoraData
 
 
-urlSpecificDomain = 'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={"name":"search","children":[{"name":"include","children":[{"name":"includePart","children":[{"name":"divaOrganisationDomainSearchTerm","value":"polar"}]}]}]}'
+urlSpecificDomain = 'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={"name":"search","children":[{"name":"include","children":[{"name":"includePart","children":[{"name":"divaOrganisationDomainSearchTerm","value":"norden"}]}]}]}'
 
 
 def start():
@@ -28,10 +28,10 @@ def start():
             workorder = buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren) # skapar workorder och record
             newRecord = workorder["record"] # plockar ut record
             createdCoraRecordResponseText = createRecord(newRecord) # create record, makes a request
-            # validateRecord(workorder) # validate, makes a request
+#            validateRecord(workorder) # validate, makes a request
             # workorders.append(buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren)) # aktiveras för att köra i poolen
             # print(workorder)
-            # print(newRecord)
+#            print(newRecord)
             relationOldNewIds, linksToEarlierId, linksToParentId = storeIdData(recordChildren, createdCoraRecordResponseText)
 
     print(f"relationOldNewIds: {relationOldNewIds}")
@@ -84,7 +84,7 @@ def buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren):
     endDate = CoraData.getFirstAtomicValueWithNameInData(recordChildren, 'closedDate')
     if endDate is not None:
         year, month, day = endDate.split("-")
-        CoraData.appendValueToList(endDate, {'children': [{'children': [{'name': "year", 'value': year}, {'name': "month", 'value': month}, {'name': "day", 'value': day}], 'name':"endDate"}] , 'name': "organisationInfo"}, recordBodyList)
+        CoraData.appendValueToList(endDate, {"children": [{"name": "year" , "value": year}, {"name": "month", "value": month}, {"name": "day"  , "value": day}],"name": "endDate"}, recordBodyList)
     adressChild = CoraData.findChildWithNameInData(recordChildren, 'address')
     if adressChild is not None:
         adressChildren = adressChild['children'] # listar alla barn till address
@@ -151,7 +151,8 @@ metadataToValidate = "new" # "new || existing"
 
 def validateRecord(recordToValidate):
     authToken = SecretData.get_authToken(system)
-    validate_headers_json = {'Content-Type':'application/vnd.cora.workorder+json', 'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
+    validate_headers_json = {'Content-Type':'application/vnd.cora.workorder+json',
+                             'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
     validate_url = base_url[system]+"workOrder"
     output = json.dumps(recordToValidate)
     response = requests.post(validate_url, data=output, headers = validate_headers_json)
@@ -167,23 +168,35 @@ def validateRecord(recordToValidate):
 # CREATE
 def createRecord(recordToCreate):
     authToken = SecretData.get_authToken(system)
-    headers_json = {'Content-Type':'application/vnd.cora.record+json', 'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
+    headers_json = {'Content-Type':'application/vnd.cora.recordgroup+json',
+                    'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
     create_url = base_url[system]+'diva-organisation/'
-    output = json.dumps(recordToCreate)
+    output = json.dumps(recordToCreate, ensure_ascii=False).encode('utf-8')
     response = requests.post(create_url, data=output, headers = headers_json)
     print(response.status_code, response.text) #
-    if response.status_code not in (200, 201, 409):
+    if response.status_code not in ([200]):
         with open('errorlog.txt', 'a', encoding='utf-8') as log:
-            log.write(f'{response.status_code}. {response.text}\n\n')
+            log.write(f'{response.status_code}. {response.text}\n')
     return response.text
 
 ### UPDATE
+#def readRecordAsJson(id):
+#    authToken = SecretData.get_authToken(system)
+#    headers_json = {'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
+#    getRecordUrl = base_url[system]+"diva-organisation/"+id
+#    response = requests.get(getRecordUrl, headers=headers_json)
+#    return json.loads(response.text)
+
 def readRecordAsJson(id):
     authToken = SecretData.get_authToken(system)
-    headers_json = {'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
-    getRecordUrl = base_url[system]+"diva-organisation/"+id
+    headers_json = {
+        'Accept': 'application/vnd.cora.record+json',
+        'authToken': authToken
+    }
+    getRecordUrl = base_url[system] + "diva-organisation/" + id
     response = requests.get(getRecordUrl, headers=headers_json)
-    return json.loads(response.text)
+    return response.json()  # ← Bättre än json.loads(response.text)
+
 
 def loopIdLists(relationOldNewIds, linksToEarlierId, linksToParentId):
     starttime = time.time()
@@ -214,9 +227,10 @@ def loopIdLists(relationOldNewIds, linksToEarlierId, linksToParentId):
 
 def updateNewRecord(id, recordToUpdate):
     authToken = SecretData.get_authToken(system)
-    headers_json = {'Content-Type':'application/vnd.cora.record+json', 'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
+    headers_json = {'Content-Type':'application/vnd.cora.recordgroup+json',
+                    'Accept':'application/vnd.cora.record+json', 'authToken':authToken}
     recordUrl = base_url[system]+"diva-organisation/"+id
-    output = json.dumps(recordToUpdate)
+    output = json.dumps(recordToUpdate, ensure_ascii=False).encode('utf-8')
     response = requests.post(recordUrl, data=output, headers = headers_json)
     print(response.status_code, response.text)
     if response.status_code not in (200, 201, 409):
