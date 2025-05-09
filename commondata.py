@@ -40,7 +40,7 @@ class  CommonData:
         return validationOrder_root
     
     @staticmethod
-    def recordInfo_build(recordType, data_record, newRecordElement):
+    def recordInfo_build(recordType, permission_unit, data_record, newRecordElement):
         recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
         validationType = ET.SubElement(recordInfo, 'validationType')
         ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
@@ -48,24 +48,28 @@ class  CommonData:
         dataDivider = ET.SubElement(recordInfo, 'dataDivider')
         ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
         ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
+        if permission_unit is not None:
+            permissionUnit = ET.SubElement(recordInfo, 'permissionUnit')
+            ET.SubElement(permissionUnit, 'linkedRecordType').text = 'permissionUnit'
+            ET.SubElement(permissionUnit, 'linkedRecordId').text= permission_unit
         oldId_fromSource = data_record.find('.//old_id')
         ET.SubElement(recordInfo, 'oldId').text = oldId_fromSource.text
 
-    @staticmethod
-    def recordInfoUnit_build(recordType, unit, data_record, newRecordElement):
-        recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
-        validationType = ET.SubElement(recordInfo, 'validationType')
-        ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
-        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-'+recordType
-        dataDivider = ET.SubElement(recordInfo, 'dataDivider')
-        ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
-        ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
-        if unit is not None:
-            permissionUnit = ET.SubElement(recordInfo, 'permissionUnit')
-            ET.SubElement(permissionUnit, 'linkedRecordType').text = 'permissionUnit'
-            ET.SubElement(permissionUnit, 'linkedRecordId').text= unit
-        oldIdFromSource = data_record.find('.//old_id')
-        ET.SubElement(recordInfo, 'oldId').text = oldIdFromSource.text
+#    @staticmethod
+#    def recordInfoUnit_build(recordType, unit, data_record, newRecordElement):
+#        recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
+#        validationType = ET.SubElement(recordInfo, 'validationType')
+#        ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
+#        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-'+recordType
+#        dataDivider = ET.SubElement(recordInfo, 'dataDivider')
+#        ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
+#        ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
+#        if unit is not None:
+#            permissionUnit = ET.SubElement(recordInfo, 'permissionUnit')
+#            ET.SubElement(permissionUnit, 'linkedRecordType').text = 'permissionUnit'
+#            ET.SubElement(permissionUnit, 'linkedRecordId').text= unit
+#        oldIdFromSource = data_record.find('.//old_id')
+#        ET.SubElement(recordInfo, 'oldId').text = oldIdFromSource.text
     
     @staticmethod
     def get_oldId(data_record):
