@@ -7,10 +7,10 @@ from commondata import CommonData
 from secretdata import SecretData
 
 
-system = 'preview'
+system = 'mig'
 recordType = 'diva-series'
 nameInData = 'series'
-permission_unit = 'norden'
+permission_unit = 'varldskulturmuseerna'
 
 # filer
 filePath_validateBase = (r'validationOrder_base.xml')
@@ -20,13 +20,12 @@ filePath_source_xml = (r"db_xml/series_"+permission_unit+"_from_db.xml")
 def start():
     starttime = time.time()
     dataList = CommonData.read_source_xml(filePath_source_xml)
-    for dataRecord in dataList.findall('.//DATA_RECORD'):
-        buildedRecord = build_record(dataRecord)
-#        validate_record(dataRecord)
-#        print(buildRecord)
+    for data_record in dataList.findall('.//DATA_RECORD'):
+        buildedRecord = build_record(data_record)
+#        validate_record(data_record)
+#        print(ET.dump(build_record(data_record)))
         createdCoraRecord = create_new_record(buildedRecord)
-        relationOldNewIds,linksToPrecedingIds, linksToHostIds = store_ids(dataRecord, createdCoraRecord)
-
+        relationOldNewIds,linksToPrecedingIds, linksToHostIds = store_ids(data_record, createdCoraRecord)
 
         print(f"relation: {relationOldNewIds}")
         print(f"pre: {linksToPrecedingIds}")
@@ -36,17 +35,17 @@ def start():
 
     print(f'Tidsåtgång: {time.time() - starttime}')
 
-def store_ids(dataRecord, createdCoraRecord):
+def store_ids(data_record, createdCoraRecord):
     createdRecords = ET.fromstring(createdCoraRecord)
     createdRecords.findall('.//recordInfo')
     createdId = createdRecords.find('.//recordInfo/id')
     createdOldId = createdRecords.find('.//recordInfo/oldId')
     relationOldNewIds[createdOldId.text] = createdId.text
-    precedingIds = dataRecord.find('.//relative_id_preceding')
+    precedingIds = data_record.find('.//relative_id_preceding')
     if precedingIds is not None and precedingIds.text:
         precedingIdsAsList = map(str.strip, precedingIds.text.split(','))
         linksToPrecedingIds[createdId.text] = precedingIdsAsList
-    hostIds = dataRecord.find('.//relative_id_host')
+    hostIds = data_record.find('.//relative_id_host')
     if hostIds is not None and hostIds.text:
         linksToHostIds[createdId.text] = hostIds.text
     return relationOldNewIds, linksToPrecedingIds, linksToHostIds
@@ -102,12 +101,12 @@ def update_new_record(id, recordToUpdate):
             log.write(f'{response.status_code}. {response.text}\n\n')
     return response.text
 
-def validate_record(dataRecord):
+def validate_record(data_record):
     authToken = SecretData.get_authToken(system)
     validate_headers_xml = {'Content-Type':'application/vnd.cora.workorder+xml',
                             'Accept':'application/vnd.cora.record+xml','authToken':authToken}
     validate_url = 'https://cora.epc.ub.uu.se/diva/rest/record/workOrder'
-    new_record_toCreate = build_record(dataRecord)
+    new_record_toCreate = build_record(data_record)
     record_toValidate = build_validate_record(recordType, filePath_validateBase, new_record_toCreate)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(record_toValidate).decode("UTF-8")
     response = requests.post(validate_url, data=output, headers = validate_headers_xml)
@@ -126,109 +125,109 @@ def build_validate_record(recordType, filePath_validateBase, new_record_toCreate
     record.append(new_record_toCreate)
     return validationOrder_root
 
-def build_record(dataRecord):
-    seriesRoot = ET.Element('series')
-    recordInfo_build(seriesRoot, dataRecord)
-    titleInfo_build(seriesRoot, dataRecord)
-    titleInfo_alternative_build(seriesRoot, dataRecord, 'alternative')
-    endDate_build(seriesRoot, dataRecord)
-    location_build(seriesRoot, dataRecord)
-    note_build(seriesRoot, dataRecord)
+def build_record(data_record):
+    newRecordElement = ET.Element(nameInData)
+    CommonData.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
+    CommonData.titleInfo_build(data_record, newRecordElement)
+    titleInfo_alternative_build(newRecordElement, data_record, 'alternative')
+    CommonData.endDate_build(data_record, newRecordElement, 'originInfo')
+    CommonData.location_build(data_record, newRecordElement)
+    note_build(newRecordElement, data_record)
     counter = 0
-    counter = identifier_build(seriesRoot, dataRecord, 'pissn', counter)
-    counter = identifier_build(seriesRoot, dataRecord, 'eissn', counter)
-    counter = genre_build(seriesRoot, dataRecord, publicationMap, counter)
-    orgLink_build(seriesRoot, dataRecord)
-    return seriesRoot
+    counter = CommonData.identifier_build(data_record, newRecordElement, 'pissn', counter)
+    counter = CommonData.identifier_build(data_record, newRecordElement, 'eissn', counter)
+    counter = genre_build(newRecordElement, data_record, publicationMap, counter)
+    orgLink_build(newRecordElement, data_record)
+    return newRecordElement
 
-def orgLink_build(seriesRoot, dataRecord):
-    orgOldIdFromSource = dataRecord.find('.//organisation_id')
+def orgLink_build(newRecordElement, data_record):
+    orgOldIdFromSource = data_record.find('.//organisation_id')
     if orgOldIdFromSource is not None and orgOldIdFromSource.text:
         orgOldId = orgOldIdFromSource.text
         recordFromSearch = search_query_org_oldId(orgOldId)
         dataList = ET.fromstring(recordFromSearch)
         idToLink = dataList.find('.//recordInfo/id')
         if idToLink is not None and idToLink.text:
-            relatedOrganisation = ET.SubElement(seriesRoot, 'organisation')
+            relatedOrganisation = ET.SubElement(newRecordElement, 'organisation')
             ET.SubElement(relatedOrganisation, 'linkedRecordType').text = 'diva-organisation'
             ET.SubElement(relatedOrganisation, 'linkedRecordId').text = idToLink.text
 
 def search_query_org_oldId(orgOldId):
     authToken = SecretData.get_authToken(system)
     search_headers_xml = {'Accept':'application/vnd.cora.recordList+xml','authToken':authToken}
-    oldId_search_query = 'searchData={"name":"organisationSearch","children":[{"name":"include","children":[{"name":"includePart","children":[{"name":"genericIdSearchTerm","value":"'+orgOldId+'"}]}]}]}'
+    oldId_search_query = 'searchData={"name":"search","children":[{"name":"include","children":[{"name":"includePart","children":[{"name":"oldIdSearchTerm","value":"'+orgOldId+'"}]}]}]}'
     search_url = base_url[system]+"searchResult/diva-organisationSearch?"+oldId_search_query
     response = requests.get(search_url, headers=search_headers_xml)
     return response.text
 
-def genre_build(seriesRoot, dataRecord, publicationMap, counter):
-    genreFromSource = dataRecord.find('.//publication_type_id')
+def genre_build(newRecordElement, data_record, publicationMap, counter):
+    genreFromSource = data_record.find('.//publication_type_id')
     if genreFromSource is not None and genreFromSource.text:
         genre_value = publicationMap[genreFromSource.text]
-        ET.SubElement(seriesRoot, 'genre', repeatId=str(counter), type = 'outputType').text = genre_value
+        ET.SubElement(newRecordElement, 'genre', repeatId=str(counter), type = 'outputType').text = genre_value
         counter += 1
     return counter
 
-def identifier_build(seriesRoot, dataRecord, identifierType, counter):
-    identifierFromSource = dataRecord.find(f'.//{identifierType}')
-    if identifierFromSource is not None and identifierFromSource.text:
-        ET.SubElement(seriesRoot, 'identifier', displayLabel=identifierType, type = 'issn' ).text = identifierFromSource.text
-        counter += 1
-    return counter
+#def identifier_build(newRecordElement, dataRecord, identifierType, counter):
+#    identifierFromSource = dataRecord.find(f'.//{identifierType}')
+#    if identifierFromSource is not None and identifierFromSource.text:
+#        ET.SubElement(newRecordElement, 'identifier', displayLabel=identifierType, type = 'issn' ).text = identifierFromSource.text
+#        counter += 1
+#    return counter
 
-def note_build(seriesRoot, dataRecord):
-    note_fromSource = dataRecord.find('.//external_note')
+def note_build(newRecordElement, data_record):
+    note_fromSource = data_record.find('.//external_note')
     if note_fromSource is not None and note_fromSource.text:
-        ET.SubElement(seriesRoot, 'note', type='external').text = note_fromSource.text
+        ET.SubElement(newRecordElement, 'note', type='external').text = note_fromSource.text
 
-def location_build(seriesRoot, dataRecord):
-    url_fromSource = dataRecord.find('.//url')
-    if url_fromSource is not None and url_fromSource.text:
-        location = ET.SubElement(seriesRoot, 'location')
-        ET.SubElement(location, 'url').text = url_fromSource.text
+#def location_build(newRecordElement, dataRecord):
+#    url_fromSource = dataRecord.find('.//url')
+#    if url_fromSource is not None and url_fromSource.text:
+#        location = ET.SubElement(newRecordElement, 'location')
+#        ET.SubElement(location, 'url').text = url_fromSource.text
 
-def endDate_build(seriesRoot, dataRecord):
-    dateFromSource = dataRecord.find('.//end_date')
-    if dateFromSource is not None and dateFromSource.text:
-        year, month, day = map(str.strip, dateFromSource.text.split('-'))
-        originInfo = ET.SubElement(seriesRoot, 'originInfo')
-        dateIssued = ET.SubElement(originInfo, 'dateIssued', point = 'end')
-        ET.SubElement(dateIssued, 'year').text = year
-        ET.SubElement(dateIssued, 'month').text = month
-        ET.SubElement(dateIssued, 'day').text = day
+#def endDate_build(newRecordElement, dataRecord):
+#    dateFromSource = dataRecord.find('.//end_date')
+#    if dateFromSource is not None and dateFromSource.text:
+#        year, month, day = map(str.strip, dateFromSource.text.split('-'))
+#        originInfo = ET.SubElement(newRecordElement, 'originInfo')
+#        dateIssued = ET.SubElement(originInfo, 'dateIssued', point = 'end')
+#        ET.SubElement(dateIssued, 'year').text = year
+#        ET.SubElement(dateIssued, 'month').text = month
+#        ET.SubElement(dateIssued, 'day').text = day
 
-def titleInfo_alternative_build(seriesRoot, dataRecord, titleType):
-    titleFromSource = dataRecord.find('.//alternative_title')
+def titleInfo_alternative_build(newRecordElement, data_record, titleType):
+    titleFromSource = data_record.find('.//alternative_title')
     if titleFromSource is not None and titleFromSource.text:
-        titleInfo = ET.SubElement(seriesRoot, 'titleInfo', type = titleType)
+        titleInfo = ET.SubElement(newRecordElement, 'titleInfo', type = titleType)
         ET.SubElement(titleInfo, 'title').text = titleFromSource.text
-    subTitleFromSource = dataRecord.find('.//alterantive_sub_title')
+    subTitleFromSource = data_record.find('.//alterantive_sub_title')
     if subTitleFromSource is not None and subTitleFromSource.text:
         ET.SubElement(titleInfo, 'subTitle').text = subTitleFromSource.text
 
-def titleInfo_build(seriesRoot, dataRecord):
-    titleFromSource = dataRecord.find('.//main_title')
-    if titleFromSource is not None and titleFromSource.text:
-        titleInfo = ET.SubElement(seriesRoot, 'titleInfo')
-        ET.SubElement(titleInfo, 'title').text = titleFromSource.text
-    subTitleFromSource = dataRecord.find('.//sub_title')
-    if subTitleFromSource is not None and subTitleFromSource.text:
-        ET.SubElement(titleInfo, 'subTitle').text = subTitleFromSource.text
+#def titleInfo_build(newRecordElement, dataRecord):
+#    titleFromSource = dataRecord.find('.//main_title')
+#    if titleFromSource is not None and titleFromSource.text:
+#        titleInfo = ET.SubElement(newRecordElement, 'titleInfo')
+#        ET.SubElement(titleInfo, 'title').text = titleFromSource.text
+#    subTitleFromSource = dataRecord.find('.//sub_title')
+#    if subTitleFromSource is not None and subTitleFromSource.text:
+#        ET.SubElement(titleInfo, 'subTitle').text = subTitleFromSource.text
 
-def recordInfo_build(seriesRoot, dataRecord):
-    recordInfo = ET.SubElement(seriesRoot, 'recordInfo')
-    # ET.SubElement(recordInfo, 'recordContentSource').text = permission_unit
-    validationType = ET.SubElement(recordInfo, 'validationType')
-    ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
-    ET.SubElement(validationType, 'linkedRecordId').text = recordType
-    dataDivider = ET.SubElement(recordInfo, 'dataDivider')
-    ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
-    ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
-    permissionUnit = ET.SubElement(recordInfo, 'permissionUnit')
-    ET.SubElement(permissionUnit, 'linkedRecordType').text = 'permissionUnit'
-    ET.SubElement(permissionUnit, 'linkedRecordId').text= permission_unit
-    oldIdFromSource = dataRecord.find('.//old_id')
-    ET.SubElement(recordInfo, 'oldId').text = oldIdFromSource.text
+#def recordInfo_build(newRecordElement, dataRecord):
+#    recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
+#    # ET.SubElement(recordInfo, 'recordContentSource').text = permission_unit
+#    validationType = ET.SubElement(recordInfo, 'validationType')
+#    ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
+#    ET.SubElement(validationType, 'linkedRecordId').text = recordType
+#    dataDivider = ET.SubElement(recordInfo, 'dataDivider')
+#    ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
+#    ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
+#    permissionUnit = ET.SubElement(recordInfo, 'permissionUnit')
+#    ET.SubElement(permissionUnit, 'linkedRecordType').text = 'permissionUnit'
+#    ET.SubElement(permissionUnit, 'linkedRecordId').text= permission_unit
+#    oldIdFromSource = dataRecord.find('.//old_id')
+#    ET.SubElement(recordInfo, 'oldId').text = oldIdFromSource.text
 
 def create_new_record(recordToCreate):
     authToken = SecretData.get_authToken(system)
@@ -238,7 +237,7 @@ def create_new_record(recordToCreate):
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers = headersXml)
     print(response.status_code, response.text)
-    if response.status_code not in (200, 201, 409):
+    if response.status_code not in (200, 201):
         with open('errorlog.txt', 'a', encoding='utf-8') as log:
             log.write(f'{response.status_code}. {response.text}\n\n')
     return response.text
