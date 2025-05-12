@@ -6,9 +6,15 @@ from multiprocessing import Pool
 from commondata import CommonData
 from secretdata import SecretData
 
-unit = 'norden'
+
 system = 'preview'
 recordType = 'diva-series'
+nameInData = 'series'
+permission_unit = 'norden'
+
+# filer
+filePath_validateBase = (r'validationOrder_base.xml')
+filePath_source_xml = (r"db_xml/series_"+permission_unit+"_from_db.xml")
 
 
 def start():
@@ -16,7 +22,8 @@ def start():
     dataList = CommonData.read_source_xml(filePath_source_xml)
     for dataRecord in dataList.findall('.//DATA_RECORD'):
         buildedRecord = build_record(dataRecord)
-        # validate_record(dataRecord)
+#        validate_record(dataRecord)
+#        print(buildRecord)
         createdCoraRecord = create_new_record(buildedRecord)
         relationOldNewIds,linksToPrecedingIds, linksToHostIds = store_ids(dataRecord, createdCoraRecord)
 
@@ -76,14 +83,16 @@ def related_subject_build(recordType, cleanedRecord, relatedType, counter, value
 
 def read_record_as_xml(id):
     authToken = SecretData.get_authToken(system)
-    headersXml = {'Content-Type':'application/vnd.cora.record+xml', 'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
+    headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml',
+                  'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
     getRecordUrl = base_url[system]+"diva-series/"+id
     response = requests.get(getRecordUrl, headers=headersXml)
     return ET.fromstring(response.text)
 
 def update_new_record(id, recordToUpdate):
     authToken = SecretData.get_authToken(system)
-    headersXml = {'Content-Type':'application/vnd.cora.record+xml', 'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
+    headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml',
+                  'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
     recordUrl = base_url[system]+"diva-series/"+id
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToUpdate).decode("UTF-8")
     response = requests.post(recordUrl, data=output, headers = headersXml)
@@ -95,7 +104,8 @@ def update_new_record(id, recordToUpdate):
 
 def validate_record(dataRecord):
     authToken = SecretData.get_authToken(system)
-    validate_headers_xml = {'Content-Type':'application/vnd.cora.workorder+xml', 'Accept':'application/vnd.cora.record+xml','authToken':authToken}
+    validate_headers_xml = {'Content-Type':'application/vnd.cora.workorder+xml',
+                            'Accept':'application/vnd.cora.record+xml','authToken':authToken}
     validate_url = 'https://cora.epc.ub.uu.se/diva/rest/record/workOrder'
     new_record_toCreate = build_record(dataRecord)
     record_toValidate = build_validate_record(recordType, filePath_validateBase, new_record_toCreate)
@@ -162,7 +172,7 @@ def genre_build(seriesRoot, dataRecord, publicationMap, counter):
 def identifier_build(seriesRoot, dataRecord, identifierType, counter):
     identifierFromSource = dataRecord.find(f'.//{identifierType}')
     if identifierFromSource is not None and identifierFromSource.text:
-        ET.SubElement(seriesRoot, 'identifier', displayLabel=identifierType, repeatId=str(counter), type = 'issn' ).text = identifierFromSource.text
+        ET.SubElement(seriesRoot, 'identifier', displayLabel=identifierType, type = 'issn' ).text = identifierFromSource.text
         counter += 1
     return counter
 
@@ -207,7 +217,7 @@ def titleInfo_build(seriesRoot, dataRecord):
 
 def recordInfo_build(seriesRoot, dataRecord):
     recordInfo = ET.SubElement(seriesRoot, 'recordInfo')
-    # ET.SubElement(recordInfo, 'recordContentSource').text = unit
+    # ET.SubElement(recordInfo, 'recordContentSource').text = permission_unit
     validationType = ET.SubElement(recordInfo, 'validationType')
     ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
     ET.SubElement(validationType, 'linkedRecordId').text = recordType
@@ -216,13 +226,14 @@ def recordInfo_build(seriesRoot, dataRecord):
     ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
     permissionUnit = ET.SubElement(recordInfo, 'permissionUnit')
     ET.SubElement(permissionUnit, 'linkedRecordType').text = 'permissionUnit'
-    ET.SubElement(permissionUnit, 'linkedRecordId').text= unit
+    ET.SubElement(permissionUnit, 'linkedRecordId').text= permission_unit
     oldIdFromSource = dataRecord.find('.//old_id')
     ET.SubElement(recordInfo, 'oldId').text = oldIdFromSource.text
 
 def create_new_record(recordToCreate):
     authToken = SecretData.get_authToken(system)
-    headersXml = {'Content-Type':'application/vnd.cora.record+xml', 'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
+    headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml',
+                  'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
     urlCreate = base_url[system]+recordType
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers = headersXml)
@@ -237,9 +248,7 @@ relationOldNewIds = OrderedDict()
 linksToPrecedingIds = OrderedDict()  
 linksToHostIds = OrderedDict()
 
-# filer
-filePath_validateBase = (r'validationOrder_base.xml')
-filePath_source_xml = (r"db_xml\series_"+unit+"_db.xml")
+
 
 # basic url for records
 base_url = {
