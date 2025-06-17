@@ -5,3 +5,5 @@ CSV/
 sql_script/
 /.project
 /.pydevproject
+example_data
+/venv/
