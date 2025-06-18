@@ -73,13 +73,13 @@ def start_app_token_client():
     
 def new_record_build(data_record):
         newRecordElement = ET.Element(nameInData)
-        common_data.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
+        common_data.record_info_build(nameInData, permission_unit, data_record, newRecordElement)
         common_data.nameAuthorityVariant_build(data_record, newRecordElement, 'authority', 'swe')
         common_data.nameAuthorityVariant_build(data_record, newRecordElement, 'variant', 'eng')
         counter = 0
         counter = common_data.identifier_build(data_record, newRecordElement, 'doi', counter)
         counter = common_data.identifier_build(data_record, newRecordElement, 'organisationNumber', counter)
-        common_data.endDate_build(data_record, newRecordElement, None)
+        common_data.end_date_build(data_record, newRecordElement, None)
         return newRecordElement
 
 def validate_record(data_record):

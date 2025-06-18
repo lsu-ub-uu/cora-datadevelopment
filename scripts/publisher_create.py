@@ -73,7 +73,7 @@ def start_app_token_client():
 
 def new_record_build(data_record):
         newRecordElement = ET.Element(nameInData)
-        common_data.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
+        common_data.record_info_build(nameInData, permission_unit, data_record, newRecordElement)
         common_data.name_build(data_record, newRecordElement)
         return newRecordElement
 
