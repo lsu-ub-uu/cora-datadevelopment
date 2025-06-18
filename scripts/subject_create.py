@@ -4,7 +4,7 @@ import time
 from collections import OrderedDict 
 from multiprocessing import Pool
 from common import common_data
-from cora.constants import ConstantsData
+from cora import constants
 #from serversidedata import ServersideData
 from cora.secretdata import SecretData
 
@@ -64,7 +64,7 @@ def create_record(data_record):
     authToken = SecretData.get_authToken(system)
     headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml',
                   'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
-    urlCreate = ConstantsData.BASE_URL[system]+"diva-"+nameInData
+    urlCreate = constants.BASE_URL[system]+"diva-"+nameInData
     recordToCreate = new_record_build(data_record)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers = headersXml)
@@ -117,7 +117,7 @@ def read_record_as_xml(id):
     authToken = SecretData.get_authToken(system)
     headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml', 
                   'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
-    getRecordUrl = ConstantsData.BASE_URL[system]+"diva-"+nameInData+"/"+id
+    getRecordUrl = constants.BASE_URL[system]+"diva-"+nameInData+"/"+id
     response = requests.get(getRecordUrl, headers=headersXml)
     return ET.fromstring(response.text)
 
@@ -131,7 +131,7 @@ def update_record(id, recordToUpdate):
     authToken = SecretData.get_authToken(system)
     headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml', 
                   'Accept':'application/vnd.cora.record+xml', 'authToken':authToken}
-    recordUrl = ConstantsData.BASE_URL[system]+"diva-"+nameInData+"/"+id
+    recordUrl = constants.BASE_URL[system]+"diva-"+nameInData+"/"+id
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToUpdate).decode("UTF-8")
     response = requests.post(recordUrl, data=output, headers = headersXml)
     print(response.status_code, response.text)

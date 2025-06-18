@@ -10,7 +10,7 @@ import requests
 from common.run_rotating_logger import RunRotatingLogger
 
 from common import common_data
-from cora.constants import ConstantsData
+from cora import constants
 from cora.client.app_token_client import AppTokenClient
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
@@ -65,7 +65,7 @@ def start_app_token_client():
                     "threading": threading}
     app_token_client = AppTokenClient(dependencies)
 
-    login_spec = {"login_url": ConstantsData.LOGIN_URLS[system],
+    login_spec = {"login_url": constants.LOGIN_URLS[system],
             "login_id": 'divaAdmin@cora.epc.ub.uu.se',
             "app_token": "49ce00fb-68b5-4089-a5f7-1c225d3cf156"}
     app_token_client.login(login_spec)
@@ -85,7 +85,7 @@ def validate_record(data_record):
     auth_token = app_token_client.get_auth_token()
     validate_headers_xml = {'Content-Type':'application/vnd.cora.workorder+xml',
                             'Accept':'application/vnd.cora.record+xml','authToken':auth_token}
-    validate_url = ConstantsData.BASE_URL[system] + 'workOrder'
+    validate_url = constants.BASE_URL[system] + 'workOrder'
     newRecordToCreate = new_record_build(data_record)
     newRecordToValidate = common_data.validateRecord_build(nameInData, filePath_validateBase, newRecordToCreate)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(newRecordToValidate).decode("UTF-8")
@@ -104,7 +104,7 @@ def create_record(data_record):
     auth_token = app_token_client.get_auth_token()
     headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml',
                   'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
-    urlCreate = ConstantsData.BASE_URL[system] + recordType
+    urlCreate = constants.BASE_URL[system] + recordType
     recordToCreate = new_record_build(data_record)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers = headersXml)

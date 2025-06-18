@@ -11,7 +11,7 @@ import requests
 from common.run_rotating_logger import RunRotatingLogger
 
 from common import common_data
-from cora.constants import ConstantsData
+from cora import constants
 from cora.client.app_token_client import AppTokenClient
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
@@ -77,7 +77,7 @@ def start_app_token_client():
                     "threading": threading}
     app_token_client = AppTokenClient(dependencies)
 
-    login_spec = {"login_url": ConstantsData.LOGIN_URLS[system],
+    login_spec = {"login_url": constants.LOGIN_URLS[system],
             "login_id": 'divaAdmin@cora.epc.ub.uu.se',
             "app_token": "49ce00fb-68b5-4089-a5f7-1c225d3cf156"}
     app_token_client.login(login_spec)
@@ -105,7 +105,7 @@ def validate_record(data_record):
     auth_token = app_token_client.get_auth_token()
     validate_headers_xml = {'Content-Type':'application/vnd.cora.workorder+xml',
                             'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
-    validate_url = ConstantsData.BASE_URL[system] + 'workOrder'
+    validate_url = constants.BASE_URL[system] + 'workOrder'
     newRecordToCreate = new_record_build(data_record)
     oldId_fromSource = common_data.get_oldId(data_record)
     newRecordToValidate = common_data.validateRecord_build(name_in_data, file_path_validate_base, newRecordToCreate)
@@ -124,7 +124,7 @@ def create_record(data_record):
     auth_token = app_token_client.get_auth_token()
     headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml',
                   'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
-    urlCreate = ConstantsData.BASE_URL[system] + record_type
+    urlCreate = constants.BASE_URL[system] + record_type
     recordToCreate = new_record_build(data_record)
     oldId_fromSource = common_data.get_oldId(data_record)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ET.tostring(recordToCreate).decode("UTF-8")
@@ -195,7 +195,7 @@ def read_record_as_xml(id):
     auth_token = app_token_client.get_auth_token()
     headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml',
                   'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
-    getRecordUrl = ConstantsData.BASE_URL[system]+'diva-series/'+id
+    getRecordUrl = constants.BASE_URL[system]+'diva-series/'+id
     response = requests.get(getRecordUrl, headers=headersXml)
     return ET.fromstring(response.text)
 
@@ -206,7 +206,7 @@ def update_created_record(id, recordToUpdate):
     auth_token = app_token_client.get_auth_token()
     headersXml = {'Content-Type':'application/vnd.cora.recordgroup+xml',
                   'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
-    recordUrl = ConstantsData.BASE_URL[system]+"diva-series/"+id
+    recordUrl = constants.BASE_URL[system]+"diva-series/"+id
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToUpdate).decode("UTF-8")
     response = requests.post(recordUrl, data=output, headers = headersXml)
     print(response.status_code, response.text)
@@ -235,7 +235,7 @@ def search_query_org_oldId(orgOldId):
     auth_token = app_token_client.get_auth_token()
     search_headers_xml = {'Accept':'application/vnd.cora.recordList+xml','authToken':auth_token}
     oldId_search_query = 'searchData={"name":"search","children":[{"name":"include","children":[{"name":"includePart","children":[{"name":"oldIdSearchTerm","value":"'+orgOldId+'"}]}]}]}'
-    search_url = ConstantsData.BASE_URL[system]+"searchResult/diva-organisationSearch?"+oldId_search_query
+    search_url = constants.BASE_URL[system]+"searchResult/diva-organisationSearch?"+oldId_search_query
     response = requests.get(search_url, headers=search_headers_xml)
     return response.text
 

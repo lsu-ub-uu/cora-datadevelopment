@@ -2,9 +2,7 @@ import pytest
 from unittest.mock import MagicMock
 from cora.client.app_token_client import AppTokenClient
 
-# test/test_TestAppTokenClient.py
 
- 
 @pytest.fixture
 def setup_client():
     mock_time = MagicMock()
