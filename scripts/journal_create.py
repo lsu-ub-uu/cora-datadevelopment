@@ -88,12 +88,12 @@ def start_app_token_client():
 
 def new_record_build(data_record):
         newRecordElement = ET.Element(nameInData)
-        common_data.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
-        common_data.titleInfo_build(data_record, newRecordElement)
+        common_data.record_info_build(nameInData, permission_unit, data_record, newRecordElement)
+        common_data.title_info_build(data_record, newRecordElement)
         counter = 0
         counter = common_data.identifier_build(data_record, newRecordElement, 'pissn', counter)
         counter = common_data.identifier_build(data_record, newRecordElement, 'eissn', counter)
-        common_data.endDate_build(data_record, newRecordElement, 'originInfo')
+        common_data.end_date_build(data_record, newRecordElement, 'originInfo')
         common_data.location_build(data_record, newRecordElement)
         return newRecordElement
 
