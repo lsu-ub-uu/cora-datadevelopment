@@ -6,4 +6,5 @@ sql_script/
 /.project
 /.pydevproject
 /venv/
+/.venv/
 *.egg-info/
