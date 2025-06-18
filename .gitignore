@@ -8,3 +8,4 @@ sql_script/
 /venv/
 /.venv/
 *.egg-info/
+.coverage
