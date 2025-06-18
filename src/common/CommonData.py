@@ -15,8 +15,8 @@ class  CommonData:
             element.remove(actionLinks)
 
     @staticmethod
-    def remove_actionLinks_from_record(record, record_type):
-        for clean_record in record.findall(f'.//{record_type}'):
+    def remove_actionLinks_from_record(record, name_in_data):
+        for clean_record in record.findall(f'.//{name_in_data}'):
             for validationType in clean_record.findall('.//validationType'):
                 CommonData.remove_action_link(validationType)
             for dataDivider in clean_record.findall('.//dataDivider'):
@@ -42,33 +42,21 @@ class  CommonData:
         return validationOrder_root
     
     @staticmethod
-    def record_info_build(record_type, data_record, newRecordElement):
+    def record_info_build(recordType, permission_unit, data_record, newRecordElement):
         recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
         validationType = ET.SubElement(recordInfo, 'validationType')
         ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
-        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-' + record_type
+        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-'+recordType
         dataDivider = ET.SubElement(recordInfo, 'dataDivider')
         ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
         ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
+        if permission_unit is not None:
+            permissionUnit = ET.SubElement(recordInfo, 'permissionUnit')
+            ET.SubElement(permissionUnit, 'linkedRecordType').text = 'permissionUnit'
+            ET.SubElement(permissionUnit, 'linkedRecordId').text= permission_unit
         oldId_fromSource = data_record.find('.//old_id')
         ET.SubElement(recordInfo, 'oldId').text = oldId_fromSource.text
 
-    @staticmethod
-    def recordInfoUnit_build(record_type, unit, data_record, newRecordElement):
-        recordInfo = ET.SubElement(newRecordElement, 'recordInfo')
-        validationType = ET.SubElement(recordInfo, 'validationType')
-        ET.SubElement(validationType, 'linkedRecordType').text = 'validationType'
-        ET.SubElement(validationType, 'linkedRecordId').text = 'diva-' + record_type
-        dataDivider = ET.SubElement(recordInfo, 'dataDivider')
-        ET.SubElement(dataDivider, 'linkedRecordType').text = 'system'
-        ET.SubElement(dataDivider, 'linkedRecordId').text = 'divaData'
-        if unit is not None:
-            permissionUnit = ET.SubElement(recordInfo, 'permissionUnit')
-            ET.SubElement(permissionUnit, 'linkedRecordType').text = 'permissionUnit'
-            ET.SubElement(permissionUnit, 'linkedRecordId').text = unit
-        oldIdFromSource = data_record.find('.//old_id')
-        ET.SubElement(recordInfo, 'oldId').text = oldIdFromSource.text
-    
     @staticmethod
     def get_oldId(data_record):
         oldId_fromSource = data_record.find('.//old_id')
@@ -107,12 +95,24 @@ class  CommonData:
             ET.SubElement(titleInfo, 'subTitle').text = subTitle_fromSource.text
 
     @staticmethod
+    def titleInfo_alternative_build(data_record, new_record_element, titleType):
+        title_from_source = data_record.find('.//alternative_title')
+        if title_from_source is not None and title_from_source.text:
+            titleInfo = ET.SubElement(new_record_element, 'titleInfo', type = titleType)
+            ET.SubElement(titleInfo, 'title').text = title_from_source.text
+        subTitleFromSource = data_record.find('.//alternative_sub_title')
+        if subTitleFromSource is not None and subTitleFromSource.text:
+            ET.SubElement(titleInfo, 'subTitle').text = subTitleFromSource.text
+
+
+    @staticmethod
     def identifier_build(data_record, newRecordElement, identifierType, counter):
         identifier_fromSource = data_record.find(f'.//identifier_{identifierType}')
         if identifier_fromSource is not None and identifier_fromSource.text:
-            if identifierType in ('pissn', 'eissn'): 
-                ET.SubElement(newRecordElement, 'identifier', displayLabel=identifierType, repeatId=str(counter), type='issn').text = identifier_fromSource.text
-                counter += 1
+            if identifierType in ('pissn', 'eissn'):      
+                ET.SubElement(newRecordElement, 'identifier', displayLabel=identifierType, type = 'issn').text = identifier_fromSource.text
+#                ET.SubElement(newRecordElement, 'identifier', displayLabel=identifierType, repeatId=str(counter), type = 'issn').text = identifier_fromSource.text
+#                counter += 1
             else:
                 ET.SubElement(newRecordElement, 'identifier', type=identifierType).text = identifier_fromSource.text
         return counter
@@ -124,12 +124,12 @@ class  CommonData:
             year, month, day = map(str.strip, date_fromSource.text.split('-'))
             if originType == 'originInfo':
                 originInfo = ET.SubElement(newRecordElement, originType)
-                dateIssued = ET.SubElement(originInfo, 'dateIssued', point='end')
+                dateIssued = ET.SubElement(originInfo, 'dateIssued', point = 'end')
                 CommonData.endDate_yearMonthDay(year, month, day, dateIssued)
-#            elif originType == 'organisationInfo':
-#                organisationInfo = ET.SubElement(new_record_element, originType)
-#                endDate = ET.SubElement(organisationInfo, 'endDate')
-#                CommonData.endDate_yearMonthDay(year, month, day, organisationInfo)
+            elif originType == 'organisationInfo':
+                organisationInfo = ET.SubElement(newRecordElement, originType)
+                endDate = ET.SubElement(organisationInfo, 'endDate')
+                CommonData.endDate_yearMonthDay(year, month, day, organisationInfo)
             else:
                 endDate = ET.SubElement(newRecordElement, 'endDate')
                 CommonData.endDate_yearMonthDay(year, month, day, endDate)
@@ -146,7 +146,22 @@ class  CommonData:
         if url_fromSource is not None and url_fromSource.text:
             location = ET.SubElement(newRecordElement, 'location')
             ET.SubElement(location, 'url').text = url_fromSource.text
-            
+
+    @staticmethod
+    def note_build(data_record, newRecordElement, noteType):
+        note_fromSource = data_record.find(f'.//note_{noteType}')
+        if note_fromSource is not None and note_fromSource.text:
+            ET.SubElement(newRecordElement, 'note', type='external').text = note_fromSource.text
+        
+    @staticmethod
+    def genre_build(data_record, new_record_element, publication_map, counter):
+        genre_from_source = data_record.find('.//publication_type_id')
+        if genre_from_source is not None and genre_from_source.text:
+            genre_value = publication_map[genre_from_source.text]
+            ET.SubElement(new_record_element, 'genre', repeatId=str(counter), type = 'outputType').text = genre_value
+            counter += 1
+        return counter
+        
     @staticmethod
     def create_record_info_for_record_type(record_type):
         record_info = ET.Element("recordInfo")

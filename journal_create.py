@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath('src'))
 import requests
 from common.RunRotatingLogger import RunRotatingLogger
 
-from commondata import CommonData
+from common.CommonData import CommonData
 from constantsdata import ConstantsData
 from cora.client.AppTokenClient import AppTokenClient
 from tqdm import tqdm
