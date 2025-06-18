@@ -9,7 +9,7 @@ import time
 #import requests
 #from common.RunRotatingLogger import RunRotatingLogger
 #
-#from common.CommonData import CommonData
+#from common import CommonData
 #from constantsdata import ConstantsData
 #from cora.client.AppTokenClient import AppTokenClient
 #from tqdm import tqdm

@@ -7,9 +7,9 @@ import time
 sys.path.append(os.path.abspath('src'))
 
 import requests
-from common.RunRotatingLogger import RunRotatingLogger
+from common.run_rotating_logger import RunRotatingLogger
 
-from common.CommonData import CommonData
+from common import common_data
 from constantsdata import ConstantsData
 from cora.client.AppTokenClient import AppTokenClient
 from tqdm import tqdm
@@ -36,7 +36,7 @@ def start():
     starttime = time.time()
     start_app_token_client()
     
-    dataList = CommonData.read_source_xml(filePath_sourceXml)
+    dataList = common_data.read_source_xml(filePath_sourceXml)
     list_dataRecord = []
     for data_record in dataList.findall('.//DATA_RECORD'):
         list_dataRecord.append(data_record)
@@ -73,8 +73,8 @@ def start_app_token_client():
 
 def new_record_build(data_record):
         newRecordElement = ET.Element(nameInData)
-        CommonData.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
-        CommonData.name_build(data_record, newRecordElement)
+        common_data.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
+        common_data.name_build(data_record, newRecordElement)
         return newRecordElement
 
 
@@ -87,10 +87,10 @@ def validate_record(data_record):
                             'Accept':'application/vnd.cora.record+xml','authToken':auth_token}
     validate_url = ConstantsData.BASE_URL[system] + 'workOrder'
     newRecordToCreate = new_record_build(data_record)
-    newRecordToValidate = CommonData.validateRecord_build(nameInData, filePath_validateBase, newRecordToCreate)
+    newRecordToValidate = common_data.validateRecord_build(nameInData, filePath_validateBase, newRecordToCreate)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(newRecordToValidate).decode("UTF-8")
     response = requests.post(validate_url, data=output, headers = validate_headers_xml)
-    oldId_fromSource = CommonData.get_oldId(data_record)
+    oldId_fromSource = common_data.get_oldId(data_record)
     if '<valid>true</valid>' not in response.text:
         data_logger.error(f"{oldId_fromSource}: {response.status_code}. {response.text}")
     if response.text:
@@ -108,7 +108,7 @@ def create_record(data_record):
     recordToCreate = new_record_build(data_record)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers = headersXml)
-    oldId_fromSource = CommonData.get_oldId(data_record)
+    oldId_fromSource = common_data.get_oldId(data_record)
     if response.text:
         data_logger.info(f"{oldId_fromSource}: {response.status_code}. {response.text}")
     if response.status_code not in ([201]):

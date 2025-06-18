@@ -5,3 +5,5 @@ CSV/
 sql_script/
 /.project
 /.pydevproject
+/venv/
+*.egg-info/

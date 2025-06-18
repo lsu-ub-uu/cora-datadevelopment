@@ -1,0 +1,13 @@
+[project]
+name = "cora-datadevelopment"
+version = "1.0.0"
+dependencies = [
+    "tqdm",
+    "pytest"
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+license = "GPL-3.0"

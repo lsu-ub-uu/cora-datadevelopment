@@ -8,9 +8,9 @@ import time
 sys.path.append(os.path.abspath('src'))
 
 import requests
-from common.RunRotatingLogger import RunRotatingLogger
+from common.run_rotating_logger import RunRotatingLogger
 
-from common.CommonData import CommonData
+from common import common_data
 from constantsdata import ConstantsData
 from cora.client.AppTokenClient import AppTokenClient
 from tqdm import tqdm
@@ -44,7 +44,7 @@ def start():
     starttime = time.time()
     start_app_token_client()
     
-    dataList = CommonData.read_source_xml(filePath_sourceXml)
+    dataList = common_data.read_source_xml(filePath_sourceXml)
     list_dataRecord = []
     for data_record in dataList.findall('.//DATA_RECORD'):
         list_dataRecord.append(data_record)
@@ -88,13 +88,13 @@ def start_app_token_client():
 
 def new_record_build(data_record):
         newRecordElement = ET.Element(nameInData)
-        CommonData.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
-        CommonData.titleInfo_build(data_record, newRecordElement)
+        common_data.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
+        common_data.titleInfo_build(data_record, newRecordElement)
         counter = 0
-        counter = CommonData.identifier_build(data_record, newRecordElement, 'pissn', counter)
-        counter = CommonData.identifier_build(data_record, newRecordElement, 'eissn', counter)
-        CommonData.endDate_build(data_record, newRecordElement, 'originInfo')
-        CommonData.location_build(data_record, newRecordElement)
+        counter = common_data.identifier_build(data_record, newRecordElement, 'pissn', counter)
+        counter = common_data.identifier_build(data_record, newRecordElement, 'eissn', counter)
+        common_data.endDate_build(data_record, newRecordElement, 'originInfo')
+        common_data.location_build(data_record, newRecordElement)
         return newRecordElement
 
 
@@ -107,8 +107,8 @@ def validate_record(data_record):
                             'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
     validate_url = ConstantsData.BASE_URL[system] + 'workOrder'
     newRecordToCreate = new_record_build(data_record)
-    oldId_fromSource = CommonData.get_oldId(data_record)
-    newRecordToValidate = CommonData.validateRecord_build(nameInData, filePath_validateBase, newRecordToCreate)
+    oldId_fromSource = common_data.get_oldId(data_record)
+    newRecordToValidate = common_data.validateRecord_build(nameInData, filePath_validateBase, newRecordToCreate)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ET.tostring(newRecordToValidate).decode("UTF-8")
     response = requests.post(validate_url, data=output, headers=validate_headers_xml)
 #    print(response.status_code, response.text)
@@ -130,7 +130,7 @@ def create_record(data_record):
                   'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
     urlCreate = ConstantsData.BASE_URL[system] + recordType
     recordToCreate = new_record_build(data_record)
-    oldId_fromSource = CommonData.get_oldId(data_record)
+    oldId_fromSource = common_data.get_oldId(data_record)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers=headersXml)
 #    print(response.status_code, response.text)

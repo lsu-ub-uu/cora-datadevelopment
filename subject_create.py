@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import time
 from collections import OrderedDict 
 from multiprocessing import Pool
-from common.CommonData import CommonData
+from common import common_data
 from constantsdata import ConstantsData
 #from serversidedata import ServersideData
 from secretdata import SecretData
@@ -19,7 +19,7 @@ filePath_sourceXml = (r"db_xml/subject_"+permission_unit+"_from_db.xml")
 
 def start():
     starttime = time.time()
-    dataList = CommonData.read_source_xml(filePath_sourceXml)
+    dataList = common_data.read_source_xml(filePath_sourceXml)
     list_dataRecord = []
     for data_record in dataList.findall('.//DATA_RECORD'):
         list_dataRecord.append(data_record)
@@ -40,10 +40,10 @@ def start():
 
 def new_record_build(data_record):
         newRecordElement = ET.Element(nameInData)
-        CommonData.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
-        CommonData.topicAuthorityVariant_build(data_record, newRecordElement, 'authority', 'swe')
-        CommonData.topicAuthorityVariant_build(data_record, newRecordElement, 'variant', 'eng')
-        CommonData.endDate_build(data_record, newRecordElement, None)
+        common_data.recordInfo_build(nameInData, permission_unit, data_record, newRecordElement)
+        common_data.topicAuthorityVariant_build(data_record, newRecordElement, 'authority', 'swe')
+        common_data.topicAuthorityVariant_build(data_record, newRecordElement, 'variant', 'eng')
+        common_data.endDate_build(data_record, newRecordElement, None)
         return newRecordElement
 
 def validate_record(data_record):
@@ -52,7 +52,7 @@ def validate_record(data_record):
                             'Accept':'application/vnd.cora.record+xml','authToken':authToken}
     validate_url = 'https://cora.epc.ub.uu.se/diva/rest/record/workOrder'
     newRecordToCreate = new_record_build(data_record)
-    newRecordToValidate = CommonData.validateRecord_build(nameInData, filePath_validateBase, newRecordToCreate)
+    newRecordToValidate = common_data.validateRecord_build(nameInData, filePath_validateBase, newRecordToCreate)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"+ET.tostring(newRecordToValidate).decode("UTF-8")
     response = requests.post(validate_url, data=output, headers = validate_headers_xml)
     print(response.status_code, response.text)
@@ -98,7 +98,7 @@ def loop_id_lists(relationOldNewIds, linksToEarlierIds, linksToBroaderIds):
         if newId in linksToEarlierIds or newId in linksToBroaderIds:
             repeatId = 0
             newRecord = read_record_as_xml(newId)
-            cleanedRecord = CommonData.remove_actionLinks_from_record(newRecord, nameInData)
+            cleanedRecord = common_data.remove_actionLinks_from_record(newRecord, nameInData)
             if newId in linksToBroaderIds:
                 broaderOldId = linksToBroaderIds[newId]
                 broaderNewId = relationOldNewIds[broaderOldId]

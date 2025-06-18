@@ -8,9 +8,9 @@ import time
 sys.path.append(os.path.abspath('src'))
 
 import requests
-from common.RunRotatingLogger import RunRotatingLogger
+from common.run_rotating_logger import RunRotatingLogger
 
-from common.CommonData import CommonData
+from common import common_data
 from constantsdata import ConstantsData
 from cora.client.AppTokenClient import AppTokenClient
 from tqdm import tqdm
@@ -42,7 +42,7 @@ def start():
     starttime = time.time()
     start_app_token_client()
 
-    dataList = CommonData.read_source_xml(file_path_source_xml)
+    dataList = common_data.read_source_xml(file_path_source_xml)
     list_dataRecord = []
     for data_record in dataList.findall('.//DATA_RECORD'):
         list_dataRecord.append(data_record)
@@ -85,16 +85,16 @@ def start_app_token_client():
     
 def new_record_build(data_record):
     new_record_element = ET.Element(name_in_data)
-    CommonData.record_info_build(name_in_data, permission_unit, data_record, new_record_element)
-    CommonData.title_info_build(data_record, new_record_element)
-    CommonData.titleInfo_alternative_build(data_record, new_record_element,  'alternative')
-    CommonData.end_date_build(data_record, new_record_element, 'originInfo')
-    CommonData.location_build(data_record, new_record_element)
-    CommonData.note_build(data_record, new_record_element, 'external')
+    common_data.record_info_build(name_in_data, permission_unit, data_record, new_record_element)
+    common_data.title_info_build(data_record, new_record_element)
+    common_data.titleInfo_alternative_build(data_record, new_record_element,  'alternative')
+    common_data.end_date_build(data_record, new_record_element, 'originInfo')
+    common_data.location_build(data_record, new_record_element)
+    common_data.note_build(data_record, new_record_element, 'external')
     counter = 0
-    counter = CommonData.identifier_build(data_record, new_record_element, 'pissn', counter)
-    counter = CommonData.identifier_build(data_record, new_record_element, 'eissn', counter)
-    counter = CommonData.genre_build(data_record, new_record_element, publication_map, counter)
+    counter = common_data.identifier_build(data_record, new_record_element, 'pissn', counter)
+    counter = common_data.identifier_build(data_record, new_record_element, 'eissn', counter)
+    counter = common_data.genre_build(data_record, new_record_element, publication_map, counter)
     orgLink_build(new_record_element, data_record)
     return new_record_element
 
@@ -107,8 +107,8 @@ def validate_record(data_record):
                             'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
     validate_url = ConstantsData.BASE_URL[system] + 'workOrder'
     newRecordToCreate = new_record_build(data_record)
-    oldId_fromSource = CommonData.get_oldId(data_record)
-    newRecordToValidate = CommonData.validateRecord_build(name_in_data, file_path_validate_base, newRecordToCreate)
+    oldId_fromSource = common_data.get_oldId(data_record)
+    newRecordToValidate = common_data.validateRecord_build(name_in_data, file_path_validate_base, newRecordToCreate)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ET.tostring(newRecordToValidate).decode("UTF-8")
     response = requests.post(validate_url, data=output, headers=validate_headers_xml)
 #    print(response.status_code, response.text)
@@ -126,7 +126,7 @@ def create_record(data_record):
                   'Accept':'application/vnd.cora.record+xml', 'authToken':auth_token}
     urlCreate = ConstantsData.BASE_URL[system] + record_type
     recordToCreate = new_record_build(data_record)
-    oldId_fromSource = CommonData.get_oldId(data_record)
+    oldId_fromSource = common_data.get_oldId(data_record)
     output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + ET.tostring(recordToCreate).decode("UTF-8")
     response = requests.post(urlCreate, data=output, headers=headersXml)
     print(response.status_code, response.text)
@@ -164,7 +164,7 @@ def loop_id_lists(relationOldNewIds, linksToPrecedingIds, linksToHostIds):
         if newId in linksToPrecedingIds or newId in linksToHostIds:
             repeatId = 0
             newRecord = read_record_as_xml(newId)
-            cleanedRecord = CommonData.remove_actionLinks_from_record(newRecord, name_in_data)
+            cleanedRecord = common_data.remove_actionLinks_from_record(newRecord, name_in_data)
             if newId in linksToHostIds:
                 parentOldId = linksToHostIds[newId]
                 parentNewId = relationOldNewIds[parentOldId]
