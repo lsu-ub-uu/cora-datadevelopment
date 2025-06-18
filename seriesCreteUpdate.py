@@ -12,7 +12,7 @@ from common.run_rotating_logger import RunRotatingLogger
 
 from common import common_data
 from constantsdata import ConstantsData
-from cora.client.AppTokenClient import AppTokenClient
+from cora.client.app_token_client import AppTokenClient
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
