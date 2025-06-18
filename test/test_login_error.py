@@ -1,5 +1,5 @@
 import pytest
-from cora.client.LoginError import LoginError
+from cora.client.login_error import LoginError
 
 def test_login_error_message():
     error = LoginError("Login failed")

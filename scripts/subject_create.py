@@ -4,9 +4,9 @@ import time
 from collections import OrderedDict 
 from multiprocessing import Pool
 from common import common_data
-from constantsdata import ConstantsData
+from cora.constants import ConstantsData
 #from serversidedata import ServersideData
-from secretdata import SecretData
+from cora.secretdata import SecretData
 
 
 system = 'mig'
@@ -14,8 +14,8 @@ recordType = 'diva-subject'
 nameInData = 'subject'
 permission_unit = 'polar'
 WORKERS = 8
-filePath_validateBase = (r"validationOrder_base.xml")
-filePath_sourceXml = (r"db_xml/subject_"+permission_unit+"_from_db.xml")
+filePath_validateBase = (r"data/cora/validate/validation_order_base.xml")
+filePath_sourceXml = (r"data/db_xml/subject_"+permission_unit+"_from_db.xml")
 
 def start():
     starttime = time.time()

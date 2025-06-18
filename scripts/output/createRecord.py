@@ -22,7 +22,7 @@ recordType = 'output'
 nameInData = 'output'
 permission_unit = 'varldskulturmuseerna'
 WORKERS = 16
-filePath_validateBase = (f"validationOrder_base.xml")
+filePath_validateBase = (f"data/cora/validate/validation_order_base.xml")
 #filePath_sourceXml = (f"output/{record_id}_varldskulturmuseerna.xml")
 
 request_counter = 0

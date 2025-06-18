@@ -11,11 +11,11 @@ import requests
 from common.run_rotating_logger import RunRotatingLogger
 
 from common import common_data
-from constantsdata import ConstantsData
+from cora.constants import ConstantsData
 from cora.client.app_token_client import AppTokenClient
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
-from collections import OrderedDict
+from collections import OrderedDict 
 
 system = 'preview'
 record_type = 'diva-series'
@@ -23,8 +23,8 @@ name_in_data = 'series'
 permission_unit = 'varldskulturmuseerna'
 WORKERS = 16
 # filer
-file_path_validate_base = (r'validationOrder_base.xml')
-file_path_source_xml = (r"db_xml/series_"+permission_unit+"_from_db.xml")
+file_path_validate_base = (r'data/cora/validate/validation_order_base.xml')
+file_path_source_xml = (r"data/db_xml/series_"+permission_unit+"_from_db.xml")
 
 app_token_client = None
 data_logger = None

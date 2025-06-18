@@ -10,7 +10,7 @@ import requests
 from common.run_rotating_logger import RunRotatingLogger
 
 from common import common_data
-from constantsdata import ConstantsData
+from cora.constants import ConstantsData
 from cora.client.app_token_client import AppTokenClient
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
@@ -20,8 +20,8 @@ recordType = 'diva-publisher'
 nameInData = 'publisher'
 permission_unit = None
 WORKERS = 16
-filePath_validateBase = (r"validationOrder_base.xml")
-filePath_sourceXml = (r"db_xml/publisher_from_db.xml")
+filePath_validateBase = (r"data/cora/validate/validation_order_base.xml")
+filePath_sourceXml = (r"data/db_xml/publisher_from_db.xml")
 
 request_counter = 0
 app_token_client = None

@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock
-from cora.client.AppTokenClient import AppTokenClient
+from cora.client.app_token_client import AppTokenClient
 
 # test/test_TestAppTokenClient.py
 

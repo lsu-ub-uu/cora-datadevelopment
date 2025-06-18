@@ -2,6 +2,7 @@
 name = "cora-datadevelopment"
 version = "1.0.0"
 dependencies = [
+    "requests",
     "tqdm",
     "pytest"
 ]

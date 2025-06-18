@@ -1,4 +1,4 @@
-from cora.client.LoginError import LoginError
+from cora.client.login_error import LoginError
 
 
 class  AppTokenClient:

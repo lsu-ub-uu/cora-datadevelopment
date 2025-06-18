@@ -4,8 +4,8 @@ from collections import OrderedDict
 from multiprocessing import Pool
 import time
 import xml.etree.ElementTree as ET
-from secretdata import SecretData
-from coradata import CoraData
+from cora.secretdata import SecretData
+from cora import cora_data
 
 
 urlSpecificDomain = 'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={"name":"search","children":[{"name":"include","children":[{"name":"includePart","children":[{"name":"divaOrganisationDomainSearchTerm","value":"norden"}]}]}]}'
@@ -20,10 +20,10 @@ def start():
     createdCoraRecordResponseText = []
     for record in json_data['dataList']['data']:
         recordChildren = record['record']['data']['children'] # listar alla barn till record
-        recordInfoChild = CoraData.findChildWithNameInData(recordChildren, 'recordInfo') # hittar recordInfo
+        recordInfoChild = cora_data.findChildWithNameInData(recordChildren, 'recordInfo') # hittar recordInfo
         recordInfoChildren = recordInfoChild['children'] # listar alla barn till recordInfo
-        validationType = CoraData.getValidationTypeLink(recordInfoChildren)
-        domain = CoraData.getFirstAtomicValueWithNameInData(recordInfoChildren, 'domain')
+        validationType = cora_data.getValidationTypeLink(recordInfoChildren)
+        domain = cora_data.getFirstAtomicValueWithNameInData(recordInfoChildren, 'domain')
         if domain != "ntnu" and domain != "hhs" and domain != "hkr" and validationType != "rootOrganisation":
             workorder = buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren) # skapar workorder och record
             newRecord = workorder["record"] # plockar ut record
@@ -62,44 +62,44 @@ def buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren):
     newAddressList = []
     # recordInfo
     newDomain = checkDomainAndSetNewValue(domain)
-    CoraData.appendValueToList(newDomain, {'children': [{'name': "linkedRecordType", 'value': "permissionUnit"}, {'name': "linkedRecordId", 'value': newDomain}], 'name': 'permissionUnit'}, recordInfoList)
-    id = CoraData.getFirstAtomicValueWithNameInData(recordInfoChildren, 'id')
-    CoraData.appendValueToList(id, {'name': "oldId", 'value': id}, recordInfoList)
-    validationType = CoraData.getValidationTypeLink(recordInfoChildren)
+    cora_data.appendValueToList(newDomain, {'children': [{'name': "linkedRecordType", 'value': "permissionUnit"}, {'name': "linkedRecordId", 'value': newDomain}], 'name': 'permissionUnit'}, recordInfoList)
+    id = cora_data.getFirstAtomicValueWithNameInData(recordInfoChildren, 'id')
+    cora_data.appendValueToList(id, {'name': "oldId", 'value': id}, recordInfoList)
+    validationType = cora_data.getValidationTypeLink(recordInfoChildren)
     newValidationType = checkValidationTypeLinkAndGetNewValue(validationType)
-    CoraData.appendValueToList(newValidationType, {'children': [{'name': "linkedRecordType", 'value': "validationType"}, {'name': "linkedRecordId", 'value': newValidationType}], 'name': 'validationType'}, recordInfoList)
-    CoraData.appendValueToList("valueNotNone", {'children': [{'name': "linkedRecordType", 'value': "system"}, {'name': "linkedRecordId", 'value': "divaData"}], 'name': 'dataDivider'}, recordInfoList)
+    cora_data.appendValueToList(newValidationType, {'children': [{'name': "linkedRecordType", 'value': "validationType"}, {'name': "linkedRecordId", 'value': newValidationType}], 'name': 'validationType'}, recordInfoList)
+    cora_data.appendValueToList("valueNotNone", {'children': [{'name': "linkedRecordType", 'value': "system"}, {'name': "linkedRecordId", 'value': "divaData"}], 'name': 'dataDivider'}, recordInfoList)
     recordBodyList.append({'children': recordInfoList, 'name': "recordInfo"})
     # parts of record
-    namePartSwe = CoraData.getOrganisationNameValueWithNameInData(recordChildren, 'organisationName')
-    CoraData.appendValueToList(namePartSwe, {'children': [{'children': [{'name': "namePart", 'value': namePartSwe}], 'name': "name", 'attributes': {'type': "corporate"}}], 'name': "authority", 'attributes': {'lang': "swe"}}, recordBodyList)
-    namePartEng = CoraData.getOrganisationNameValueWithNameInData(recordChildren, 'organisationAlternativeName')
-    CoraData.appendValueToList(namePartEng, {'children': [{'children': [{'name': "namePart", 'value': namePartEng}], 'name': "name", 'attributes': {'type': "corporate"}}], 'name': "variant", 'attributes': {'lang': "eng"}}, recordBodyList)
-    url = CoraData.getFirstAtomicValueWithNameInData(recordChildren, 'URL')
-    CoraData.appendValueToList(url, {'children': [{'name': "url", 'value': url}], 'name': "location"}, recordBodyList)
-    orgNum = CoraData.getFirstAtomicValueWithNameInData(recordChildren, 'organisationNumber')
-    CoraData.appendValueToList(orgNum, {'name': "identifier", 'attributes': {'type': "organisationNumber"}, 'value': orgNum}, recordBodyList)
-    orgCode = CoraData.getFirstAtomicValueWithNameInData(recordChildren, 'organisationCode')
-    CoraData.appendValueToList(orgCode, {'name': "identifier", 'attributes': {'type': "organisationCode"}, 'value': orgCode}, recordBodyList)
-    endDate = CoraData.getFirstAtomicValueWithNameInData(recordChildren, 'closedDate')
+    namePartSwe = cora_data.getOrganisationNameValueWithNameInData(recordChildren, 'organisationName')
+    cora_data.appendValueToList(namePartSwe, {'children': [{'children': [{'name': "namePart", 'value': namePartSwe}], 'name': "name", 'attributes': {'type': "corporate"}}], 'name': "authority", 'attributes': {'lang': "swe"}}, recordBodyList)
+    namePartEng = cora_data.getOrganisationNameValueWithNameInData(recordChildren, 'organisationAlternativeName')
+    cora_data.appendValueToList(namePartEng, {'children': [{'children': [{'name': "namePart", 'value': namePartEng}], 'name': "name", 'attributes': {'type': "corporate"}}], 'name': "variant", 'attributes': {'lang': "eng"}}, recordBodyList)
+    url = cora_data.getFirstAtomicValueWithNameInData(recordChildren, 'URL')
+    cora_data.appendValueToList(url, {'children': [{'name': "url", 'value': url}], 'name': "location"}, recordBodyList)
+    orgNum = cora_data.getFirstAtomicValueWithNameInData(recordChildren, 'organisationNumber')
+    cora_data.appendValueToList(orgNum, {'name': "identifier", 'attributes': {'type': "organisationNumber"}, 'value': orgNum}, recordBodyList)
+    orgCode = cora_data.getFirstAtomicValueWithNameInData(recordChildren, 'organisationCode')
+    cora_data.appendValueToList(orgCode, {'name': "identifier", 'attributes': {'type': "organisationCode"}, 'value': orgCode}, recordBodyList)
+    endDate = cora_data.getFirstAtomicValueWithNameInData(recordChildren, 'closedDate')
     if endDate is not None:
         year, month, day = endDate.split("-")
-        CoraData.appendValueToList(endDate, {"children": [{"name": "year" , "value": year}, {"name": "month", "value": month}, {"name": "day"  , "value": day}],"name": "endDate"}, recordBodyList)
-    adressChild = CoraData.findChildWithNameInData(recordChildren, 'address')
+        cora_data.appendValueToList(endDate, {"children": [{"name": "year" , "value": year}, {"name": "month", "value": month}, {"name": "day"  , "value": day}],"name": "endDate"}, recordBodyList)
+    adressChild = cora_data.findChildWithNameInData(recordChildren, 'address')
     if adressChild is not None:
         adressChildren = adressChild['children'] # listar alla barn till address
-        postOfficeBox = CoraData.getFirstAtomicValueWithNameInData(adressChildren, 'box')
-        CoraData.appendValueToList(postOfficeBox, {"name": "postOfficeBox", "value": postOfficeBox}, newAddressList)
-        street = CoraData.getFirstAtomicValueWithNameInData(adressChildren, 'street')
-        CoraData.appendValueToList(street, {"name": "street", "value": street}, newAddressList)
-        postcode = CoraData.getFirstAtomicValueWithNameInData(adressChildren, 'postcode')
-        CoraData.appendValueToList(postcode, {"name": "postcode", "value": postcode}, newAddressList)
-        place = CoraData.getFirstAtomicValueWithNameInData(adressChildren, 'city')
-        CoraData.appendValueToList(place, {"name": "place", "value": place}, newAddressList)
-        country = CoraData.getFirstAtomicValueWithNameInData(adressChildren, 'country')
+        postOfficeBox = cora_data.getFirstAtomicValueWithNameInData(adressChildren, 'box')
+        cora_data.appendValueToList(postOfficeBox, {"name": "postOfficeBox", "value": postOfficeBox}, newAddressList)
+        street = cora_data.getFirstAtomicValueWithNameInData(adressChildren, 'street')
+        cora_data.appendValueToList(street, {"name": "street", "value": street}, newAddressList)
+        postcode = cora_data.getFirstAtomicValueWithNameInData(adressChildren, 'postcode')
+        cora_data.appendValueToList(postcode, {"name": "postcode", "value": postcode}, newAddressList)
+        place = cora_data.getFirstAtomicValueWithNameInData(adressChildren, 'city')
+        cora_data.appendValueToList(place, {"name": "place", "value": place}, newAddressList)
+        country = cora_data.getFirstAtomicValueWithNameInData(adressChildren, 'country')
         newCountry = checkCountryAndSetNewValue(country)
-        CoraData.appendValueToList(newCountry, {"name": "country", "value": newCountry}, newAddressList)
-    CoraData.appendValueToList(adressChild, {'children': newAddressList, 'name': "address"}, recordBodyList)
+        cora_data.appendValueToList(newCountry, {"name": "country", "value": newCountry}, newAddressList)
+    cora_data.appendValueToList(adressChild, {'children': newAddressList, 'name': "address"}, recordBodyList)
     newRecord = {'children': recordBodyList, 'name': "organisation"}
     workorder = createWorkOrder(workorderBase, newRecord)
     return workorder
@@ -108,12 +108,12 @@ def buildRecordToCreateAndValidate(domain, recordChildren, recordInfoChildren):
 def storeIdData(recordChildren, createdCoraRecordResponseText):
     coraRecord = json.loads(createdCoraRecordResponseText)
     coraRecordChildren = coraRecord['record']['data']['children']
-    coraRecordRecordInfoChild = CoraData.findChildWithNameInData(coraRecordChildren, 'recordInfo')
+    coraRecordRecordInfoChild = cora_data.findChildWithNameInData(coraRecordChildren, 'recordInfo')
     coraRecordRecordInfoChildren = coraRecordRecordInfoChild['children'] # borde kuna slås ihop ovan och använda en av befintliga funktionerna istället
-    newId = (CoraData.getFirstAtomicValueWithNameInData(coraRecordRecordInfoChildren, 'id'))
-    oldId = (CoraData.getFirstAtomicValueWithNameInData(coraRecordRecordInfoChildren, 'oldId'))
-    earlierLinkOldId = CoraData.getParentEarlierLinks(recordChildren, 'earlierOrganisation')
-    parentLinkOldId = CoraData.getParentEarlierLinks(recordChildren, 'parentOrganisation')
+    newId = (cora_data.getFirstAtomicValueWithNameInData(coraRecordRecordInfoChildren, 'id'))
+    oldId = (cora_data.getFirstAtomicValueWithNameInData(coraRecordRecordInfoChildren, 'oldId'))
+    earlierLinkOldId = cora_data.getParentEarlierLinks(recordChildren, 'earlierOrganisation')
+    parentLinkOldId = cora_data.getParentEarlierLinks(recordChildren, 'parentOrganisation')
     print(f"earlier: {earlierLinkOldId}")
     print(f"earlier size: {len(earlierLinkOldId)}")
     print(f"parent: {parentLinkOldId}")
@@ -132,8 +132,8 @@ linksToParentId = OrderedDict()
 
 ### VALIDATE
 def openValidationOrderBaseFile():
-    validationOrder_baseFile = (r"validationOrder_base.json")
-    with open(validationOrder_baseFile, 'r') as openfile:
+    data/cora/validate/validation_order_baseFile = (r"data/cora/validate/validation_order_base.json")
+    with open(data/cora/validate/validation_order_baseFile, 'r') as openfile:
         validationObject = json.load(openfile)
     return validationObject
 
@@ -261,19 +261,19 @@ def removeActionLinksFromDataList(dataList): # används inte just nu...
 def removeActionLinksFromRecord(recordToClean):
     record = recordToClean['record']['data'] # denna nivå ska returneras?
     recordChildren = recordToClean['record']['data']['children']
-    recordInfo = CoraData.findChildWithNameInData(recordChildren, 'recordInfo')
-    permissionUnit = CoraData.findChildWithNameInData(recordInfo['children'], 'permissionUnit')
+    recordInfo = cora_data.findChildWithNameInData(recordChildren, 'recordInfo')
+    permissionUnit = cora_data.findChildWithNameInData(recordInfo['children'], 'permissionUnit')
     del permissionUnit['actionLinks']
-    validationType = CoraData.findChildWithNameInData(recordInfo['children'], 'validationType')
+    validationType = cora_data.findChildWithNameInData(recordInfo['children'], 'validationType')
     del validationType['actionLinks']
-    dataDivider = CoraData.findChildWithNameInData(recordInfo['children'], 'dataDivider')
+    dataDivider = cora_data.findChildWithNameInData(recordInfo['children'], 'dataDivider')
     del dataDivider['actionLinks']
-    type = CoraData.findChildWithNameInData(recordInfo['children'], 'type')
+    type = cora_data.findChildWithNameInData(recordInfo['children'], 'type')
     del type['actionLinks']
-    createdBy = CoraData.findChildWithNameInData(recordInfo['children'], 'createdBy')
+    createdBy = cora_data.findChildWithNameInData(recordInfo['children'], 'createdBy')
     del createdBy['actionLinks']
-    updated = CoraData.findChildWithNameInData(recordInfo['children'], 'updated')
-    updatedBy = CoraData.findChildWithNameInData(updated['children'], 'updatedBy')
+    updated = cora_data.findChildWithNameInData(recordInfo['children'], 'updated')
+    updatedBy = cora_data.findChildWithNameInData(updated['children'], 'updatedBy')
     del updatedBy['actionLinks']
     return record
 
