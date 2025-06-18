@@ -4,7 +4,8 @@ version = "1.0.0"
 dependencies = [
     "requests",
     "tqdm",
-    "pytest"
+    "pytest",
+    "pytest-cov"
 ]
 license = "GPL-3.0"
 

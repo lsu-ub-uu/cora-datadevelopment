@@ -18,9 +18,9 @@ def __normalize_xml_string(xml):
 
     return canonicalize(root)
 
-def assert_equal_for_xml_and_xml_string(record_info, expected_xml):
+def assert_equal_for_xml_and_xml_string(actual_xml, expected_xml):
         expected_as_xml = ET.fromstring(expected_xml)
         expected_normalized = __normalize_xml_string(expected_as_xml)
-        record_info_normalized = __normalize_xml_string(record_info)
+        actual_xml_normalized = __normalize_xml_string(actual_xml)
 
-        assert record_info_normalized == expected_normalized
+        assert actual_xml_normalized == expected_normalized

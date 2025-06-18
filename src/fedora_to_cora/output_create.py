@@ -45,6 +45,13 @@ def create_variable(source_record, old_name, new_name, attributes, transform_val
 
     return variable
 
+def create_genre_type_contentType(source_record):
+    attributes = {"type":"contentType"}
+    old_variable = source_record.find(".//contentTypeCode")
+    old_content = get_content_type(old_variable.text)
+    genre = ET.Element('genre', attrib=attributes)
+    
+
 def create_title(source_record):
     attributes = {"lang": source_record.find("./originalPublicationTitle/language/languageCode3").text}
     titleInfo = ET.Element('titleInfo', attrib=attributes)
@@ -62,9 +69,7 @@ def create_subject(source_record):
 
     return subject
 
-def transform_to_cora_output(filename):
-    print(filename)
-    source_record = read_source_xml(filename)
+def transform_to_cora_output(source_record):   
     target_record = ET.Element("output")
 
     target_record.append(create_record_info(source_record))
