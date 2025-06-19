@@ -1,4 +1,3 @@
-
 <publication>
   <contentType>
     <contentTypeId>50</contentTypeId>
@@ -255,7 +254,7 @@
         <showsOnList>true</showsOnList>
       </language>
       <list>
-        <string>Sinologi  Arkeologi</string>
+        <string>Sinologi Arkeologi</string>
       </list>
     </entry>
   </keyWords>
