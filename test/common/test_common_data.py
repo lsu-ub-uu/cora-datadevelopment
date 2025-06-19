@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 from common import common_data
-from common.test.helper import assert_equal_for_xml_and_xml_string
+from common.test_helper import assert_equal_for_xml_and_xml_string
 
 def test_create_link():
     name_in_data = "someNameInData" 
@@ -11,12 +11,12 @@ def test_create_link():
     link = common_data.create_record_link_using_name_type_id(name_in_data, record_type, record_id)
     
     expected_xml = """
-                    <someNameInData>
+                    <someNameInData> 
                         <linkedRecordType>someType</linkedRecordType>
                         <linkedRecordId>someId</linkedRecordId>
                     </someNameInData>
-                    """
-    
+                    """ 
+      
     assert_equal_for_xml_and_xml_string(link, expected_xml)
     
 def test_create_record_info():

@@ -11,7 +11,6 @@ source_record = ET.fromstring(
     """
 )
 
-
 def test_create_genre_type_content_type():
     contentType = create_genre_type_content_type(source_record)
 
