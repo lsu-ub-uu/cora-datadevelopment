@@ -1,7 +1,8 @@
 import xml.etree.ElementTree as ET
 import requests
-import urllib.parse
 from cora.constants import BASE_URL
+
+_cache: dict[str, str | None] = {}
 
 
 def get_organisation_id_by_old_id(
@@ -16,26 +17,20 @@ def get_organisation_id_by_old_id(
     :return: The new organisation ID as a string, or None if not found.
     """
 
+    if old_id in _cache:
+        print(f"Cache hit for old ID: {old_id}")
+        return _cache[old_id]
+
     request_url = f"{base_url}searchResult/diva-organisationSearch"
 
-    headers = {"accept": "application/vnd.cora.recordList+xml"}
-    search_data = f"""
-        <?xml version="1.0" encoding="UTF-8"?>
-        <search>
-            <include>
-                <includePart>
-                    <oldIdSearchTerm>{old_id}</oldIdSearchTerm>
-                </includePart>
-            </include>
-        </search>
-    """
-    search_data_clean = "".join(line.strip() for line in search_data.splitlines())
-    encoded_search_data = urllib.parse.quote(search_data_clean)
-    params = {"searchData": encoded_search_data}
+    headers = {
+        "accept": "application/vnd.cora.recordList+xml",
+        "Authorization": f"Bearer {auth_token}",
+    }
 
-    print(f"Request URL: {request_url}")
-    print(f"Headers: {headers}")
-    print(f"Params: {params}")
+    search_data = _create_search_data(old_id)
+    params = {"searchData": search_data.strip().replace("\n", "")}
+
     response = requests.get(
         request_url,
         headers=headers,
@@ -47,22 +42,30 @@ def get_organisation_id_by_old_id(
             f"Failed to fetch organisation ID: {response.status_code} {response.text}"
         )
     response_xml = ET.fromstring(response.text)
-    print(response_xml)
+    record_ids = response_xml.findall(".//recordInfo/id")
 
-
-if __name__ == "__main__":
-    # Example usage
-    old_id = "885801"
-    base_url = BASE_URL["pre"]
-    auth_token = "your_auth_token_here"
-
-    try:
-        organisation_id = get_organisation_id_by_old_id(
-            old_id, base_url=base_url, auth_token=auth_token
+    if len(record_ids) > 1:
+        print(
+            f"Warning: Multiple organisations found for old ID '{old_id}'. Using the first one."
         )
-        if organisation_id:
-            print(f"Organisation ID for old ID {old_id}: {organisation_id}")
-        else:
-            print(f"No organisation found for old ID {old_id}.")
-    except Exception as e:
-        print(f"Error: {e}")
+    elif len(record_ids) == 0:
+        print(f"Warning: No organisations found for old ID '{old_id}'. Returning None.")
+
+    record_id = record_ids[0] if record_ids else None
+
+    result = record_id.text if record_id is not None else None
+    _cache[old_id] = result
+    return result
+
+
+def _create_search_data(old_id: str) -> str:
+    return f"""
+        <?xml version="1.0" encoding="UTF-8"?>
+        <search>
+            <include>
+                <includePart>
+                    <oldIdSearchTerm>{old_id}</oldIdSearchTerm>
+                </includePart>
+            </include>
+        </search>
+    """
