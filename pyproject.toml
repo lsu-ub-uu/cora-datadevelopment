@@ -5,7 +5,8 @@ dependencies = [
     "requests",
     "tqdm",
     "pytest",
-    "pytest-cov"
+    "pytest-cov",
+    "pytest-watcher"
 ]
 license = "GPL-3.0"
 

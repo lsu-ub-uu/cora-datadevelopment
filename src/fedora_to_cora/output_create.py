@@ -1,28 +1,103 @@
 import xml.etree.ElementTree as ET
 
-from fedora_to_cora.create_record_info import create_record_info
-from fedora_to_cora.create_genre_type_content_type import create_genre_type_content_type
-from fedora_to_cora.create_title_info import create_title_info
-from fedora_to_cora.create_subject import create_subject
+from fedora_to_cora import (
+    create_language,
+    create_record_info,
+    create_genre_type_content_type,
+    create_title_info,
+    create_subject,
+    create_artistic_work,
+    create_genre_type_output_type,
+    create_title_info_type_alternative,
+)
 
 
 def transform_to_cora_output(source_record):
     target_record = ET.Element("output")
 
-    target_record.append(create_record_info(source_record))
-    target_record.append(create_genre_type_content_type(source_record))
-    target_record.append(create_title_info(source_record))
-    target_record.append(create_subject(source_record))
-    # genre type="outputType" (valideringstyp)
-    # genre type="subcategory"
-    # language
-    # note type="publicationStatus"
-    # artisticWork type="outputType"
-    # genre type="contentType"
-    # titleInfo type="alternative"
-    # name type="persnal"
+    def _append(child: ET.Element | None):
+        if child is not None:
+            target_record.append(child)
+
+    def _append_all(children: list[ET.Element]):
+        for child in children:
+            _append(child)
+
+    # --- Behövs för Sammlingsverk --- #
+
+    # recordInfo
+    ## validationType <- publicationTypeId
+    ## permissionUnit <- domain
+    ## oldId <- pid
+    ## visibility <- administrativeInfo/updaters/userInformation/userAction
+    _append(create_record_info(source_record))
+
+    # genre type="contentType" <- contentTypeCode
+    _append(create_genre_type_content_type(source_record))
+
+    # titleInfo type="main" <- originalPublicationTitle
+    _append(create_title_info(source_record))
+
+    # subject <- keyWords
+    _append(create_subject(source_record))
+
+    # genre type="outputType" (valideringstyp) <- publicationType via get_validation_type_by_publication_typ
+    _append(create_genre_type_output_type(source_record))
+
+    # language <- originalPublicationTitle/language
+    _append(create_language(source_record))
+
+    # artisticWork type="outputType" <- artistic work
+    _append(create_artistic_work(source_record))
+    # titleInfo type="alternative"  <- alternativePublicationTitles
+    _append_all(create_title_info_type_alternative(source_record))
+
+    # name type="personal"
+
     # name type="corporate"
     # note type="creatorCount"
+    # abstract <- abstracts
+    # originInfo
+    ## dateIssued
+    ## copyrightDate
+    ## dateOther type="online"
+    ## agent
+    ## place
+    ## edition
+    # extent <- Verkets fysiska omfattning
+    # classification authority="ssif" <- nationalCategories
+    # subject authority="diva" <- researchSubjects
+    # subject authority="sdg" <- sustainableDevelopments / behöver extra jobb
+
+    # identifier type="isbn"
+    # identifier type="isrn"
+    # identifier type="doi"
+    # identifier type="ismn"
+    # identifier type="archiveNumber"
+    # identifier type="openAlex"
+    # identifier type="se-libr"
+    # identifier type="localId"
+
+    # location <- urls/url
+    # location displayLabel="orderLink"
+    # note type="external" <- note
+    # relatedItem type="series"
+    # relatedItem type="researchData"
+    # relatedItem type="project"
+    # relatedItem type="initiative"
+    # relatedItem type="retracted | constituent | thesis"
+    # accessCondition authority="kb.se"
+    # localGenericMarkup / ny metadata
+    # admin
+    ## note type="internal" <- internalNote
+
+    # ---- Behövs för Sammlingsverk Update ----#
+    # attachment
+
+    # ---- Behövs ej för Sammlingsverk ----#
+    # genre type="subcategory"
+    # note type="publicationStatus"
+    # genre type="contentType"
     # typeOfResource
     # type
     # material
@@ -30,30 +105,12 @@ def transform_to_cora_output(source_record):
     # size
     # duration
     # physicalDescription
-    # abstract
-    # subject
     # dateOther type="patent"
-    # originInfo
     # imprint
-    # extent
-    # classification authority="ssif"
-    # subject authority="diva"
-    # subject authority="sdg"
-    # identifier type="isbn"
-    # identifier type="isrn"
-    # identifier type="ismn"
     # identifier type="patentNumber"
-    # identifier type="doi"
     # identifier type="pmid"
     # identifier type="wos"
     # identifier type="scopus"
-    # identifier type="openAlex"
-    # identifier type="se-libr"
-    # identifier type="archiveNumber"
-    # identifier type="localId"
-    # location
-    # location displayLabel="orderLink"
-    # note type="external"
     # academicSemester
     # studentDegree
     # externalCollaboration
@@ -67,16 +124,8 @@ def transform_to_cora_output(source_record):
     # relatedItem type="book"
     # relatedItem type="conferencePublication"
     # relatedItem type="conference"
-    # relatedItem type="series"
-    # relatedItem type="researchData"
-    # relatedItem type="project"
     # relatedItem type="funder"
-    # relatedItem type="initiative"
     # relatedItem type="retracted"
     # relatedItem type="constituent"
-    # accessCondition authority="kb.se"
-    # localGenericMarkup
-    # admin
-    # attachment
 
     return target_record

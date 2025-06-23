@@ -4,7 +4,7 @@ from xml.etree import ElementTree as ET
 from common.common_data import read_source_xml
 
 
-def test_creates_ouput():
+def test_creates_output():
     fedora_xml = read_source_xml("data/fedora_xml/1681782_varldskulturmuserna.xml")
 
     result = transform_to_cora_output(fedora_xml)
@@ -28,6 +28,11 @@ def test_creates_ouput():
         <subject lang="eng">
             <topic>Sinologi, Arkeologi</topic>
         </subject>
+        <genre type="outputType">publication_edited-book</genre>
+        <language repeatId="0">
+            <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
+        </language>
+        <artisticWork type="outputType">false</artisticWork>
     </output>
     """
 

@@ -18,31 +18,33 @@ This file is part of DiVA Client.
 
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
-from fedora_to_cora.get_validation_type_by_publication_type_id import get_validation_type_by_publication_type_id
+from fedora_to_cora.get_validation_type_by_publication_type_id import (
+    get_validation_type_by_publication_type_id,
+)
 from fedora_to_cora.get_visibility import get_visibility
 
 
 def create_record_info(source_record):
     recordInfo = ET.Element("recordInfo")
 
-
-    ET.SubElement(recordInfo, "validationType").text = get_validation_type_by_publication_type_id(
-        source_record.find(".//publicationTypeId").text
+    ET.SubElement(recordInfo, "validationType").text = (
+        get_validation_type_by_publication_type_id(
+            source_record.find(".//publicationTypeId").text
+        )
     )
 
     ET.SubElement(recordInfo, "dataDivider").text = "divaData"
 
-    recordInfo.append(create_record_link_using_name_type_id(
-        "permissionUnit",
-        "permissionUnit",
-        source_record.find(".//domain").text
-    ))
+    recordInfo.append(
+        create_record_link_using_name_type_id(
+            "permissionUnit", "permissionUnit", source_record.find(".//domain").text
+        )
+    )
 
     ET.SubElement(recordInfo, "visibility").text = get_visibility(source_record)
 
-
     pid = source_record.find(".//pid")
-    if pid is not None and pid.text:
-        ET.SubElement(recordInfo, "oldId").text = pid.text
+    assert pid is not None and pid.text is not None, "pid is missing in source record"
+    ET.SubElement(recordInfo, "oldId").text = pid.text
 
     return recordInfo

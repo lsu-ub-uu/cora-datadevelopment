@@ -41,11 +41,24 @@ source_record = ET.fromstring(
 
 def test_create_subject_sets_language():
     subject = create_subject(source_record)
+    assert subject is not None
     assert subject.attrib["lang"] == "eng"
 
 
 def test_create_subject_sets_topic_replaces_spaces_with_comma():
     subject = create_subject(source_record)
+    assert subject is not None
     topic = subject.find("topic")
     assert topic is not None
     assert topic.text == "Sinologi, Arkeologi"
+
+
+def test_handles_no_keywrods():
+    source_record_no_keywords = ET.fromstring(
+        """
+        <publication>
+        </publication>
+        """
+    )
+    subject = create_subject(source_record_no_keywords)
+    assert subject is None
