@@ -1,8 +1,6 @@
 from xml.etree import ElementTree as ET
 from fedora_to_cora import create_name_type_personals
 from common.test_helper import assert_equal_for_xml_and_xml_string, MockCoraConfig
-from cora import get_organisation_by_old_id
-import pytest
 
 mock_config = MockCoraConfig("https://example.org/rest/record/", "test-token")
 

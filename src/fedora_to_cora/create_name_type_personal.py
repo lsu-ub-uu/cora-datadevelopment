@@ -52,6 +52,8 @@ def create_name_type_personal(
     """
     name_type_personal = ET.Element("name", type="personal", repeatId=str(repeatId))
 
+    # TODO Handle linked person
+
     last_name = person.find("./lastName")
     if last_name is not None and last_name.text:
         ET.SubElement(name_type_personal, "namePart", type="family").text = (

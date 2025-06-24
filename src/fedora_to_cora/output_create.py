@@ -11,6 +11,7 @@ from fedora_to_cora import (
     create_genre_type_output_type,
     create_title_info_type_alternative,
     create_name_type_personals,
+    create_note_type_creator_count,
 )
 
 
@@ -59,8 +60,8 @@ def transform_to_cora_output(
     # name type="personal"
     _append_all(create_name_type_personals(source_record, cora_config))
 
-    # name type="corporate"
-    # note type="creatorCount"
+    # name type="corporate" <- skipped
+    _append(create_note_type_creator_count(source_record))
     # abstract <- abstracts
     # originInfo
     ## dateIssued

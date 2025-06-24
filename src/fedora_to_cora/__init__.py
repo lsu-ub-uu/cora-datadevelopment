@@ -6,3 +6,4 @@ from .create_subject import create_subject
 from .create_artistic_work import create_artistic_work
 from .create_genre_type_output_type import create_genre_type_output_type
 from .create_name_type_personal import create_name_type_personals
+from .create_note_type_creator_count import create_note_type_creator_count

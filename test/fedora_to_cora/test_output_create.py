@@ -27,7 +27,7 @@ def test_creates_output(requests_mock):
         text=mock_response,
     )
 
-    fedora_xml = read_source_xml("data/fedora_xml/1681782_varldskulturmuserna.xml")
+    fedora_xml = read_source_xml("test/mock_varldskulturmuserna.xml")
 
     result = transform_to_cora_output(
         fedora_xml,
@@ -77,6 +77,7 @@ def test_creates_output(requests_mock):
                 </organisation>
             </affiliation>
         </name>
+        <note type="creatorCount">1</note>
     </output>
     """
 
