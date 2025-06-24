@@ -30,7 +30,6 @@ def get_organisation_id_by_old_id(
     }
 
     search_data = _create_search_data(old_id)
-    print(f"Actual search data '{inline_xml_string(search_data)}'")
     params = {"searchData": inline_xml_string(search_data)}
 
     response = requests.get(
@@ -44,7 +43,6 @@ def get_organisation_id_by_old_id(
             f"Failed to fetch organisation ID: {response.status_code} {response.text}"
         )
     response_xml = ET.fromstring(response.text)
-    print(response.text)
     record_ids = response_xml.findall(".//recordInfo/id")
 
     if len(record_ids) > 1:

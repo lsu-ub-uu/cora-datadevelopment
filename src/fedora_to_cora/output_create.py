@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+from cora.cora_config import CoraConfigProtocol
 
 from fedora_to_cora import (
     create_language,
@@ -13,7 +14,9 @@ from fedora_to_cora import (
 )
 
 
-def transform_to_cora_output(source_record):
+def transform_to_cora_output(
+    source_record: ET.Element, cora_config: CoraConfigProtocol
+) -> ET.Element:
     target_record = ET.Element("output")
 
     def _append(child: ET.Element | None):
@@ -54,7 +57,7 @@ def transform_to_cora_output(source_record):
     _append_all(create_title_info_type_alternative(source_record))
 
     # name type="personal"
-    _append_all(create_name_type_personals(source_record))
+    _append_all(create_name_type_personals(source_record, cora_config))
 
     # name type="corporate"
     # note type="creatorCount"

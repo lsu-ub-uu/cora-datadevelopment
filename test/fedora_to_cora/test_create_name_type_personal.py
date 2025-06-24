@@ -1,299 +1,10 @@
 from xml.etree import ElementTree as ET
 from fedora_to_cora import create_name_type_personals
-from common.test_helper import assert_equal_for_xml_and_xml_string
+from common.test_helper import assert_equal_for_xml_and_xml_string, MockCoraConfig
+from cora import get_organisation_by_old_id
+import pytest
 
-source_record = ET.fromstring(
-    """
-    <publication>
-        <authors>
-            <person>
-                <firstName>Michaela</firstName>
-                <lastName>Andersson</lastName>
-                <localId>mican434</localId>
-                <organisations>
-                    <organisation>
-                    <organisationContacts/>
-                    <organisationPredecessors/>
-                    <organisationPredecessorDescriptions/>
-                    <organisationNameUncontrolled>Extern organisation</organisationNameUncontrolled>
-                    <controlled>false</controlled>
-                    <notEligible>false</notEligible>
-                    <showInPortal>false</showInPortal>
-                    <showInDefence>false</showInDefence>
-                    <topLevel>false</topLevel>
-                    </organisation>
-                    <organisation>
-                    <organisationId>985</organisationId>
-                    <organisationType>
-                        <organisationTypeId>55</organisationTypeId>
-                        <organisationTypeCode>unit</organisationTypeCode>
-                        <organisationTypeNames>
-                        <organisationTypeName>
-                            <organisationTypeNameId>1911</organisationTypeNameId>
-                            <locale>en</locale>
-                            <organisationTypeName>Unit</organisationTypeName>
-                        </organisationTypeName>
-                        <organisationTypeName>
-                            <organisationTypeNameId>1910</organisationTypeNameId>
-                            <locale>sv</locale>
-                            <organisationTypeName>Enhet</organisationTypeName>
-                        </organisationTypeName>
-                        </organisationTypeNames>
-                    </organisationType>
-                    <organisationName>
-                        <name>Universitetsbiblioteket</name>
-                        <locale>sv</locale>
-                    </organisationName>
-                    <domain>uu</domain>
-                    <oldDivaDb>uu</oldDivaDb>
-                    <oldDivaId>701</oldDivaId>
-                    <oldParentId>4569</oldParentId>
-                    <organisationAlternativeNames>
-                        <organisationName>
-                        <organisationNameId>2716</organisationNameId>
-                        <locale>en</locale>
-                        <organisationName>University Library</organisationName>
-                        </organisationName>
-                    </organisationAlternativeNames>
-                    <organisationContacts/>
-                    <organisationAddress>
-                        <addressId>1961</addressId>
-                        <postbox>Box 510</postbox>
-                        <postnumber>75120</postnumber>
-                        <city>Uppsala</city>
-                        <country>
-                        <countryCode>se</countryCode>
-                        <countryNames>
-                            <countryName>
-                            <countryNameId>775</countryNameId>
-                            <locale>sv</locale>
-                            <countryName>Sverige</countryName>
-                            </countryName>
-                            <countryName>
-                            <countryNameId>774</countryNameId>
-                            <locale>en</locale>
-                            <countryName>Sweden</countryName>
-                            </countryName>
-                            <countryName>
-                            <countryNameId>10553</countryNameId>
-                            <locale>no</locale>
-                            <countryName>Sverige</countryName>
-                            </countryName>
-                        </countryNames>
-                        <showsOnList>true</showsOnList>
-                        </country>
-                    </organisationAddress>
-                    <organisationParents>
-                        <organisation>
-                        <organisationId>978</organisationId>
-                        <organisationType>
-                            <organisationTypeId>50</organisationTypeId>
-                            <organisationTypeCode>university</organisationTypeCode>
-                            <organisationTypeNames>
-                            <organisationTypeName>
-                                <organisationTypeNameId>1901</organisationTypeNameId>
-                                <locale>en</locale>
-                                <organisationTypeName>University</organisationTypeName>
-                            </organisationTypeName>
-                            <organisationTypeName>
-                                <organisationTypeNameId>1900</organisationTypeNameId>
-                                <locale>sv</locale>
-                                <organisationTypeName>Universitet</organisationTypeName>
-                            </organisationTypeName>
-                            </organisationTypeNames>
-                        </organisationType>
-                        <organisationName>
-                            <name>Uppsala universitet</name>
-                            <locale>sv</locale>
-                        </organisationName>
-                        <domain>uu</domain>
-                        <organisationNumber>202100-2932-0</organisationNumber>
-                        <oldDivaDb>uu</oldDivaDb>
-                        <oldDivaId>4569</oldDivaId>
-                        <organisationAlternativeNames>
-                            <organisationName>
-                            <organisationNameId>2709</organisationNameId>
-                            <locale>en</locale>
-                            <organisationName>Uppsala University</organisationName>
-                            </organisationName>
-                        </organisationAlternativeNames>
-                        <organisationContacts/>
-                        <organisationAddress>
-                            <addressId>1956</addressId>
-                            <postnumber>75105</postnumber>
-                            <city>Uppsala</city>
-                            <country>
-                            <countryCode>se</countryCode>
-                            <countryNames>
-                                <countryName>
-                                <countryNameId>775</countryNameId>
-                                <locale>sv</locale>
-                                <countryName>Sverige</countryName>
-                                </countryName>
-                                <countryName>
-                                <countryNameId>774</countryNameId>
-                                <locale>en</locale>
-                                <countryName>Sweden</countryName>
-                                </countryName>
-                                <countryName>
-                                <countryNameId>10553</countryNameId>
-                                <locale>no</locale>
-                                <countryName>Sverige</countryName>
-                                </countryName>
-                            </countryNames>
-                            <showsOnList>true</showsOnList>
-                            </country>
-                        </organisationAddress>
-                        <organisationParents>
-                            <organisation>
-                            <organisationId>6599</organisationId>
-                            <organisationType>
-                                <organisationTypeId>49</organisationTypeId>
-                                <organisationTypeCode>root</organisationTypeCode>
-                                <organisationTypeNames>
-                                <organisationTypeName>
-                                    <organisationTypeNameId>1925</organisationTypeNameId>
-                                    <locale>en</locale>
-                                    <organisationTypeName>Root organisation</organisationTypeName>
-                                </organisationTypeName>
-                                <organisationTypeName>
-                                    <organisationTypeNameId>1924</organisationTypeNameId>
-                                    <locale>sv</locale>
-                                    <organisationTypeName>Rotorganisation</organisationTypeName>
-                                </organisationTypeName>
-                                </organisationTypeNames>
-                            </organisationType>
-                            <organisationName>
-                                <name>UU</name>
-                                <locale>sv</locale>
-                            </organisationName>
-                            <domain>uu</domain>
-                            <organisationAlternativeNames>
-                                <organisationName>
-                                <organisationNameId>51963</organisationNameId>
-                                <locale>en</locale>
-                                <organisationName>UU</organisationName>
-                                </organisationName>
-                            </organisationAlternativeNames>
-                            <organisationContacts/>
-                            <organisationParents/>
-                            <organisationPredecessors/>
-                            <organisationPredecessorDescriptions/>
-                            <controlled>true</controlled>
-                            <notEligible>true</notEligible>
-                            <showInPortal>false</showInPortal>
-                            <showInDefence>false</showInDefence>
-                            <topLevel>false</topLevel>
-                            </organisation>
-                        </organisationParents>
-                        <organisationPredecessors/>
-                        <organisationPredecessorDescriptions/>
-                        <controlled>true</controlled>
-                        <notEligible>false</notEligible>
-                        <showInPortal>true</showInPortal>
-                        <showInDefence>true</showInDefence>
-                        <topLevel>true</topLevel>
-                        </organisation>
-                    </organisationParents>
-                    <organisationPredecessors/>
-                    <organisationPredecessorDescriptions/>
-                    <controlled>true</controlled>
-                    <notEligible>false</notEligible>
-                    <showInPortal>false</showInPortal>
-                    <showInDefence>false</showInDefence>
-                    <topLevel>false</topLevel>
-                    </organisation>
-                </organisations>
-                <email>epost@adress.se</email>
-                <birthYear>1802</birthYear>
-                <deathYear>1977</deathYear>
-                <title>Jägmästare</title>
-                <researchGroup>En forskargrupp</researchGroup>
-                <identifiers>
-                    <entry>
-                    <personIdentifierType>orcid</personIdentifierType>
-                    <personIdentifier>
-                        <value>0000-0002-3134-8865</value>
-                        <type>orcid</type>
-                    </personIdentifier>
-                    </entry>
-                    <entry>
-                    <personIdentifierType>viaf</personIdentifierType>
-                    <personIdentifier>
-                        <value>66470391</value>
-                        <type>viaf</type>
-                    </personIdentifier>
-                    </entry>
-                    <entry>
-                    <personIdentifierType>libris</personIdentifierType>
-                    <personIdentifier>
-                        <value>khwz2wc314fjgq3</value>
-                        <type>libris</type>
-                    </personIdentifier>
-                    </entry>
-                </identifiers>
-                <authorityPid>authority-person:60563</authorityPid>
-            </person>
-            <person>
-                <firstName>Per</firstName>
-                <lastName>Minimal</lastName>
-                <identifiers>
-                    <entry>
-                    <personIdentifierType>orcid</personIdentifierType>
-                    <personIdentifier>
-                        <value/>
-                        <type>orcid</type>
-                    </personIdentifier>
-                    </entry>
-                </identifiers>
-            </person>
-            <person>
-                <firstName>Mats</firstName>
-                <lastName>Mellanting</lastName>
-                <localId>mellan02</localId>
-                <organisations>
-                    <organisation>
-                    <organisationContacts/>
-                    <organisationPredecessors/>
-                    <organisationPredecessorDescriptions/>
-                    <organisationNameUncontrolled>Annat universitet</organisationNameUncontrolled>
-                    <controlled>false</controlled>
-                    <notEligible>false</notEligible>
-                    <showInPortal>false</showInPortal>
-                    <showInDefence>false</showInDefence>
-                    <topLevel>false</topLevel>
-                    </organisation>
-                </organisations>
-                <identifiers>
-                    <entry>
-                    <personIdentifierType>orcid</personIdentifierType>
-                    <personIdentifier>
-                        <value>0000-7777-0000-000X</value>
-                        <type>orcid</type>
-                    </personIdentifier>
-                    </entry>
-                </identifiers>
-            </person>
-        </authors>
-    </publication>
-    """
-)
-
-# <name type="personal">
-#     <person />
-#     <namePart type="family"/>
-#     <namePart type="given" />
-#     <role>
-#         <roleTerm />
-#     <affiliation>
-#         <organisation />
-#         <name type="corporate" />
-#             <namePart />
-#         <identifier type="ror" />
-#         <country />
-#         <description />
-#     </ affiliation>
-# </name>
+mock_config = MockCoraConfig("https://example.org/rest/record/", "test-token")
 
 
 def test_creates_name_type_personal():
@@ -309,7 +20,10 @@ def test_creates_name_type_personal():
         </publication>
         """
     )
-    names = create_name_type_personals(source_record)
+    names = create_name_type_personals(
+        source_record,
+        mock_config,
+    )
     assert_equal_for_xml_and_xml_string(
         names[0],
         """
@@ -376,7 +90,10 @@ def test_creates_persons_for_roles():
         </publication>
         """
     )
-    names = create_name_type_personals(source_record)
+    names = create_name_type_personals(
+        source_record,
+        mock_config,
+    )
 
     assert len(names) == 7
 
@@ -423,7 +140,10 @@ def test_creates_uncontrolled_affiliation():
         </publication>
         """
     )
-    names = create_name_type_personals(source_record)
+    names = create_name_type_personals(
+        source_record,
+        mock_config,
+    )
     assert_equal_for_xml_and_xml_string(
         names[0],
         """
@@ -435,6 +155,63 @@ def test_creates_uncontrolled_affiliation():
                 <name type="corporate">
                     <namePart>Extern organisation</namePart>
                 </name>
+            </affiliation>
+        </name>
+        """,
+    )
+
+
+def test_creates_controlled_affiliation(monkeypatch):
+    mock_old_id = "985"
+    expected_cora_id = "diva-organisation:21861441014837120"
+
+    def mock_get_org(old_id, *args, **kwargs):
+        if old_id == mock_old_id:
+            return expected_cora_id
+        else:
+            return None
+
+    monkeypatch.setattr(
+        "fedora_to_cora.create_name_type_personal.get_organisation_id_by_old_id",
+        mock_get_org,
+    )
+
+    source_record = ET.fromstring(
+        f"""
+        <publication>
+            <authors>
+                <person>
+                    <firstName>Michaela</firstName>
+                    <lastName>Andersson</lastName>
+                    <organisations>
+                        <organisation>
+                            <organisationId>{mock_old_id}</organisationId>
+                            <controlled>true</controlled>
+                        </organisation>
+                    </organisations>
+                </person>
+            </authors>
+        </publication>
+        """
+    )
+
+    names = create_name_type_personals(
+        source_record,
+        mock_config,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        f"""
+        <name type="personal" repeatId="0">
+            <namePart type="family">Andersson</namePart>
+            <namePart type="given">Michaela</namePart>
+            <role><roleTerm type="code" repeatId="0">aut</roleTerm></role>
+            <affiliation repeatId="0">
+                <organisation>
+                    <linkedRecordType>diva-organisation</linkedRecordType>
+                    <linkedRecordId>{expected_cora_id}</linkedRecordId>
+                </organisation>
             </affiliation>
         </name>
         """,

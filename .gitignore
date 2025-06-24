@@ -9,3 +9,4 @@ sql_script/
 /.venv/
 *.egg-info/
 .coverage
+/output_xml
