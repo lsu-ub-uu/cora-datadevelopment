@@ -12,6 +12,8 @@ from fedora_to_cora import (
     create_title_info_type_alternative,
     create_name_type_personals,
     create_note_type_creator_count,
+    create_abstracts,
+    create_identifier_type_isbn,
 )
 
 
@@ -63,8 +65,9 @@ def transform_to_cora_output(
     # name type="corporate" <- skipped
     _append(create_note_type_creator_count(source_record))
     # abstract <- abstracts
+    _append_all(create_abstracts(source_record))
     # originInfo
-    ## dateIssued
+    ## dateIssued <- <publicationDate>
     ## copyrightDate
     ## dateOther type="online"
     ## agent
@@ -76,6 +79,9 @@ def transform_to_cora_output(
     # subject authority="sdg" <- sustainableDevelopments / behöver extra jobb
 
     # identifier type="isbn"
+    _append_all(
+        create_identifier_type_isbn(source_record)
+    )  # vad vill vi ha om för displayLabel om det inte finns någon typ i federa?
     # identifier type="isrn"
     # identifier type="doi"
     # identifier type="ismn"

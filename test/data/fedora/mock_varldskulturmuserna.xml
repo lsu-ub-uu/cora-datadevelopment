@@ -86,7 +86,8 @@
     <createdDate>2022-07-07T13:12:10.149+02:00</createdDate>
     <updatedDate>2022-10-14T08:21:57.583+02:00</updatedDate>
   </administrativeInfo>
-  <publicationDate>2022-07-07T13:12:00.000+02:00</publicationDate>
+  <publicationDate>
+    2022-07-07T13:12:00.000+02:00</publicationDate>
   <editors>
     <person>
       <firstName>Östasiatiska museet</firstName>
@@ -146,7 +147,8 @@
       </identifiers>
     </person>
   </editors>
-  <noOfContributors>1</noOfContributors>
+  <noOfContributors>
+    1</noOfContributors>
   <originalPublicationTitle>
     <title>Bulletin of the Museum of Far Eastern Antiquities (BMFEA)</title>
     <subTitle></subTitle>
@@ -216,7 +218,8 @@
     </url>
   </urls>
   <nbn>urn:nbn:se:varldskulturmuseerna:diva-6</nbn>
-  <oai>oai:DiVA.org:varldskulturmuseerna-6</oai>
+  <oai>
+    oai:DiVA.org:varldskulturmuseerna-6</oai>
   <identifiers>
     <entry>
       <publicationIdentifierType>libris</publicationIdentifierType>
@@ -230,7 +233,8 @@
   <categories></categories>
   <nationalCategories></nationalCategories>
   <researchSubjects></researchSubjects>
-  <keyWords class="hashtable">
+  <keyWords
+    class="hashtable">
     <entry>
       <language>
         <languageCode3>eng</languageCode3>
@@ -259,21 +263,54 @@
       </list>
     </entry>
   </keyWords>
+  <abstracts>
+    <abstract>
+      <language>
+        <languageCode3>swe</languageCode3>
+        <languageCode2>sv</languageCode2>
+        <languageNames>
+          <languageName>
+            <languageNameId>10261</languageNameId>
+            <locale>no</locale>
+            <languageName>svensk</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1723</languageNameId>
+            <locale>sv</locale>
+            <languageName>Svenska</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1722</languageNameId>
+            <locale>en</locale>
+            <languageName>Swedish</languageName>
+          </languageName>
+        </languageNames>
+        <showsOnList>true</showsOnList>
+      </language>
+      <text>
+        Lorem ipsum dolor sit amet
+      </text>
+    </abstract>
+  </abstracts>
   <note></note>
   <internalNote></internalNote>
-  <formatElectronic>false</formatElectronic>
+  <formatElectronic>
+    false</formatElectronic>
   <formatPrint>false</formatPrint>
   <distributorAsDist>
     <distributorNames></distributorNames>
   </distributorAsDist>
   <agreementAccepted>false</agreementAccepted>
-  <reviewed>false</reviewed>
+  <reviewed>
+    false</reviewed>
   <reviewedBefore>false</reviewedBefore>
   <migrated>false</migrated>
-  <importDuplicate>false</importDuplicate>
+  <importDuplicate>
+    false</importDuplicate>
   <registratedDuplicate>false</registratedDuplicate>
   <artisticWork>false</artisticWork>
-  <failed>false</failed>
+  <failed>
+    false</failed>
   <hidden>false</hidden>
   <publicationOrder>
     <orderLink>false</orderLink>
@@ -281,4 +318,17 @@
   </publicationOrder>
   <canOrderOnline>false</canOrderOnline>
   <publicationChannel></publicationChannel>
+  <isbnNumbers>
+    <isbn>
+      <number>978-91-506-2649-0</number>
+      <type>print</type>
+    </isbn>
+    <isbn>
+      <number>978-92-893-7379-1</number>
+      <type>electronic</type>
+    </isbn>
+    <isbn>
+      <number>978-92-893-7380-7</number>
+    </isbn>
+  </isbnNumbers>
 </publication>

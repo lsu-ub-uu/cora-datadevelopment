@@ -19,3 +19,7 @@ def inline_xml_string(xml: str) -> str:
     Convert a multi-line XML string into a single line string suitable for inline use.
     """
     return "".join(line.strip() for line in xml.splitlines() if line.strip())
+
+
+def get_inner_xml(element: ET.Element) -> str:
+    return "".join(ET.tostring(child, encoding="unicode") for child in element)

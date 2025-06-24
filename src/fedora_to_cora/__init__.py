@@ -7,3 +7,6 @@ from .create_artistic_work import create_artistic_work
 from .create_genre_type_output_type import create_genre_type_output_type
 from .create_name_type_personal import create_name_type_personals
 from .create_note_type_creator_count import create_note_type_creator_count
+from .create_abstracts import create_abstracts
+from .create_identifier_type_isbn import create_identifier_type_isbn
+from .create_identifier_type_isrn import create_identifier_type_isrn
