@@ -9,6 +9,7 @@ from fedora_to_cora import (
     create_artistic_work,
     create_genre_type_output_type,
     create_title_info_type_alternative,
+    create_name_type_personals,
 )
 
 
@@ -53,6 +54,7 @@ def transform_to_cora_output(source_record):
     _append_all(create_title_info_type_alternative(source_record))
 
     # name type="personal"
+    _append_all(create_name_type_personals(source_record))
 
     # name type="corporate"
     # note type="creatorCount"

@@ -1,12 +1,13 @@
 import xml.etree.ElementTree as ET
 import requests
 from cora.constants import BASE_URL
+from common.xml_utils import inline_xml_string
 
 _cache: dict[str, str | None] = {}
 
 
 def get_organisation_id_by_old_id(
-    old_id: str, *, base_url: str, auth_token: str
+    old_id: str, *, base_url: str, auth_token: str | None = None
 ) -> str | None:
     """
     Fetch the Cora organisation ID using the old organisation ID.
@@ -25,11 +26,12 @@ def get_organisation_id_by_old_id(
 
     headers = {
         "accept": "application/vnd.cora.recordList+xml",
-        "Authorization": f"Bearer {auth_token}",
+        "Authtoken": auth_token,
     }
 
     search_data = _create_search_data(old_id)
-    params = {"searchData": search_data.strip().replace("\n", "")}
+    print(f"Actual search data '{inline_xml_string(search_data)}'")
+    params = {"searchData": inline_xml_string(search_data)}
 
     response = requests.get(
         request_url,
@@ -42,6 +44,7 @@ def get_organisation_id_by_old_id(
             f"Failed to fetch organisation ID: {response.status_code} {response.text}"
         )
     response_xml = ET.fromstring(response.text)
+    print(response.text)
     record_ids = response_xml.findall(".//recordInfo/id")
 
     if len(record_ids) > 1:

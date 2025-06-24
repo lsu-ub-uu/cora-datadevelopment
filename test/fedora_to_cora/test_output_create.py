@@ -33,6 +33,14 @@ def test_creates_output():
             <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
         </language>
         <artisticWork type="outputType">false</artisticWork>
+        <name repeatId="0" type="personal">
+            <namePart type="family">Östasiatiska museet</namePart>
+            <namePart type="given">Östasiatiska museet</namePart>
+            <role>
+                <roleTerm repeatId="0" type="code">edt</roleTerm>
+            </role>
+            <affiliation repeatId="0"></affiliation>
+        </name>
     </output>
     """
 

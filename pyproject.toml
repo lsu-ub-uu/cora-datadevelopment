@@ -3,6 +3,7 @@ name = "cora-datadevelopment"
 version = "1.0.0"
 dependencies = [
     "requests",
+    "requests-mock",
     "tqdm",
     "pytest",
     "pytest-cov",
