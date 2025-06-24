@@ -27,7 +27,7 @@ def test_creates_output(requests_mock):
         text=mock_response,
     )
 
-    fedora_xml = read_source_xml("test/mock_varldskulturmuserna.xml")
+    fedora_xml = read_source_xml("test/data/fedora/mock_varldskulturmuserna.xml")
 
     result = transform_to_cora_output(
         fedora_xml,
