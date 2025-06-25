@@ -30,15 +30,3 @@ def assert_equal_for_xml_and_xml_string(actual_xml, expected_xml):
     actual_xml_normalized = pretty_print_xml_string(__normalize_xml_string(actual_xml))
 
     assert actual_xml_normalized == expected_normalized
-
-
-class MockCoraConfig:
-    def __init__(self, base_url: str, auth_token: str):
-        self._base_url = base_url
-        self._auth_token = auth_token
-
-    def get_base_url(self):
-        return self._base_url
-
-    def get_auth_token(self):
-        return self._auth_token

@@ -2,7 +2,7 @@ from .create_language import create_language
 from .create_record_info import create_record_info
 from .create_genre_type_content_type import create_genre_type_content_type
 from .create_title_info import create_title_info, create_title_info_type_alternative
-from .create_subject import create_subject
+from .create_subject import create_subjects
 from .create_artistic_work import create_artistic_work
 from .create_genre_type_output_type import create_genre_type_output_type
 from .create_name_type_personal import create_name_type_personals

@@ -11,11 +11,14 @@ def create_origin_info(source_record: ET.Element) -> ET.Element | None:
     if date_issued is not None:
         origin_info.append(date_issued)
 
-    # TODO copyrightDate
-    # TODO dateOther type="online"
-    # TODO agent
-    # TODO place
-    # TODO edition
+    # TODO copyrightDate NEJ
+    # TODO dateOther type="online" NEJ
+
+    # TODO agent/publisher/publisher publication/publisher/publishingHouse/publishingHouseId
+    # TODO agent/namePart publication/publisher/publisherName
+    # TODO agent/role/roleTerm = "pbl"
+    # TODO place publication/publisher/city
+    # TODO edition publication/edition
 
     if len(origin_info) == 0:
         return None

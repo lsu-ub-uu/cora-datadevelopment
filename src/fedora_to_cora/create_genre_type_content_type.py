@@ -7,9 +7,9 @@ def create_genre_type_content_type(source_record: ET.Element) -> ET.Element | No
     if content_type_code is None or content_type_code.text is None:
         return None
 
-    old_content = get_content_type(content_type_code.text)
+    content_type = get_content_type(content_type_code.text)
 
     genre = ET.Element("genre", type="contentType")
-    genre.text = old_content
+    genre.text = content_type
 
     return genre

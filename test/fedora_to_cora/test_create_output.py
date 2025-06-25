@@ -1,7 +1,8 @@
-from common.test_helper import assert_equal_for_xml_and_xml_string, MockCoraConfig
+from common.test_helper import assert_equal_for_xml_and_xml_string
 from fedora_to_cora.create_output import transform_to_cora_output
 from xml.etree import ElementTree as ET
 from common.common_data import read_source_xml
+from cora.context import MockContext
 
 
 def test_creates_output(requests_mock):
@@ -31,7 +32,7 @@ def test_creates_output(requests_mock):
 
     result = transform_to_cora_output(
         fedora_xml,
-        MockCoraConfig("https://pre.diva-portal.org/rest/record/", "test-token"),
+        MockContext("https://pre.diva-portal.org/rest/record/", "test-token"),
     )
 
     expected_xml = f"""
@@ -56,7 +57,7 @@ def test_creates_output(requests_mock):
         <titleInfo lang="eng">
             <title>Bulletin of the Museum of Far Eastern Antiquities (BMFEA)</title>
         </titleInfo>
-        <subject lang="eng">
+        <subject lang="eng" repeatId="0">
             <topic>Sinologi, Arkeologi</topic>
         </subject>
         <originInfo>
@@ -73,7 +74,7 @@ def test_creates_output(requests_mock):
             <namePart type="family">Östasiatiska museet</namePart>
             <namePart type="given">Östasiatiska museet</namePart>
             <role>
-                <roleTerm repeatId="0" type="code">edt</roleTerm>
+                <roleTerm repeatId="0">edt</roleTerm>
             </role>
             <affiliation repeatId="0">
                 <organisation>
@@ -92,7 +93,7 @@ def test_creates_output(requests_mock):
         </admin>
         <identifier displayLabel="print" repeatId="0" type="isbn">978-91-506-2649-0</identifier>
         <identifier displayLabel="online" repeatId="1" type="isbn">978-92-893-7379-1</identifier>
-        <identifier displayLabel="invalid" repeatId="2" type="isbn">978-92-893-7380-7</identifier>
+        <identifier displayLabel="undefined" repeatId="2" type="isbn">978-92-893-7380-7</identifier>
         <identifier type="isrn">ISRN.01</identifier>
     </output>
     """

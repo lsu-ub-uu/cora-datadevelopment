@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from cora.cora_config import CoraConfigProtocol
+from cora.context import Context
 
 from fedora_to_cora import (
     create_admin,
@@ -8,7 +8,7 @@ from fedora_to_cora import (
     create_record_info,
     create_genre_type_content_type,
     create_title_info,
-    create_subject,
+    create_subjects,
     create_artistic_work,
     create_genre_type_output_type,
     create_title_info_type_alternative,
@@ -20,18 +20,17 @@ from fedora_to_cora import (
 )
 
 
-def transform_to_cora_output(
-    source_record: ET.Element, cora_config: CoraConfigProtocol
-) -> ET.Element:
+def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
     target_record = ET.Element("output")
 
     def _append(child: ET.Element | None):
-        if child is not None:
+        if child is not None and len(child) > 0:
             target_record.append(child)
 
     def _append_all(children: list[ET.Element]):
         for child in children:
-            _append(child)
+            if len(child) > 0:
+                _append(child)
 
     # --- Behövs för Sammlingsverk --- #
 
@@ -49,7 +48,7 @@ def transform_to_cora_output(
     _append(create_title_info(source_record))
 
     # subject <- keyWords
-    _append(create_subject(source_record))
+    _append_all(create_subjects(source_record))
 
     _append(create_origin_info(source_record))
 
@@ -65,7 +64,7 @@ def transform_to_cora_output(
     _append_all(create_title_info_type_alternative(source_record))
 
     # name type="personal"
-    _append_all(create_name_type_personals(source_record, cora_config))
+    _append_all(create_name_type_personals(source_record, context))
 
     # name type="corporate" <- skipped
     _append(create_note_type_creator_count(source_record))
@@ -89,14 +88,17 @@ def transform_to_cora_output(
     _append_all(
         create_identifier_type_isbn(source_record)
     )  # vad vill vi ha om för displayLabel om det inte finns någon typ i federa?
-    # identifier type="isrn"
-    _append(create_identifier_type_isrn(source_record))
+
     # identifier type="doi"
     # identifier type="ismn"
     # identifier type="archiveNumber"
     # identifier type="openAlex"
     # identifier type="se-libr"
     # identifier type="localId"
+
+    # identifiertype type="pmid"
+    # identifiertype type="wos"
+    # identifiertype type="scopus"
 
     # location <- urls/url
     # location displayLabel="orderLink"
@@ -128,9 +130,8 @@ def transform_to_cora_output(
     # dateOther type="patent"
     # imprint
     # identifier type="patentNumber"
-    # identifier type="pmid"
-    # identifier type="wos"
-    # identifier type="scopus"
+    # identifier type="isrn"
+    _append(create_identifier_type_isrn(source_record))
     # academicSemester
     # studentDegree
     # externalCollaboration

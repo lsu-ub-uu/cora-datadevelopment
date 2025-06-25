@@ -10,3 +10,4 @@ sql_script/
 *.egg-info/
 .coverage
 /output_xml
+/logs

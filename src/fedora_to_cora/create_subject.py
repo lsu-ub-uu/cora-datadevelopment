@@ -1,26 +1,24 @@
 import xml.etree.ElementTree as ET
 
 
-def create_subject(source_record: ET.Element) -> ET.Element | None:
-    keyWords = source_record.find("./keyWords")
-    if keyWords is None:
-        return None
-    language_code, topic = _validate(source_record)
+def create_subjects(source_record: ET.Element) -> list[ET.Element]:
+    keyword_entries = source_record.findall("./keyWords/entry")
 
-    subject = ET.Element("subject", lang=language_code)
-    ET.SubElement(subject, "topic").text = topic.replace(" ", ", ")
-
-    return subject
+    return [create_subject(entry, i) for (i, entry) in enumerate(keyword_entries)]
 
 
-def _validate(source_record: ET.Element):
-    languageCode = source_record.find("./keyWords/entry/language/languageCode3")
-    topic = source_record.find("./keyWords/entry/list/string")
+def create_subject(keyword_entry: ET.Element, repeat_id: int) -> ET.Element:
+    language_code = keyword_entry.find("./language/languageCode3")
+    topic = keyword_entry.find("./list/string")
+
     assert (
-        languageCode is not None and languageCode.text is not None
-    ), "keyWords/entry/language/languageCode3 must be present in source_record"
+        language_code is not None and language_code.text is not None
+    ), "keyWord languageCode3 is missing"
     assert (
         topic is not None and topic.text is not None
-    ), "keyWords/entry/list/string in source_record"
+    ), "keyWord list/string is missing"
 
-    return (languageCode.text, topic.text)
+    subject = ET.Element("subject", lang=language_code.text, repeatId=str(repeat_id))
+    ET.SubElement(subject, "topic").text = topic.text.replace(" ", ", ")
+
+    return subject

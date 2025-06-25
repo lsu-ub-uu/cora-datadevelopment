@@ -1,10 +1,11 @@
 import xml.etree.ElementTree as ET
+from common.common_data import create_record_link_using_name_type_id
 from cora.get_organisation_by_old_id import get_organisation_id_by_old_id
-from cora.cora_config import CoraConfigProtocol
+from cora.context import Context
 
 
 def create_name_type_personals(
-    source_record: ET.Element, config: CoraConfigProtocol
+    source_record: ET.Element, context: Context
 ) -> list[ET.Element]:
     """
     Create a list of person names from all roles, merging them and ensuring unique repeatId.
@@ -26,7 +27,7 @@ def create_name_type_personals(
         for person in persons:
             if person is not None:
                 name_type_personals.append(
-                    create_name_type_personal(person, [role_term], repeat_id, config)
+                    create_name_type_personal(person, [role_term], repeat_id, context)
                 )
                 repeat_id += 1
 
@@ -37,7 +38,7 @@ def create_name_type_personals(
             if marc_code.text
         ]
         name_type_personals.append(
-            create_name_type_personal(contributor, role_terms, repeat_id, config)
+            create_name_type_personal(contributor, role_terms, repeat_id, context)
         )
         repeat_id += 1
 
@@ -45,7 +46,7 @@ def create_name_type_personals(
 
 
 def create_name_type_personal(
-    person: ET.Element, role_terms: list[str], repeatId: int, config: CoraConfigProtocol
+    person: ET.Element, role_terms: list[str], repeatId: int, context: Context
 ) -> ET.Element:
     """
     Create a nameTypePersonal element from an author element.
@@ -68,28 +69,28 @@ def create_name_type_personal(
 
     role = ET.SubElement(name_type_personal, "role")
     for i, role_term in enumerate(role_terms):
-        ET.SubElement(role, "roleTerm", type="code", repeatId=str(i)).text = role_term
+        ET.SubElement(role, "roleTerm", repeatId=str(i)).text = role_term
 
     for i, organisation in enumerate(person.findall("./organisations/organisation")):
-        name_type_personal.append(create_affiliation(organisation, i, config))
+        name_type_personal.append(create_affiliation(organisation, i, context))
 
     return name_type_personal
 
 
 def create_affiliation(
-    organisation: ET.Element, repeat_id: int, config: CoraConfigProtocol
+    organisation: ET.Element, repeat_id: int, context: Context
 ) -> ET.Element:
     controlled = organisation.find("./controlled")
     if controlled is not None and controlled.text == "true":
         return create_affiliation_for_controlled_organisation(
-            organisation, repeat_id, config
+            organisation, repeat_id, context
         )
     else:
         return create_affiliation_for_uncontrolled_organisation(organisation, repeat_id)
 
 
 def create_affiliation_for_controlled_organisation(
-    organisation: ET.Element, repeat_id: int, config: CoraConfigProtocol
+    organisation: ET.Element, repeat_id: int, context: Context
 ) -> ET.Element:
     """
     Create an affiliation element for a controlled organisation.
@@ -102,13 +103,14 @@ def create_affiliation_for_controlled_organisation(
 
     cora_id = get_organisation_id_by_old_id(
         organisation_id.text,
-        base_url=config.get_base_url(),
-        auth_token=config.get_auth_token(),
+        base_url=context.get_base_url(),
+        auth_token=context.get_auth_token(),
     )
 
-    organisation_link = ET.SubElement(affiliation, "organisation")
-    ET.SubElement(organisation_link, "linkedRecordType").text = "diva-organisation"
-    ET.SubElement(organisation_link, "linkedRecordId").text = cora_id
+    organisation_link = create_record_link_using_name_type_id(
+        "organisation", "diva-organisation", cora_id
+    )
+    affiliation.append(organisation_link)
 
     return affiliation
 

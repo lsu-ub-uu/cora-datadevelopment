@@ -1,8 +1,9 @@
 from xml.etree import ElementTree as ET
 from fedora_to_cora import create_name_type_personals
-from common.test_helper import assert_equal_for_xml_and_xml_string, MockCoraConfig
+from common.test_helper import assert_equal_for_xml_and_xml_string
+from cora.context import MockContext
 
-mock_config = MockCoraConfig("https://example.org/rest/record/", "test-token")
+mock_context = MockContext("https://example.org/rest/record/", "test-token")
 
 
 def test_creates_name_type_personal():
@@ -20,7 +21,7 @@ def test_creates_name_type_personal():
     )
     names = create_name_type_personals(
         source_record,
-        mock_config,
+        mock_context,
     )
     assert_equal_for_xml_and_xml_string(
         names[0],
@@ -28,7 +29,7 @@ def test_creates_name_type_personal():
         <name type="personal" repeatId="0">
             <namePart type="family">Andersson</namePart>
             <namePart type="given">Michaela</namePart>
-            <role><roleTerm type="code" repeatId="0">aut</roleTerm></role>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
         </name>
         """,
     )
@@ -90,7 +91,7 @@ def test_creates_persons_for_roles():
     )
     names = create_name_type_personals(
         source_record,
-        mock_config,
+        mock_context,
     )
 
     assert len(names) == 7
@@ -140,7 +141,7 @@ def test_creates_uncontrolled_affiliation():
     )
     names = create_name_type_personals(
         source_record,
-        mock_config,
+        mock_context,
     )
     assert_equal_for_xml_and_xml_string(
         names[0],
@@ -148,7 +149,7 @@ def test_creates_uncontrolled_affiliation():
         <name type="personal" repeatId="0">
             <namePart type="family">Andersson</namePart>
             <namePart type="given">Michaela</namePart>
-            <role><roleTerm type="code" repeatId="0">aut</roleTerm></role>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
             <affiliation repeatId="0">
                 <name type="corporate">
                     <namePart>Extern organisation</namePart>
@@ -195,7 +196,7 @@ def test_creates_controlled_affiliation(monkeypatch):
 
     names = create_name_type_personals(
         source_record,
-        mock_config,
+        mock_context,
     )
 
     assert_equal_for_xml_and_xml_string(
@@ -204,7 +205,7 @@ def test_creates_controlled_affiliation(monkeypatch):
         <name type="personal" repeatId="0">
             <namePart type="family">Andersson</namePart>
             <namePart type="given">Michaela</namePart>
-            <role><roleTerm type="code" repeatId="0">aut</roleTerm></role>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
             <affiliation repeatId="0">
                 <organisation>
                     <linkedRecordType>diva-organisation</linkedRecordType>

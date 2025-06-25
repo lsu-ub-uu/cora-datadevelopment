@@ -21,7 +21,7 @@ def create_identifier_type_isbn(source_record: ET.Element) -> list[ET.Element]:
 isbn_type_map = {
     "print": "print",
     "electronic": "online",
-    None: "invalid",
+    None: "undefined",
 }
 
 

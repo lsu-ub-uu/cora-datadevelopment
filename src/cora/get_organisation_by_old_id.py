@@ -19,7 +19,6 @@ def get_organisation_id_by_old_id(
     """
 
     if old_id in _cache:
-        print(f"Cache hit for old ID: {old_id}")
         return _cache[old_id]
 
     request_url = f"{base_url}searchResult/diva-organisationSearch"

@@ -43,6 +43,6 @@ def test_create_identifier_type_isbn():
     assert_equal_for_xml_and_xml_string(
         identifiers[2],
         """
-        <identifier type="isbn" displayLabel="invalid" repeatId="2">978-92-893-7380-7</identifier>
+        <identifier type="isbn" displayLabel="undefined" repeatId="2">978-92-893-7380-7</identifier>
         """,
     )
