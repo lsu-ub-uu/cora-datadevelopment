@@ -84,6 +84,7 @@ def test_creates_output(requests_mock):
         <identifier displayLabel="print" repeatId="0" type="isbn">978-91-506-2649-0</identifier>
         <identifier displayLabel="online" repeatId="1" type="isbn">978-92-893-7379-1</identifier>
         <identifier displayLabel="invalid" repeatId="2" type="isbn">978-92-893-7380-7</identifier>
+        <identifier type="isrn">ISRN.01</identifier>
     </output>
     """
 

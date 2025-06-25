@@ -14,6 +14,7 @@ from fedora_to_cora import (
     create_note_type_creator_count,
     create_abstracts,
     create_identifier_type_isbn,
+    create_identifier_type_isrn,
 )
 
 
@@ -83,6 +84,7 @@ def transform_to_cora_output(
         create_identifier_type_isbn(source_record)
     )  # vad vill vi ha om för displayLabel om det inte finns någon typ i federa?
     # identifier type="isrn"
+    _append(create_identifier_type_isrn(source_record))
     # identifier type="doi"
     # identifier type="ismn"
     # identifier type="archiveNumber"
