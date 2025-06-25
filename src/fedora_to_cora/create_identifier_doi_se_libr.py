@@ -22,7 +22,7 @@ def _create_identifier_doi_se_libr(
     Create a DOI or SE Libris identifier element from the source record.
     """
     identifier = ET.Element(
-        "identifier", type=convert_libris_to_se_libris(identifier_type)
+        "identifier", type=_convert_libris_to_se_libris(identifier_type)
     )
     entries = source_record.findall("identifiers/entry")
 
@@ -38,7 +38,7 @@ def _create_identifier_doi_se_libr(
     return identifier
 
 
-def convert_libris_to_se_libris(value: str) -> str:
+def _convert_libris_to_se_libris(value: str) -> str:
     """
     Convert a Libris identifier to a SE Libris identifier.
     """
