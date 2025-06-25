@@ -5,13 +5,17 @@ import os
 import traceback
 from cora.context import CoraContext, Context
 from cora.validate_record import validate_record
+from cora.create_record import create_record
 
+successful_transformations = []
+failed_transformations = []
 
 env = {
     "xml_dir": "data/fedora_xml/varldskulturmuseerna/20250625",
-    "system": "pre",
+    "system": "preview",
     "login_id": "divaAdmin@cora.epc.ub.uu.se",
     "app_token": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
+    "dry_run": True,  # Set to True to skip actual transformations
 }
 
 
@@ -30,13 +34,29 @@ def transform_fedora_file(filename, context: Context):
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(pretty_print_xml(cora_output))
 
-    validate_record(
-        cora_output,
-        record_type="diva-output",
-        auth_token=context.get_auth_token(),
-        base_url=context.get_base_url(),
-        logger=context.get_logger(),
-    )
+    if env["dry_run"]:
+        valid, errors = validate_record(
+            cora_output,
+            record_type="diva-output",
+            auth_token=context.get_auth_token(),
+            base_url=context.get_base_url(),
+            logger=context.get_logger(),
+        )
+    else:
+        valid, errors = create_record(
+            cora_output,
+            record_type="diva-output",
+            auth_token=context.get_auth_token(),
+            base_url=context.get_base_url(),
+            logger=context.get_logger(),
+        )
+
+    if valid:
+        successful_transformations.append(filename)
+    else:
+        failed_transformations.append(
+            f"{filename} - Errors: [{', '.join(errors) if errors else ''}]"
+        )
 
 
 def main():  #
@@ -58,6 +78,16 @@ def main():  #
                 context.log(f"Error processing {filename}: {e}", "error")
                 traceback.print_exc()
                 continue
+
+    context.log("==== Processing complete ====")
+    context.log(f"{len(successful_transformations)} Successful transformations:")
+    for filename in successful_transformations:
+        context.log(f"✅ {filename}")
+    context.log(f"{len(failed_transformations)} Failed transformations:")
+    for filename in failed_transformations:
+        context.log(f"❌ {filename}")
+
+    print(f"Output logged to {context.get_logger().handlers[0].baseFilename}")  # type: ignore[attr-defined]
 
 
 if __name__ == "__main__":

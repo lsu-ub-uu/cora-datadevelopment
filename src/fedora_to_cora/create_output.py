@@ -24,12 +24,12 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     target_record = ET.Element("output")
 
     def _append(child: ET.Element | None):
-        if child is not None and len(child) > 0:
+        if child is not None and (len(child) > 0 or child.text):
             target_record.append(child)
 
     def _append_all(children: list[ET.Element]):
         for child in children:
-            if len(child) > 0:
+            if len(child) > 0 or child.text:
                 _append(child)
 
     # --- Behövs för Sammlingsverk --- #

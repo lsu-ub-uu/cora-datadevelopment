@@ -1,9 +1,8 @@
 import requests
 import xml.etree.ElementTree as ET
-from cora.context import CoraContext
 from common.common_data import validateRecord_build
-from common.xml_utils import pretty_print_xml_string
 from logging import Logger
+from typing import Tuple, List, Optional
 
 filePath_validateBase = r"data/cora/validate/validation_order_base.xml"
 
@@ -15,7 +14,7 @@ def validate_record(
     auth_token: str,
     base_url: str,
     logger: Logger,
-) -> None:
+) -> Tuple[bool, Optional[List[str]]]:
     validate_url = base_url + "workOrder"
     headers = {
         "Content-Type": "application/vnd.cora.workorder+xml",
@@ -36,19 +35,19 @@ def validate_record(
         logger.error(
             f"⚠️ Failed to validate {record_type} with oldId {old_id_text}: {response.status_code}."
         )
-        return
+        return (False, [f"Validation failed with status {response.status_code}"])
 
     response_data = ET.fromstring(response.text)
     valid = response_data.find(".//valid")
-    error_messages = "\n - ".join(
-        [msg.text for msg in response_data.findall(".//errorMessage") if msg.text]
-    )
 
     if valid is not None and valid.text == "true":
         logger.info(
             f"✅ Validation succeeded for {record_type} with oldId {old_id_text}."
         )
-    if error_messages:
-        logger.error(
-            f"❌ Validation failed for {record_type} with oldId {old_id_text}.\n\nErrors:\n - {error_messages}\n"
-        )
+        return (True, None)
+
+    errors = [msg.text for msg in response_data.findall(".//errorMessage") if msg.text]
+    logger.error(
+        f"❌ Validation failed for {record_type} with oldId {old_id_text}.\n\nErrors:\n - {"\n - ".join(errors)}\n"
+    )
+    return (False, errors)
