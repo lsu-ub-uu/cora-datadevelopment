@@ -2,7 +2,9 @@ import xml.etree.ElementTree as ET
 from cora.cora_config import CoraConfigProtocol
 
 from fedora_to_cora import (
+    create_admin,
     create_language,
+    create_origin_info,
     create_record_info,
     create_genre_type_content_type,
     create_title_info,
@@ -49,6 +51,8 @@ def transform_to_cora_output(
     # subject <- keyWords
     _append(create_subject(source_record))
 
+    _append(create_origin_info(source_record))
+
     # genre type="outputType" (valideringstyp) <- publicationType via get_validation_type_by_publication_typ
     _append(create_genre_type_output_type(source_record))
 
@@ -67,6 +71,8 @@ def transform_to_cora_output(
     _append(create_note_type_creator_count(source_record))
     # abstract <- abstracts
     _append_all(create_abstracts(source_record))
+
+    _append(create_admin(source_record))
     # originInfo
     ## dateIssued <- <publicationDate>
     ## copyrightDate

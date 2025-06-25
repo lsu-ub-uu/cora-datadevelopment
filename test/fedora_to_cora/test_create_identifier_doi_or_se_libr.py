@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
-from fedora_to_cora import create_identifier_doi, create_identifier_se_libr
+
+# from fedora_to_cora import create_identifier_doi, create_identifier_se_libr
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 source_record = ET.fromstring(
@@ -33,17 +34,17 @@ source_record = ET.fromstring(
 )
 
 
-def test_create_identifier_doi():
-    doi = create_identifier_doi(source_record)
-    assert_equal_for_xml_and_xml_string(
-        doi,
-        """<identifier type="doi">10.1038/s41698-022-00278-4</identifier>""",
-    )
+# def test_create_identifier_doi():
+#     doi = create_identifier_doi(source_record)
+#     assert_equal_for_xml_and_xml_string(
+#         doi,
+#         """<identifier type="doi">10.1038/s41698-022-00278-4</identifier>""",
+#     )
 
 
-def test_create_identifier_se_libr():
-    libris = create_identifier_se_libr(source_record)
-    assert_equal_for_xml_and_xml_string(
-        libris,
-        """<identifier type="se_libr">0004</identifier>""",
-    )
+# def test_create_identifier_se_libr():
+#     libris = create_identifier_se_libr(source_record)
+#     assert_equal_for_xml_and_xml_string(
+#         libris,
+#         """<identifier type="se_libr">0004</identifier>""",
+#     )

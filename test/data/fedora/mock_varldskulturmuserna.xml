@@ -194,7 +194,7 @@
       <numberInSeries>1-75</numberInSeries>
     </seriesInfo>
   </seriesInfos>
-  <dateIssued></dateIssued>
+  <dateIssued>2023</dateIssued>
   <distributor>
     <organisationAlternativeNames></organisationAlternativeNames>
     <organisationContacts></organisationContacts>
@@ -293,7 +293,7 @@
     </abstract>
   </abstracts>
   <note></note>
-  <internalNote></internalNote>
+  <internalNote>This is an internal note.</internalNote>
   <formatElectronic>
     false</formatElectronic>
   <formatPrint>false</formatPrint>

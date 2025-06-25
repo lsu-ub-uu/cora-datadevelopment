@@ -1,5 +1,5 @@
 from common.test_helper import assert_equal_for_xml_and_xml_string, MockCoraConfig
-from fedora_to_cora.output_create import transform_to_cora_output
+from fedora_to_cora.create_output import transform_to_cora_output
 from xml.etree import ElementTree as ET
 from common.common_data import read_source_xml
 
@@ -59,6 +59,11 @@ def test_creates_output(requests_mock):
         <subject lang="eng">
             <topic>Sinologi, Arkeologi</topic>
         </subject>
+        <originInfo>
+            <dateIssued>
+                <year>2023</year>
+            </dateIssued>
+        </originInfo>
         <genre type="outputType">publication_edited-book</genre>
         <language repeatId="0">
             <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
@@ -81,6 +86,10 @@ def test_creates_output(requests_mock):
         <abstract lang="swe" repeatId="0">
             Lorem ipsum dolor sit amet
         </abstract>
+        <admin>
+            <note type="internal">This is an internal note.</note>
+            <reviewed>false</reviewed>
+        </admin>
         <identifier displayLabel="print" repeatId="0" type="isbn">978-91-506-2649-0</identifier>
         <identifier displayLabel="online" repeatId="1" type="isbn">978-92-893-7379-1</identifier>
         <identifier displayLabel="invalid" repeatId="2" type="isbn">978-92-893-7380-7</identifier>

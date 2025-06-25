@@ -1,4 +1,4 @@
-from fedora_to_cora.output_create import transform_to_cora_output
+from fedora_to_cora.create_output import transform_to_cora_output
 from common.xml_utils import pretty_print_xml
 from common.common_data import read_source_xml
 import os
