@@ -12,14 +12,15 @@ def create_abstracts(source_record: ET.Element) -> list[ET.Element]:
     Returns:
         list[ET.Element]: A list of abstract elements.
     """
+    abstracts = []
+    for i, source_abstract in enumerate(source_record.findall("./abstracts/abstract")):
+        abstract = create_abstract(source_abstract, i)
+        if abstract is not None:
+            abstracts.append(abstract)
+    return abstracts
 
-    return [
-        create_abstract(abstract, i)
-        for (i, abstract) in enumerate(source_record.findall("./abstracts/abstract"))
-    ]
 
-
-def create_abstract(source_abstract: ET.Element, repeat_id: int) -> ET.Element:
+def create_abstract(source_abstract: ET.Element, repeat_id: int) -> ET.Element | None:
     """
     Create an abstract element with a repeatId attribute.
 
@@ -41,7 +42,9 @@ def create_abstract(source_abstract: ET.Element, repeat_id: int) -> ET.Element:
     )
 
     source_text = source_abstract.find("./text")
-    if source_text is not None:
-        abstract_element.text = source_text.text
+    if source_text is None:
+        return None
+
+    abstract_element.text = source_text.text
 
     return abstract_element

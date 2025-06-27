@@ -54,3 +54,23 @@ def test_create_abstracts():
         </abstract>
         """,
     )
+
+
+def test_create_abstracts_empty():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <abstracts>
+                <abstract>
+                    <language>
+                        <languageCode3>swe</languageCode3>
+                    </language>
+                </abstract>
+            </abstracts>
+        </publication>
+        """
+    )
+
+    abstracts = create_abstracts(source_record)
+
+    assert len(abstracts) == 0

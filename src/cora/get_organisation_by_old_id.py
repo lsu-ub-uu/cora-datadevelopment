@@ -2,12 +2,18 @@ import xml.etree.ElementTree as ET
 import requests
 from cora.constants import BASE_URL
 from common.xml_utils import inline_xml_string
+from cora.error import LinkedRecordNotFoundError
+from logging import Logger
 
 _cache: dict[str, str | None] = {}
 
 
 def get_organisation_id_by_old_id(
-    old_id: str, *, base_url: str, auth_token: str | None = None
+    old_id: str,
+    *,
+    base_url: str,
+    auth_token: str | None = None,
+    logger: Logger,
 ) -> str | None:
     """
     Fetch the Cora organisation ID using the old organisation ID.
@@ -45,11 +51,11 @@ def get_organisation_id_by_old_id(
     record_ids = response_xml.findall(".//recordInfo/id")
 
     if len(record_ids) > 1:
-        print(
+        logger.warning(
             f"Warning: Multiple organisations found for old ID '{old_id}'. Using the first one."
         )
     elif len(record_ids) == 0:
-        print(f"Warning: No organisations found for old ID '{old_id}'. Returning None.")
+        raise LinkedRecordNotFoundError(record_type="diva-organisation", old_id=old_id)
 
     record_id = record_ids[0] if record_ids else None
 

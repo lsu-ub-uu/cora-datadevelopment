@@ -105,6 +105,7 @@ def create_affiliation_for_controlled_organisation(
         organisation_id.text,
         base_url=context.get_base_url(),
         auth_token=context.get_auth_token(),
+        logger=context.get_logger(),
     )
 
     organisation_link = create_record_link_using_name_type_id(
