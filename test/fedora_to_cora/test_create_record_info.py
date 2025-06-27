@@ -2,8 +2,10 @@ from xml.etree import ElementTree as ET
 from fedora_to_cora.create_record_info import create_record_info
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-source_record = ET.fromstring(
-    """
+
+def test_create_record_info():
+    source_record = ET.fromstring(
+        """
     <publication>
         <publicationType>
             <publicationTypeId>50</publicationTypeId>
@@ -19,10 +21,8 @@ source_record = ET.fromstring(
         <pid>456</pid>
     </publication>
     """
-)
+    )
 
-
-def test_create_record_info():
     record_info = create_record_info(source_record)
 
     assert_equal_for_xml_and_xml_string(

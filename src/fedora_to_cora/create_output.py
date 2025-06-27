@@ -32,62 +32,40 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
             if len(child) > 0 or child.text:
                 _append(child)
 
-    # --- Behövs för Sammlingsverk --- #
-
-    # recordInfo
-    ## validationType <- publicationTypeId
-    ## permissionUnit <- domain
-    ## oldId <- pid
-    ## visibility <- administrativeInfo/updaters/userInformation/userAction
     _append(create_record_info(source_record))
 
-    # genre type="contentType" <- contentTypeCode
     _append(create_genre_type_content_type(source_record))
 
-    # titleInfo type="main" <- originalPublicationTitle
     _append(create_title_info(source_record))
 
-    # subject <- keyWords
     _append_all(create_subjects(source_record))
 
+    # work in progress
     _append(create_origin_info(source_record))
 
-    # genre type="outputType" (valideringstyp) <- publicationType via get_validation_type_by_publication_typ
     _append(create_genre_type_output_type(source_record))
 
-    # language <- originalPublicationTitle/language
     _append(create_language(source_record))
 
-    # artisticWork type="outputType" <- artistic work
     _append(create_artistic_work(source_record))
-    # titleInfo type="alternative"  <- alternativePublicationTitles
+
     _append_all(create_title_info_type_alternative(source_record))
 
-    # name type="personal"
+    # Does not handle linked persons yet
     _append_all(create_name_type_personals(source_record, context))
 
-    # name type="corporate" <- skipped
     _append(create_note_type_creator_count(source_record))
-    # abstract <- abstracts
+
     _append_all(create_abstracts(source_record))
 
     _append(create_admin(source_record))
-    # originInfo
-    ## dateIssued <- <publicationDate>
-    ## copyrightDate
-    ## dateOther type="online"
-    ## agent
-    ## place
-    ## edition
+
+    _append_all(create_identifier_type_isbn(source_record))
+
     # extent <- Verkets fysiska omfattning
     # classification authority="ssif" <- nationalCategories
     # subject authority="diva" <- researchSubjects
     # subject authority="sdg" <- sustainableDevelopments / behöver extra jobb
-
-    # identifier type="isbn"
-    _append_all(
-        create_identifier_type_isbn(source_record)
-    )  # vad vill vi ha om för displayLabel om det inte finns någon typ i federa?
 
     # identifier type="doi"
     # identifier type="ismn"
