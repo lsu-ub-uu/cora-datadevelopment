@@ -87,10 +87,10 @@ def test_creates_output(requests_mock):
         <abstract lang="swe" repeatId="0">
             Lorem ipsum dolor sit amet
         </abstract>
-        <admin>
+        <adminInfo>
             <note type="internal">This is an internal note.</note>
             <reviewed>false</reviewed>
-        </admin>
+        </adminInfo>
         <identifier displayLabel="print" repeatId="0" type="isbn">978-91-506-2649-0</identifier>
         <identifier displayLabel="online" repeatId="1" type="isbn">978-92-893-7379-1</identifier>
         <identifier displayLabel="undefined" repeatId="2" type="isbn">978-92-893-7380-7</identifier>

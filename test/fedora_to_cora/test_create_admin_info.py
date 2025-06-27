@@ -1,9 +1,9 @@
-from fedora_to_cora import create_admin
+from fedora_to_cora import create_admin_info
 import xml.etree.ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
-def test_create_admin():
+def test_create_admin_info():
     source_record = ET.fromstring(
         """
         <publication>
@@ -13,14 +13,14 @@ def test_create_admin():
         """
     )
 
-    admin = create_admin(source_record)
+    admin = create_admin_info(source_record)
 
     assert_equal_for_xml_and_xml_string(
         admin,
         """
-            <admin>
+            <adminInfo>
                 <note type="internal">Intern anmärkning</note>
                 <reviewed>true</reviewed>
-            </admin>
+            </adminInfo>
         """,
     )

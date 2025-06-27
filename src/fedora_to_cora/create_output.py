@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from cora.context import Context
 
 from fedora_to_cora import (
-    create_admin,
+    create_admin_info,
     create_language,
     create_origin_info,
     create_record_info,
@@ -58,10 +58,17 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
 
     _append_all(create_abstracts(source_record))
 
-    _append(create_admin(source_record))
+    _append(create_admin_info(source_record))
 
     _append_all(create_identifier_type_isbn(source_record))
 
+    # originInfo
+    ## dateIssued <- <publicationDate>
+    ## copyrightDate
+    ## dateOther type="online"
+    ## agent
+    ## place
+    ## edition
     # extent <- Verkets fysiska omfattning
     # classification authority="ssif" <- nationalCategories
     # subject authority="diva" <- researchSubjects
