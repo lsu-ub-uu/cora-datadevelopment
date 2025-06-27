@@ -12,7 +12,7 @@ failed_transformations = []
 
 env = {
     "xml_dir": "data/fedora_xml/varldskulturmuseerna/20250625",
-    "system": "preview",
+    "system": "pre",
     "login_id": "divaAdmin@cora.epc.ub.uu.se",
     "app_token": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
     "dry_run": True,  # Set to True to skip actual transformations
