@@ -12,3 +12,7 @@ from .create_identifier_type_isbn import create_identifier_type_isbn
 from .create_identifier_type_isrn import create_identifier_type_isrn
 from .create_admin import create_admin
 from .create_origin_info import create_origin_info
+from .create_identifier_doi_se_libr import (
+    create_identifier_doi,
+    create_identifier_se_libr,
+)

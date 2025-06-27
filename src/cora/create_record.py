@@ -32,22 +32,10 @@ def create_record(
     )
 
     if response.status_code == 201:
-        logger.info(f"Record created successfully: {old_id_text}")
+        logger.info(f"✅ Record created successfully: {old_id_text}")
         return True, None
 
-    try:
-        response_data = ET.fromstring(response.text)
-        errors = [
-            msg.text for msg in response_data.findall(".//errorMessage") if msg.text
-        ]
-    except ET.ParseError:
-        errors = []
-    if len(errors) > 0:
-        logger.error(
-            f"{response.status_code} Failed to create record for {record_type} with oldId {old_id_text}. \n\nErrors:\n - {"\n - ".join(errors)}\n"
-        )
-        return False, errors
     logger.error(
-        f"{response.status_code} Failed to create record for {record_type} with oldId {old_id_text}. \n\n{response.text}\n"
+        f"❌ Failed to create record for {record_type} with oldId {old_id_text}. \n\nStatus: {response.status_code}\n{response.text}\n"
     )
     return False, [f"Failed to create record with status {response.status_code}"]
