@@ -52,7 +52,8 @@ def record_info_build(recordType, permission_unit, data_record, newRecordElement
         ET.SubElement(permissionUnit, "linkedRecordType").text = "permissionUnit"
         ET.SubElement(permissionUnit, "linkedRecordId").text = permission_unit
     oldId_fromSource = data_record.find(".//old_id")
-    ET.SubElement(recordInfo, "oldId").text = oldId_fromSource.text
+    if oldId_fromSource is not None and oldId_fromSource.text:
+        ET.SubElement(recordInfo, "oldId").text = oldId_fromSource.text
 
 
 def get_oldId(data_record):
@@ -135,7 +136,7 @@ def end_date_build(data_record, newRecordElement, originType):
             endDate_yearMonthDay(year, month, day, endDate)
 
 
-def endDate_yearMonthDay(year, month, day, rootElement):
+def endDate_yearMonthDay(year: str, month: str, day: str, rootElement: ET.Element):
     ET.SubElement(rootElement, "year").text = year
     ET.SubElement(rootElement, "month").text = month
     ET.SubElement(rootElement, "day").text = day
@@ -167,7 +168,7 @@ def genre_build(data_record, new_record_element, publication_map, counter):
     return counter
 
 
-def create_record_info_for_record_type(record_type):
+def create_record_info_for_record_type(record_type: str) -> ET.Element:
     record_info = ET.Element("recordInfo")
 
     validation_type = create_record_link_using_name_type_id(
@@ -185,7 +186,9 @@ def create_record_info_for_record_type(record_type):
     return record_info
 
 
-def create_record_link_using_name_type_id(name_in_data, record_type, record_id):
+def create_record_link_using_name_type_id(
+    name_in_data: str, record_type: str, record_id: str
+) -> ET.Element:
     link = ET.Element(name_in_data)
     ET.SubElement(link, "linkedRecordType").text = record_type
     ET.SubElement(link, "linkedRecordId").text = record_id
