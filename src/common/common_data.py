@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 
-def read_source_xml(filePath_sourceXml):
+def read_source_xml(filePath_sourceXml) -> ET.Element:
     sourceFile_xml = ET.parse(filePath_sourceXml)
     root = sourceFile_xml.getroot()
     return root

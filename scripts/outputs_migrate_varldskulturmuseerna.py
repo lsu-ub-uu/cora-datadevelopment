@@ -1,11 +1,11 @@
-from fedora_to_cora.create_output import transform_to_cora_output
+from fedora_to_cora.output_transform import transform_to_cora_output
 from common.xml_utils import pretty_print_xml
 from common.common_data import read_source_xml
 import os
 import traceback
 from cora.context import CoraContext, Context
-from cora.validate_record import validate_record
-from cora.create_record import create_record
+from cora.validate import validate_record
+from cora.create import create_record
 
 successful_transformations = []
 failed_transformations = []

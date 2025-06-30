@@ -1,5 +1,5 @@
 from common.test_helper import assert_equal_for_xml_and_xml_string
-from fedora_to_cora.create_output import transform_to_cora_output
+from fedora_to_cora.output_transform import transform_to_cora_output
 from xml.etree import ElementTree as ET
 from common.common_data import read_source_xml
 from cora.context import MockContext

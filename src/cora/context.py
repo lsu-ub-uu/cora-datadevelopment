@@ -8,6 +8,7 @@ from logging import Logger
 from common.run_rotating_logger import RunRotatingLogger
 import sys
 import os
+from unittest.mock import MagicMock
 
 main_script = os.path.basename(sys.argv[0])
 
@@ -19,10 +20,12 @@ class Context(Protocol):
     def log(
         self, message: str, level: Literal["info", "error", "warning"] = "info"
     ) -> None: ...
+    def get_log_file_path(self) -> str: ...
+    def get_workers(self) -> int: ...
 
 
 class CoraContext(Context):
-    def __init__(self, system: str, login_id: str, app_token: str):
+    def __init__(self, system: str, login_id: str, app_token: str, workers: int = 16):
         self.system = system
         self._logger = RunRotatingLogger("data", f"logs/{main_script}.log").get()
         self.app_token_client = AppTokenClient(
@@ -39,6 +42,7 @@ class CoraContext(Context):
                 "app_token": app_token,
             }
         )
+        self._workers = workers
 
     def get_base_url(self) -> str:
         """
@@ -64,6 +68,14 @@ class CoraContext(Context):
         """
         return self._logger
 
+    def get_log_file_path(self) -> str:
+        """
+        Get the file path of the log file.
+
+        :return: The log file path as a string.
+        """
+        return self._logger.handlers[0].baseFilename  # type: ignore[attr-defined]
+
     def log(self, message: str, level: Literal["info", "error", "warning"] = "info"):
         """
         Log a message with the specified logging level.
@@ -80,14 +92,29 @@ class CoraContext(Context):
         else:
             self._logger.debug(message)
 
+    def get_workers(self) -> int:
+        """
+        Get the number of worker threads to use for parallel processing.
+
+        :return: The number of worker threads.
+        """
+        return self._workers
+
     def close(self):
         return
 
 
 class MockContext(Context):
-    def __init__(self, base_url: str, auth_token: str):
+    def __init__(self, base_url: str, auth_token: str, workers: int = 16):
         self._base_url = base_url
         self._auth_token = auth_token
+        self._workers = workers
+        self.log = MagicMock()
+
+    def log(
+        self, message: str, level: Literal["info", "error", "warning"] = "info"
+    ) -> None:
+        pass
 
     def get_base_url(self):
         return self._base_url
@@ -96,7 +123,10 @@ class MockContext(Context):
         return self._auth_token
 
     def get_logger(self):
-        return Logger("MockLogger")
+        return MagicMock()
 
-    def log(self, message: str, level: Literal["info", "error", "warning"] = "info"):
-        print(f"[{level.upper()}] {message}")
+    def get_log_file_path(self) -> str:
+        return "mock_log_file.log"
+
+    def get_workers(self) -> int:
+        return self._workers

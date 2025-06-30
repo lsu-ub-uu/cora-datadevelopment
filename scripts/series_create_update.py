@@ -36,6 +36,7 @@ linksToHostIds = OrderedDict()
 
 
 def start():
+    """Assumes all organisations are already created in Cora."""
     global data_logger
     data_logger = RunRotatingLogger("data", "logs/data_processing.txt").get()
     data_logger.info("Data processing started")
