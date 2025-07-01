@@ -77,6 +77,7 @@ def nameAuthorityVariant_build(data_record, newRecordElement, elementName, langu
         ET.SubElement(nameType, "namePart").text = nameLang_fromSource.text
 
 
+
 def topicAuthorityVariant_build(data_record, newRecordElement, elementName, language):
     topicLang_fromSource = data_record.find(f".//topic_{language}")
     topic = ET.SubElement(newRecordElement, elementName, lang=language)

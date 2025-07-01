@@ -1,5 +1,4 @@
 import xml.etree.ElementTree as ET
-import common.common_data as common_data
 from common.record_info_create import record_info_create
 from common.name_type_corporate_create import name_type_corporate_create
 

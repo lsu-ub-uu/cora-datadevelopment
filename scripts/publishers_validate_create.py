@@ -13,7 +13,7 @@ source_xml_file_path = "data/db_xml/publishers.xml"
 system = "preview"
 login_id = "divaAdmin@cora.epc.ub.uu.se"
 app_token = "49ce00fb-68b5-4089-a5f7-1c225d3cf156"
-dry_run = False
+dry_run = True
 workers = 16
 
 

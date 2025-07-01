@@ -17,7 +17,9 @@ def record_info_create(
 
     record_info.append(
         create_record_link_using_name_type_id(
-            name_in_data="dataDivider", record_type="system", record_id="divaData"
+            name_in_data="dataDivider", 
+            record_type="system", 
+            record_id="divaData"
         )
     )
 
