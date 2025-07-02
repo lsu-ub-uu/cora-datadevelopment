@@ -18,6 +18,7 @@ from fedora_to_cora import (
     create_identifier_type_isbn,
     create_identifier_type_isrn,
 )
+from fedora_to_cora.create_origin_info import create_origin_info
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
@@ -41,7 +42,7 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     _append_all(create_subjects(source_record))
 
     # work in progress
-    _append(create_origin_info(source_record))
+    _append(create_origin_info(source_record, context))
 
     _append(create_genre_type_output_type(source_record))
 

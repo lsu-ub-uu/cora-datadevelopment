@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
-from cora.get_organisation_by_old_id import get_organisation_id_by_old_id
+from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from cora.context import Context
 
 
@@ -101,11 +101,10 @@ def create_affiliation_for_controlled_organisation(
 
     assert organisation_id is not None and organisation_id.text
 
-    cora_id = get_organisation_id_by_old_id(
+    cora_id = get_cora_id_by_old_id(
         organisation_id.text,
-        base_url=context.get_base_url(),
-        auth_token=context.get_auth_token(),
-        logger=context.get_logger(),
+        record_type="diva-organisation",
+        context=context,
     )
 
     organisation_link = create_record_link_using_name_type_id(

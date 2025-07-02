@@ -1,17 +1,20 @@
-from cora.get_organisation_by_old_id import get_organisation_id_by_old_id, _cache
+from cora.get_cora_id_by_old_id import get_cora_id_by_old_id, _cache
 from common.xml_utils import inline_xml_string
 import pytest
 from cora.error import LinkedRecordNotFoundError
 from logging import Logger
 from unittest.mock import MagicMock
+from cora.context import MockContext
+
 
 base_url = "https://pre.diva-portal.org/rest/record/"
 test_token = "test-token"
+mock_context = MockContext(base_url, test_token)
 
 logger = Logger("test_logger")
 
 
-def test_get_organisation_by_old_id(requests_mock):
+def test_get_cora_id_by_old_id(requests_mock):
     old_id = "878550"
     expected_cora_id = "123"
 
@@ -21,8 +24,10 @@ def test_get_organisation_by_old_id(requests_mock):
         text=create_mock_response(expected_cora_id),
     )
 
-    response = get_organisation_id_by_old_id(
-        old_id, base_url=base_url, auth_token=test_token, logger=logger
+    response = get_cora_id_by_old_id(
+        old_id,
+        record_type="diva-organisation",
+        context=mock_context,
     )
     assert requests_mock.called == True
     assert requests_mock.call_count == 1
@@ -38,11 +43,15 @@ def test_return_cache_when_id_exists(requests_mock):
         text=create_mock_response(expected_cora_id),
     )
 
-    response1 = get_organisation_id_by_old_id(
-        old_id, base_url=base_url, auth_token=test_token, logger=logger
+    response1 = get_cora_id_by_old_id(
+        old_id,
+        record_type="diva-organisation",
+        context=mock_context,
     )
-    response2 = get_organisation_id_by_old_id(
-        old_id, base_url=base_url, auth_token=test_token, logger=logger
+    response2 = get_cora_id_by_old_id(
+        old_id,
+        record_type="diva-organisation",
+        context=mock_context,
     )
     assert requests_mock.call_count == 1
     assert response1 == response2 == expected_cora_id
@@ -66,11 +75,15 @@ def test_get_two_different_organisations(requests_mock):
         text=create_mock_response(expected_cora_id2),
     )
 
-    response1 = get_organisation_id_by_old_id(
-        old_id, base_url=base_url, auth_token=test_token, logger=logger
+    response1 = get_cora_id_by_old_id(
+        old_id,
+        record_type="diva-organisation",
+        context=mock_context,
     )
-    response2 = get_organisation_id_by_old_id(
-        old_id2, base_url=base_url, auth_token=test_token, logger=logger
+    response2 = get_cora_id_by_old_id(
+        old_id2,
+        record_type="diva-organisation",
+        context=mock_context,
     )
     assert requests_mock.call_count == 2
     assert response1 == expected_cora_id
@@ -87,8 +100,10 @@ def test_raises_error_when_no_result(requests_mock):
     )
 
     with pytest.raises(LinkedRecordNotFoundError) as exc_info:
-        get_organisation_id_by_old_id(
-            old_id_not_found, base_url=base_url, auth_token=test_token, logger=logger
+        get_cora_id_by_old_id(
+            old_id_not_found,
+            record_type="diva-organisation",
+            context=mock_context,
         )
     assert "diva-organisation not found for old ID: 404404" == str(exc_info.value)
     assert requests_mock.call_count == 1
@@ -129,15 +144,16 @@ def test_logs_warning_and_returns_first_id_when_multiple_results(
         """,
     )
 
-    mock_logger = MagicMock(spec=Logger)
-
-    response = get_organisation_id_by_old_id(
-        old_id_multiple, base_url=base_url, auth_token=test_token, logger=mock_logger
+    response = get_cora_id_by_old_id(
+        old_id_multiple,
+        record_type="diva-organisation",
+        context=mock_context,
     )
     assert requests_mock.call_count == 1
-    assert response == expected_cora_id  # Assuming the first ID is returned
-    mock_logger.warning.assert_called_once_with(
-        f"Warning: Multiple organisations found for old ID '{old_id_multiple}'. Using the first one."
+    assert response == expected_cora_id
+    mock_context.log.assert_called_with(  # type: ignore
+        f"Warning: Multiple diva-organisations found for old ID '{old_id_multiple}'. Using the first one.",
+        "warning",
     )
 
 
@@ -151,10 +167,12 @@ def test_raises_error_when_not_ok_response(requests_mock):
     )
 
     with pytest.raises(Exception) as exc_info:
-        get_organisation_id_by_old_id(
-            old_id, base_url=base_url, auth_token=test_token, logger=logger
+        get_cora_id_by_old_id(
+            old_id,
+            record_type="diva-organisation",
+            context=mock_context,
         )
-    assert "Failed to fetch organisation ID: 500" in str(exc_info.value)
+    assert "Failed to fetch diva-organisation ID: 500" in str(exc_info.value)
     assert requests_mock.call_count == 1
 
 

@@ -104,7 +104,7 @@ ptw --now .
   - ✅ reviewed
   - note type="internal" ← `<internalNote>`
 
-## Behövs för Sammlingsverk Update
+## Behövs för Samlingsverk Update
 
 - attachment
   - `<agreementAccepted>` - kanske inte sparas?
@@ -142,10 +142,10 @@ ptw --now .
 - relatedItem type="constituent"
 - failed
 
-## Okänt:
+## Behöver mer information för att migrera
 
-- `<hidden>` - kommer behöva hanteras vid migrering
-- `<publicationChannel>` - kommer behövas
+- `<hidden>` - Om true visas posten ej i sökgränssnittet. Och måste sökas fram med särskild flagga. kommer behöva hanteras vid migrering. Kanske blir visibility: unpublished?
+- `<publicationChannel>` - Används för konstnärlig output. Metadata ej klar i Cora.
 
 ## Taggar ej i Cora
 

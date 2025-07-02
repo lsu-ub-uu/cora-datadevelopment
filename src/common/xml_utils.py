@@ -27,3 +27,11 @@ def inline_xml_string(xml: str) -> str:
 
 def get_inner_xml(element: ET.Element) -> str:
     return "".join(ET.tostring(child, encoding="unicode") for child in element)
+
+
+def append_if_value(parent: ET.Element, child: ET.Element | None) -> None:
+    """
+    Append a child element to a parent if the child is not None and has content.
+    """
+    if child is not None and (len(child) > 0 or child.text):
+        parent.append(child)

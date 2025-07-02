@@ -171,7 +171,7 @@ def test_creates_controlled_affiliation(monkeypatch):
             return None
 
     monkeypatch.setattr(
-        "fedora_to_cora.create_name_type_personal.get_organisation_id_by_old_id",
+        "fedora_to_cora.create_name_type_personal.get_cora_id_by_old_id",
         mock_get_org,
     )
 

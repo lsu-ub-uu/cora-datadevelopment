@@ -105,7 +105,12 @@ class CoraContext(Context):
 
 
 class MockContext(Context):
-    def __init__(self, base_url: str, auth_token: str, workers: int = 16):
+    def __init__(
+        self,
+        base_url: str = "https://pre.diva-portal.org/rest/record/",
+        auth_token: str = "test-token",
+        workers: int = 16,
+    ):
         self._base_url = base_url
         self._auth_token = auth_token
         self._workers = workers
