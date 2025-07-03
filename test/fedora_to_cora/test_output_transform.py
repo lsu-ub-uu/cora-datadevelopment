@@ -7,25 +7,15 @@ from cora.context import MockContext
 
 def test_output_transform(requests_mock):
     affiliation_organisation_id = "diva-organisation:15111790767789817"
-    mock_response = f"""
-    <dataList>
-        <data>
-            <record>
-                <data>
-                    <organisation>
-                        <recordInfo>
-                            <id>{affiliation_organisation_id}</id>
-                        </recordInfo>
-                    </organisation>
-                </data>
-            </record>
-        </data>
-    </dataList>
-    """
+    subject_id = "diva-subject:30224"
 
     requests_mock.get(
         "https://pre.diva-portal.org/rest/record/searchResult/diva-organisationSearch",
-        text=mock_response,
+        text=_create_search_mock_response("organisation", affiliation_organisation_id),
+    )
+    requests_mock.get(
+        "https://pre.diva-portal.org/rest/record/searchResult/diva-subjectSearch",
+        text=_create_search_mock_response("subject", subject_id),
     )
 
     fedora_xml = read_source_xml("test/data/fedora/mock_varldskulturmuserna.xml")
@@ -78,6 +68,12 @@ def test_output_transform(requests_mock):
         <extent>208</extent>
         <classification authority="ssif" repeatId="0">30224</classification>
         <classification authority="ssif" repeatId="1">60301</classification>
+        <subject authority="diva">
+            <topic repeatId="0">
+                <linkedRecordType>diva-subject</linkedRecordType>
+                <linkedRecordId>{subject_id}</linkedRecordId>
+            </topic>
+        </subject>
         <genre type="outputType">publication_edited-book</genre>
         <language repeatId="0">
             <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
@@ -112,3 +108,21 @@ def test_output_transform(requests_mock):
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
+def _create_search_mock_response(tag_name, record_id):
+    return f"""
+    <dataList>
+        <data>
+            <record>
+                <data>
+                    <{tag_name}>
+                        <recordInfo>
+                            <id>{record_id}</id>
+                        </recordInfo>
+                    </{tag_name}>
+                </data>
+            </record>
+        </data>
+    </dataList>
+    """

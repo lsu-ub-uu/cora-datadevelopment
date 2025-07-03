@@ -6,6 +6,7 @@ from fedora_to_cora.create_admin_info import create_admin_info
 from fedora_to_cora.create_language import create_language
 from fedora_to_cora.create_record_info import create_record_info
 from fedora_to_cora.create_genre_type_content_type import create_genre_type_content_type
+from fedora_to_cora.create_subject_authority_diva import create_subject_authority_diva
 from fedora_to_cora.create_title_info import (
     create_title_info,
     create_title_info_type_alternative,
@@ -41,6 +42,10 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     append_if_value(target_record, create_extent(source_record))
 
     append_if_value(target_record, create_classification_authority_ssif(source_record))
+
+    append_if_value(
+        target_record, create_subject_authority_diva(source_record, context)
+    )
 
     append_if_value(target_record, create_genre_type_output_type(source_record))
 

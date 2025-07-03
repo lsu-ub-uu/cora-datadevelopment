@@ -493,7 +493,49 @@
       <organisations/>
     </subject>
   </nationalCategories>
-  <researchSubjects></researchSubjects>
+    <researchSubjects>
+    <subject>
+      <subjectId>40103</subjectId>
+      <subjectType>
+        <subjectTypeId>53</subjectTypeId>
+        <subjectTypeCode>researchSubject</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3711</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3710</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3709</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>Forskningsämne</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>86107</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Digital humaniora</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>86106</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Digital humaniora</subjectName>
+        </subjectName>
+      </subjectNames>
+      <parents></parents>
+      <predecessors></predecessors>
+      <domain>varldskulturmuseerna</domain>
+      <notEligible>false</notEligible>
+      <organisations></organisations>
+    </subject>
+  </researchSubjects>
   <keyWords
     class="hashtable">
     <entry>
