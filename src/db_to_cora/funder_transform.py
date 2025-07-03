@@ -37,14 +37,9 @@ def _create_record_info(source_record: ET.Element) -> ET.Element:
 def _create_authority_or_variant_lang(source_record: ET.Element, element_name: str, language: str) -> ET.Element | None:
     name_lang = source_record.find(f".//name_{language}")
     if name_lang is not None and name_lang.text:
-#    if (name_eng is None):
-#        return None
-        return create_authority_or_variant_lang_using_name_type_corporate(name_lang.text, element_name, language)
+        return create_authority_or_variant_lang_using_name_type_corporate(
+            name_lang.text, element_name, language)
 
-
-def _create_identifiers(source_record: ET.Element, identifierType: str) -> ET.Element | None:
-    identifier = source_record.find(f".//identifier_{identifierType}")
-    print(identifier)
     
 
 

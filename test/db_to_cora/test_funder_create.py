@@ -7,15 +7,45 @@ def test_element_xml():
     source_record = ET.fromstring(
         """
         <DATA_RECORD>
-            <old_id>123</old_id>
+            <old_id>1234</old_id>
             <name_swe>Ett namn</name_swe>
-            <name_eng>Some name</name_eng>
-            <end_date>2025-05-06</end_date>
-            <identifier_organisationNumber>202100-5489</identifier_organisationNumber>
-            <identifier_doi>10.1000/182</identifier_doi>
-            <locale_swe>sv</locale_swe>
-            <locale_eng>en</locale_eng>
-            <funder_name_id>15</funder_name_id>
+        </DATA_RECORD>       
+        """
+    )
+    
+    result = transform_funder(source_record)
+
+    expected_xml = """
+    <funder>
+        <recordInfo>
+            <validationType>
+                <linkedRecordType>validationType</linkedRecordType>
+                <linkedRecordId>diva-funder</linkedRecordId>
+            </validationType>
+            <dataDivider>
+                <linkedRecordType>system</linkedRecordType>
+                <linkedRecordId>divaData</linkedRecordId>
+            </dataDivider>
+            <oldId>1234</oldId>
+        </recordInfo>
+        <authority lang="swe">
+            <name type="corporate">
+                <namePart>Ett namn</namePart>
+            </name>
+        </authority>
+    </funder>
+    """
+
+    assert_equal_for_xml_and_xml_string(result, expected_xml)
+    
+    
+def test_element_variant_xml():
+    source_record = ET.fromstring(
+        """
+        <DATA_RECORD>
+            <old_id>1234</old_id>
+            <name_swe>Ett namn</name_swe>
+            <name_eng>Some name</name_eng>      
         </DATA_RECORD>       
         """
     )
@@ -45,9 +75,11 @@ def test_element_xml():
                 <namePart>Some name</namePart>
             </name>
         </variant>
-        <identifier type="doi">10.1000/182</identifier>
-        <identifier type="organisationNumber">202100-5489</identifier>
     </funder>
     """
-
+    
     assert_equal_for_xml_and_xml_string(result, expected_xml)
+    
+    
+    
+    
