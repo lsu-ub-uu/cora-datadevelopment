@@ -15,15 +15,8 @@ def create_origin_info(
 
     append_if_value(origin_info, _create_date_issued(source_record))
     append_if_value(origin_info, _create_agent(source_record, context))
-
-    # TODO agent/publisher/publisher publication/publisher/publishingHouse/publishingHouseId
-    # TODO agent/namePart publication/publisher/publisherName
-    # TODO agent/role/roleTerm = "pbl"
-    # TODO place publication/publisher/city
-    # TODO edition publication/edition
-
-    if len(origin_info) == 0:
-        return None
+    append_if_value(origin_info, _create_place(source_record))
+    append_if_value(origin_info, _create_edition(source_record))
 
     return origin_info
 
@@ -77,6 +70,34 @@ def _create_publisher_link(
     cora_publisher_id = get_cora_id_by_old_id(
         publishing_house_id.text, record_type="diva-publisher", context=context
     )
-    return create_record_link_using_name_type_id(
+    link = create_record_link_using_name_type_id(
         "publisher", "diva-publisher", cora_publisher_id
     )
+    link.set("repeatId", "0")
+    return link
+
+
+def _create_place(source_record: ET.Element) -> ET.Element | None:
+    """
+    Create a place element from publication/publisher/city
+    """
+    city = source_record.find("./publisher/city")
+    if city is None or city.text is None:
+        return None
+
+    place = ET.Element("place", repeatId="0")
+    ET.SubElement(place, "placeTerm").text = city.text
+    return place
+
+
+def _create_edition(source_record: ET.Element) -> ET.Element | None:
+    """
+    Create an edition element from publication/edition
+    """
+    edition = source_record.find("./edition")
+    if edition is None or edition.text is None:
+        return None
+
+    edition_element = ET.Element("edition")
+    edition_element.text = edition.text
+    return edition_element

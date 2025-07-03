@@ -38,7 +38,12 @@ def test_origin_info_date_issued_missing_year():
 
     origin_info = create_origin_info(source_record, MockContext())
 
-    assert origin_info is None
+    assert_equal_for_xml_and_xml_string(
+        origin_info,
+        """
+        <originInfo></originInfo>
+        """,
+    )
 
 
 def test_create_agent_from_uncontrolled_publisher():
@@ -89,7 +94,6 @@ def test_create_agent_from_controlled_publisher(monkeypatch):
         f"""
         <publication>
             <publisher>
-                <city>Uppsala</city>
                 <publishingHouse>
                     <publishingHouseId>{mock_old_id}</publishingHouseId>
                     <name>Uppsala universitet</name>
@@ -114,6 +118,52 @@ def test_create_agent_from_controlled_publisher(monkeypatch):
                     <roleTerm>pbl</roleTerm>
                 </role>
             </agent>
+        </originInfo>
+        """,
+    )
+
+
+def test_create_place_from_city():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publisher>
+                <city>Uppsala</city>
+            </publisher>
+        </publication>
+        """
+    )
+
+    origin_info = create_origin_info(source_record, MockContext())
+
+    assert_equal_for_xml_and_xml_string(
+        origin_info,
+        """
+        <originInfo>
+            <place repeatId="0">
+                <placeTerm>Uppsala</placeTerm>
+            </place>
+        </originInfo>
+        """,
+    )
+
+
+def test_create_editon():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <edition>First Edition</edition>
+        </publication>
+        """
+    )
+
+    origin_info = create_origin_info(source_record, MockContext())
+
+    assert_equal_for_xml_and_xml_string(
+        origin_info,
+        """
+        <originInfo>
+            <edition>First Edition</edition>
         </originInfo>
         """,
     )

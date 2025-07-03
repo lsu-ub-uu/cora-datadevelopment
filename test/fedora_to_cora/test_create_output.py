@@ -64,6 +64,15 @@ def test_creates_output(requests_mock):
             <dateIssued>
                 <year>2023</year>
             </dateIssued>
+            <agent>
+                <namePart repeatId="0">Uppsala Läroverk</namePart>
+                <role>
+                    <roleTerm>pbl</roleTerm>
+                </role>
+            </agent>
+            <place repeatId="0">
+                <placeTerm>Stockholm</placeTerm>
+            </place>
         </originInfo>
         <genre type="outputType">publication_edited-book</genre>
         <language repeatId="0">
