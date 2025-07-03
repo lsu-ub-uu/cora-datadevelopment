@@ -76,6 +76,8 @@ def test_output_transform(requests_mock):
             <edition>3</edition>
         </originInfo>
         <extent>208</extent>
+        <classification authority="ssif" repeatId="0">30224</classification>
+        <classification authority="ssif" repeatId="1">60301</classification>
         <genre type="outputType">publication_edited-book</genre>
         <language repeatId="0">
             <languageTerm type="code" authority="iso639-2b">eng</languageTerm>

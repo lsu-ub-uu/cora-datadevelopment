@@ -65,8 +65,8 @@ ptw --now .
   - ✅ agent
   - ✅ place
   - ✅ edition
-- extent ← `<pages>`
-- classification authority="ssif" ← `<nationalCategories>`
+- ✅ extent ← `<pages>`
+- ✅ classification authority="ssif" ← `<nationalCategories><subject><subjectCode>`
 - subject authority="diva" ← `<researchSubjects>`
 - subject authority="sdg" ← `<sustainableDevelopments>` (behöver extra jobb)
 

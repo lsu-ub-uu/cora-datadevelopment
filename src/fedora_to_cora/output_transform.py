@@ -20,6 +20,9 @@ from fedora_to_cora.create_identifier_type_isbn import create_identifier_type_is
 from fedora_to_cora.create_identifier_type_isrn import create_identifier_type_isrn
 from fedora_to_cora.create_origin_info import create_origin_info
 from fedora_to_cora.create_extent import create_extent
+from fedora_to_cora.create_classsification_authority_ssif import (
+    create_classification_authority_ssif,
+)
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
@@ -36,6 +39,8 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     append_if_value(target_record, create_origin_info(source_record, context))
 
     append_if_value(target_record, create_extent(source_record))
+
+    append_if_value(target_record, create_classification_authority_ssif(source_record))
 
     append_if_value(target_record, create_genre_type_output_type(source_record))
 

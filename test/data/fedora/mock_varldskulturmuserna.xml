@@ -235,7 +235,264 @@
     </entry>
   </identifiers>
   <categories></categories>
-  <nationalCategories></nationalCategories>
+  <nationalCategories>
+    <subject>
+      <subjectId>11686</subjectId>
+      <subjectType>
+        <subjectTypeId>57</subjectTypeId>
+        <subjectTypeCode>hsv</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3723</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3722</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>HSV categories</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3721</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>28522</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Allmän medicin</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>28523</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Family Medicine</subjectName>
+        </subjectName>
+      </subjectNames>
+      <subjectCode>30224</subjectCode>
+      <parents>
+        <subject>
+          <subjectId>11662</subjectId>
+          <subjectType>
+            <subjectTypeId>57</subjectTypeId>
+            <subjectTypeCode>hsv</subjectTypeCode>
+            <subjectTypeNames>
+              <subjectTypeName>
+                <subjectTypeNameId>3723</subjectTypeNameId>
+                <locale>no</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3722</subjectTypeNameId>
+                <locale>en</locale>
+                <subjectTypeName>HSV categories</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3721</subjectTypeNameId>
+                <locale>sv</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+            </subjectTypeNames>
+          </subjectType>
+          <subjectNames>
+            <subjectName>
+              <subjectNameId>28475</subjectNameId>
+              <locale>en</locale>
+              <subjectName>Clinical Medicine</subjectName>
+            </subjectName>
+            <subjectName>
+              <subjectNameId>28474</subjectNameId>
+              <locale>sv</locale>
+              <subjectName>Klinisk medicin</subjectName>
+            </subjectName>
+          </subjectNames>
+          <subjectCode>302</subjectCode>
+          <parents>
+            <subject>
+              <subjectId>11649</subjectId>
+              <subjectType>
+                <subjectTypeId>57</subjectTypeId>
+                <subjectTypeCode>hsv</subjectTypeCode>
+                <subjectTypeNames>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3723</subjectTypeNameId>
+                    <locale>no</locale>
+                    <subjectTypeName>HSV kategorier</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3722</subjectTypeNameId>
+                    <locale>en</locale>
+                    <subjectTypeName>HSV categories</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3721</subjectTypeNameId>
+                    <locale>sv</locale>
+                    <subjectTypeName>HSV kategorier</subjectTypeName>
+                  </subjectTypeName>
+                </subjectTypeNames>
+              </subjectType>
+              <subjectNames>
+                <subjectName>
+                  <subjectNameId>28449</subjectNameId>
+                  <locale>en</locale>
+                  <subjectName>Medical and Health Sciences</subjectName>
+                </subjectName>
+                <subjectName>
+                  <subjectNameId>28448</subjectNameId>
+                  <locale>sv</locale>
+                  <subjectName>Medicin och hälsovetenskap</subjectName>
+                </subjectName>
+              </subjectNames>
+              <subjectCode>3</subjectCode>
+              <parents/>
+              <predecessors/>
+              <domain>diva</domain>
+              <notEligible>false</notEligible>
+              <organisations/>
+            </subject>
+          </parents>
+          <predecessors/>
+          <domain>diva</domain>
+          <notEligible>false</notEligible>
+          <organisations/>
+        </subject>
+      </parents>
+      <predecessors/>
+      <domain>diva</domain>
+      <notEligible>false</notEligible>
+      <organisations/>
+    </subject>
+    <subject>
+      <subjectId>11783</subjectId>
+      <subjectType>
+        <subjectTypeId>57</subjectTypeId>
+        <subjectTypeCode>hsv</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3723</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3722</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>HSV categories</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3721</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>28716</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Filosofi</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>28717</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Philosophy</subjectName>
+        </subjectName>
+      </subjectNames>
+      <subjectCode>60301</subjectCode>
+      <parents>
+        <subject>
+          <subjectId>11782</subjectId>
+          <subjectType>
+            <subjectTypeId>57</subjectTypeId>
+            <subjectTypeCode>hsv</subjectTypeCode>
+            <subjectTypeNames>
+              <subjectTypeName>
+                <subjectTypeNameId>3723</subjectTypeNameId>
+                <locale>no</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3722</subjectTypeNameId>
+                <locale>en</locale>
+                <subjectTypeName>HSV categories</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3721</subjectTypeNameId>
+                <locale>sv</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+            </subjectTypeNames>
+          </subjectType>
+          <subjectNames>
+            <subjectName>
+              <subjectNameId>28714</subjectNameId>
+              <locale>sv</locale>
+              <subjectName>Filosofi, etik och religion</subjectName>
+            </subjectName>
+            <subjectName>
+              <subjectNameId>28715</subjectNameId>
+              <locale>en</locale>
+              <subjectName>Philosophy, Ethics and Religion</subjectName>
+            </subjectName>
+          </subjectNames>
+          <subjectCode>603</subjectCode>
+          <parents>
+            <subject>
+              <subjectId>11772</subjectId>
+              <subjectType>
+                <subjectTypeId>57</subjectTypeId>
+                <subjectTypeCode>hsv</subjectTypeCode>
+                <subjectTypeNames>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3723</subjectTypeNameId>
+                    <locale>no</locale>
+                    <subjectTypeName>HSV kategorier</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3722</subjectTypeNameId>
+                    <locale>en</locale>
+                    <subjectTypeName>HSV categories</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3721</subjectTypeNameId>
+                    <locale>sv</locale>
+                    <subjectTypeName>HSV kategorier</subjectTypeName>
+                  </subjectTypeName>
+                </subjectTypeNames>
+              </subjectType>
+              <subjectNames>
+                <subjectName>
+                  <subjectNameId>28694</subjectNameId>
+                  <locale>sv</locale>
+                  <subjectName>Humaniora och konst</subjectName>
+                </subjectName>
+                <subjectName>
+                  <subjectNameId>28695</subjectNameId>
+                  <locale>en</locale>
+                  <subjectName>Humanities and the Arts</subjectName>
+                </subjectName>
+              </subjectNames>
+              <subjectCode>6</subjectCode>
+              <parents/>
+              <predecessors/>
+              <domain>diva</domain>
+              <notEligible>false</notEligible>
+              <organisations/>
+            </subject>
+          </parents>
+          <predecessors/>
+          <domain>diva</domain>
+          <notEligible>false</notEligible>
+          <organisations/>
+        </subject>
+      </parents>
+      <predecessors/>
+      <domain>diva</domain>
+      <notEligible>false</notEligible>
+      <organisations/>
+    </subject>
+  </nationalCategories>
   <researchSubjects></researchSubjects>
   <keyWords
     class="hashtable">
