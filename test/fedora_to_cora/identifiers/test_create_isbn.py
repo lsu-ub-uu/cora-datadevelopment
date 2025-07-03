@@ -1,5 +1,5 @@
 from xml.etree import ElementTree as ET
-from fedora_to_cora.create_identifier_type_isbn import create_identifier_type_isbn
+from fedora_to_cora.identifiers.create_isbn import create_identifier_type_isbn
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 

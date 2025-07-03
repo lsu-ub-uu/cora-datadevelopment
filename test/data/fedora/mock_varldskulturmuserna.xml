@@ -221,6 +221,12 @@
       <openAccess>true</openAccess>
     </url>
   </urls>
+  <archiveNumber>Arkivnummer.01</archiveNumber>
+  <localId>LocalId.01</localId>
+  <isi>ISI.01</isi>
+  <pmid>pmid123</pmid>
+  <patentNumber>Patentnummer01</patentNumber>
+  <scopusId>Scopus.01</scopusId>
   <nbn>urn:nbn:se:varldskulturmuseerna:diva-6</nbn>
   <oai>
     oai:DiVA.org:varldskulturmuseerna-6</oai>

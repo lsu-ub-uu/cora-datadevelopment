@@ -104,6 +104,12 @@ def test_output_transform(requests_mock):
         <identifier displayLabel="online" repeatId="1" type="isbn">978-92-893-7379-1</identifier>
         <identifier displayLabel="undefined" repeatId="2" type="isbn">978-92-893-7380-7</identifier>
         <identifier type="isrn">ISRN.01</identifier>
+        <identifier type="archiveNumber">Arkivnummer.01</identifier>
+        <identifier type="localId">LocalId.01</identifier>
+        <identifier type="pmid">pmid123</identifier>
+        <identifier type="wos">ISI.01</identifier>
+        <identifier type="scopus">Scopus.01</identifier>
+        <identifier type="patentNumber">Patentnummer01</identifier>
     </output>
     """
 

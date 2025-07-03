@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 
-from fedora_to_cora.create_identifier_doi_se_libr import (
+from fedora_to_cora.identifiers.create_doi_se_libr import (
     create_identifier_doi,
     create_identifier_se_libr,
 )

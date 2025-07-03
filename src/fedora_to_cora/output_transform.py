@@ -17,13 +17,13 @@ from fedora_to_cora.create_genre_type_output_type import create_genre_type_outpu
 from fedora_to_cora.create_name_type_personal import create_name_type_personals
 from fedora_to_cora.create_note_type_creator_count import create_note_type_creator_count
 from fedora_to_cora.create_abstracts import create_abstracts
-from fedora_to_cora.create_identifier_type_isbn import create_identifier_type_isbn
-from fedora_to_cora.create_identifier_type_isrn import create_identifier_type_isrn
+from fedora_to_cora.identifiers.create_isbn import create_identifier_type_isbn
 from fedora_to_cora.create_origin_info import create_origin_info
 from fedora_to_cora.create_extent import create_extent
 from fedora_to_cora.create_classsification_authority_ssif import (
     create_classification_authority_ssif,
 )
+from fedora_to_cora.identifiers.create_identifier import create_identifier
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
@@ -66,76 +66,36 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
 
     append_if_value(target_record, create_identifier_type_isbn(source_record))
 
-    # originInfo
-    ## dateIssued <- <publicationDate>
-    ## copyrightDate
-    ## dateOther type="online"
-    ## agent
-    ## place
-    ## edition
-    # extent <- Verkets fysiska omfattning
-    # classification authority="ssif" <- nationalCategories
-    # subject authority="diva" <- researchSubjects
-    # subject authority="sdg" <- sustainableDevelopments / behöver extra jobb
+    append_if_value(
+        target_record,
+        create_identifier(source_record, type="isrn"),
+    )
 
-    # identifier type="doi"
-    # identifier type="ismn"
-    # identifier type="archiveNumber"
-    # identifier type="openAlex"
-    # identifier type="se-libr"
-    # identifier type="localId"
+    append_if_value(
+        target_record,
+        create_identifier(source_record, type="archiveNumber"),
+    )
 
-    # identifiertype type="pmid"
-    # identifiertype type="wos"
-    # identifiertype type="scopus"
+    append_if_value(
+        target_record,
+        create_identifier(source_record, type="localId"),
+    )
 
-    # location <- urls/url
-    # location displayLabel="orderLink"
-    # note type="external" <- note
-    # relatedItem type="series"
-    # relatedItem type="researchData"
-    # relatedItem type="project"
-    # relatedItem type="initiative"
-    # relatedItem type="retracted | constituent | thesis"
-    # accessCondition authority="kb.se"
-    # localGenericMarkup / ny metadata
-    # admin
-    ## note type="internal" <- internalNote
-
-    # ---- Behövs för Sammlingsverk Update ----#
-    # attachment
-
-    # ---- Behövs ej för Sammlingsverk ----#
-    # genre type="subcategory"
-    # note type="publicationStatus"
-    # genre type="contentType"
-    # typeOfResource
-    # type
-    # material
-    # technique
-    # size
-    # duration
-    # physicalDescription
-    # dateOther type="patent"
-    # imprint
-    # identifier type="patentNumber"
-    # identifier type="isrn"
-    append_if_value(target_record, create_identifier_type_isrn(source_record))
-    # academicSemester
-    # studentDegree
-    # externalCollaboration
-    # degreeGrantingInstitution type="corporate"
-    # supervisor type="personal"
-    # examiner type="personal"
-    # opponent type="personal"
-    # presentation
-    # defence
-    # relatedItem type="journal"
-    # relatedItem type="book"
-    # relatedItem type="conferencePublication"
-    # relatedItem type="conference"
-    # relatedItem type="funder"
-    # relatedItem type="retracted"
-    # relatedItem type="constituent"
+    append_if_value(
+        target_record,
+        create_identifier(source_record, type="pmid"),
+    )
+    append_if_value(
+        target_record,
+        create_identifier(source_record, type="wos", source_selector="./isi"),
+    )
+    append_if_value(
+        target_record,
+        create_identifier(source_record, type="scopus", source_selector="./scopusId"),
+    )
+    append_if_value(
+        target_record,
+        create_identifier(source_record, type="patentNumber"),
+    )
 
     return target_record

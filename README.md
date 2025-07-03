@@ -33,18 +33,18 @@ ptw --now .
 ## Behövs för Sammlingsverk
 
 - ✅ recordInfo
-  - ✅ validationType ← `<publicationType><publicationTypeId>`
-  - ✅ permissionUnit ← domain
-  - ✅ oldId ← `<pid>`
-  - ✅ visibility ← `<administrativeInfo><updaters><userInformation><userAction>`
-  - ✅ genre type="contentType" ← `<contentType><contentTypeCode>`
-- ✅ titleInfo type="main" ← `<originalPublicationTitle>`
-- ✅ subject ← `<keyWords>`
-- ✅ genre type="outputType" (valideringstyp) ← `<publicationType>` via `get_validation_type_by_publication_typ`
-- ✅ language ← `<originalPuoriblicationTitle><language>`
-- ✅ artisticWork type="outputType" ← `<artisticWork>`
-- ✅ titleInfo type="alternative" ← `<alternativePublicationTitles>`
-- ✅ name type="personal" ←
+  - ✅ validationType <- `<publicationType><publicationTypeId>`
+  - ✅ permissionUnit <- domain
+  - ✅ oldId <- `<pid>`
+  - ✅ visibility <- `<administrativeInfo><updaters><userInformation><userAction>`
+  - ✅ genre type="contentType" <- `<contentType><contentTypeCode>`
+- ✅ titleInfo type="main" <- `<originalPublicationTitle>`
+- ✅ subject <- `<keyWords>`
+- ✅ genre type="outputType" (valideringstyp) <- `<publicationType>` via `get_validation_type_by_publication_typ`
+- ✅ language <- `<originalPuoriblicationTitle><language>`
+- ✅ artisticWork type="outputType" <- `<artisticWork>`
+- ✅ titleInfo type="alternative" <- `<alternativePublicationTitles>`
+- ✅ name type="personal" <-
 
   ```xml
   <authors><person>
@@ -54,55 +54,68 @@ ptw --now .
   <opponents><person>
   ```
 
-- ❌ name type="corporate" ← skipped
+- ❌ name type="corporate" <- skipped
 - ✅ note type="creatorCount"
-- ✅ abstract ← `<abstracts><abstract>`
+- ✅ abstract <- `<abstracts><abstract>`
 
 - originInfo
-  - ✅ dateIssued ← `<publicationDate>`
-  - ❌copyrightDate ← skipped
-  - ❌ dateOther type="online" ← skipped
+  - ✅ dateIssued <- `<publicationDate>`
+  - ❌copyrightDate <- skipped
+  - ❌ dateOther type="online" <- skipped
   - ✅ agent
   - ✅ place
   - ✅ edition
-- ✅ extent ← `<pages>`
-- ✅ classification authority="ssif" ← `<nationalCategories><subject><subjectCode>`
-- subject authority="diva" ← `<researchSubjects>`
-- subject authority="sdg" ← `<sustainableDevelopments>` (behöver extra jobb)
-
+- ✅ extent <- `<pages>`
+- ✅ classification authority="ssif" <- `<nationalCategories><subject><subjectCode>`
+- ✅ subject authority="diva" <- `<researchSubjects>`
+- subject authority="sdg" <- `<sustainableDevelopments>` (mappa från developmentId (sustainable_development i DB till sdg nummer))
 - ✅ identifier type="isbn"
 - ✅ identifier type="doi"
 - identifier type="ismn"
-- identifier type="archiveNumber"
+  ```xml
+    <ismnNumbers>
+      <ismn>
+        <number>978-91-506-2649-0</number>
+        <type>print</type>
+      </ismn>
+      <ismn>
+        <number>978-92-893-7379-1</number>
+        <type>electronic</type>
+      </ismn>
+      <ismn>
+        <number>978-92-893-7380-7</number>
+      </ismn>
+    </ismnNumbers>
+  ```
+- ✅identifier type="archiveNumber"> <-`<archiveNumber>`
 - identifier type="openAlex" (NY)
 - ✅ identifier type="se-libr"
-- identifier type="localId"
-- identifiertype type="pmid"
-- identifiertype type="wos"`<artisticWork>false</artisticWork>`
-- identifiertype type="scopus"
-- location ← `<urls><url>`
+- ✅ identifier type="localId"
+- ✅ identifier type type="pmid"
+- ✅ identifier type type="wos"
+- ✅ identifier type type="scopus"
+- location <- `<urls><url>` (openAccess behöver läggas till i metadata)
 - location displayLabel="orderLink"
   ```xml
   <publicationOrder>
-    <orderProfileId>OrderProfile-4</orderProfileId>
+    <orderProfileId>OrderProfile-4</orderProfileId>  (Kolla upp i höst, ärgeneriska texter i Classic)
     <orderURL>https://liu.powerinit.com/Modules/Prepri/Public/Login.aspx?c=3</orderURL> Troligen
     <orderLink>true</orderLink>
     <validFrom>2021-02-04T06:34:00.000+01:00</validFrom>
     <parameters/>
   </publicationOrder>
   ```
-- note type="external" ← `<note>`
-- relatedItem type="series" ← `<seriesInfo>`
+- note type="external" <- `<note>`
+- relatedItem type="series" <- `<seriesInfo>`
 - relatedItem type="researchData" (NY)
-- relatedItem type="project"
-- relatedItem type="initiative"
-
-- relatedItem type="retracted | constituent | thesis"
-- accessCondition authority="kb.se"
+- relatedItem type="project" <- `<projects>`
+- relatedItem type="initiative" (NY)
+- accessCondition authority="kb.se" (NY)
 - localGenericMarkup (NY)
-- admin
-  - ✅ reviewed
-  - note type="internal" ← `<internalNote>`
+- adminInfo
+  - failed <- `<failed>`
+  - ✅ reviewed <- `<reviewed>`
+  - note type="internal" <- `<internalNote>`
 
 ## Behövs för Samlingsverk Update
 
@@ -111,36 +124,36 @@ ptw --now .
 
 ## Behövs ej för Sammlingsverk
 
-- genre type="subcategory"
-- note type="publicationStatus"
-- typeOfResource
-- type
-- material
-- technique
-- size
-- duration
-- physicalDescription
-- dateOther type="patent"
-- imprint
-- identifier type="patentNumber"
+- genre type="subcategory" <- `<subType>`
+- note type="publicationStatus" <- `<publicationStatus>`
+- typeOfResource <- `<mediaInformation>` från `get_mediatype`
+- type <- `<mediaInformation>`
+- material <- `<mediaInformation>`
+- technique <- `<mediaInformation>`
+- size <- `<mediaInformation>`
+- duration <- `<mediaInformation>`
+- physicalDescription <- `<mediaInformation>`
+- dateOther type="patent" <- `<patentDate>`
+- imprint (Gäller bara UU)
+- ✅ identifier type="patentNumber"
 - ✅ identifier type="isrn"
-- academicSemester
-- studentDegree
-- externalCollaboration
-- degreeGrantingInstitution type="corporate"
-- supervisor type="personal"
-- examiner type="personal"
-- opponent type="personal"
-- presentation
-- defence
-- relatedItem type="journal"
-- relatedItem type="book"
-- relatedItem type="conferencePublication"
-- relatedItem type="conference"
+- academicSemester <- `<academicTerm>`
+- studentDegree <- `<studentDegrees>`
+- externalCollaboration <- `<externalCooperation>`
+- degreeGrantingInstitution type="corporate" <- <defence><grantingInstitution>`
+- supervisor type="personal" <- `<supervisors><person>`
+- examiner type="personal" <- `<examiners><person>`
+- opponent type="personal" <- `<opponents><person>`
+- presentation <- `<defence>` (Kolla om både presentation och defence behövs)
+- defence <- `<defence>`
+- relatedItem type="journal" <- `<journal>`
+- relatedItem type="book" <- `<bookTitle>` och `<bookEdition>` <- `<statmentOfResponsibility>` som barnelement i Cora
+- relatedItem type="conferencePublication" <- `<proceedingsTitle>` och `<proceedingsEditor>` <- `<statmentOfResponsibility>` som barnelement i Cora
+- relatedItem type="conference" <- `<conference>`
 - relatedItem type="funder" <- `<funderInfos><funderId><projectNumber>`
-- relatedItem type="retracted"
-- relatedItem type="constituent"
-- failed
+- related (NY)
+- related type="retracted" (NY)
+- related type="constituent" (länkade avhandligar)
 
 ## Behöver mer information för att migrera
 

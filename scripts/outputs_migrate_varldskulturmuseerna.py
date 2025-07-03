@@ -12,7 +12,7 @@ failed_transformations = []
 
 env = {
     "xml_dir": "data/fedora_xml/varldskulturmuseerna/20250625",
-    "system": "preview",
+    "system": "pre",
     "login_id": "divaAdmin@cora.epc.ub.uu.se",
     "app_token": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
     "dry_run": True,  # Set to True to skip actual transformations
@@ -71,17 +71,13 @@ def transform_fedora_file(filename, context: Context):
         valid, errors = validate_record(
             cora_output,
             record_type="diva-output",
-            auth_token=context.get_auth_token(),
-            base_url=context.get_base_url(),
-            logger=context.get_logger(),
+            context=context,
         )
     else:
         valid, errors = create_record(
             cora_output,
             record_type="diva-output",
-            auth_token=context.get_auth_token(),
-            base_url=context.get_base_url(),
-            logger=context.get_logger(),
+            context=context,
         )
 
     if valid:
