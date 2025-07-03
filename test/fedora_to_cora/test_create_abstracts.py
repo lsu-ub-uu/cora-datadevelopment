@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from fedora_to_cora import create_abstracts
+from fedora_to_cora.create_abstracts import create_abstracts
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 

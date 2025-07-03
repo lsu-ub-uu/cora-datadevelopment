@@ -5,7 +5,7 @@ from common.common_data import read_source_xml
 from cora.context import MockContext
 
 
-def test_creates_output(requests_mock):
+def test_output_transform(requests_mock):
     affiliation_organisation_id = "diva-organisation:15111790767789817"
     mock_response = f"""
     <dataList>
@@ -73,7 +73,9 @@ def test_creates_output(requests_mock):
             <place repeatId="0">
                 <placeTerm>Stockholm</placeTerm>
             </place>
+            <edition>3</edition>
         </originInfo>
+        <extent>208</extent>
         <genre type="outputType">publication_edited-book</genre>
         <language repeatId="0">
             <languageTerm type="code" authority="iso639-2b">eng</languageTerm>

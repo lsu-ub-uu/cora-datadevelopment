@@ -1,6 +1,9 @@
 import xml.etree.ElementTree as ET
 
-from fedora_to_cora import create_identifier_doi, create_identifier_se_libr
+from fedora_to_cora.create_identifier_doi_se_libr import (
+    create_identifier_doi,
+    create_identifier_se_libr,
+)
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 source_record = ET.fromstring(

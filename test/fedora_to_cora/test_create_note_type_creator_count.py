@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from fedora_to_cora import create_note_type_creator_count
+from fedora_to_cora.create_note_type_creator_count import create_note_type_creator_count
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 

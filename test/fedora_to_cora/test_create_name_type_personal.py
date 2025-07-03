@@ -1,5 +1,5 @@
 from xml.etree import ElementTree as ET
-from fedora_to_cora import create_name_type_personals
+from fedora_to_cora.create_name_type_personal import create_name_type_personals
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.context import MockContext
 

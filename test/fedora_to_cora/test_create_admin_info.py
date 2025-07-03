@@ -1,4 +1,4 @@
-from fedora_to_cora import create_admin_info
+from fedora_to_cora.create_admin_info import create_admin_info
 import xml.etree.ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 

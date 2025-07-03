@@ -60,12 +60,12 @@ ptw --now .
 
 - originInfo
   - ✅ dateIssued ← `<publicationDate>`
-  - copyrightDate
-  - dateOther type="online"
-  - agent
-  - place
-  - edition
-- extent ← Verkets fysiska omfattning
+  - ❌copyrightDate ← skipped
+  - ❌ dateOther type="online" ← skipped
+  - ✅ agent
+  - ✅ place
+  - ✅ edition
+- extent ← `<pages>`
 - classification authority="ssif" ← `<nationalCategories>`
 - subject authority="diva" ← `<researchSubjects>`
 - subject authority="sdg" ← `<sustainableDevelopments>` (behöver extra jobb)

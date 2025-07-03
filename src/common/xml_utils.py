@@ -29,9 +29,19 @@ def get_inner_xml(element: ET.Element) -> str:
     return "".join(ET.tostring(child, encoding="unicode") for child in element)
 
 
-def append_if_value(parent: ET.Element, child: ET.Element | None) -> None:
+def append_if_value(
+    parent: ET.Element, child: ET.Element | list[ET.Element] | None
+) -> None:
     """
-    Append a child element to a parent if the child is not None and has content.
+    Append a child element or list of child elements to a parent if they are not None and have content.
     """
-    if child is not None and (len(child) > 0 or child.text):
-        parent.append(child)
+    if child is None:
+        return
+
+    if isinstance(child, list):
+        for element in child:
+            if element is not None and (len(element) > 0 or element.text):
+                parent.append(element)
+    else:
+        if len(child) > 0 or child.text:
+            parent.append(child)

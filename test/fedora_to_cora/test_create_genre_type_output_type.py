@@ -1,6 +1,6 @@
 import pytest
 from xml.etree import ElementTree as ET
-from fedora_to_cora import create_genre_type_output_type
+from fedora_to_cora.create_genre_type_output_type import create_genre_type_output_type
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 

@@ -195,6 +195,8 @@
     </seriesInfo>
   </seriesInfos>
   <dateIssued>2023</dateIssued>
+  <pages>208</pages>
+  <edition>3</edition>
   <distributor>
     <organisationAlternativeNames></organisationAlternativeNames>
     <organisationContacts></organisationContacts>
@@ -207,6 +209,7 @@
     <showInDefence>false</showInDefence>
     <topLevel>false</topLevel>
   </distributor>
+
   <publisher>
     <city>Stockholm</city>
     <publisherName>Uppsala Läroverk</publisherName>
