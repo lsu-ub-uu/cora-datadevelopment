@@ -15,7 +15,6 @@ from fedora_to_cora.create_subject import create_subjects
 from fedora_to_cora.create_artistic_work import create_artistic_work
 from fedora_to_cora.create_genre_type_output_type import create_genre_type_output_type
 from fedora_to_cora.create_name_type_personal import create_name_type_personals
-from fedora_to_cora.create_note_type_creator_count import create_note_type_creator_count
 from fedora_to_cora.create_abstracts import create_abstracts
 from fedora_to_cora.identifiers.create_isbn import create_identifier_type_isbn
 from fedora_to_cora.create_origin_info import create_origin_info
@@ -24,6 +23,9 @@ from fedora_to_cora.create_classsification_authority_ssif import (
     create_classification_authority_ssif,
 )
 from fedora_to_cora.identifiers.create_identifier import create_identifier
+from fedora_to_cora.create_note import create_note
+from fedora_to_cora.create_location import create_locations
+from fedora_to_cora.create_subject_authority_sdg import create_subject_authority_sdg
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
@@ -58,11 +60,21 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     # Does not handle linked persons yet
     append_if_value(target_record, create_name_type_personals(source_record, context))
 
-    append_if_value(target_record, create_note_type_creator_count(source_record))
+    append_if_value(
+        target_record,
+        create_note(
+            source_record, type="creatorCount", source_selector="./noOfContributors"
+        ),
+    )
 
     append_if_value(target_record, create_abstracts(source_record))
 
     append_if_value(target_record, create_admin_info(source_record))
+
+    append_if_value(
+        target_record,
+        create_subject_authority_sdg(source_record),
+    )
 
     append_if_value(target_record, create_identifier_type_isbn(source_record))
 
@@ -96,6 +108,14 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     append_if_value(
         target_record,
         create_identifier(source_record, type="patentNumber"),
+    )
+    append_if_value(
+        target_record,
+        create_locations(source_record),
+    )
+    append_if_value(
+        target_record,
+        create_note(source_record, type="external", source_selector="./note"),
     )
 
     return target_record

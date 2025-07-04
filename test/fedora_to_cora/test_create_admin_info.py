@@ -68,6 +68,47 @@ def test_create_admin_info_when_no_reviewed():
     )
 
 
+def test_create_admin_info_failed_true():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <failed>true</failed>
+        </publication>
+        """
+    )
+
+    admin = create_admin_info(source_record)
+
+    assert_equal_for_xml_and_xml_string(
+        admin,
+        """
+            <adminInfo>
+                <failed>true</failed>
+            </adminInfo>
+        """,
+    )
+
+
+def test_create_admin_info_failed_false():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <failed>false</failed>
+        </publication>
+        """
+    )
+
+    admin = create_admin_info(source_record)
+
+    assert_equal_for_xml_and_xml_string(
+        admin,
+        """
+            <adminInfo>
+            </adminInfo>
+        """,
+    )
+
+
 def test_create_admin_info_when_no_note_and_no_reviewed():
     source_record = ET.fromstring(
         """

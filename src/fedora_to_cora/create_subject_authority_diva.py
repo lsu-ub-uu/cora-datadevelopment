@@ -23,8 +23,6 @@ def create_subject_authority_diva(
         if topic.text
     ]
 
-    print(f"Found {len(topics)} topics in source record.")
-
     append_if_value(subject, topics)
 
     return subject
@@ -34,8 +32,6 @@ def _create_topic(subject_id: str, repeat_id: int, context: Context) -> ET.Eleme
     cora_id = get_cora_id_by_old_id(
         subject_id, record_type=DIVA_SUBJECT_RECORD_TYPE, context=context
     )
-
-    print(f"Found Cora ID for subject '{subject_id}': {cora_id}")
 
     topic = create_record_link_using_name_type_id(
         name_in_data="topic", record_type=DIVA_SUBJECT_RECORD_TYPE, record_id=cora_id

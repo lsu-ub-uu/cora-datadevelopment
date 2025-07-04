@@ -216,7 +216,7 @@
   </publisher>
   <urls>
     <url>
-      <url>https://archive.org/details/ostasiatiska?query=bulletin&amp;sin=</url>
+      <url>http://example.com</url>
       <label>BMFEA vol 1-75</label>
       <openAccess>true</openAccess>
     </url>
@@ -240,6 +240,25 @@
       </publicationIdentifier>
     </entry>
   </identifiers>
+  <sustainableDevelopments>
+    <sustainableDevelopment>
+      <developmentId>850</developmentId>
+      <domain>uu</domain>
+      <name>
+        <name>Exempel Hållbar utveckling</name>
+        <locale>sv</locale>
+      </name>
+      <alternativeNames>
+        <sustainableDevelopmentName>
+          <developmentNameId>72150</developmentNameId>
+          <name>
+            <name>Example sustainable development</name>
+            <locale>en</locale>
+          </name>
+        </sustainableDevelopmentName>
+      </alternativeNames>
+    </sustainableDevelopment>
+  </sustainableDevelopments>
   <categories></categories>
   <nationalCategories>
     <subject>
@@ -601,7 +620,7 @@
       </text>
     </abstract>
   </abstracts>
-  <note></note>
+  <note>This is an external note.</note>
   <internalNote>This is an internal note.</internalNote>
   <formatElectronic>
     false</formatElectronic>
@@ -619,7 +638,8 @@
   <registratedDuplicate>false</registratedDuplicate>
   <artisticWork>false</artisticWork>
   <failed>
-    false</failed>
+    false
+  </failed>
   <hidden>false</hidden>
   <publicationOrder>
     <orderLink>false</orderLink>

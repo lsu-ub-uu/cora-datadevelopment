@@ -68,7 +68,7 @@ ptw --now .
 - ✅ extent <- `<pages>`
 - ✅ classification authority="ssif" <- `<nationalCategories><subject><subjectCode>`
 - ✅ subject authority="diva" <- `<researchSubjects>`
-- subject authority="sdg" <- `<sustainableDevelopments>` (mappa från developmentId (sustainable_development i DB till sdg nummer))
+- ✅ subject authority="sdg" <- `<sustainableDevelopments>` (värden som inte är giltiga för valideringen behöver uppdateras)
 - ✅ identifier type="isbn"
 - ✅ identifier type="doi"
 - identifier type="ismn"
@@ -87,14 +87,14 @@ ptw --now .
       </ismn>
     </ismnNumbers>
   ```
-- ✅identifier type="archiveNumber"> <-`<archiveNumber>`
+- ✅ identifier type="archiveNumber"> <- `<archiveNumber>`
 - identifier type="openAlex" (NY)
 - ✅ identifier type="se-libr"
 - ✅ identifier type="localId"
 - ✅ identifier type type="pmid"
 - ✅ identifier type type="wos"
 - ✅ identifier type type="scopus"
-- location <- `<urls><url>` (openAccess behöver läggas till i metadata)
+- ✅ location <- `<urls><url>` (openAccess behöver hanteras)
 - location displayLabel="orderLink"
   ```xml
   <publicationOrder>
@@ -105,17 +105,22 @@ ptw --now .
     <parameters/>
   </publicationOrder>
   ```
-- note type="external" <- `<note>`
-- relatedItem type="series" <- `<seriesInfo>`
+- ✅note type="external" <- `<note>`
+- relatedItem type="series" <- `<seriesInfo>` och `<uncontrolledSeriesInfo>`
+  - series <- `<seriesInfo>`
+  - titleInfo/mainTitle <- `uncontrolledSeriesInfo/series/seriesNameUncontrolled`
+  - identifier type="issn" displayLabel="pissn" <- `uncontrolledSeriesInfo/series/issn`
+  - identifier type="issn" displayLabel="eissn" <- `uncontrolledSeriesInfo/series/eissn`
+  - partNumber <- `uncontrolledSeriesInfo/numberInSeries` (?)
 - relatedItem type="researchData" (NY)
 - relatedItem type="project" <- `<projects>`
 - relatedItem type="initiative" (NY)
 - accessCondition authority="kb.se" (NY)
 - localGenericMarkup (NY)
 - adminInfo
-  - failed <- `<failed>`
+  - ✅ failed <- `<failed>`
   - ✅ reviewed <- `<reviewed>`
-  - note type="internal" <- `<internalNote>`
+  - ✅ note type="internal" <- `<internalNote>`
 
 ## Behövs för Samlingsverk Update
 
@@ -125,7 +130,7 @@ ptw --now .
 ## Behövs ej för Sammlingsverk
 
 - genre type="subcategory" <- `<subType>`
-- note type="publicationStatus" <- `<publicationStatus>`
+- note type="publicationStatus" <- `<publicationStatus>` (behöver mappas om till värden i Cora)
 - typeOfResource <- `<mediaInformation>` från `get_mediatype`
 - type <- `<mediaInformation>`
 - material <- `<mediaInformation>`
@@ -140,7 +145,7 @@ ptw --now .
 - academicSemester <- `<academicTerm>`
 - studentDegree <- `<studentDegrees>`
 - externalCollaboration <- `<externalCooperation>`
-- degreeGrantingInstitution type="corporate" <- <defence><grantingInstitution>`
+- degreeGrantingInstitution type="corporate" <- `<defence><grantingInstitution>`
 - supervisor type="personal" <- `<supervisors><person>`
 - examiner type="personal" <- `<examiners><person>`
 - opponent type="personal" <- `<opponents><person>`

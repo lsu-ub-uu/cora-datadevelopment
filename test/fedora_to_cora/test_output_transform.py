@@ -100,6 +100,9 @@ def test_output_transform(requests_mock):
             <note type="internal">This is an internal note.</note>
             <reviewed>false</reviewed>
         </adminInfo>
+        <subject authority="sdg">
+            <topic repeatId="0">sdg1</topic>
+        </subject>
         <identifier displayLabel="print" repeatId="0" type="isbn">978-91-506-2649-0</identifier>
         <identifier displayLabel="online" repeatId="1" type="isbn">978-92-893-7379-1</identifier>
         <identifier displayLabel="undefined" repeatId="2" type="isbn">978-92-893-7380-7</identifier>
@@ -110,6 +113,11 @@ def test_output_transform(requests_mock):
         <identifier type="wos">ISI.01</identifier>
         <identifier type="scopus">Scopus.01</identifier>
         <identifier type="patentNumber">Patentnummer01</identifier>
+        <location repeatId="0">
+            <url>http://example.com</url>
+            <displayLabel>BMFEA vol 1-75</displayLabel>
+        </location>
+        <note type="external">This is an external note.</note>
     </output>
     """
 
