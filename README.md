@@ -106,12 +106,13 @@ ptw --now .
   </publicationOrder>
   ```
 - ✅note type="external" <- `<note>`
-- relatedItem type="series" <- `<seriesInfo>` och `<uncontrolledSeriesInfo>`
-  - series <- `<seriesInfo>`
-  - titleInfo/mainTitle <- `uncontrolledSeriesInfo/series/seriesNameUncontrolled`
-  - identifier type="issn" displayLabel="pissn" <- `uncontrolledSeriesInfo/series/issn`
-  - identifier type="issn" displayLabel="eissn" <- `uncontrolledSeriesInfo/series/eissn`
-  - partNumber <- `uncontrolledSeriesInfo/numberInSeries` (?)
+- ✅ relatedItem type="series" <- `<seriesInfo>` och `<uncontrolledSeriesInfo>`
+  - ✅ series <- `<seriesInfo>`
+  - ✅ titleInfo/mainTitle <- `uncontrolledSeriesInfo/series/seriesNameUncontrolled`
+  - ✅ identifier type="issn" displayLabel="pissn" <- `uncontrolledSeriesInfo/series/issn`
+  - ✅ identifier type="issn" displayLabel="eissn" <- `uncontrolledSeriesInfo/series/eissn`
+  - ✅ partNumber <- `uncontrolledSeriesInfo/numberInSeries` (?)
+  - ❌ No mapping: `uncontrolledSeriesInfos/seriesAlternativeTitles, subjects, relationships`
 - relatedItem type="researchData" (NY)
 - relatedItem type="project" <- `<projects>`
 - relatedItem type="initiative" (NY)
@@ -144,6 +145,10 @@ ptw --now .
 - ✅ identifier type="isrn"
 - academicSemester <- `<academicTerm>`
 - studentDegree <- `<studentDegrees>`
+  - degreeLevel <- `studentDegree/thesisLevel/thesisLevelCode`
+  - universityPoints <- `studentDegree/universityPoiunts/hp`
+  - course <- link to diva-course by oldId: `studentDegree/undergraduateSubject/subjectId`
+  - programme <- link to diva-programme by oldId: `studentDegree/educationalProgramme/subjectId`
 - externalCollaboration <- `<externalCooperation>`
 - degreeGrantingInstitution type="corporate" <- `<defence><grantingInstitution>`
 - supervisor type="personal" <- `<supervisors><person>`
