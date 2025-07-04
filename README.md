@@ -144,11 +144,11 @@ ptw --now .
 - ✅ identifier type="patentNumber"
 - ✅ identifier type="isrn"
 - academicSemester <- `<academicTerm>`
-- studentDegree <- `<studentDegrees>`
-  - degreeLevel <- `studentDegree/thesisLevel/thesisLevelCode`
-  - universityPoints <- `studentDegree/universityPoiunts/hp`
-  - course <- link to diva-course by oldId: `studentDegree/undergraduateSubject/subjectId`
-  - programme <- link to diva-programme by oldId: `studentDegree/educationalProgramme/subjectId`
+- ✅ studentDegree <- `<studentDegrees>`
+  - ✅ degreeLevel <- `studentDegree/thesisLevel/thesisLevelCode`
+  - ✅ universityPoints <- `studentDegree/universityPoiunts/hp`
+  - ✅ course <- link to diva-course by oldId: `studentDegree/undergraduateSubject/subjectId`
+  - ✅ programme <- link to diva-programme by oldId: `studentDegree/educationalProgramme/subjectId`
 - externalCollaboration <- `<externalCooperation>`
 - degreeGrantingInstitution type="corporate" <- `<defence><grantingInstitution>`
 - supervisor type="personal" <- `<supervisors><person>`

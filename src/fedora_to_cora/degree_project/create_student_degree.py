@@ -33,11 +33,13 @@ def _create_student_degree(
         points.text = university_points
 
     # TODO Linked course
-    course_old_id = source_student_degree.findtext("./undergraduateSubject/subjectId")
-    if course_old_id:
+    programme_old_id = source_student_degree.findtext(
+        "./undergraduateSubject/subjectId"
+    )
+    if programme_old_id:
         cora_id = get_cora_id_by_old_id(
             context=context,
-            old_id=course_old_id,
+            old_id=programme_old_id,
             record_type="diva-course",
         )
         student_degree.append(
@@ -49,5 +51,21 @@ def _create_student_degree(
         )
 
     # TODO Linked programme
+    programme_old_id = source_student_degree.findtext(
+        "./educationalProgramme/subjectId"
+    )
+    if programme_old_id:
+        cora_id = get_cora_id_by_old_id(
+            context=context,
+            old_id=programme_old_id,
+            record_type="diva-course",
+        )
+        student_degree.append(
+            create_record_link_using_name_type_id(
+                "programme",
+                "diva-programme",
+                cora_id,
+            )
+        )
 
     return student_degree
