@@ -50,7 +50,7 @@ def test_create_controlled_series_link(monkeypatch):
     assert_equal_for_xml_and_xml_string(
         series_items[0],
         f"""
-        <relatedItem type="series" repeatId="0">
+        <relatedItem type="series" repeatId="controlled0">
             <series>
                 <linkedRecordType>diva-series</linkedRecordType>
                 <linkedRecordId>{series_cora_id_1}</linkedRecordId>
@@ -61,7 +61,7 @@ def test_create_controlled_series_link(monkeypatch):
     assert_equal_for_xml_and_xml_string(
         series_items[1],
         f"""
-        <relatedItem type="series" repeatId="1">
+        <relatedItem type="series" repeatId="controlled1">
             <series>
                 <linkedRecordType>diva-series</linkedRecordType>
                 <linkedRecordId>{series_cora_id_2}</linkedRecordId>
