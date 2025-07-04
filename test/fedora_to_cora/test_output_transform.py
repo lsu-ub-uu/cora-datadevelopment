@@ -8,6 +8,7 @@ from cora.context import MockContext
 def test_output_transform(requests_mock):
     affiliation_organisation_id = "diva-organisation:15111790767789817"
     subject_id = "diva-subject:30224"
+    series_id = "diva-series:17450"
 
     requests_mock.get(
         "https://pre.diva-portal.org/rest/record/searchResult/diva-organisationSearch",
@@ -16,6 +17,10 @@ def test_output_transform(requests_mock):
     requests_mock.get(
         "https://pre.diva-portal.org/rest/record/searchResult/diva-subjectSearch",
         text=_create_search_mock_response("subject", subject_id),
+    )
+    requests_mock.get(
+        "https://pre.diva-portal.org/rest/record/searchResult/diva-seriesSearch",
+        text=_create_search_mock_response("series", series_id),
     )
 
     fedora_xml = read_source_xml("test/data/fedora/mock_varldskulturmuserna.xml")
@@ -118,6 +123,12 @@ def test_output_transform(requests_mock):
             <displayLabel>BMFEA vol 1-75</displayLabel>
         </location>
         <note type="external">This is an external note.</note>
+        <relatedItem type="series" repeatId="controlled0">
+            <series>
+                <linkedRecordType>diva-series</linkedRecordType>
+                <linkedRecordId>{series_id}</linkedRecordId>
+            </series>
+        </relatedItem>
     </output>
     """
 

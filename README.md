@@ -159,6 +159,7 @@ ptw --now .
 - related (NY)
 - related type="retracted" (NY)
 - related type="constituent" (länkade avhandligar)
+- note type="statementOfResponsibility
 
 ## Behöver mer information för att migrera
 

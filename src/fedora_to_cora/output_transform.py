@@ -26,6 +26,9 @@ from fedora_to_cora.identifiers.create_identifier import create_identifier
 from fedora_to_cora.create_note import create_note
 from fedora_to_cora.create_location import create_locations
 from fedora_to_cora.create_subject_authority_sdg import create_subject_authority_sdg
+from fedora_to_cora.create_related_item_type_series import (
+    create_related_item_type_series,
+)
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
@@ -97,25 +100,35 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
         target_record,
         create_identifier(source_record, type="pmid"),
     )
+
     append_if_value(
         target_record,
         create_identifier(source_record, type="wos", source_selector="./isi"),
     )
+
     append_if_value(
         target_record,
         create_identifier(source_record, type="scopus", source_selector="./scopusId"),
     )
+
     append_if_value(
         target_record,
         create_identifier(source_record, type="patentNumber"),
     )
+
     append_if_value(
         target_record,
         create_locations(source_record),
     )
+
     append_if_value(
         target_record,
         create_note(source_record, type="external", source_selector="./note"),
+    )
+
+    append_if_value(
+        target_record,
+        create_related_item_type_series(source_record, context),
     )
 
     return target_record
