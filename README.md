@@ -132,7 +132,7 @@ ptw --now .
 
 - genre type="subcategory" <- `<subType>`
 - note type="publicationStatus" <- `<publicationStatus>` (behöver mappas om till värden i Cora)
-- typeOfResource <- `<mediaInformation>` från `get_mediatype`
+- ✅ typeOfResource <- `<mediaType>`
 - type <- `<mediaInformation>`
 - material <- `<mediaInformation>`
 - technique <- `<mediaInformation>`
@@ -168,14 +168,14 @@ ptw --now .
   - ✅ identifier type="issn" displayLabel="pissn"
   - ✅ identifier type="issn" displayLabel="eissn"
   - part
-    - detail type="volume"
+    - detail type="volume" (är det `<volume>` som ska vara värdet?)
       - number
-    - detail type="issue"
+    - detail type="issue" (är det `<issueNumber>` som ska vara värdet?)
       - number
     - detail type="artNo"
     - extent
-      - start
-      - end
+      - start (är det `<startPage>` som ska vara värdet?)
+      - end (är det `<endPage>` som ska vara värdet?)
 - relatedItem type="book" <- `<bookTitle>` och `<bookEdition>` <- `<statmentOfResponsibility>` som barnelement i Cora
 - relatedItem type="conferencePublication" <- `<proceedingsTitle>` och `<proceedingsEditor>` <- `<statmentOfResponsibility>` som barnelement i Cora
 - relatedItem type="conference" <- `<conference>`
