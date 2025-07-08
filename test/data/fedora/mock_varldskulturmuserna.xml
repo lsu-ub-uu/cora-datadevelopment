@@ -987,4 +987,11 @@
     </partner>
     </partners>
   </externalCooperation>
+  <defence>
+    <grantingInstitution>
+        <organisationName>
+            <name>Uppsala universitet</name>
+        </organisationName>
+    </grantingInstitution>
+</defence>
 </publication>

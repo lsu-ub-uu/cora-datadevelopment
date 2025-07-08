@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from fedora_to_cora.create_related_item_type_series import (
+from fedora_to_cora.related_items.create_series import (
     create_related_item_type_series,
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
@@ -21,7 +21,7 @@ def test_create_controlled_series_link(monkeypatch):
             raise ValueError(f"Unexpected old ID: {old_id}")
 
     monkeypatch.setattr(
-        "fedora_to_cora.create_related_item_type_series.get_cora_id_by_old_id",
+        "fedora_to_cora.related_items.create_series.get_cora_id_by_old_id",
         get_cora_id_by_old_id_mock,
     )
 

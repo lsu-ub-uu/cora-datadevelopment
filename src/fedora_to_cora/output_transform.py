@@ -26,11 +26,12 @@ from fedora_to_cora.identifiers.create_identifier import create_identifier
 from fedora_to_cora.create_note import create_note
 from fedora_to_cora.create_location import create_locations
 from fedora_to_cora.create_subject_authority_sdg import create_subject_authority_sdg
-from fedora_to_cora.create_related_item_type_series import (
+from fedora_to_cora.related_items.create_series import (
     create_related_item_type_series,
 )
 from fedora_to_cora.degree_project.create_student_degree import create_student_degrees
 from fedora_to_cora.degree_project.create_external_collaboration import create_external_collaboration
+from fedora_to_cora.create_degree_granting_institution import create_degree_granting_institution
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
     target_record = ET.Element("output")
@@ -133,8 +134,12 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     )
 
     append_if_value(target_record, create_student_degrees(source_record, context))
+    
     append_if_value(
         target_record,
         create_external_collaboration(source_record),
     )
+    
+    append_if_value(target_record, create_degree_granting_institution(source_record, context))
+    
     return target_record

@@ -150,8 +150,8 @@ ptw --now .
   - ✅ course <- link to diva-course by oldId: `studentDegree/undergraduateSubject/subjectId`
   - ✅ programme <- link to diva-programme by oldId: `studentDegree/educationalProgramme/subjectId`
 - ✅ externalCollaboration <- `<externalCooperation>`
-- degreeGrantingInstitution type="corporate" <- `<defence><grantingInstitution>`
-  - organisation
+- ✅ degreeGrantingInstitution type="corporate" <- `<defence><grantingInstitution>`
+  - ✅ organisation
   - ✅ namePart
   - ✅ role
   - ❌ identifier type="ror" (ROR finns inte i Classic)
@@ -160,7 +160,22 @@ ptw --now .
 - opponent type="personal" <- `<opponents><person>`
 - presentation <- `<defence>` (Kolla om både presentation och defence behövs)
 - defence <- `<defence>`
-- relatedItem type="journal" <- `<journal>`
+- relatedItem type="journal" <- `<journal>` (openAccess behöver hanteras)
+  - ✅ journal
+  - ✅ titleInfo
+    - ✅ title
+    - ✅ subTitle
+  - ✅ identifier type="issn" displayLabel="pissn"
+  - ✅ identifier type="issn" displayLabel="eissn"
+  - part
+    - detail type="volume"
+      - number
+    - detail type="issue"
+      - number
+    - detail type="artNo"
+    - extent
+      - start
+      - end
 - relatedItem type="book" <- `<bookTitle>` och `<bookEdition>` <- `<statmentOfResponsibility>` som barnelement i Cora
 - relatedItem type="conferencePublication" <- `<proceedingsTitle>` och `<proceedingsEditor>` <- `<statmentOfResponsibility>` som barnelement i Cora
 - relatedItem type="conference" <- `<conference>`

@@ -137,6 +137,14 @@ def test_output_transform(requests_mock):
             <namePart repeatId="0">En extern partner</namePart>
             <namePart repeatId="1">Ytterligare extern partner</namePart>
         </externalCollaboration>
+        <degreeGrantingInstitution type="corporate">
+            <namePart>Uppsala universitet</namePart>
+            <role>
+                <roleTerm>
+                    dgg
+                </roleTerm>
+            </role>
+        </degreeGrantingInstitution>
     </output>
     """
 
