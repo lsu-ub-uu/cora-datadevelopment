@@ -19,7 +19,7 @@ from fedora_to_cora.create_abstracts import create_abstracts
 from fedora_to_cora.identifiers.create_isbn import create_identifier_type_isbn
 from fedora_to_cora.create_origin_info import create_origin_info
 from fedora_to_cora.create_extent import create_extent
-from fedora_to_cora.create_classsification_authority_ssif import (
+from fedora_to_cora.create_classification_authority_ssif import (
     create_classification_authority_ssif,
 )
 from fedora_to_cora.identifiers.create_identifier import create_identifier
@@ -29,7 +29,8 @@ from fedora_to_cora.create_subject_authority_sdg import create_subject_authority
 from fedora_to_cora.create_related_item_type_series import (
     create_related_item_type_series,
 )
-
+from fedora_to_cora.degree_project.create_student_degree import create_student_degrees
+from fedora_to_cora.degree_project.create_external_collaboration import create_external_collaboration
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
     target_record = ET.Element("output")
@@ -131,4 +132,9 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
         create_related_item_type_series(source_record, context),
     )
 
+    append_if_value(target_record, create_student_degrees(source_record, context))
+    append_if_value(
+        target_record,
+        create_external_collaboration(source_record),
+    )
     return target_record

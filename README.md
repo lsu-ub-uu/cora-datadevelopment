@@ -149,8 +149,12 @@ ptw --now .
   - ✅ universityPoints <- `studentDegree/universityPoiunts/hp`
   - ✅ course <- link to diva-course by oldId: `studentDegree/undergraduateSubject/subjectId`
   - ✅ programme <- link to diva-programme by oldId: `studentDegree/educationalProgramme/subjectId`
-- externalCollaboration <- `<externalCooperation>`
+- ✅ externalCollaboration <- `<externalCooperation>`
 - degreeGrantingInstitution type="corporate" <- `<defence><grantingInstitution>`
+  - organisation
+  - ✅ namePart
+  - ✅ role
+  - ❌ identifier type="ror" (ROR finns inte i Classic)
 - supervisor type="personal" <- `<supervisors><person>`
 - examiner type="personal" <- `<examiners><person>`
 - opponent type="personal" <- `<opponents><person>`

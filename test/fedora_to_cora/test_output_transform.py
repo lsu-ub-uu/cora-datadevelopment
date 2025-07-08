@@ -129,6 +129,14 @@ def test_output_transform(requests_mock):
                 <linkedRecordId>{series_id}</linkedRecordId>
             </series>
         </relatedItem>
+        <studentDegree repeatId="0">
+            <degreeLevel>H2</degreeLevel>Z>
+            <universityPoints>20</universityPoints>
+        </studentDegree>...
+        <externalCollaboration>
+            <namePart repeatId="0">En extern partner</namePart>
+            <namePart repeatId="1">Ytterligare extern partner</namePart>
+        </externalCollaboration>
     </output>
     """
 

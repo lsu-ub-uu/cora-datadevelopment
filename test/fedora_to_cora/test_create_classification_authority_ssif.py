@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from fedora_to_cora.create_classsification_authority_ssif import (
+from fedora_to_cora.create_classification_authority_ssif import (
     create_classification_authority_ssif,
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
