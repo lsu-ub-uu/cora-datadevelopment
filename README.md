@@ -34,7 +34,7 @@ ptw --now .
 
 - ✅ recordInfo
   - ✅ validationType <- `<publicationType><publicationTypeId>`
-  - ✅ permissionUnit <- domain
+  - ✅ permissionUnit <- `<domain>`
   - ✅ oldId <- `<pid>`
   - ✅ visibility <- `<administrativeInfo><updaters><userInformation><userAction>`
   - ✅ genre type="contentType" <- `<contentType><contentTypeCode>`
@@ -72,6 +72,7 @@ ptw --now .
 - ✅ identifier type="isbn"
 - ✅ identifier type="doi"
 - identifier type="ismn"
+
   ```xml
     <ismnNumbers>
       <ismn>
@@ -87,6 +88,7 @@ ptw --now .
       </ismn>
     </ismnNumbers>
   ```
+
 - ✅ identifier type="archiveNumber"> <- `<archiveNumber>`
 - identifier type="openAlex" (NY)
 - ✅ identifier type="se-libr"
@@ -98,7 +100,7 @@ ptw --now .
 - location displayLabel="orderLink"
   ```xml
   <publicationOrder>
-    <orderProfileId>OrderProfile-4</orderProfileId>  (Kolla upp i höst, ärgeneriska texter i Classic)
+    <orderProfileId>OrderProfile-4</orderProfileId>  (Kolla upp i höst, är generiska texter i Classic)
     <orderURL>https://liu.powerinit.com/Modules/Prepri/Public/Login.aspx?c=3</orderURL> Troligen
     <orderLink>true</orderLink>
     <validFrom>2021-02-04T06:34:00.000+01:00</validFrom>
@@ -133,12 +135,12 @@ ptw --now .
 - genre type="subcategory" <- `<subType>`
 - note type="publicationStatus" <- `<publicationStatus>` (behöver mappas om till värden i Cora)
 - ✅ typeOfResource <- `<mediaType>`
-- type <- `<mediaInformation>`
-- material <- `<mediaInformation>`
-- technique <- `<mediaInformation>`
-- size <- `<mediaInformation>`
-- duration <- `<mediaInformation>`
-- physicalDescription <- `<mediaInformation>`
+- type <- `<mediaInformation><physicalDescriptions>`
+- material <- `<mediaInformation><materials>`
+- technique <- `<mediaInformation><techniques>`
+- size <- `<mediaInformation><size>`
+- duration <- `<mediaInformation><duration>`
+- physicalDescription <- `<mediaInformation><physicalDescriptions>`
 - dateOther type="patent" <- `<patentDate>`
 - imprint (Gäller bara UU)
 - ✅ identifier type="patentNumber"

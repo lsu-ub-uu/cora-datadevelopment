@@ -1,5 +1,4 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import get_inner_xml
 
 
 def create_abstracts(source_record: ET.Element) -> list[ET.Element]:

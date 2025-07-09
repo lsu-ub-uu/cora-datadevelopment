@@ -3,26 +3,6 @@ from common.test_helper import assert_equal_for_xml_and_xml_string
 import xml.etree.ElementTree as ET
 import pytest
 
-def test_create_type_of_resource():
-
-    source_record = ET.fromstring(
-        """
-        <publication>
-            <mediaType>
-                <autoId>1</autoId>
-            </mediaType>
-        </publication>
-        """
-    )
-    
-    type_of_resource = create_type_of_resource(source_record)
-
-    assert_equal_for_xml_and_xml_string(
-        type_of_resource,
-        """
-        <typeOfResource>stillImage</typeOfResource>
-        """,
-    )
 
 @pytest.mark.parametrize(
     "media_type,expected",
@@ -38,7 +18,7 @@ def test_create_type_of_resource():
         ("9", "soundRecordingNonMusical"),
         ("10", "text"),
         ("11", "cartographic"),
-    ]
+    ],
 )
 def test_create_type_of_resource(media_type, expected):
     source_record = ET.fromstring(
@@ -50,7 +30,7 @@ def test_create_type_of_resource(media_type, expected):
         </publication>
         """
     )
-    
+
     type_of_resource = create_type_of_resource(source_record)
 
     assert_equal_for_xml_and_xml_string(
