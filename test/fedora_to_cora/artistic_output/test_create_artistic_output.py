@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import pytest
 
 from fedora_to_cora.artistic_output.create_artistic_output import (
     create_physical_desctiption,
@@ -231,3 +232,25 @@ def test_create_artistic_output_with_physical_description():
         </physicalDescription>
         """,
     )
+
+
+def test_create_artistic_output_without_language():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <mediaInformation>
+                <types class="hashtable">
+                    <entry>
+                        <list>
+                            <string>Typ01</string>
+                            <string>Typ02</string>
+                        </list>
+                    </entry>
+                </types>
+            </mediaInformation>
+        </publication>
+        """
+    )
+
+    with pytest.raises(ValueError):
+        create_types(source_record)

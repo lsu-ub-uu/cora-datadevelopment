@@ -135,13 +135,13 @@ ptw --now .
 - genre type="subcategory" <- `<subType>`
 - note type="publicationStatus" <- `<publicationStatus>` (behöver mappas om till värden i Cora)
 - ✅ typeOfResource <- `<mediaType>`
-- type <- `<mediaInformation><physicalDescriptions>`
-- material <- `<mediaInformation><materials>`
-- technique <- `<mediaInformation><techniques>`
-- size <- `<mediaInformation><size>`
-- duration <- `<mediaInformation><duration>`
-- physicalDescription <- `<mediaInformation><physicalDescriptions>`
-- dateOther type="patent" <- `<patentDate>`
+- ✅ type <- `<mediaInformation><physicalDescriptions>`
+- ✅ material <- `<mediaInformation><materials>`
+- ✅ technique <- `<mediaInformation><techniques>`
+- ✅ size <- `<mediaInformation><size>`
+- ✅ duration <- `<mediaInformation><duration>`
+- ✅ physicalDescription <- `<mediaInformation><physicalDescriptions>`
+- ✅ dateOther type="patent" <- `<patentDate>`
 - imprint (Gäller bara UU)
 - ✅ identifier type="patentNumber"
 - ✅ identifier type="isrn"
