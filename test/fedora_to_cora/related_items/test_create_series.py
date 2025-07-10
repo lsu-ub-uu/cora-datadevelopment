@@ -120,7 +120,7 @@ def xtest_creates_controlled_and_uncontrolled_series(monkeypatch):
             raise ValueError(f"Unexpected old ID: {old_id}")
 
     monkeypatch.setattr(
-        "fedora_to_cora.create_related_item_type_series.get_cora_id_by_old_id",
+        "fedora_to_cora.related_items.create_series.get_cora_id_by_old_id",
         get_cora_id_by_old_id_mock,
     )
 
@@ -133,12 +133,16 @@ def xtest_creates_controlled_and_uncontrolled_series(monkeypatch):
                         <seriesId>{series_old_id_1}</seriesId>
                     </series>
                 </seriesInfo>
-                <uncontrolledSeriesInfo>
-                    <series>
-                        <seriesNameUncontrolled>Okontrollerad serie</seriesNameUncontrolled>
-                    </series>
-                </uncontrolledSeriesInfo>
             </seriesInfos>
+            <uncontrolledSeriesInfo>
+                <series>
+                    <issn>4444-5555</issn>
+                    <eissn>6666-7777</eissn>
+                    <seriesNameUncontrolled>Okontrollerad serie</seriesNameUncontrolled>
+                    <controlled>false</controlled>
+                </series>
+                <numberInSeries>66</numberInSeries>
+            </uncontrolledSeriesInfo>
         </publication>
         """
     )
@@ -148,22 +152,25 @@ def xtest_creates_controlled_and_uncontrolled_series(monkeypatch):
     assert len(series_items) == 2
     assert_equal_for_xml_and_xml_string(
         series_items[0],
-        """
+        f"""
         <relatedItem type="series" repeatId="controlled0">
             <series>
                 <linkedRecordType>diva-series</linkedRecordType>
-                <linkedRecordId>diva-series:17450</linkedRecordId>
+                <linkedRecordId>{series_cora_id_1}</linkedRecordId>
             </series>
         </relatedItem>
         """,
     )
     assert_equal_for_xml_and_xml_string(
         series_items[1],
-        """
-         <relatedItem type="series" repeatId="uncontrolled0">
+        f"""
+        <relatedItem type="series" repeatId="uncontrolled0">
             <titleInfo>
                 <title>Okontrollerad serie</title>
             </titleInfo>
+            <identifier type="issn" displayLabel="pissn">4444-5555</identifier>
+            <identifier type="issn" displayLabel="eissn">6666-7777</identifier>
+            <partNumber>66</partNumber>
         </relatedItem>
         """,
     )

@@ -90,7 +90,7 @@ ptw --now .
   ```
 
 - ✅ identifier type="archiveNumber"> <- `<archiveNumber>`
-- identifier type="openAlex" (NY)
+- 🆕 identifier type="openAlex"
 - ✅ identifier type="se-libr"
 - ✅ identifier type="localId"
 - ✅ identifier type type="pmid"
@@ -115,12 +115,12 @@ ptw --now .
   - ✅ identifier type="issn" displayLabel="eissn" <- `uncontrolledSeriesInfo/series/eissn`
   - ✅ partNumber <- `uncontrolledSeriesInfo/numberInSeries` (?)
   - ❌ No mapping: `uncontrolledSeriesInfos/seriesAlternativeTitles, subjects, relationships`
-- relatedItem type="researchData" (NY)
-- relatedItem type="project" <- `<projects>`
-- relatedItem type="initiative" (NY)
-- accessCondition authority="kb.se" (NY)
-- localGenericMarkup (NY)
-- adminInfo
+- 🆕 relatedItem type="researchData"
+- ✅ relatedItem type="project" <- `<projects>`
+- 🆕 relatedItem type="initiative"
+- 🆕 accessCondition authority="kb.se"
+- 🆕 localGenericMarkup
+- ✅ adminInfo
   - ✅ failed <- `<failed>`
   - ✅ reviewed <- `<reviewed>`
   - ✅ note type="internal" <- `<internalNote>`
@@ -132,7 +132,7 @@ ptw --now .
 
 ## Behövs ej för Sammlingsverk
 
-- genre type="subcategory" <- `<subType>`
+- genre type="subcategory" <- `<subType>` (behöver mappas om till värden i Cora)
 - note type="publicationStatus" <- `<publicationStatus>` (behöver mappas om till värden i Cora)
 - ✅ typeOfResource <- `<mediaType>`
 - ✅ type <- `<mediaInformation><physicalDescriptions>`
@@ -145,7 +145,7 @@ ptw --now .
 - imprint (Gäller bara UU)
 - ✅ identifier type="patentNumber"
 - ✅ identifier type="isrn"
-- academicSemester <- `<academicTerm>`
+- ✅ academicSemester <- `<academicTerm>`
 - ✅ studentDegree <- `<studentDegrees>`
   - ✅ degreeLevel <- `studentDegree/thesisLevel/thesisLevelCode`
   - ✅ universityPoints <- `studentDegree/universityPoiunts/hp`
@@ -160,9 +160,9 @@ ptw --now .
 - supervisor type="personal" <- `<supervisors><person>`
 - examiner type="personal" <- `<examiners><person>`
 - opponent type="personal" <- `<opponents><person>`
-- presentation <- `<defence>` (Kolla om både presentation och defence behövs)
-- defence <- `<defence>`
-- relatedItem type="journal" <- `<journal>` (openAccess behöver hanteras)
+- presentation <- `<defence>` (Kolla om både presentation och defence behöver hanteras)
+- ✅ defence <- `<defence>`
+- relatedItem type="journal" <- `<journal>`
   - ✅ journal
   - ✅ titleInfo
     - ✅ title
@@ -182,10 +182,10 @@ ptw --now .
 - relatedItem type="conferencePublication" <- `<proceedingsTitle>` och `<proceedingsEditor>` <- `<statmentOfResponsibility>` som barnelement i Cora
 - relatedItem type="conference" <- `<conference>`
 - relatedItem type="funder" <- `<funderInfos><funderId><projectNumber>`
-- related (NY)
-- related type="retracted" (NY)
+- 🆕 related
+- 🆕 related type="retracted"
 - related type="constituent" (länkade avhandligar)
-- note type="statementOfResponsibility
+- note type="statementOfResponsibility"
 
 ## Behöver mer information för att migrera
 
