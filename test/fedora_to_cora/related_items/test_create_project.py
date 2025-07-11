@@ -66,7 +66,7 @@ def test_create_controlled_project_link(monkeypatch):
     )
 
 
-def xtest_create_uncontrolled_series():
+def test_create_uncontrolled_project():
     source_record = ET.fromstring(
         """
         <publication>
@@ -85,11 +85,11 @@ def xtest_create_uncontrolled_series():
 
     assert len(project) == 2
     assert_equal_for_xml_and_xml_string(
-        project[1],
+        project[0],
         """
         <relatedItem type="project" repeatId="uncontrolled0">
-            <titleInfo lang="swe">
-                <title>Ytterligare ett annat projekt</title>
+            <titleInfo>
+                <title>Ett annat projekt</title>
             </titleInfo>
         </relatedItem>
         """,
@@ -98,7 +98,7 @@ def xtest_create_uncontrolled_series():
         project[1],
         """
         <relatedItem type="project" repeatId="uncontrolled1">
-            <titleInfo lang="swe">
+            <titleInfo>
                 <title>Ytterligare ett annat projekt</title>
             </titleInfo>
         </relatedItem>

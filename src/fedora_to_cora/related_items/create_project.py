@@ -53,13 +53,15 @@ def _create_controlled_project_link(
             record_id=project_cora_id,
         )
     )
+
     return related_item
 
 
 def _create_related_items_from_uncontrolled_projects(
     source_record: ET.Element,
 ) -> list[ET.Element]:
-    uncontrolled_project_ids = source_record.findall("./project/projectName")
+    uncontrolled_project_ids = source_record.findall("./projects/project/projectName")
+
     return [
         _create_uncontrolled_project(project_xml, f"uncontrolled{i}")
         for i, project_xml in enumerate(uncontrolled_project_ids)
@@ -71,12 +73,12 @@ def _create_uncontrolled_project(project_xml: ET.Element, repeat_id: str) -> ET.
     Create a relatedItem element of type project with an uncontrolled project link.
     """
     related_item = ET.Element("relatedItem", type="project", repeatId=repeat_id)
-
+    print("")
     append_if_value(
         related_item,
-        _create_title_info(project_xml.findtext("./projectName")),
+        _create_title_info(project_xml.text),
     )
-
+    print(ET.tostring(related_item))
     return related_item
 
 
@@ -84,6 +86,7 @@ def _create_title_info(title: str | None) -> ET.Element:
     """
     Create a titleInfo element with the given title.
     """
+
     title_info = ET.Element("titleInfo")
     title_element = ET.SubElement(title_info, "title")
     title_element.text = title

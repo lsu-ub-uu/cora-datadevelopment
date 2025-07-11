@@ -689,292 +689,7 @@
         <name__no>20hp</name__no>
         <hp>20</hp>
       </universityPoints>
-<!--       <undergraduateSubject>
-        <subjectId>30650</subjectId>
-        <subjectType>
-          <subjectTypeId>54</subjectTypeId>
-          <subjectTypeCode>undergraduate</subjectTypeCode>
-          <subjectTypeNames>
-            <subjectTypeName>
-              <subjectTypeNameId>3714</subjectTypeNameId>
-              <locale>no</locale>
-              <subjectTypeName>Undergraduate</subjectTypeName>
-            </subjectTypeName>
-            <subjectTypeName>
-              <subjectTypeNameId>3713</subjectTypeNameId>
-              <locale>en</locale>
-              <subjectTypeName>Undergraduate</subjectTypeName>
-            </subjectTypeName>
-            <subjectTypeName>
-              <subjectTypeNameId>3712</subjectTypeNameId>
-              <locale>sv</locale>
-              <subjectTypeName>Undergraduate</subjectTypeName>
-            </subjectTypeName>
-          </subjectTypeNames>
-        </subjectType>
-        <subjectNames>
-          <subjectName>
-            <subjectNameId>68601</subjectNameId>
-            <locale>en</locale>
-            <subjectName>Test course</subjectName>
-          </subjectName>
-          <subjectName>
-            <subjectNameId>68600</subjectNameId>
-            <locale>sv</locale>
-            <subjectName>Testkurs</subjectName>
-          </subjectName>
-        </subjectNames>
-        <subjectCode>TEST02</subjectCode>
-        <parents>
-          <subject>
-            <subjectId>32200</subjectId>
-            <subjectType>
-              <subjectTypeId>54</subjectTypeId>
-              <subjectTypeCode>undergraduate</subjectTypeCode>
-              <subjectTypeNames>
-                <subjectTypeName>
-                  <subjectTypeNameId>3714</subjectTypeNameId>
-                  <locale>no</locale>
-                  <subjectTypeName>Undergraduate</subjectTypeName>
-                </subjectTypeName>
-                <subjectTypeName>
-                  <subjectTypeNameId>3713</subjectTypeNameId>
-                  <locale>en</locale>
-                  <subjectTypeName>Undergraduate</subjectTypeName>
-                </subjectTypeName>
-                <subjectTypeName>
-                  <subjectTypeNameId>3712</subjectTypeNameId>
-                  <locale>sv</locale>
-                  <subjectTypeName>Undergraduate</subjectTypeName>
-                </subjectTypeName>
-              </subjectTypeNames>
-            </subjectType>
-            <subjectNames>
-              <subjectName>
-                <subjectNameId>72250</subjectNameId>
-                <locale>sv</locale>
-                <subjectName>Testkurs - överordnad</subjectName>
-              </subjectName>
-              <subjectName>
-                <subjectNameId>72251</subjectNameId>
-                <locale>en</locale>
-                <subjectName>Test course</subjectName>
-              </subjectName>
-            </subjectNames>
-            <subjectCode>TEST01</subjectCode>
-            <parents/>
-            <predecessors/>
-            <domain>uu</domain>
-            <notEligible>false</notEligible>
-            <organisations/>
-          </subject>
-        </parents>
-        <predecessors>
-          <subject>
-            <subjectId>30652</subjectId>
-            <subjectType>
-              <subjectTypeId>54</subjectTypeId>
-              <subjectTypeCode>undergraduate</subjectTypeCode>
-              <subjectTypeNames>
-                <subjectTypeName>
-                  <subjectTypeNameId>3714</subjectTypeNameId>
-                  <locale>no</locale>
-                  <subjectTypeName>Undergraduate</subjectTypeName>
-                </subjectTypeName>
-                <subjectTypeName>
-                  <subjectTypeNameId>3713</subjectTypeNameId>
-                  <locale>en</locale>
-                  <subjectTypeName>Undergraduate</subjectTypeName>
-                </subjectTypeName>
-                <subjectTypeName>
-                  <subjectTypeNameId>3712</subjectTypeNameId>
-                  <locale>sv</locale>
-                  <subjectTypeName>Undergraduate</subjectTypeName>
-                </subjectTypeName>
-              </subjectTypeNames>
-            </subjectType>
-            <subjectNames>
-              <subjectName>
-                <subjectNameId>68605</subjectNameId>
-                <locale>en</locale>
-                <subjectName>Testkurs - äldre variant</subjectName>
-              </subjectName>
-              <subjectName>
-                <subjectNameId>68604</subjectNameId>
-                <locale>sv</locale>
-                <subjectName>Testkurs - äldre variant</subjectName>
-              </subjectName>
-            </subjectNames>
-            <closedDate class="sql-date">2020-12-31</closedDate>
-            <parents/>
-            <predecessors/>
-            <domain>uu</domain>
-            <notEligible>false</notEligible>
-            <organisations/>
-          </subject>
-        </predecessors>
-        <domain>uu</domain>
-        <notEligible>false</notEligible>
-        <organisations/>
-      </undergraduateSubject> -->
     </studentDegree>
-    <!-- <studentDegree>
-      <thesisLevel>
-        <thesisLevelId>65</thesisLevelId>
-        <thesisLevelCode>H4</thesisLevelCode>
-        <thesisLevelOldCode/>
-        <thesisLevelNames>
-          <thesisLevelName>
-            <thesisLevelNameId>330</thesisLevelNameId>
-            <locale>sv</locale>
-            <thesisLevelName>Självständigt arbete på avancerad nivå (konstnärlig magisterexamen)</thesisLevelName>
-          </thesisLevelName>
-          <thesisLevelName>
-            <thesisLevelNameId>331</thesisLevelNameId>
-            <locale>en</locale>
-            <thesisLevelName>Independent thesis Advanced level (degree of Master of Fine Arts (One Year))</thesisLevelName>
-          </thesisLevelName>
-        </thesisLevelNames>
-        <degrees/>
-        <domain>diva</domain>
-      </thesisLevel>
-      <universityPoints>
-        <points>5</points>
-        <name__sv>5 poäng / 7,5 hp</name__sv>
-        <name__en>5 credits / 7,5 HE credits</name__en>
-        <name__no>5 poäng / 7,5 hp</name__no>
-        <hp>7,5</hp>
-      </universityPoints>
-      <educationalProgram>
-        <subjectId>31051</subjectId>
-        <subjectType>
-          <subjectTypeId>56</subjectTypeId>
-          <subjectTypeCode>educationalProgram</subjectTypeCode>
-          <subjectTypeNames>
-            <subjectTypeName>
-              <subjectTypeNameId>3720</subjectTypeNameId>
-              <locale>no</locale>
-              <subjectTypeName>Program</subjectTypeName>
-            </subjectTypeName>
-            <subjectTypeName>
-              <subjectTypeNameId>3719</subjectTypeNameId>
-              <locale>en</locale>
-              <subjectTypeName>Program</subjectTypeName>
-            </subjectTypeName>
-            <subjectTypeName>
-              <subjectTypeNameId>3718</subjectTypeNameId>
-              <locale>sv</locale>
-              <subjectTypeName>Utbildningsprogram</subjectTypeName>
-            </subjectTypeName>
-          </subjectTypeNames>
-        </subjectType>
-        <subjectNames>
-          <subjectName>
-            <subjectNameId>69552</subjectNameId>
-            <locale>sv</locale>
-            <subjectName>Testprogram</subjectName>
-          </subjectName>
-          <subjectName>
-            <subjectNameId>69553</subjectNameId>
-            <locale>en</locale>
-            <subjectName>Testprogram</subjectName>
-          </subjectName>
-        </subjectNames>
-        <subjectCode>TEST01</subjectCode>
-        <parents>
-          <subject>
-            <subjectId>32201</subjectId>
-            <subjectType>
-              <subjectTypeId>56</subjectTypeId>
-              <subjectTypeCode>educationalProgram</subjectTypeCode>
-              <subjectTypeNames>
-                <subjectTypeName>
-                  <subjectTypeNameId>3720</subjectTypeNameId>
-                  <locale>no</locale>
-                  <subjectTypeName>Program</subjectTypeName>
-                </subjectTypeName>
-                <subjectTypeName>
-                  <subjectTypeNameId>3719</subjectTypeNameId>
-                  <locale>en</locale>
-                  <subjectTypeName>Program</subjectTypeName>
-                </subjectTypeName>
-                <subjectTypeName>
-                  <subjectTypeNameId>3718</subjectTypeNameId>
-                  <locale>sv</locale>
-                  <subjectTypeName>Utbildningsprogram</subjectTypeName>
-                </subjectTypeName>
-              </subjectTypeNames>
-            </subjectType>
-            <subjectNames>
-              <subjectName>
-                <subjectNameId>72253</subjectNameId>
-                <locale>en</locale>
-                <subjectName>Testprogram - överordnat</subjectName>
-              </subjectName>
-              <subjectName>
-                <subjectNameId>72252</subjectNameId>
-                <locale>sv</locale>
-                <subjectName>Testprogram - överordnat</subjectName>
-              </subjectName>
-            </subjectNames>
-            <subjectCode>TEST03</subjectCode>
-            <parents/>
-            <predecessors/>
-            <domain>uu</domain>
-            <notEligible>false</notEligible>
-            <organisations/>
-          </subject>
-        </parents>
-        <predecessors>
-          <subject>
-            <subjectId>32202</subjectId>
-            <subjectType>
-              <subjectTypeId>56</subjectTypeId>
-              <subjectTypeCode>educationalProgram</subjectTypeCode>
-              <subjectTypeNames>
-                <subjectTypeName>
-                  <subjectTypeNameId>3720</subjectTypeNameId>
-                  <locale>no</locale>
-                  <subjectTypeName>Program</subjectTypeName>
-                </subjectTypeName>
-                <subjectTypeName>
-                  <subjectTypeNameId>3719</subjectTypeNameId>
-                  <locale>en</locale>
-                  <subjectTypeName>Program</subjectTypeName>
-                </subjectTypeName>
-                <subjectTypeName>
-                  <subjectTypeNameId>3718</subjectTypeNameId>
-                  <locale>sv</locale>
-                  <subjectTypeName>Utbildningsprogram</subjectTypeName>
-                </subjectTypeName>
-              </subjectTypeNames>
-            </subjectType>
-            <subjectNames>
-              <subjectName>
-                <subjectNameId>72255</subjectNameId>
-                <locale>sv</locale>
-                <subjectName>Testprogram - äldre variant</subjectName>
-              </subjectName>
-              <subjectName>
-                <subjectNameId>72254</subjectNameId>
-                <locale>en</locale>
-                <subjectName>Testprogram - äldre variant</subjectName>
-              </subjectName>
-            </subjectNames>
-            <subjectCode>TEST05</subjectCode>
-            <closedDate class="sql-date">2000-12-31</closedDate>
-            <parents/>
-            <predecessors/>
-            <domain>uu</domain>
-            <notEligible>false</notEligible>
-            <organisations/>
-          </subject>
-        </predecessors>
-        <domain>uu</domain>
-        <notEligible>false</notEligible>
-        <organisations/>
-      </educationalProgram>
-    </studentDegree> -->
   </studentDegrees>
   <externalCooperation>
     <external>true</external>
@@ -993,5 +708,53 @@
             <name>Uppsala universitet</name>
         </organisationName>
     </grantingInstitution>
-</defence>
+  </defence>
+  <academicTerm>
+      <year>2022</year>
+      <term>HT</term>
+  </academicTerm>
+  <journal>
+    <journalTitle>
+        <titleId>1082</titleId>
+        <mainTitle>Design, Automation and Test in Europe</mainTitle>
+        <subTitle>Journal of Testing</subTitle>
+        <locale>und</locale>
+    </journalTitle>
+    <openAccess>false</openAccess>
+    <printedIssn>1530-1591</printedIssn>
+    <electronicIssn>1558-1101</electronicIssn>
+    <openAccess>false</openAccess>
+    <projects>
+      <project>
+        <projectName>Ett annat projekt</projectName>
+      </project>
+      <project>
+      <projectName>Ytterligare ett annat projekt</projectName>
+      </project>
+    </projects>
+  </journal>
+  <identifiers>
+    <entry>
+        <publicationIdentifierType>doi</publicationIdentifierType>
+        <publicationIdentifier>
+            <value>10.1038/s41698-022-00278-4</value>
+            <type>doi</type>
+            <openAccess>true</openAccess>
+        </publicationIdentifier>
+    </entry>
+    <entry>
+        <publicationIdentifierType>libris</publicationIdentifierType>
+        <publicationIdentifier>
+            <value>0004</value>
+            <alternativeValues>
+                <value>
+                    <content>0005</content>
+                </value>
+            </alternativeValues>
+            <type>libris</type>
+            <openAccess>false</openAccess>
+        </publicationIdentifier>
+    </entry>
+  </identifiers>
 </publication>
+

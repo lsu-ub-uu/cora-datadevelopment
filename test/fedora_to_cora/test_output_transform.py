@@ -145,6 +145,35 @@ def test_output_transform(requests_mock):
                 </roleTerm>
             </role>
         </degreeGrantingInstitution>
+        <artisticWork type='outputType'>false</artisticWork>
+        <academicSemester>
+            <year>2022</year>
+            <academicSemester>ht</academicSemester>
+        </academicSemester>
+        <externalCollaboration>
+            <namePart repeatId="0">
+                En extern partner
+            </namePart>
+            <namePart repeatId="1">
+                Ytterligare extern partner
+            </namePart>
+        </externalCollaboration>
+        <studentDegree repeatId="0">
+            <degreeLevel>H2</degreeLevel>
+            <universityPoints>20</universityPoints>
+        </studentDegree>
+        <relatedItem type="journal">
+            <titleInfo>
+                <title>Design, Automation and Test in Europe</title>
+                <subTitle>Journal of Testing</subTitle>
+            </titleInfo>
+            <identifier type="issn" displayLabel="pissn">
+                1530-1591
+            </identifier>
+            <identifier type="issn" displayLabel="eissn">
+                1558-1101
+            </identifier>
+         </relatedItem>
     </output>
     """
 

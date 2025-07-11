@@ -16,6 +16,11 @@ from fedora_to_cora.create_artistic_work import create_artistic_work
 from fedora_to_cora.create_genre_type_output_type import create_genre_type_output_type
 from fedora_to_cora.create_name_type_personal import create_name_type_personals
 from fedora_to_cora.create_abstracts import create_abstracts
+
+from fedora_to_cora.degree_project.create_academic_semester import (
+    create_academic_semester,
+)
+from fedora_to_cora.identifiers.create_doi_se_libr import create_identifier_se_libr
 from fedora_to_cora.identifiers.create_isbn import create_identifier_type_isbn
 from fedora_to_cora.create_origin_info import create_origin_info
 from fedora_to_cora.create_extent import create_extent
@@ -26,15 +31,27 @@ from fedora_to_cora.identifiers.create_identifier import create_identifier
 from fedora_to_cora.create_note import create_note
 from fedora_to_cora.create_location import create_locations
 from fedora_to_cora.create_subject_authority_sdg import create_subject_authority_sdg
+from fedora_to_cora.related_items.create_journal import create_related_item_type_journal
 from fedora_to_cora.related_items.create_series import (
     create_related_item_type_series,
 )
 from fedora_to_cora.degree_project.create_student_degree import create_student_degrees
-from fedora_to_cora.degree_project.create_external_collaboration import create_external_collaboration
-from fedora_to_cora.create_degree_granting_institution import create_degree_granting_institution
+from fedora_to_cora.degree_project.create_external_collaboration import (
+    create_external_collaboration,
+)
+from fedora_to_cora.create_degree_granting_institution import (
+    create_degree_granting_institution,
+)
+
+from fedora_to_cora.related_items.create_project import (
+    create_related_item_type_project,
+)
+
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
     target_record = ET.Element("output")
+
+    # create student_degree
 
     append_if_value(target_record, create_record_info(source_record))
 
@@ -118,6 +135,8 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
         create_identifier(source_record, type="patentNumber"),
     )
 
+    create_identifier_se_libr(source_record)
+
     append_if_value(
         target_record,
         create_locations(source_record),
@@ -134,12 +153,35 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     )
 
     append_if_value(target_record, create_student_degrees(source_record, context))
-    
+
     append_if_value(
         target_record,
         create_external_collaboration(source_record),
     )
-    
-    append_if_value(target_record, create_degree_granting_institution(source_record, context))
-    
+
+    append_if_value(
+        target_record, create_degree_granting_institution(source_record, context)
+    )
+    append_if_value(target_record, create_artistic_work(source_record))
+
+    append_if_value(target_record, create_academic_semester(source_record))
+
+    append_if_value(target_record, create_external_collaboration(source_record))
+
+    append_if_value(target_record, create_student_degrees(source_record, context))
+
+    append_if_value(
+        target_record, create_related_item_type_journal(source_record, context)
+    )
+
+    # append_if_value(
+    #     target_record, create_related_item_type_project(source_record, context)
+    # )
+
     return target_record
+
+
+# create_project
+# create_defence
+# create_type_of_resource
+# create_

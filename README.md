@@ -148,7 +148,7 @@ ptw --now .
 - ✅ academicSemester <- `<academicTerm>`
 - ✅ studentDegree <- `<studentDegrees>`
   - ✅ degreeLevel <- `studentDegree/thesisLevel/thesisLevelCode`
-  - ✅ universityPoints <- `studentDegree/universityPoiunts/hp`
+  - ✅ universityPoints <- `studentDegree/universityPoints/hp`
   - ✅ course <- link to diva-course by oldId: `studentDegree/undergraduateSubject/subjectId`
   - ✅ programme <- link to diva-programme by oldId: `studentDegree/educationalProgramme/subjectId`
 - ✅ externalCollaboration <- `<externalCooperation>`
