@@ -17,6 +17,7 @@ from fedora_to_cora.create_genre_type_output_type import create_genre_type_outpu
 from fedora_to_cora.create_name_type_personal import create_name_type_personals
 from fedora_to_cora.create_abstracts import create_abstracts
 
+from fedora_to_cora.create_type_of_resource import create_type_of_resource
 from fedora_to_cora.degree_project.create_academic_semester import (
     create_academic_semester,
 )
@@ -46,6 +47,7 @@ from fedora_to_cora.create_degree_granting_institution import (
 from fedora_to_cora.related_items.create_project import (
     create_related_item_type_project,
 )
+from fedora_to_cora.thesis.create_defence import create_defence
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
@@ -174,14 +176,15 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
         target_record, create_related_item_type_journal(source_record, context)
     )
 
-    # append_if_value(
-    #     target_record, create_related_item_type_project(source_record, context)
-    # )
+    append_if_value(
+        target_record, create_related_item_type_project(source_record, context)
+    )
+
+    append_if_value(target_record, create_defence(source_record))
+
+    append_if_value(target_record, create_type_of_resource(source_record))
 
     return target_record
 
 
-# create_project
-# create_defence
 # create_type_of_resource
-# create_

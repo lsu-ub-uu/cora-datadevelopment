@@ -173,7 +173,39 @@ def test_output_transform(requests_mock):
             <identifier type="issn" displayLabel="eissn">
                 1558-1101
             </identifier>
-         </relatedItem>
+        </relatedItem>
+            <relatedItem type="project" repeatId="uncontrolled0">
+            <titleInfo>
+                <title>Ett annat projekt</title>
+            </titleInfo>
+        </relatedItem>
+        <relatedItem type="project" repeatId="uncontrolled1">
+            <titleInfo>
+                <title>Ytterligare ett annat projekt</title>
+            </titleInfo>
+        </relatedItem>
+        <defence>
+            <language>
+                <languageTerm type="code" authority="iso639-2b">swe</languageTerm>
+            </language>
+            <dateOther type="presentation">
+                <year>2022</year>
+                <month>07</month>
+                <day>31</day>
+                <hh>16</hh>
+                <mm>19</mm>
+            </dateOther>
+            <location>
+                Balsalen
+            </location>
+            <address>Slottet, 75105, Uppsala, se</address>
+            <place>
+                <placeTerm>
+                Uppsala
+                </placeTerm>
+            </place>
+        </defence>
+        <typeOfResource>stillImage</typeOfResource>
     </output>
     """
 

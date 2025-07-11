@@ -73,12 +73,12 @@ def _create_uncontrolled_project(project_xml: ET.Element, repeat_id: str) -> ET.
     Create a relatedItem element of type project with an uncontrolled project link.
     """
     related_item = ET.Element("relatedItem", type="project", repeatId=repeat_id)
-    print("")
+
     append_if_value(
         related_item,
         _create_title_info(project_xml.text),
     )
-    print(ET.tostring(related_item))
+
     return related_item
 
 

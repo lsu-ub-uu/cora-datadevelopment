@@ -19,7 +19,6 @@ def create_defence(source_record: ET.Element) -> ET.Element:
     place = _create_place(source_record)
     defence.append(place)
 
-    print(ET.tostring(defence))
     return defence
 
 
@@ -60,6 +59,7 @@ def _create_language(source_record: ET.Element) -> ET.Element:
     language = ET.Element("language")
     lanugage_term = ET.Element("languageTerm", type="code", authority="iso639-2b")
     language_code_3 = source_record.findtext("./defence/language/languageCode3")
+    assert language_code_3 is not None, "language must be present in source_record"
     lanugage_term.text = language_code_3
     language.append(lanugage_term)
     return language

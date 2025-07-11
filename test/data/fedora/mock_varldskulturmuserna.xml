@@ -703,11 +703,28 @@
     </partners>
   </externalCooperation>
   <defence>
-    <grantingInstitution>
-        <organisationName>
-            <name>Uppsala universitet</name>
-        </organisationName>
-    </grantingInstitution>
+      <date>2022-07-31T16:19:00.000+02:00</date>
+      <language>
+          <languageCode3>swe</languageCode3>
+      </language>
+      <room>
+          <name>Balsalen</name>
+          <street>Slottet</street>
+          <city>Uppsala</city>
+      </room>
+      <grantingInstitution>
+          <organisationName>
+              <name>Uppsala universitet</name>
+          </organisationName>
+          <organisationAddress>
+              <addressId>1956</addressId>
+              <postnumber>75105</postnumber>
+              <city>Uppsala</city>
+              <country>
+                  <countryCode>se</countryCode>
+              </country>
+          </organisationAddress>
+      </grantingInstitution>
   </defence>
   <academicTerm>
       <year>2022</year>
@@ -724,14 +741,6 @@
     <printedIssn>1530-1591</printedIssn>
     <electronicIssn>1558-1101</electronicIssn>
     <openAccess>false</openAccess>
-    <projects>
-      <project>
-        <projectName>Ett annat projekt</projectName>
-      </project>
-      <project>
-      <projectName>Ytterligare ett annat projekt</projectName>
-      </project>
-    </projects>
   </journal>
   <identifiers>
     <entry>
@@ -756,5 +765,16 @@
         </publicationIdentifier>
     </entry>
   </identifiers>
+  <projects>
+    <project>
+      <projectName>Ett annat projekt</projectName>
+    </project>
+    <project>
+    <projectName>Ytterligare ett annat projekt</projectName>
+    </project>
+  </projects>
+  <mediaType>
+      <autoId>1</autoId>
+  </mediaType>
 </publication>
 
