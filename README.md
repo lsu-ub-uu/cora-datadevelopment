@@ -144,9 +144,6 @@ ptw --now .
   - ✅ namePart
   - ✅ role
   - 🆕 identifier type="ror" (ROR finns inte i Classic)
-- supervisor type="personal" <- `<supervisors><person>`
-- examiner type="personal" <- `<examiners><person>`
-- opponent type="personal" <- `<opponents><person>`
 - presentation <- `<defence>` (Kolla om både presentation och defence behöver hanteras)
 - ✅ defence <- `<defence>`
 - relatedItem type="journal" <- `<journal>`
