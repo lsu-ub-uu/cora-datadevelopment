@@ -30,7 +30,11 @@ ptw --now .
 
 ## Status för convertering
 
-## Behövs för Sammlingsverk
+## Binary
+
+## Output
+
+### Behövs för Sammlingsverk
 
 - ✅ recordInfo
   - ✅ validationType <- `<publicationType><publicationTypeId>`
@@ -125,12 +129,12 @@ ptw --now .
   - ✅ reviewed <- `<reviewed>`
   - ✅ note type="internal" <- `<internalNote>`
 
-## Behövs för Samlingsverk Update
+### Behövs för Samlingsverk Update
 
 - attachment
   - `<agreementAccepted>` - kanske inte sparas?
 
-## Behövs ej för Sammlingsverk
+### Behövs ej för Sammlingsverk
 
 - genre type="subcategory" <- `<subType>` (behöver mappas om till värden i Cora)
 - note type="publicationStatus" <- `<publicationStatus>` (behöver mappas om till värden i Cora)
@@ -156,7 +160,7 @@ ptw --now .
   - ✅ organisation
   - ✅ namePart
   - ✅ role
-  - ❌ identifier type="ror" (ROR finns inte i Classic)
+  - 🆕 identifier type="ror" (ROR finns inte i Classic)
 - supervisor type="personal" <- `<supervisors><person>`
 - examiner type="personal" <- `<examiners><person>`
 - opponent type="personal" <- `<opponents><person>`
@@ -170,14 +174,14 @@ ptw --now .
   - ✅ identifier type="issn" displayLabel="pissn"
   - ✅ identifier type="issn" displayLabel="eissn"
   - part
-    - detail type="volume" (är det `<volume>` som ska vara värdet?)
+    - detail type="volume" <- `<volume>`
       - number
-    - detail type="issue" (är det `<issueNumber>` som ska vara värdet?)
+    - detail type="issue" <- `<issueNumber>`
       - number
-    - detail type="artNo"
+    - detail type="artNo" `<articleId>`
     - extent
-      - start (är det `<startPage>` som ska vara värdet?)
-      - end (är det `<endPage>` som ska vara värdet?)
+      - start <- `<startPage>`
+      - end <- `<endPage>`
 - relatedItem type="book" <- `<bookTitle>` och `<bookEdition>` <- `<statmentOfResponsibility>` som barnelement i Cora
 - relatedItem type="conferencePublication" <- `<proceedingsTitle>` och `<proceedingsEditor>` <- `<statmentOfResponsibility>` som barnelement i Cora
 - relatedItem type="conference" <- `<conference>`
