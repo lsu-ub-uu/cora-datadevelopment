@@ -9,7 +9,7 @@ from db_to_cora.journal_transform import transform_journal
 
 RECORD_TYPE = "diva-journal"
 
-source_xml_file_path = "data/db_xml/journals_from_db.xml"
+source_xml_file_path = "data/db_xml/journal_from_db.xml"
 system = "preview"
 login_id = "divaAdmin@cora.epc.ub.uu.se"
 app_token = "49ce00fb-68b5-4089-a5f7-1c225d3cf156"
@@ -25,20 +25,20 @@ def main():
 
     source_records = _read_source_records(context)
 
-    cora_funders = _transform_to_cora_funders(source_records)
+    cora_journals = _transform_to_cora_journals(source_records)
     
-#    for elem in cora_funders:
-#        print(ET.tostring(elem, encoding='unicode'))
+    for elem in cora_journals:
+        print(ET.tostring(elem, encoding='unicode'))
     
-    validation_results = validate_record_list(cora_funders, RECORD_TYPE, context)
-
-    if not dry_run and all(valid for (valid, _) in validation_results):
-        create_record_list(cora_funders, RECORD_TYPE, context)
-
-    context.log(f"Run time: {time.time() - starttime}")
-    print(
-        f"Processing completed in {time.time() - starttime}s. Output logged to {context.get_log_file_path()}"
-    )
+#    validation_results = validate_record_list(cora_journals, RECORD_TYPE, context)
+#
+#    if not dry_run and all(valid for (valid, _) in validation_results):
+#        create_record_list(cora_journals, RECORD_TYPE, context)
+#
+#    context.log(f"Run time: {time.time() - starttime}")
+#    print(
+#        f"Processing completed in {time.time() - starttime}s. Output logged to {context.get_log_file_path()}"
+#    )
 
 
 def _read_source_records(context: Context):
@@ -48,7 +48,7 @@ def _read_source_records(context: Context):
     return source_records
 
 
-def _transform_to_cora_funders(source_records: list[ET.Element]):
+def _transform_to_cora_journals(source_records: list[ET.Element]):
     return run_with_threads(
         source_records,
         transform_journal,
@@ -56,5 +56,8 @@ def _transform_to_cora_funders(source_records: list[ET.Element]):
         desc="Transforming new records",
     )
 
+
 if __name__ == "__main__":
     main()
+    
+    

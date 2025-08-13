@@ -7,6 +7,7 @@ def test_element_xml():
         """
         <DATA_RECORD>
             <old_id>1234</old_id>
+            <title>some title</title>
         </DATA_RECORD>       
         """
     )
@@ -26,6 +27,9 @@ def test_element_xml():
             </dataDivider>
             <oldId>1234</oldId>
         </recordInfo>
+        <titleInfo>
+            <title>some title</title>
+        </titleInfo>
     </journal>
     """
 

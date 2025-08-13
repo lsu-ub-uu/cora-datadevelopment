@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 #from common.xml_utils import append_if_value
 from common.record_info_create import record_info_create
-
+from common.common_data import create_title_info
 
 nameInData = "journal"
 
@@ -12,8 +12,9 @@ def transform_journal(source_record: ET.Element) -> ET.Element:
     """
 
     journal = ET.Element(nameInData)
-
+    
     journal.append(_create_record_info(source_record))
+    journal.append(_create_title_info(source_record))
         
     return journal
 
@@ -29,3 +30,11 @@ def _create_record_info(source_record: ET.Element) -> ET.Element:
         old_id=source_old_id.text,
         permission_unit_id=None,
     )
+    
+def _create_title_info(source_record: ET.Element) -> ET.Element:
+    title = source_record.find(f".//title")
+    if title is not None and title.text:
+        return create_title_info(
+            title.text)
+    
+    
