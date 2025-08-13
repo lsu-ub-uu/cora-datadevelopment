@@ -1,6 +1,9 @@
 import xml.etree.ElementTree as ET
+from common.xml_utils import append_if_value
 from common.record_info_create import record_info_create
 from common.create_authority_or_variant_lang import create_authority_or_variant_lang_using_name_type_corporate
+from common.create_end_date import create_end_date
+
 
 nameInData = "funder"
 
@@ -14,10 +17,9 @@ def transform_funder(source_record: ET.Element) -> ET.Element:
 
     funder.append(_create_record_info(source_record))
     funder.append(_create_authority_or_variant_lang(source_record, element_name="authority", language="swe"))
-    variant_lang = _create_authority_or_variant_lang(source_record, element_name="variant", language="eng")
-    if variant_lang is not None:
-        funder.append(variant_lang)
-        
+    append_if_value(funder, _create_authority_or_variant_lang(source_record, element_name="variant", language="eng"))
+    append_if_value(funder, _create_end_date(source_record, origin_type=None))
+   
     return funder
 
 
@@ -40,7 +42,8 @@ def _create_authority_or_variant_lang(source_record: ET.Element, element_name: s
         return create_authority_or_variant_lang_using_name_type_corporate(
             name_lang.text, element_name, language)
 
-    
-
-
-
+def _create_end_date(source_record: ET.Element, origin_type: str)-> ET.Element | None:
+    end_date = source_record.find(".//end_date")
+    if end_date is not None and end_date.text:
+        return create_end_date(
+            end_date.text, origin_type=None)
