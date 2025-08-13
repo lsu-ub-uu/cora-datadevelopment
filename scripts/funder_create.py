@@ -26,14 +26,14 @@ def main():
     source_records = _read_source_records(context)
 
     cora_funders = _transform_to_cora_funders(source_records)
-
-    for elem in cora_funders:
-        print(ET.tostring(elem, encoding='unicode'))
     
-#    validation_results = validate_record_list(cora_funders, RECORD_TYPE, context)
+#    for elem in cora_funders:
+#        print(ET.tostring(elem, encoding='unicode'))
+    
+    validation_results = validate_record_list(cora_funders, RECORD_TYPE, context)
 
-#    if not dry_run and all(valid for (valid, _) in validation_results):
-#        create_record_list(cora_funders, RECORD_TYPE, context)
+    if not dry_run and all(valid for (valid, _) in validation_results):
+        create_record_list(cora_funders, RECORD_TYPE, context)
 
     context.log(f"Run time: {time.time() - starttime}")
     print(
