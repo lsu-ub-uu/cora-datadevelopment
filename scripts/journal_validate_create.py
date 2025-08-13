@@ -1,170 +1,60 @@
-from multiprocessing import Pool
-from multiprocessing.pool import ThreadPool
-import os
-import sys
-import threading
 import time
-
-sys.path.append(os.path.abspath("src"))
-
-import requests
-from common.run_rotating_logger import RunRotatingLogger
-
+from cora.context import CoraContext, Context
 from common import common_data
-from cora import constants
-from cora.client.app_token_client import AppTokenClient
-from tqdm import tqdm
 import xml.etree.ElementTree as ET
+from common.threads import run_with_threads
+from cora.validate import validate_record_list
+from cora.create import create_record_list
+from db_to_cora.journal_transform import transform_journal
+
+RECORD_TYPE = "diva-journal"
+
+source_xml_file_path = "data/db_xml/journals_from_db.xml"
+system = "preview"
+login_id = "divaAdmin@cora.epc.ub.uu.se"
+app_token = "49ce00fb-68b5-4089-a5f7-1c225d3cf156"
+dry_run = True
+workers = 16
 
 
-system = "mig"
-# system = 'local'
-recordType = "diva-journal"
-nameInData = "journal"
-permission_unit = None
-WORKERS = 16
-filePath_validateBase = r"data/cora/validate/validation_order_base.xml"
-# filePath_sourceXml = (r"data/db_xml\db_diva-"+nameInData+".xml")
-filePath_sourceXml = r"data/db_xml/journal_from_db.xml"
+def main():
+    context = CoraContext(system, login_id, app_token)
 
-request_counter = 0
-app_token_client = None
-data_logger = None
-
-
-def start():
-    global data_logger
-    #    login_logger = RunRotatingLogger('login', 'logs/apptokenlog.txt').get()
-    #    login_logger.info(f"_handle_login_response:{response}")
-
-    data_logger = RunRotatingLogger("data", "logs/data_processing.txt").get()
-    data_logger.info("Data processing started")
-
+    context.log("Data processing started")
     starttime = time.time()
-    start_app_token_client()
 
-    dataList = common_data.read_source_xml(filePath_sourceXml)
-    list_dataRecord = []
-    for data_record in dataList.findall(".//DATA_RECORD"):
-        list_dataRecord.append(data_record)
+    source_records = _read_source_records(context)
 
-    print(f"Number of records read: {len(list_dataRecord)}")
+    cora_funders = _transform_to_cora_funders(source_records)
+    
+#    for elem in cora_funders:
+#        print(ET.tostring(elem, encoding='unicode'))
+    
+    validation_results = validate_record_list(cora_funders, RECORD_TYPE, context)
 
-    #    with Pool(WORKERS) as pool:
-    with ThreadPool(WORKERS) as pool:
-        #        test = pool.map(new_record_build, list_dataRecord)
-        #            print(test)
-        #        pool.map(validate_record, list_dataRecord)
-        #        list(tqdm(
-        #            pool.imap_unordered(validate_record, list_dataRecord),
-        #            total=len(list_dataRecord),
-        #            desc="Validating records"
-        #        ))
-        list(
-            tqdm(
-                pool.imap_unordered(create_record, list_dataRecord),
-                total=len(list_dataRecord),
-                desc="Created records",
-            )
-        )
-        # pool.map(ServersideData.create_record, list_dataRecord)
-    #    global app_token_client
+    if not dry_run and all(valid for (valid, _) in validation_results):
+        create_record_list(cora_funders, RECORD_TYPE, context)
 
-    print(f"Tidsåtgång: {time.time() - starttime}")
-
-
-def start_app_token_client():
-    global app_token_client
-    dependencies = {"requests": requests, "time": time, "threading": threading}
-    app_token_client = AppTokenClient(dependencies)
-
-    login_spec = {
-        "login_url": constants.LOGIN_URLS[system],
-        "login_id": "divaAdmin@cora.epc.ub.uu.se",
-        "app_token": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
-    }
-    app_token_client.login(login_spec)
-
-
-def new_record_build(data_record):
-    newRecordElement = ET.Element(nameInData)
-
-    common_data.record_info_build(
-        nameInData, permission_unit, data_record, newRecordElement
+    context.log(f"Run time: {time.time() - starttime}")
+    print(
+        f"Processing completed in {time.time() - starttime}s. Output logged to {context.get_log_file_path()}"
     )
-    common_data.title_info_build(data_record, newRecordElement)
-    counter = 0
-    counter = common_data.identifier_build(
-        data_record, newRecordElement, "pissn", counter
+
+
+def _read_source_records(context: Context):
+    source_data = common_data.read_source_xml(source_xml_file_path)
+    source_records = [record for record in source_data.findall(".//DATA_RECORD")]
+    context.log(f"Number of records read: {len(source_records)}")
+    return source_records
+
+
+def _transform_to_cora_funders(source_records: list[ET.Element]):
+    return run_with_threads(
+        source_records,
+        transform_journal,
+        workers=workers,
+        desc="Transforming new records",
     )
-    counter = common_data.identifier_build(
-        data_record, newRecordElement, "eissn", counter
-    )
-    common_data.end_date_build(data_record, newRecordElement, "originInfo")
-    common_data.location_build(data_record, newRecordElement)
-    return newRecordElement
-
-
-def validate_record(data_record):
-    global app_token_client
-    global data_logger
-
-    auth_token = app_token_client.get_auth_token()
-    validate_headers_xml = {
-        "Content-Type": "application/vnd.cora.workorder+xml",
-        "Accept": "application/vnd.cora.record+xml",
-        "authToken": auth_token,
-    }
-    validate_url = constants.BASE_URL[system] + "workOrder"
-    newRecordToCreate = new_record_build(data_record)
-    oldId_fromSource = common_data.get_oldId(data_record)
-    newRecordToValidate = common_data.validateRecord_build(
-        recordType, filePath_validateBase, newRecordToCreate
-    )
-    output = '<?xml version="1.0" encoding="UTF-8"?>' + ET.tostring(
-        newRecordToValidate
-    ).decode("UTF-8")
-    response = requests.post(validate_url, data=output, headers=validate_headers_xml)
-    #    print(response.status_code, response.text)
-    if "<valid>true</valid>" not in response.text:
-        with open(f"errorlog.txt", "a", encoding="utf-8") as log:
-            log.write(
-                f"{oldId_fromSource}: {response.status_code}. {response.text}\n\n"
-            )
-    if response.text:
-        data_logger.info(f"{oldId_fromSource}: {response.status_code}. {response.text}")
-        with open(f"log.txt", "a", encoding="utf-8") as log:
-            log.write(
-                f"{oldId_fromSource}: {response.status_code}. {response.text}\n\n"
-            )
-
-
-def create_record(data_record):
-    global app_token_client
-    global data_logger
-
-    auth_token = app_token_client.get_auth_token()
-    headersXml = {
-        "Content-Type": "application/vnd.cora.recordgroup+xml",
-        "Accept": "application/vnd.cora.record+xml",
-        "authToken": auth_token,
-    }
-    urlCreate = constants.BASE_URL[system] + recordType
-    recordToCreate = new_record_build(data_record)
-    oldId_fromSource = common_data.get_oldId(data_record)
-    output = '<?xml version="1.0" encoding="UTF-8"?>' + ET.tostring(
-        recordToCreate
-    ).decode("UTF-8")
-    response = requests.post(urlCreate, data=output, headers=headersXml)
-    #    print(response.status_code, response.text)
-    if response.text:
-        data_logger.info(f"{oldId_fromSource}: {response.status_code}. {response.text}")
-    if response.status_code not in ([201]):
-        data_logger.error(
-            f"{oldId_fromSource}: {response.status_code}. {response.text}"
-        )
-    return response.text
-
 
 if __name__ == "__main__":
-    start()
+    main()
