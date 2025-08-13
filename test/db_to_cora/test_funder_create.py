@@ -47,6 +47,8 @@ def test_element_xml():
             <month>05</month>
             <day>06</day>
         </endDate>
+        <identifier type="doi">10.1000/182</identifier>
+        <identifier type="organisationNumber">202100-5489</identifier>
     </funder>
     """
 

@@ -3,6 +3,7 @@ from common.xml_utils import append_if_value
 from common.record_info_create import record_info_create
 from common.create_authority_or_variant_lang import create_authority_or_variant_lang_using_name_type_corporate
 from common.create_end_date import create_end_date
+from common.common_data import create_identifiers_from_source
 
 
 nameInData = "funder"
@@ -19,7 +20,9 @@ def transform_funder(source_record: ET.Element) -> ET.Element:
     funder.append(_create_authority_or_variant_lang(source_record, element_name="authority", language="swe"))
     append_if_value(funder, _create_authority_or_variant_lang(source_record, element_name="variant", language="eng"))
     append_if_value(funder, _create_end_date(source_record, origin_type=None))
-   
+    append_if_value(funder, _create_identifiers_from_source(source_record, identifier_type="doi"))
+    append_if_value(funder, _create_identifiers_from_source(source_record, identifier_type="organisationNumber"))
+        
     return funder
 
 
@@ -47,3 +50,11 @@ def _create_end_date(source_record: ET.Element, origin_type: str)-> ET.Element |
     if end_date is not None and end_date.text:
         return create_end_date(
             end_date.text, origin_type=None)
+        
+def _create_identifiers_from_source(source_record: ET.Element, identifier_type: str) -> ET.Element | None:
+    identifier = source_record.find(f".//identifier_{identifier_type}")
+    if identifier is not None and identifier.text:
+        return create_identifiers_from_source(
+            identifier.text, identifier_type)
+    
+    
