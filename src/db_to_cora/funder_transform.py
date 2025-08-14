@@ -19,7 +19,7 @@ def transform_funder(source_record: ET.Element) -> ET.Element:
     funder.append(_create_record_info(source_record))
     funder.append(_create_authority_or_variant_lang(source_record, element_name="authority", language="swe"))
     append_if_value(funder, _create_authority_or_variant_lang(source_record, element_name="variant", language="eng"))
-    append_if_value(funder, _create_end_date(source_record, origin_type=None))
+    append_if_value(funder, _create_end_date(source_record))
     append_if_value(funder, _create_identifiers_from_source(source_record, identifier_type="doi"))
     append_if_value(funder, _create_identifiers_from_source(source_record, identifier_type="organisationNumber"))
         
@@ -45,11 +45,11 @@ def _create_authority_or_variant_lang(source_record: ET.Element, element_name: s
         return create_authority_or_variant_lang_using_name_type_corporate(
             name_lang.text, element_name, language)
 
-def _create_end_date(source_record: ET.Element, origin_type: str)-> ET.Element | None:
+def _create_end_date(source_record: ET.Element)-> ET.Element | None:
     end_date = source_record.find(".//end_date")
     if end_date is not None and end_date.text:
         return create_end_date(
-            end_date.text, origin_type=None)
+            end_date.text)
         
 def _create_identifiers_from_source(source_record: ET.Element, identifier_type: str) -> ET.Element | None:
     identifier = source_record.find(f".//identifier_{identifier_type}")
