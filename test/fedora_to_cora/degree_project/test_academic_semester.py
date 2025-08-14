@@ -47,3 +47,24 @@ def test_academic_semester_is_empty():
         </academicSemester>
         """,
     )
+
+
+def test_academic_semester_with_year_is_empty():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <academicTerm>
+                <year></year>
+            </academicTerm>
+        </publication>
+        """
+    )
+    semester = create_academic_semester(source_record)
+
+    assert_equal_for_xml_and_xml_string(
+        semester,
+        """
+        <academicSemester>
+        </academicSemester>
+        """,
+    )

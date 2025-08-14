@@ -1,3 +1,5 @@
+import xml.etree.ElementTree as ET
+
 publication_map = {
     "50": "publication_journal-article",
     "51": "publication_review-article",
@@ -32,3 +34,18 @@ def get_validation_type_by_publication_type_id(publication_type_id: str) -> str:
     if publication_type_id not in publication_map:
         raise KeyError(f"Unknown publication_type_id: {publication_type_id}")
     return publication_map[publication_type_id]
+
+
+def get_validation_type_from_fedora_record(source_record: ET.Element) -> str:
+    """
+    Extracts the publication type ID from the source record and returns the corresponding validation type.
+
+    :param source_record: The source XML record element.
+    :return: The validation type as a string.
+    :raises KeyError: If the publication type ID is not found.
+    """
+    publication_type_id = source_record.findtext("./publicationType/publicationTypeId")
+    if publication_type_id is None:
+        raise KeyError("publicationTypeId is missing in source record")
+
+    return get_validation_type_by_publication_type_id(publication_type_id)

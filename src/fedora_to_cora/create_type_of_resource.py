@@ -1,25 +1,28 @@
 import xml.etree.ElementTree as ET
 
 map_media_type = {
-    "1": "stillImage", # still image
-    "2": "artifact", # three dimensional object
-    "3": "soundRecording", # sound recording
-    "4": "notatedMusic", # notated music
-    "6": "movingImage", # moving image
-    "7": "mixedMaterial", # mixed material
-    "5": "softwareMultimedia", # software, multimedia
-    "8": "soundRecordingMusical", # sound recording-musical
-    "9": "soundRecordingNonMusical", # sound recording-nonmusical
-    "10": "text", # text
-    "11": "cartographic", # cartographic
+    "1": "stillImage",  # still image
+    "2": "artifact",  # three dimensional object
+    "3": "soundRecording",  # sound recording
+    "4": "notatedMusic",  # notated music
+    "6": "movingImage",  # moving image
+    "7": "mixedMaterial",  # mixed material
+    "5": "softwareMultimedia",  # software, multimedia
+    "8": "soundRecordingMusical",  # sound recording-musical
+    "9": "soundRecordingNonMusical",  # sound recording-nonmusical
+    "10": "text",  # text
+    "11": "cartographic",  # cartographic
 }
+
 
 def create_type_of_resource(source_record: ET.Element) -> ET.Element:
     type_of_resource = ET.Element("typeOfResource")
     media_type = source_record.findtext("./mediaType/autoId")
-    type_of_resource.text = _get_type_of_resource_by_media_type(media_type)
+    if media_type is not None:
+        type_of_resource.text = _get_type_of_resource_by_media_type(media_type)
 
     return type_of_resource
+
 
 def _get_type_of_resource_by_media_type(media_type: str) -> str:
     """

@@ -27,7 +27,13 @@ def create_name_type_personals(
         for person in persons:
             if person is not None:
                 name_type_personals.append(
-                    create_name_type_personal(person, [role_term], repeat_id, context)
+                    create_name_type_personal(
+                        person,
+                        [role_term],
+                        repeat_id,
+                        context,
+                        author_only=is_author_only_type(source_record),
+                    )
                 )
                 repeat_id += 1
 
@@ -46,7 +52,11 @@ def create_name_type_personals(
 
 
 def create_name_type_personal(
-    person: ET.Element, role_terms: list[str], repeatId: int, context: Context
+    person: ET.Element,
+    role_terms: list[str],
+    repeatId: int,
+    context: Context,
+    author_only: bool = False,
 ) -> ET.Element:
     """
     Create a nameTypePersonal element from an author element.
@@ -68,8 +78,12 @@ def create_name_type_personal(
         )
 
     role = ET.SubElement(name_type_personal, "role")
+
     for i, role_term in enumerate(role_terms):
-        ET.SubElement(role, "roleTerm", repeatId=str(i)).text = role_term
+        role_term_el = ET.SubElement(role, "roleTerm")
+        role_term_el.text = role_term
+        if not author_only:
+            role_term_el.set("repeatId", str(i))
 
     for i, organisation in enumerate(person.findall("./organisations/organisation")):
         name_type_personal.append(create_affiliation(organisation, i, context))
@@ -129,3 +143,13 @@ def create_affiliation_for_uncontrolled_organisation(
         ET.SubElement(name, "namePart").text = uncontrolled_name.text
 
     return affiliation
+
+
+def is_author_only_type(source_record: ET.Element) -> bool:
+    """
+    Check if the publication type only allows a single role (author)
+    """
+
+    author_only_types = {"53", "56", "65"}
+    publication_type_id = source_record.findtext("./publicationType/publicationTypeId")
+    return publication_type_id in author_only_types

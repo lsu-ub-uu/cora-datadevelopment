@@ -19,7 +19,7 @@ This file is part of DiVA Client.
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
 from fedora_to_cora.get_validation_type_by_publication_type_id import (
-    get_validation_type_by_publication_type_id,
+    get_validation_type_from_fedora_record,
 )
 from fedora_to_cora.get_visibility import get_visibility
 
@@ -41,15 +41,10 @@ def create_record_info(source_record: ET.Element) -> ET.Element:
 
 
 def _create_validation_type(source_record: ET.Element) -> ET.Element:
-    publicationTypeId = source_record.find(".//publicationTypeId")
-    assert (
-        publicationTypeId is not None and publicationTypeId.text is not None
-    ), "publicationTypeId is missing in source record"
-
     return create_record_link_using_name_type_id(
         "validationType",
         record_type="validationType",
-        record_id=get_validation_type_by_publication_type_id(publicationTypeId.text),
+        record_id=get_validation_type_from_fedora_record(source_record),
     )
 
 

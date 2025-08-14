@@ -17,20 +17,7 @@ def test_create_defence():
                     <street>Slottet</street>
                     <city>Uppsala</city>
                 </room>
-                <grantingInstitution>
-                    <organisationId>978</organisationId>
-                    <organisationName>
-                        <name>Uppsala universitet</name>
-                    </organisationName>
-                    <organisationAddress>
-                        <addressId>1956</addressId>
-                        <postnumber>75105</postnumber>
-                        <city>Uppsala</city>
-                        <country>
-                            <countryCode>se</countryCode>
-                        </country>
-                    </organisationAddress>
-                </grantingInstitution>
+               
             </defence>
         </publication>
         """
@@ -55,12 +42,35 @@ def test_create_defence():
                 <location>
                     Balsalen
                 </location>
-                <address>Slottet, 75105, Uppsala, se</address>
+                <address>Slottet</address>
                 <place>
                     <placeTerm>
-                    Uppsala
+                        Uppsala
                     </placeTerm>
                 </place>
+            </defence>
+        """,
+    )
+
+
+def test_create_empty_defence():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <defence>
+                <room>
+                </room>
+            </defence>
+        </publication>
+        """
+    )
+
+    admin = create_defence(source_record)
+
+    assert_equal_for_xml_and_xml_string(
+        admin,
+        """
+            <defence> 
             </defence>
         """,
     )
