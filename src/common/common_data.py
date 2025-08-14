@@ -1,10 +1,80 @@
 import xml.etree.ElementTree as ET
+from common.create_end_date import append_year_month_day
 
 
 def read_source_xml(filePath_sourceXml) -> ET.Element:
     sourceFile_xml = ET.parse(filePath_sourceXml)
     root = sourceFile_xml.getroot()
+    
     return root
+
+
+def create_title_info(title: str, subtitle: str) -> ET.Element:
+    title_info = ET.Element("titleInfo")
+    title_info.append(
+        create_element_from_source("title", value = title)
+        )
+    if subtitle is not None and subtitle.text:
+        title_info.append(
+            create_element_from_source("subtitle", value = subtitle.text)
+            )
+    return title_info
+
+
+def create_identifiers_from_source_with_repeat_id(identifier: str, identifier_type: str, identifier_repeat_id: dict) -> ET.Element:
+    identifier_element = create_identifiers_from_source(identifier, identifier_type)
+    identifier_element.set("displayLabel", identifier_type)
+    identifier_element.set("repeatId", str(identifier_repeat_id["repeatId"]))
+    identifier_repeat_id["repeatId"] = identifier_repeat_id["repeatId"] + 1
+    identifier_element.set("type", "issn")
+    return identifier_element
+    
+def create_identifiers_from_source(identifier: str, identifier_type: str) -> ET.Element:
+    identifiers = ET.Element("identifier", type = identifier_type)
+    identifiers.text = identifier
+    
+    return identifiers
+
+
+
+
+def create_origin_info(date: str, origin_type: str):
+    origin_info = ET.Element(origin_type)
+    date_issued = ET.Element("dateIssued", point="end")
+    
+    year, month, day = map(str.strip, date.split("-"))
+    append_year_month_day(date_issued, year, month, day)
+    
+    origin_info.append(date_issued)
+    
+    return origin_info
+
+def create_location(url:str) -> ET.Element:
+    location = ET.Element("location")
+    location.append(
+        create_element_from_source("url", value = url)
+        )
+    return location
+
+
+def create_record_link_using_name_type_id(
+    name_in_data: str, record_type: str, record_id: str) -> ET.Element:
+    link = ET.Element(name_in_data)
+    ET.SubElement(link, "linkedRecordType").text = record_type
+    ET.SubElement(link, "linkedRecordId").text = record_id
+    return link
+
+
+def create_element_from_source(tag_name: str, value: str) -> ET.Element:
+    element = ET.Element(tag_name)
+    element.text = value
+    
+    return element
+
+
+
+
+
 
 
 def remove_action_link(element):
@@ -104,6 +174,7 @@ def titleInfo_alternative_build(data_record, new_record_element, titleType):
         ET.SubElement(titleInfo, "subTitle").text = subTitleFromSource.text
 
 
+
 def identifier_build(data_record, newRecordElement, identifierType, counter):
     identifier_fromSource = data_record.find(f".//identifier_{identifierType}")
     if identifier_fromSource is not None and identifier_fromSource.text:
@@ -118,6 +189,7 @@ def identifier_build(data_record, newRecordElement, identifierType, counter):
                 identifier_fromSource.text
             )
     return counter
+
 
 
 def end_date_build(data_record, newRecordElement, originType):
@@ -141,8 +213,9 @@ def endDate_yearMonthDay(year: str, month: str, day: str, rootElement: ET.Elemen
     ET.SubElement(rootElement, "year").text = year
     ET.SubElement(rootElement, "month").text = month
     ET.SubElement(rootElement, "day").text = day
-
-
+    
+    
+    
 def location_build(data_record, newRecordElement):
     url_fromSource = data_record.find(".//url")
     if url_fromSource is not None and url_fromSource.text:
@@ -187,10 +260,4 @@ def create_record_info_for_record_type(record_type: str) -> ET.Element:
     return record_info
 
 
-def create_record_link_using_name_type_id(
-    name_in_data: str, record_type: str, record_id: str
-) -> ET.Element:
-    link = ET.Element(name_in_data)
-    ET.SubElement(link, "linkedRecordType").text = record_type
-    ET.SubElement(link, "linkedRecordId").text = record_id
-    return link
+

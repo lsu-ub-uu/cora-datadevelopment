@@ -53,6 +53,7 @@ def test_complete_xml():
     )
 
     result = transform_journal(source_record)
+    secondResultSameRun = transform_journal(source_record)
 
     expected_xml = """
     <journal>
@@ -87,3 +88,8 @@ def test_complete_xml():
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
+    assert_equal_for_xml_and_xml_string(secondResultSameRun, expected_xml)
+    
+    
+    
+    

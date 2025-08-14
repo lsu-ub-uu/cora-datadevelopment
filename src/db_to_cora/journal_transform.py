@@ -3,7 +3,7 @@ from common.xml_utils import append_if_value
 from common.record_info_create import record_info_create
 from common.common_data import create_title_info
 from common.common_data import create_origin_info
-from common.common_data import create_identifiers_from_source
+from common.common_data import create_identifiers_from_source_with_repeat_id
 from common.common_data import create_location
 
 nameInData = "journal"
@@ -13,14 +13,15 @@ def transform_journal(source_record: ET.Element) -> ET.Element:
     """
     Create a Cora journal element from a DB export journal.
     """
-
+#    create_identifiers_from_source._counter=-1;
+    identifier_repeat_id = dict(repeatId = 0)
     journal = ET.Element(nameInData)
     
     journal.append(_create_record_info(source_record))
     journal.append(_create_title_info(source_record))
     append_if_value(journal, _create_origin_info(source_record, origin_type="originInfo"))
-    append_if_value(journal, _create_identifiers_from_source(source_record, identifier_type="eissn"))
-    append_if_value(journal, _create_identifiers_from_source(source_record, identifier_type="pissn"))
+    append_if_value(journal, _create_identifiers_from_source_with_repeat_id(source_record, "eissn", identifier_repeat_id))
+    append_if_value(journal, _create_identifiers_from_source_with_repeat_id(source_record, "pissn", identifier_repeat_id))
     append_if_value(journal, _create_location(source_record))
     
         
@@ -52,11 +53,11 @@ def _create_origin_info(source_record: ET.Element, origin_type: str) -> ET.Eleme
         return create_origin_info(
             end_date.text, origin_type)
         
-def _create_identifiers_from_source(source_record: ET.Element, identifier_type: str) -> ET.Element | None:
+def _create_identifiers_from_source_with_repeat_id(source_record: ET.Element, identifier_type: str, identifier_repeat_id: dict) -> ET.Element | None:
     identifier = source_record.find(f".//identifier_{identifier_type}")
     if identifier is not None and identifier.text:
-        return create_identifiers_from_source(
-            identifier.text, identifier_type)
+        return create_identifiers_from_source_with_repeat_id(
+            identifier.text, identifier_type, identifier_repeat_id)
 
     
 def _create_location(source_record: ET.Element) -> ET.Element | None:
