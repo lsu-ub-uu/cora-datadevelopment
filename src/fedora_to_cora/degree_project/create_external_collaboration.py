@@ -12,7 +12,7 @@ def create_external_collaboration(source_record: ET.Element) -> ET.Element:
     """
     external_collaboration = ET.Element("externalCollaboration")
     
-    for i, partner in enumerate(source_record.findall(".//partner")):
+    for i, partner in enumerate(source_record.findall("./externalCooperation/partners/partner")):
         name_part = ET.SubElement(external_collaboration, "namePart", repeatId=str(i))
         name_part.text = partner.findtext("name", "")
     
