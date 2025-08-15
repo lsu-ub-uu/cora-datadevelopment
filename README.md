@@ -45,7 +45,7 @@ ptw --now .
 - ✅ titleInfo type="main" <- `<originalPublicationTitle>`
 - ✅ subject <- `<keyWords>`
 - ✅ genre type="outputType" (valideringstyp) <- `<publicationType>` via `get_validation_type_by_publication_typ`
-- ✅ language <- `<originalPuoriblicationTitle><language>`
+- ✅ language <- `<originalPublicationTitle><language>`
 - ✅ artisticWork type="outputType" <- `<artisticWork>`
 - ✅ titleInfo type="alternative" <- `<alternativePublicationTitles>`
 - ✅ name type="personal" <-
@@ -85,6 +85,7 @@ ptw --now .
 - ✅ identifier type type="scopus"
 - ✅ location <- `<urls><url>` (openAccess behöver hanteras)
 - location displayLabel="orderLink"
+
   ```xml
   <publicationOrder>
     <orderProfileId>OrderProfile-4</orderProfileId>  (Kolla upp i höst, är generiska texter i Classic)
@@ -94,14 +95,15 @@ ptw --now .
     <parameters/>
   </publicationOrder>
   ```
+
 - ✅note type="external" <- `<note>`
 - ✅ relatedItem type="series" <- `<seriesInfo>` och `<uncontrolledSeriesInfo>`
   - ✅ series <- `<seriesInfo>`
-  - ✅ titleInfo/mainTitle <- `uncontrolledSeriesInfo/series/seriesNameUncontrolled`
-  - ✅ identifier type="issn" displayLabel="pissn" <- `uncontrolledSeriesInfo/series/issn`
-  - ✅ identifier type="issn" displayLabel="eissn" <- `uncontrolledSeriesInfo/series/eissn`
-  - ✅ partNumber <- `uncontrolledSeriesInfo/numberInSeries` (?)
-  - ❌ No mapping: `uncontrolledSeriesInfos/seriesAlternativeTitles, subjects, relationships`
+  - ✅ titleInfo/mainTitle <- `<uncontrolledSeriesInfo><series><seriesNameUncontrolled>`
+  - ✅ identifier type="issn" displayLabel="pissn" <- `<uncontrolledSeriesInfo><series><issn>`
+  - ✅ identifier type="issn" displayLabel="eissn" <- `<uncontrolledSeriesInfo><series><eissn>`
+  - ✅ partNumber <- `<uncontrolledSeriesInfo>numberInSeries>` (?)
+  - ❌ No mapping: `<uncontrolledSeriesInfos><seriesAlternativeTitles>, <subjects>, <relationships>`
 - 🆕 relatedItem type="researchData"
 - ✅ relatedItem type="project" <- `<projects>`
 - 🆕 relatedItem type="initiative"
@@ -134,10 +136,10 @@ ptw --now .
 - ✅ identifier type="isrn"
 - ✅ academicSemester <- `<academicTerm>`
 - ✅ studentDegree <- `<studentDegrees>`
-  - ✅ degreeLevel <- `studentDegree/thesisLevel/thesisLevelCode`
-  - ✅ universityPoints <- `studentDegree/universityPoints/hp`
-  - ✅ course <- link to diva-course by oldId: `studentDegree/undergraduateSubject/subjectId`
-  - ✅ programme <- link to diva-programme by oldId: `studentDegree/educationalProgramme/subjectId`
+  - ✅ degreeLevel <- `<studentDegree><thesisLevel><thesisLevelCode>`
+  - ✅ universityPoints <- `<studentDegree><universityPoints><hp>`
+  - ✅ course <- link to diva-course by oldId: `<studentDegree><undergraduateSubject><subjectId>`
+  - ✅ programme <- link to diva-programme by oldId: `<studentDegree><educationalProgramme><subjectId>`
 - ✅ externalCollaboration <- `<externalCooperation>`
 - ✅ degreeGrantingInstitution type="corporate" <- `<defence><grantingInstitution>`
   - ✅ organisation
@@ -146,6 +148,39 @@ ptw --now .
   - 🆕 identifier type="ror" (ROR finns inte i Classic)
 - presentation <- `<defence>` (Kolla om både presentation och defence behöver hanteras)
 - ✅ defence <- `<defence>`
+
+  ```xml
+  <defence>
+    <language>
+        <languageTerm type="code" authority="iso639-2b">swe</languageTerm>
+    </language>
+    <dateOther type="presentation">
+        <year>2022</year>
+        <month>07</month>
+        <day>31</day>
+        <hh>16</hh>
+        <mm>19</mm>
+    </dateOther>
+    <location>
+        Balsalen
+    </location>
+    <address>Slottet</address>
+    <place>/
+        <placeTerm>
+            Uppsala
+        </placeTerm>
+    </place>
+  </defence>
+  ```
+
+  - ✅ `<language>` <- `<languageTerm><language>`
+  - ✅ `<dateOther>` <- `<date>`
+  - ✅ `<location>` <- `<room> <name>`
+  - ✅ `<address>` <- `<room><street>`
+  - ✅ `<place><placeTerm>` <- `<room><city>`
+  - ✅ `<degreeGrantingInstitution>` <- `<grantingInstitution>`
+  - `<organisation>` <- `<organisati✅ onId>`
+
 - relatedItem type="journal" <- `<journal>`
   - ✅ journal
   - ✅ titleInfo
@@ -169,7 +204,7 @@ ptw --now .
 - 🆕 related
 - 🆕 related type="retracted"
 - related type="constituent" (länkade avhandligar)
-- note type="statementOfResponsibility"
+- note type="statementOfResponsibility"/
 
 ## Behöver mer information för att migrera
 

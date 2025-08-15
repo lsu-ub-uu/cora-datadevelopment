@@ -10,12 +10,12 @@ def test_create_external_collaboration():
             <externalCooperation>
                 <external>true</external>
                 <partners>
-                <partner>
-                    <name>En extern partner</name>
-                </partner>
-                <partner>
-                    <name>Ytterligare extern partner</name>
-                </partner>
+                    <partner>
+                        <name>En extern partner</name>
+                    </partner>
+                    <partner>
+                        <name>Ytterligare extern partner</name>
+                    </partner>
                 </partners>
             </externalCooperation>
         </publication>
