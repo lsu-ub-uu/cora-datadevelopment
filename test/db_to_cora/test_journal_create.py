@@ -79,8 +79,8 @@ def test_complete_xml():
                 <day>06</day>
             </dateIssued>
         </originInfo>
-        <identifier displayLabel="eissn" repeatId="0" type="issn">1234-1234</identifier>
-        <identifier displayLabel="pissn" repeatId="1" type="issn">5678-5678</identifier>
+        <identifier displayLabel="eissn" type="issn">1234-1234</identifier>
+        <identifier displayLabel="pissn" type="issn">5678-5678</identifier>
         <location>
             <url>url.se</url>
         </location>

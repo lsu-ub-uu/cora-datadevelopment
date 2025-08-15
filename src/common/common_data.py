@@ -24,8 +24,8 @@ def create_title_info(title: str, subtitle: str) -> ET.Element:
 def create_identifiers_from_source_with_repeat_id(identifier: str, identifier_type: str, identifier_repeat_id: dict) -> ET.Element:
     identifier_element = create_identifiers_from_source(identifier, identifier_type)
     identifier_element.set("displayLabel", identifier_type)
-    identifier_element.set("repeatId", str(identifier_repeat_id["repeatId"]))
-    identifier_repeat_id["repeatId"] = identifier_repeat_id["repeatId"] + 1
+#    identifier_element.set("repeatId", str(identifier_repeat_id["repeatId"]))
+#    identifier_repeat_id["repeatId"] = identifier_repeat_id["repeatId"] + 1
     identifier_element.set("type", "issn")
     return identifier_element
     
