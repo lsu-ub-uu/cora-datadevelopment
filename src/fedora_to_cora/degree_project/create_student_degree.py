@@ -32,7 +32,6 @@ def _create_student_degree(
         points = ET.SubElement(student_degree, "universityPoints")
         points.text = university_points
 
-    # TODO Linked course
     programme_old_id = source_student_degree.findtext(
         "./undergraduateSubject/subjectId"
     )
@@ -50,7 +49,6 @@ def _create_student_degree(
             )
         )
 
-    # TODO Linked programme
     programme_old_id = source_student_degree.findtext(
         "./educationalProgramme/subjectId"
     )

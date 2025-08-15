@@ -10,6 +10,9 @@ def test_creates_name_type_personal():
     source_record = ET.fromstring(
         """
         <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+            </publicationType>
             <authors>
                 <person>
                     <firstName>Michaela</firstName>
@@ -39,6 +42,9 @@ def test_creates_persons_for_roles():
     source_record = ET.fromstring(
         """
         <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+            </publicationType>
             <authors>
                 <person>
                     <firstName>Abel</firstName>
@@ -124,6 +130,9 @@ def test_creates_uncontrolled_affiliation():
     source_record = ET.fromstring(
         """
         <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+            </publicationType>
             <authors>
                 <person>
                     <firstName>Michaela</firstName>
@@ -178,6 +187,9 @@ def test_creates_controlled_affiliation(monkeypatch):
     source_record = ET.fromstring(
         f"""
         <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+            </publicationType>
             <authors>
                 <person>
                     <firstName>Michaela</firstName>
@@ -212,6 +224,38 @@ def test_creates_controlled_affiliation(monkeypatch):
                     <linkedRecordId>{expected_cora_id}</linkedRecordId>
                 </organisation>
             </affiliation>
+        </name>
+        """,
+    )
+
+
+def test_creates_for_author_only_validation_type():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>65</publicationTypeId>
+            </publicationType>
+            <authors>
+                <person>
+                    <firstName>John</firstName>
+                    <lastName>Doe</lastName>
+                </person>
+            </authors>
+        </publication>
+        """
+    )
+    names = create_name_type_personals(
+        source_record,
+        mock_context,
+    )
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">Doe</namePart>
+            <namePart type="given">John</namePart>
+            <role><roleTerm>aut</roleTerm></role>
         </name>
         """,
     )

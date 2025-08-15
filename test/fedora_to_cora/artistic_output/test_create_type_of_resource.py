@@ -39,3 +39,21 @@ def test_create_type_of_resource(media_type, expected):
         <typeOfResource>{expected}</typeOfResource>
         """,
     )
+
+
+def test_missing_media_type():
+    source_record = ET.fromstring(
+        """
+        <publication>
+        </publication>
+        """
+    )
+
+    type_of_resource = create_type_of_resource(source_record)
+
+    assert_equal_for_xml_and_xml_string(
+        type_of_resource,
+        f"""
+        <typeOfResource></typeOfResource>
+        """,
+    )

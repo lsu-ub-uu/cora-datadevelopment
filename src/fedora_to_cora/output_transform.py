@@ -161,11 +161,6 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
         create_external_collaboration(source_record),
     )
 
-    append_if_value(
-        target_record, create_degree_granting_institution(source_record, context)
-    )
-    append_if_value(target_record, create_artistic_work(source_record))
-
     append_if_value(target_record, create_academic_semester(source_record))
 
     append_if_value(target_record, create_external_collaboration(source_record))
@@ -179,8 +174,6 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     append_if_value(
         target_record, create_related_item_type_project(source_record, context)
     )
-
-    append_if_value(target_record, create_defence(source_record))
 
     append_if_value(target_record, create_type_of_resource(source_record))
 

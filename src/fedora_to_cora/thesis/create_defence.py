@@ -1,49 +1,36 @@
 import xml.etree.ElementTree as ET
 
+from common.xml_utils import append_if_value
+
 
 def create_defence(source_record: ET.Element) -> ET.Element:
     defence = ET.Element("defence")
 
-    language = _create_language(source_record)
-    defence.append(language)
+    append_if_value(defence, _create_language(source_record))
 
-    date_other = _create_duration(source_record)
-    defence.append(date_other)
+    append_if_value(defence, _create_duration(source_record))
 
-    location = _create_location(source_record)
-    defence.append(location)
+    append_if_value(defence, _create_location(source_record))
 
-    address = _create_address(source_record)
-    defence.append(address)
+    append_if_value(defence, _create_address(source_record))
 
-    place = _create_place(source_record)
-    defence.append(place)
+    append_if_value(defence, _create_place(source_record))
 
     return defence
 
 
 def _create_place(source_record: ET.Element) -> ET.Element:
     place = ET.Element("place")
-    city = source_record.findtext(
-        "./defence/grantingInstitution/organisationAddress/city"
-    )
-    ET.SubElement(place, "placeTerm").text = city
+    city = source_record.findtext("./defence/room/city")
+    if city is not None:
+        ET.SubElement(place, "placeTerm").text = city
     return place
 
 
 def _create_address(source_record: ET.Element) -> ET.Element:
     address = ET.Element("address")
     street = source_record.findtext("./defence/room/street")
-    post_number = source_record.findtext(
-        "./defence/grantingInstitution/organisationAddress/postnumber"
-    )
-    city = source_record.findtext(
-        "./defence/grantingInstitution/organisationAddress/city"
-    )
-    country = source_record.findtext(
-        "./defence/grantingInstitution/organisationAddress/country/countryCode"
-    )
-    address.text = f"{street}, {post_number}, {city}, {country}"
+    address.text = street
 
     return address
 
@@ -57,11 +44,11 @@ def _create_location(source_record: ET.Element) -> ET.Element:
 
 def _create_language(source_record: ET.Element) -> ET.Element:
     language = ET.Element("language")
-    lanugage_term = ET.Element("languageTerm", type="code", authority="iso639-2b")
+    language_term = ET.Element("languageTerm", type="code", authority="iso639-2b")
     language_code_3 = source_record.findtext("./defence/language/languageCode3")
-    assert language_code_3 is not None, "language must be present in source_record"
-    lanugage_term.text = language_code_3
-    language.append(lanugage_term)
+    language_term.text = language_code_3
+
+    append_if_value(language, language_term)
     return language
 
 
