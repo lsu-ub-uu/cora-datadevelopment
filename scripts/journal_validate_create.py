@@ -9,7 +9,7 @@ from db_to_cora.journal_transform import transform_journal
 
 RECORD_TYPE = "diva-journal"
 
-source_xml_file_path = "data/db_xml/journal_from_db.xml"
+source_xml_file_path = "data/db_xml/journals.xml"
 system = "preview"
 login_id = "divaAdmin@cora.epc.ub.uu.se"
 app_token = "49ce00fb-68b5-4089-a5f7-1c225d3cf156"
