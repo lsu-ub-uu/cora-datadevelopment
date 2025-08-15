@@ -12,11 +12,11 @@ def read_source_xml(filePath_sourceXml) -> ET.Element:
 def create_title_info(title: str, subtitle: str) -> ET.Element:
     title_info = ET.Element("titleInfo")
     title_info.append(
-        create_element_from_source("title", value = title)
+        create_element_from_source("title", title)
         )
     if subtitle is not None and subtitle.text:
         title_info.append(
-            create_element_from_source("subtitle", value = subtitle.text)
+            create_element_from_source("subtitle", subtitle.text)
             )
     return title_info
 
@@ -52,7 +52,7 @@ def create_origin_info(date: str, origin_type: str):
 def create_location(url:str) -> ET.Element:
     location = ET.Element("location")
     location.append(
-        create_element_from_source("url", value = url)
+        create_element_from_source("url", url)
         )
     return location
 
