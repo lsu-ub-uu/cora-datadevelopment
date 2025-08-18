@@ -11,6 +11,9 @@ dependencies = [
 ]
 license = "GPL-3.0"
 
+[project.scripts]
+outputs-migrate = "outputs_migrate:main"
+
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
