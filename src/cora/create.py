@@ -6,10 +6,10 @@ from common.threads import run_with_threads
 
 
 def create_record_list(
-    cora_publishers: list[ET.Element], record_type: str, context: Context
+    record_list: list[ET.Element], record_type: str, context: Context
 ):
     creation_results = run_with_threads(
-        cora_publishers,
+        record_list,
         lambda record: create_record(record, record_type=record_type, context=context),
         workers=context.get_workers(),
         desc="Creating records",
@@ -19,7 +19,7 @@ def create_record_list(
     creation_errors = [errors for (valid, errors) in creation_results if not valid]
 
     context.log(
-        f"Created {len(cora_publishers)} records. {len(successful_creates)} succeeded, {len(creation_errors)} failed."
+        f"Created {len(record_list)} records. {len(successful_creates)} succeeded, {len(creation_errors)} failed."
     )
 
     return creation_results

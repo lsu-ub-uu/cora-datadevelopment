@@ -2,52 +2,68 @@ import xml.etree.ElementTree as ET
 from cora.context import Context
 from common.xml_utils import append_if_value
 
-from fedora_to_cora.create_admin_info import create_admin_info
-from fedora_to_cora.create_language import create_language
-from fedora_to_cora.create_record_info import create_record_info
-from fedora_to_cora.create_genre_type_content_type import create_genre_type_content_type
-from fedora_to_cora.create_subject_authority_diva import create_subject_authority_diva
-from fedora_to_cora.create_title_info import (
+from fedora_to_cora.transform.create_admin_info import create_admin_info
+from fedora_to_cora.transform.create_language import create_language
+from fedora_to_cora.transform.create_record_info import create_record_info
+from fedora_to_cora.transform.create_genre_type_content_type import (
+    create_genre_type_content_type,
+)
+from fedora_to_cora.transform.create_subject_authority_diva import (
+    create_subject_authority_diva,
+)
+from fedora_to_cora.transform.create_title_info import (
     create_title_info,
     create_title_info_type_alternative,
 )
-from fedora_to_cora.create_subject import create_subjects
-from fedora_to_cora.create_artistic_work import create_artistic_work
-from fedora_to_cora.create_genre_type_output_type import create_genre_type_output_type
-from fedora_to_cora.create_name_type_personal import create_name_type_personals
-from fedora_to_cora.create_abstracts import create_abstracts
+from fedora_to_cora.transform.create_subject import create_subjects
+from fedora_to_cora.transform.create_artistic_work import create_artistic_work
+from fedora_to_cora.transform.create_genre_type_output_type import (
+    create_genre_type_output_type,
+)
+from fedora_to_cora.transform.create_name_type_personal import (
+    create_name_type_personals,
+)
+from fedora_to_cora.transform.create_abstracts import create_abstracts
 
-from fedora_to_cora.create_type_of_resource import create_type_of_resource
-from fedora_to_cora.degree_project.create_academic_semester import (
+from fedora_to_cora.transform.create_type_of_resource import create_type_of_resource
+from fedora_to_cora.transform.degree_project.create_academic_semester import (
     create_academic_semester,
 )
-from fedora_to_cora.identifiers.create_doi_se_libr import create_identifier_se_libr
-from fedora_to_cora.identifiers.create_isbn import create_identifier_type_isbn
-from fedora_to_cora.create_origin_info import create_origin_info
-from fedora_to_cora.create_extent import create_extent
-from fedora_to_cora.create_classification_authority_ssif import (
+from fedora_to_cora.transform.identifiers.create_doi_se_libr import (
+    create_identifier_se_libr,
+)
+from fedora_to_cora.transform.identifiers.create_isbn import create_identifier_type_isbn
+from fedora_to_cora.transform.create_origin_info import create_origin_info
+from fedora_to_cora.transform.create_extent import create_extent
+from fedora_to_cora.transform.create_classification_authority_ssif import (
     create_classification_authority_ssif,
 )
-from fedora_to_cora.identifiers.create_identifier import create_identifier
-from fedora_to_cora.create_note import create_note
-from fedora_to_cora.create_location import create_locations
-from fedora_to_cora.create_subject_authority_sdg import create_subject_authority_sdg
-from fedora_to_cora.related_items.create_journal import create_related_item_type_journal
-from fedora_to_cora.related_items.create_series import (
+from fedora_to_cora.transform.identifiers.create_identifier import create_identifier
+from fedora_to_cora.transform.create_note import create_note
+from fedora_to_cora.transform.create_location import create_locations
+from fedora_to_cora.transform.create_subject_authority_sdg import (
+    create_subject_authority_sdg,
+)
+from fedora_to_cora.transform.related_items.create_journal import (
+    create_related_item_type_journal,
+)
+from fedora_to_cora.transform.related_items.create_series import (
     create_related_item_type_series,
 )
-from fedora_to_cora.degree_project.create_student_degree import create_student_degrees
-from fedora_to_cora.degree_project.create_external_collaboration import (
+from fedora_to_cora.transform.degree_project.create_student_degree import (
+    create_student_degrees,
+)
+from fedora_to_cora.transform.degree_project.create_external_collaboration import (
     create_external_collaboration,
 )
-from fedora_to_cora.create_degree_granting_institution import (
+from fedora_to_cora.transform.create_degree_granting_institution import (
     create_degree_granting_institution,
 )
 
-from fedora_to_cora.related_items.create_project import (
+from fedora_to_cora.transform.related_items.create_project import (
     create_related_item_type_project,
 )
-from fedora_to_cora.thesis.create_defence import create_defence
+from fedora_to_cora.transform.thesis.create_defence import create_defence
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
