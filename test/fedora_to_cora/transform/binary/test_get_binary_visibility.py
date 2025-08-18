@@ -1,0 +1,120 @@
+import xml.etree.ElementTree as ET
+from fedora_to_cora.transform.binary.get_binary_visibility import get_binary_visibility
+from datetime import datetime
+
+
+def test_returns_hidden_when_deleted():
+    source_record = ET.fromstring(
+        """
+        <attachment>
+            <availableFrom>2022-12-27T13:23:13.908+01:00</availableFrom>
+            <deleted>true</deleted>
+            <deleteDate>2023-01-31T15:41:40.623+01:00</deleteDate>
+        </attachment>
+        """
+    )
+    assert get_binary_visibility(source_record) == "hidden"
+
+
+def test_returns_published_when_available_from_in_the_past(monkeypatch):
+    monkeypatch.setattr(
+        "fedora_to_cora.transform.binary.get_binary_visibility._get_today",
+        lambda: datetime(2025, 1, 1).astimezone(),
+    )
+    source_record = ET.fromstring(
+        """
+        <attachment>
+            <availableFrom>2022-12-27T13:23:13.908+01:00</availableFrom>
+            <deleted>false</deleted>
+        </attachment>
+        """
+    )
+
+    assert get_binary_visibility(source_record) == "published"
+
+
+def test_returns_unpublished_when_available_from_in_the_future(monkeypatch):
+    monkeypatch.setattr(
+        "fedora_to_cora.transform.binary.get_binary_visibility._get_today",
+        lambda: datetime(2025, 1, 1).astimezone(),
+    )
+    source_record = ET.fromstring(
+        """
+        <attachment>
+            <availableFrom>2026-12-27T13:23:13.908+01:00</availableFrom>
+            <deleted>false</deleted>
+        </attachment>
+        """
+    )
+
+    assert get_binary_visibility(source_record) == "unpublished"
+
+
+def test_returns_unpublished_when_no_available_from():
+    source_record = ET.fromstring(
+        """
+        <attachment>
+            <deleted>false</deleted>
+        </attachment>
+        """
+    )
+
+    assert get_binary_visibility(source_record) == "unpublished"
+
+
+def test_returns_published_when_available_from_in_the_past_and_available_until_is_in_the_future(
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        "fedora_to_cora.transform.binary.get_binary_visibility._get_today",
+        lambda: datetime(2025, 1, 1).astimezone(),
+    )
+    source_record = ET.fromstring(
+        """
+        <attachment>
+            <availableFrom>2022-12-27T13:23:13.908+01:00</availableFrom>
+            <availableUntil>2026-12-27T13:23:13.908+01:00</availableUntil>
+            <deleted>false</deleted>
+        </attachment>
+        """
+    )
+
+    assert get_binary_visibility(source_record) == "published"
+
+
+def test_returns_unpublished_when_available_until_is_in_the_past(
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        "fedora_to_cora.transform.binary.get_binary_visibility._get_today",
+        lambda: datetime(2027, 1, 1).astimezone(),
+    )
+    source_record = ET.fromstring(
+        """
+        <attachment>
+            <availableFrom>2022-12-27T13:23:13.908+01:00</availableFrom>
+            <availableUntil>2026-12-27T13:23:13.908+01:00</availableUntil>
+            <deleted>false</deleted>
+        </attachment>
+        """
+    )
+
+    assert get_binary_visibility(source_record) == "unpublished"
+
+
+def test_returns_unpublished_when_on_hold(monkeypatch):
+    monkeypatch.setattr(
+        "fedora_to_cora.transform.binary.get_binary_visibility._get_today",
+        lambda: datetime(2025, 1, 1).astimezone(),
+    )
+    source_record = ET.fromstring(
+        """
+        <attachment>
+            <availableFrom>2022-12-27T13:23:13.908+01:00</availableFrom>
+            <deleted>false</deleted>
+            <onHold>true</onHold>
+        </attachment>
+        """
+    )
+
+    assert get_binary_visibility(source_record) == "unpublished"

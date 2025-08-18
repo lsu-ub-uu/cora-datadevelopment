@@ -3,11 +3,9 @@ import xml.etree.ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
-def skip_test_create_binary_record():
+def test_create_binary_record():
     source_record = ET.fromstring(
         """
-    <attachments class="tree-set">
-        <no-comparator></no-comparator>
         <attachment>
         <mimeType>
             <mimeTypeId>62</mimeTypeId>
@@ -61,8 +59,7 @@ def skip_test_create_binary_record():
         <toBeArchived>false</toBeArchived>
         <digitized>true</digitized>
         <hasCoverPage>false</hasCoverPage>
-        </attachment>
-    </attachments>
+    </attachment>
         """
     )
 
@@ -73,19 +70,18 @@ def skip_test_create_binary_record():
         """
             <binary>
                 <recordInfo>
-                    <dataDivider>
-                        <linkedRecordType>system</linkedRecordType>
-                        <linkedRecordId>divaData</linkedRecordId>
-                    </dataDivider>
                     <validationType>
                         <linkedRecordType>validationType</linkedRecordType>
                         <linkedRecordId>genericBinary</linkedRecordId>
                     </validationType>
-                    <visibility>unpublished</visibility>
+                    <dataDivider>
+                        <linkedRecordType>system</linkedRecordType>
+                        <linkedRecordId>divaData</linkedRecordId>
+                    </dataDivider>
+                    <visibility>published</visibility>
                 </recordInfo>
-                <originalFileName></originalFileName>
-                <expectedFileSize></expectedFileSize>
-                <expectedChecksum></expectedChecksum>
+                <originalFileName>BMFEA 81_HR + Low (210215).zip</originalFileName>
+                <expectedFileSize>93598848</expectedFileSize>
             </binary>
         """,
     )

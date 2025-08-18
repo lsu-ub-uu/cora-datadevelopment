@@ -22,57 +22,37 @@ from fedora_to_cora.transform.get_validation_type_by_publication_type_id import 
     get_validation_type_from_fedora_record,
 )
 from fedora_to_cora.transform.get_visibility import get_visibility
+from common.record_info_create import record_info_create
 
 
 def create_record_info(source_record: ET.Element) -> ET.Element:
-    recordInfo = ET.Element("recordInfo")
+    validation_type = get_validation_type_from_fedora_record(source_record)
 
-    recordInfo.append(_create_validation_type(source_record))
+    permission_unit = _create_permission_unit(source_record)
 
-    recordInfo.append(_create_data_divider())
+    visibility = get_visibility(source_record)
 
-    recordInfo.append(_create_permission_unit(source_record))
+    old_id = _create_old_id(source_record)
 
-    ET.SubElement(recordInfo, "visibility").text = get_visibility(source_record)
-
-    recordInfo.append(_create_old_id(source_record))
-
-    return recordInfo
-
-
-def _create_validation_type(source_record: ET.Element) -> ET.Element:
-    return create_record_link_using_name_type_id(
-        "validationType",
-        record_type="validationType",
-        record_id=get_validation_type_from_fedora_record(source_record),
+    return record_info_create(
+        validation_type_id=validation_type,
+        old_id=old_id,
+        permission_unit_id=permission_unit,
+        visibility=visibility,
     )
 
 
-def _create_data_divider() -> ET.Element:
-    return create_record_link_using_name_type_id(
-        "dataDivider",
-        record_type="system",
-        record_id="divaData",
-    )
-
-
-def _create_permission_unit(source_record: ET.Element) -> ET.Element:
+def _create_permission_unit(source_record: ET.Element) -> str:
     domain = source_record.find(".//domain")
     assert (
         domain is not None and domain.text is not None
     ), "domain is missing in source record"
 
-    return create_record_link_using_name_type_id(
-        "permissionUnit",
-        record_type="permissionUnit",
-        record_id=domain.text,
-    )
+    return domain.text
 
 
-def _create_old_id(source_record: ET.Element) -> ET.Element:
+def _create_old_id(source_record: ET.Element) -> str:
     pid = source_record.find(".//pid")
     assert pid is not None and pid.text is not None, "pid is missing in source record"
 
-    oldId = ET.Element("oldId")
-    oldId.text = pid.text
-    return oldId
+    return pid.text

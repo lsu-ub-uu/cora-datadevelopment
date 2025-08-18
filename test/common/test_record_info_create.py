@@ -52,3 +52,44 @@ def test_record_info_create_without_permission_unit():
     """
 
     assert_equal_for_xml_and_xml_string(record_info, expected_xml)
+
+
+def test_record_info_create_with_only_validation_type():
+    record_info = record_info_create(validation_type_id="someValidationType")
+
+    expected_xml = """
+        <recordInfo>
+            <validationType>
+                <linkedRecordType>validationType</linkedRecordType>
+                <linkedRecordId>someValidationType</linkedRecordId>
+            </validationType>
+            <dataDivider>
+                <linkedRecordType>system</linkedRecordType>
+                <linkedRecordId>divaData</linkedRecordId>
+            </dataDivider>
+        </recordInfo>
+    """
+
+    assert_equal_for_xml_and_xml_string(record_info, expected_xml)
+
+
+def test_record_info_create_with_visibility():
+    record_info = record_info_create(
+        validation_type_id="someValidationType", visibility="published"
+    )
+
+    expected_xml = """
+        <recordInfo>
+            <validationType>
+                <linkedRecordType>validationType</linkedRecordType>
+                <linkedRecordId>someValidationType</linkedRecordId>
+            </validationType>
+            <dataDivider>
+                <linkedRecordType>system</linkedRecordType>
+                <linkedRecordId>divaData</linkedRecordId>
+            </dataDivider>
+            <visibility>published</visibility>
+        </recordInfo>
+    """
+
+    assert_equal_for_xml_and_xml_string(record_info, expected_xml)
