@@ -2,12 +2,12 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 
 
-def get_binary_visibility(source_record: ET.Element) -> str:
+def get_binary_visibility(fedora_attachment: ET.Element) -> str:
     today = _get_today()
-    deleted = source_record.findtext("./deleted")
-    on_hold = source_record.findtext("./onHold")
-    available_from = _parse_date(source_record.findtext("./availableFrom"))
-    available_until = _parse_date(source_record.findtext("./availableUntil"))
+    deleted = fedora_attachment.findtext("./deleted")
+    on_hold = fedora_attachment.findtext("./onHold")
+    available_from = _parse_date(fedora_attachment.findtext("./availableFrom"))
+    available_until = _parse_date(fedora_attachment.findtext("./availableUntil"))
 
     if deleted == "true":
         return "hidden"

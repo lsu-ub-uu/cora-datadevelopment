@@ -43,7 +43,7 @@ def create_record_info(source_record: ET.Element) -> ET.Element:
 
 
 def _create_permission_unit(source_record: ET.Element) -> str:
-    domain = source_record.find(".//domain")
+    domain = source_record.find("./administrativeInfo/domain")
     assert (
         domain is not None and domain.text is not None
     ), "domain is missing in source record"
@@ -52,7 +52,7 @@ def _create_permission_unit(source_record: ET.Element) -> str:
 
 
 def _create_old_id(source_record: ET.Element) -> str:
-    pid = source_record.find(".//pid")
+    pid = source_record.find("./pid")
     assert pid is not None and pid.text is not None, "pid is missing in source record"
 
     return pid.text
