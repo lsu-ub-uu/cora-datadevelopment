@@ -12,7 +12,8 @@ dependencies = [
 license = "GPL-3.0"
 
 [project.scripts]
-outputs-migrate = "outputs_migrate:main"
+outputs-migrate = "scripts.outputs_migrate:main"
+outputs-testdata-create = "scripts.outputs_testdata_create:main"
 
 [build-system]
 requires = ["setuptools"]
