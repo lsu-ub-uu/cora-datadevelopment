@@ -4,18 +4,19 @@ from common.xml_utils import append_if_value
 from .get_binary_visibility import get_binary_visibility
 
 
-def create_binary_record(source_record: ET.Element) -> ET.Element:
+def create_binary_record(attachment: ET.Element) -> ET.Element:
     binary_record = ET.Element("binary")
+    binary_record.set("type", "generic")
 
     binary_record.append(
         record_info_create(
             validation_type_id="genericBinary",
-            visibility=get_binary_visibility(source_record),
+            visibility=get_binary_visibility(attachment),
         )
     )
 
-    append_if_value(binary_record, _create_original_file_name(source_record))
-    append_if_value(binary_record, _create_expected_file_size(source_record))
+    append_if_value(binary_record, _create_original_file_name(attachment))
+    append_if_value(binary_record, _create_expected_file_size(attachment))
 
     return binary_record
 

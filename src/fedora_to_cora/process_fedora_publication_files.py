@@ -51,7 +51,7 @@ def process_fedora_publication_files(
 def _process_file(filename: str, context: Context, xml_dir: str, dry_run: bool):
     context.log(f"--- Processing file: {filename} ---")
     source_record = _read_source_record_from_file(xml_dir, filename)
-    valid, errors = output_migrate(source_record, context, dry_run)
+    valid, errors = output_migrate(source_record, context, xml_dir, dry_run)
     if valid:
         successful_transformations.append(filename)
     else:
