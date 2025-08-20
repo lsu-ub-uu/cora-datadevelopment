@@ -28,9 +28,28 @@ pytest --cov=src
 ptw --now .
 ```
 
+## Run scripts
+
+`output-migrate` to migrate posts with the fedora format into the Cora format
+
+- `-h`, `--help`: show the helper
+- `--xml-dir`: the directory where the fedora XML publications are located.
+- `--system`: the system where you whant to put the migrated posts.
+- `--login-id`: the id for the user used to migrate the posts.
+- `--app-token`: the token for the user.
+- `--wet-run`: if you want to do a dry-run of the script without creating the migrated files.
+
+`output-testdata-create` to create a dummy post in the Cora format, it uses the same arguments but does not include the `--wet-run` and always creates a post.
+
 ## Status för convertering
 
 ## Binary
+
+- binary
+  - recordInfo
+    - visibility <-- från `<deleted>`, `<onHold>`, `<availableFrom>`, `<availableUntil>`
+  - originalFileName <- `<path>` samt skippa allt efter /
+  - expectedFileSize <- `<fileSize>`
 
 ## Output
 
@@ -66,23 +85,23 @@ ptw --now .
   - ✅ dateIssued <- `<publicationDate>`
   - ❌copyrightDate <- skipped
   - ❌ dateOther type="online" <- skipped
-  - ✅ agent
-  - ✅ place
-  - ✅ edition
+  - ✅ agent <- `<publisher><publisherName>`
+  - ✅ place <- `<publisher><city>`
+  - ✅ edition <- `<edition>`
 - ✅ extent <- `<pages>`
 - ✅ classification authority="ssif" <- `<nationalCategories><subject><subjectCode>`
 - ✅ subject authority="diva" <- `<researchSubjects>`
 - ✅ subject authority="sdg" <- `<sustainableDevelopments>` (värden som inte är giltiga för valideringen behöver uppdateras)
-- ✅ identifier type="isbn"
-- ✅ identifier type="doi"
+- ✅ identifier type="isbn" <- `<isbn>`
+- ✅ identifier type="doi" <- `<identifiers><entry><publicationIdentifierType>doi`
 - 🆕 identifier type="ismn"
 - ✅ identifier type="archiveNumber"> <- `<archiveNumber>`
 - 🆕 identifier type="openAlex"
-- ✅ identifier type="se-libr"
-- ✅ identifier type="localId"
-- ✅ identifier type type="pmid"
-- ✅ identifier type type="wos"
-- ✅ identifier type type="scopus"
+- ✅ identifier type="se-libr" <- `<identifiers><entry><publicationIdentifierType>libris`
+- ✅ identifier type="localId" <- `<localId>`
+- ✅ identifier type type="pmid" <- `<pmid>`
+- ✅ identifier type type="wos" <- `<isi>`
+- ✅ identifier type type="scopus" <- `<scopusId>`
 - ✅ location <- `<urls><url>` (openAccess behöver hanteras)
 - location displayLabel="orderLink"
 
@@ -132,8 +151,8 @@ ptw --now .
 - ✅ physicalDescription <- `<mediaInformation><physicalDescriptions>`
 - ✅ dateOther type="patent" <- `<patentDate>`
 - imprint (Gäller bara UU)
-- ✅ identifier type="patentNumber"
-- ✅ identifier type="isrn"
+- ✅ identifier type="patentNumber" <- `<patentNumber>`
+- ✅ identifier type="isrn" <- `<isrn>`
 - ✅ academicSemester <- `<academicTerm>`
 - ✅ studentDegree <- `<studentDegrees>`
   - ✅ degreeLevel <- `<studentDegree><thesisLevel><thesisLevelCode>`
@@ -179,7 +198,7 @@ ptw --now .
   - ✅ `<address>` <- `<room><street>`
   - ✅ `<place><placeTerm>` <- `<room><city>`
   - ✅ `<degreeGrantingInstitution>` <- `<grantingInstitution>`
-  - `<organisation>` <- `<organisati✅ onId>`
+  - `<organisation>` <- `<organisationId>`
 
 - relatedItem type="journal" <- `<journal>`
   - ✅ journal
