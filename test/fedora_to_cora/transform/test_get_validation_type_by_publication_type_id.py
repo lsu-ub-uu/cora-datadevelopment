@@ -1,6 +1,8 @@
 import pytest
+import xml.etree.ElementTree as ET
 from fedora_to_cora.transform.get_validation_type_by_publication_type_id import (
     get_validation_type_by_publication_type_id,
+    get_validation_type_from_fedora_record,
 )
 
 
@@ -36,3 +38,32 @@ def test_known_publication_type_ids(pub_type_id, expected):
 def test_unknown_publication_type_id_raises_keyerror(invalid_id):
     with pytest.raises(KeyError):
         get_validation_type_by_publication_type_id(invalid_id)
+
+
+def test_get_validation_type():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+            </publicationType>
+        </publication>
+        """
+    )
+
+    validation_type = get_validation_type_from_fedora_record(source_record)
+    assert (validation_type) == "publication_edited-book"
+
+
+def test_missing_validation_type():
+    source_record = ET.fromstring(
+        f"""
+        <publication>
+            <publicationType>
+            </publicationType>
+        </publication>
+        """
+    )
+
+    with pytest.raises(KeyError):
+        get_validation_type_from_fedora_record(source_record)
