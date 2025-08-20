@@ -57,3 +57,18 @@ def test_missing_media_type():
         <typeOfResource></typeOfResource>
         """,
     )
+
+
+def test_wrong_media_type():
+    source_record = ET.fromstring(
+        f"""
+        <publication>
+            <mediaType>
+                <autoId>999</autoId>
+            </mediaType>
+        </publication>
+        """
+    )
+
+    with pytest.raises(KeyError):
+        create_type_of_resource(source_record)

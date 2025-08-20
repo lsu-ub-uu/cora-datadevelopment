@@ -26,7 +26,7 @@ def create_type_of_resource(source_record: ET.Element) -> ET.Element:
 
 def _get_type_of_resource_by_media_type(media_type: str) -> str:
     """
-    Returns the Cora DiVA typeOfResource based on the DiVA Classic publication type ID.
+    Returns the Cora DiVA typeOfResource based on the DiVA Clic publication type ID.
 
     :param media_type: The ID of the publication type.
     :return: The typeOfResource as a string.
