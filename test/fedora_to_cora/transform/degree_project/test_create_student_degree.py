@@ -101,3 +101,45 @@ def test_create_linked_course(monkeypatch):
             </course>
         </studentDegree>""",
     )
+
+
+def test_create_linked_programme(monkeypatch):
+    old_id = "123"
+    cora_id = "cora-course:12345678901234567"
+
+    def mock_get_cora_id_by_old_id(old_id, *args, **kwargs):
+        if old_id == "123":
+            return "cora-course:12345678901234567"
+        return None
+
+    monkeypatch.setattr(
+        "fedora_to_cora.transform.degree_project.create_student_degree.get_cora_id_by_old_id",
+        mock_get_cora_id_by_old_id,
+    )
+
+    source_record = ET.fromstring(
+        f"""
+        <publication>
+            <studentDegrees>
+                <studentDegree>
+                    <educationalProgramme>
+                        <subjectId>{old_id}</subjectId>
+                    </educationalProgramme>
+                </studentDegree>
+            </studentDegrees>
+        </publication>
+    """
+    )
+
+    student_degrees = create_student_degrees(source_record, MockContext())
+    assert len(student_degrees) == 1
+    assert_equal_for_xml_and_xml_string(
+        student_degrees[0],
+        f"""
+        <studentDegree repeatId="0">
+            <programme>
+                <linkedRecordType>diva-programme</linkedRecordType>
+                <linkedRecordId>{cora_id}</linkedRecordId>
+            </programme>
+        </studentDegree>""",
+    )

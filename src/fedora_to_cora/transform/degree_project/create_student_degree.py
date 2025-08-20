@@ -32,13 +32,11 @@ def _create_student_degree(
         points = ET.SubElement(student_degree, "universityPoints")
         points.text = university_points
 
-    programme_old_id = source_student_degree.findtext(
-        "./undergraduateSubject/subjectId"
-    )
-    if programme_old_id:
+    course_old_id = source_student_degree.findtext("./undergraduateSubject/subjectId")
+    if course_old_id:
         cora_id = get_cora_id_by_old_id(
             context=context,
-            old_id=programme_old_id,
+            old_id=course_old_id,
             record_type="diva-course",
         )
         student_degree.append(
