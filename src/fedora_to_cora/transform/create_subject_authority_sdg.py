@@ -31,12 +31,3 @@ def create_subject_authority_sdg(source_record: ET.Element) -> ET.Element:
         subject.append(topic)
 
     return subject
-
-
-def _create_topic(sdg_id: str, repeat_id: int) -> ET.Element:
-    """
-    Create a topic element for the SDG with the given ID and repeat ID.
-    """
-    topic = ET.Element("topic", repeatId=str(repeat_id))
-    topic.text = sdg_id
-    return topic
