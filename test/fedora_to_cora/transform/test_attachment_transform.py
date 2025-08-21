@@ -40,3 +40,16 @@ def test_attachment_transform(monkeypatch):
         </attachment>
         """,
     )
+    # <type>
+    # <displayLabel>
+    # <note type"attachmentVersion">
+    # <adminInfo>
+    #     <availability>
+    #         <year>
+    #         <month>
+    #         <day>
+    #     </availability>
+    #     <secrecy>
+    #     <identifier type="registrationNumber">
+    #     <note type:"attachment">
+    # </adminInfo>
