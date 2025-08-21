@@ -1,9 +1,11 @@
-from fedora_to_cora.transform.binary.create_binary_record import create_binary_record
+from fedora_to_cora.transform.binary.binary_record_transform import (
+    binary_record_transform,
+)
 import xml.etree.ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
-def test_create_binary_record():
+def test_binary_record_transform():
     source_record = ET.fromstring(
         """
         <attachment>
@@ -63,12 +65,12 @@ def test_create_binary_record():
         """
     )
 
-    admin = create_binary_record(source_record)
+    admin = binary_record_transform(source_record)
 
     assert_equal_for_xml_and_xml_string(
         admin,
         """
-            <binary>
+            <binary type="generic">
                 <recordInfo>
                     <validationType>
                         <linkedRecordType>validationType</linkedRecordType>

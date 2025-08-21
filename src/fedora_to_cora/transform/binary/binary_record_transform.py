@@ -4,7 +4,7 @@ from common.xml_utils import append_if_value
 from .get_binary_visibility import get_binary_visibility
 
 
-def create_binary_record(attachment: ET.Element) -> ET.Element:
+def binary_record_transform(attachment: ET.Element) -> ET.Element:
     binary_record = ET.Element("binary")
     binary_record.set("type", "generic")
 

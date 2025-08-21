@@ -1,6 +1,6 @@
 import requests
 import xml.etree.ElementTree as ET
-from typing import Tuple, List, Optional
+from typing import Literal, Tuple, List, Optional, TypeGuard
 from cora.context import Context
 from common.threads import run_with_threads
 from common.xml_utils import pretty_print_xml
@@ -26,18 +26,27 @@ def create_record_list(
     return creation_results
 
 
-class CreateRecordResult:
+class CreateRecordSuccessResult:
     def __init__(
         self,
-        success: bool,
-        error: Optional[str] = None,
-        record_id: Optional[str] = None,
-        response_data: Optional[ET.Element] = None,
+        record_id: str,
+        response_data: ET.Element,
     ):
-        self.success = success
+        self.success = True
         self.record_id = record_id
-        self.error = error
+        self.error = None
         self.response_data = response_data
+
+
+class CreateRecordFailureResult:
+    def __init__(
+        self,
+        error: str,
+    ):
+        self.success = False
+        self.error = error
+        self.record_id = None
+        self.response_data = None
 
 
 def create_record(
@@ -45,7 +54,7 @@ def create_record(
     *,
     record_type: str,
     context: Context,
-) -> CreateRecordResult:
+) -> CreateRecordSuccessResult | CreateRecordFailureResult:
     """Creates a Cora record from the given XML element.
 
     :param record: The XML element representing the record to create.
@@ -78,16 +87,15 @@ def create_record(
             record_id = response_data.findtext(".//recordInfo/id")
             print(pretty_print_xml(response_data))
             assert record_id is not None, "Record ID not found in response"
-            return CreateRecordResult(
-                success=True, record_id=record_id, response_data=response_data
+            return CreateRecordSuccessResult(
+                record_id=record_id, response_data=response_data
             )
 
         context.log(
             f"❌ Failed to create record for {record_type} with oldId {old_id_text}. \n\nStatus: {response.status_code}\n{response.text}\n",
             "error",
         )
-        return CreateRecordResult(
-            success=False,
+        return CreateRecordFailureResult(
             error=f"Failed to create record with status {response.status_code}: {response.text}",
         )
     except requests.RequestException as e:
@@ -95,4 +103,12 @@ def create_record(
             f"❌ Request failed for {record_type} with oldId {old_id_text}: {e}",
             "error",
         )
-        return CreateRecordResult(success=False, error=str(e))
+        return CreateRecordFailureResult(
+            error=str(e),
+        )
+
+
+def is_success_result(
+    result: CreateRecordSuccessResult | CreateRecordFailureResult,
+) -> TypeGuard[CreateRecordSuccessResult]:
+    return result.success

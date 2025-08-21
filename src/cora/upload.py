@@ -10,8 +10,8 @@ def upload_binary(binary_record: ET.Element, file_path: str, context: Context):
 
     # Check if file exists
     if not os.path.exists(file_path):
-        print(f"Error: File '{file_path}' does not exist")
-        return False
+        context.log(f"Error: File '{file_path}' does not exist", level="error")
+        raise UploadError(f"File '{file_path}' does not exist")
 
     upload_action_link = binary_record.find("./actionLinks/upload")
     assert (
@@ -31,13 +31,24 @@ def upload_binary(binary_record: ET.Element, file_path: str, context: Context):
                 },
             )
     except (OSError, IOError) as e:
-        print(f"Error reading file '{file_path}': {e}")
-        return False
+        context.log(f"Error reading file '{file_path}': {e}", level="error")
+        raise UploadError(f"Failed to read file '{file_path}': {e}")
 
-    print(f"Upload response: {response.status_code}")
     if response.status_code == 200:
-        print("Upload successful")
-        return True
+        context.log(f"Upload successful: {file_path}")
     else:
-        print(f"Upload failed: {response.text}")
-        return False
+        context.log(f"Upload failed: {response.text}", level="error")
+        raise UploadError(
+            f"Failed to upload binary file '{file_path}': {response.status_code} - {response.text}"
+        )
+
+
+class UploadError(Exception):
+    """Custom exception for upload errors."""
+
+    def __init__(self, message: str):
+        super().__init__(message)
+        self.message = message
+
+    def __str__(self):
+        return f"UploadError: {self.message}"
