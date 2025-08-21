@@ -1,6 +1,7 @@
 from typing import Tuple
 import xml.etree.ElementTree as ET
 from cora.context import Context
+from cora.delete import delete_record
 from fedora_to_cora.attachments_migrate import attachments_migrate
 from fedora_to_cora.output_transform import transform_to_cora_output
 from common.xml_utils import pretty_print_xml
@@ -43,7 +44,11 @@ def output_migrate(
                 xml_dir,
             )
             if not success:
-                # TODO delete record?
+                context.log(
+                    f"❌ Failed to migrate attachments for record with old id {source_record.findtext('.//pid')} Rolling back.",
+                    level="error",
+                )
+                delete_record(create_record_result.response_data, context)
                 return False, errors
 
         return create_record_result.success, (

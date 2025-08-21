@@ -85,7 +85,6 @@ def create_record(
         if response.status_code == 201:
             response_data = ET.fromstring(response.text)
             record_id = response_data.findtext(".//recordInfo/id")
-            print(pretty_print_xml(response_data))
             assert record_id is not None, "Record ID not found in response"
             return CreateRecordSuccessResult(
                 record_id=record_id, response_data=response_data

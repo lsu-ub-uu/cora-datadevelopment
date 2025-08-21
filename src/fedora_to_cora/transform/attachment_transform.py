@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
+from fedora_to_cora.transform.binary.get_attachment_type import get_attachment_type
 
 
 def attachment_transform(
@@ -13,7 +14,7 @@ def attachment_transform(
             record_id=binary_record_id,
         )
     )
-    ET.SubElement(attachment, "type").text = "fullText"
+    ET.SubElement(attachment, "type").text = get_attachment_type(source_attachment)
 
     admin_info = ET.SubElement(attachment, "adminInfo")
     ET.SubElement(admin_info, "availability").text = "availableNow"

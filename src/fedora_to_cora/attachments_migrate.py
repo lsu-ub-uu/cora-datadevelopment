@@ -9,6 +9,7 @@ from fedora_to_cora.transform.binary.binary_record_transform import (
 from cora.create import create_record, is_success_result
 from cora.update import update_record
 from cora.upload import UploadError, upload_binary
+from cora.delete import delete_record
 from fedora_to_cora.transform.attachment_transform import attachment_transform
 
 

@@ -6,8 +6,6 @@ from cora.context import Context
 
 
 def upload_binary(binary_record: ET.Element, file_path: str, context: Context):
-    print(f"Uploading binary file: {file_path}")
-
     # Check if file exists
     if not os.path.exists(file_path):
         context.log(f"Error: File '{file_path}' does not exist", level="error")

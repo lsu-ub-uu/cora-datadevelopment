@@ -1,9 +1,16 @@
+from unittest.mock import MagicMock
 import xml.etree.ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from fedora_to_cora.transform.attachment_transform import attachment_transform
 
 
-def test_attachment_transform():
+def test_attachment_transform(monkeypatch):
+    get_attachment_type_mock = MagicMock(return_value="fullText")
+    monkeypatch.setattr(
+        "fedora_to_cora.transform.attachment_transform.get_attachment_type",
+        get_attachment_type_mock,
+    )
+
     source_record = ET.fromstring(
         """
             <attachment>
