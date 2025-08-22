@@ -6,6 +6,9 @@ def get_binary_visibility(fedora_attachment: ET.Element) -> str:
     today = _get_today()
     deleted = fedora_attachment.findtext("./deleted")
     on_hold = fedora_attachment.findtext("./onHold")
+    archive_only = fedora_attachment.findtext("./archiveOnly")
+    to_be_archived = fedora_attachment.findtext("./toBeArchived")
+    to_be_published = fedora_attachment.findtext("./toBePublished")
     available_from = _parse_date(fedora_attachment.findtext("./availableFrom"))
     available_until = _parse_date(fedora_attachment.findtext("./availableUntil"))
 
@@ -13,6 +16,15 @@ def get_binary_visibility(fedora_attachment: ET.Element) -> str:
         return "hidden"
 
     if on_hold == "true":
+        return "unpublished"
+
+    if archive_only == "true":
+        return "unpublished"
+
+    if to_be_archived == "true":
+        return "unpublished"
+
+    if to_be_published == "true":
         return "unpublished"
 
     if available_from is not None and available_from < today:

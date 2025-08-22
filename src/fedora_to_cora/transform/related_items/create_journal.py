@@ -27,7 +27,6 @@ def create_related_item_type_journal(
     append_if_value(related_item, title_info)
 
     journal_old_id = source_record.findtext("./journal/journalId")
-    print(f"Journal old ID: {journal_old_id}")
     if journal_old_id is not None:
         cora_id = get_cora_id_by_old_id(
             journal_old_id, record_type=DIVA_JOURNAL_RECORD_TYPE, context=context

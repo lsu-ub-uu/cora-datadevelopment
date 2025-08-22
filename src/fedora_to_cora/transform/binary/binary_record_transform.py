@@ -4,18 +4,20 @@ from common.xml_utils import append_if_value
 from .get_binary_visibility import get_binary_visibility
 
 
-def create_binary_record(source_record: ET.Element) -> ET.Element:
+def binary_record_transform(attachment: ET.Element) -> ET.Element:
     binary_record = ET.Element("binary")
+    binary_record.set("type", "generic")
 
     binary_record.append(
         record_info_create(
             validation_type_id="genericBinary",
-            visibility=get_binary_visibility(source_record),
+            visibility=get_binary_visibility(attachment),
         )
     )
 
-    append_if_value(binary_record, _create_original_file_name(source_record))
-    append_if_value(binary_record, _create_expected_file_size(source_record))
+    append_if_value(binary_record, _create_original_file_name(attachment))
+    append_if_value(binary_record, _create_expected_file_size(attachment))
+    append_if_value(binary_record, _create_expected_checksum(attachment))
 
     return binary_record
 
@@ -34,3 +36,10 @@ def _create_expected_file_size(source_record: ET.Element) -> ET.Element:
     if file_size is not None:
         expected_file_size.text = file_size
     return expected_file_size
+
+def _create_expected_checksum(source_record: ET.Element) -> ET.Element:
+    expected_checksum = ET.Element("expectedChecksum")
+    checksum = source_record.findtext(".//checksum/digest")
+    if checksum is not None:
+        expected_checksum.text = checksum
+    return expected_checksum
