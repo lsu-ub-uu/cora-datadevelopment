@@ -266,6 +266,77 @@ def failed_to_update_record(monkeypatch):
     assert errors[0] == "UploadError: Failed to upload binary"
 
 
+def test_roll_back_binary_records_when_something_fails(monkeypatch):
+    create_record_mock = _set_up_create_record_mock(monkeypatch)
+
+    upload_binary_mock = _set_up_upload_binary_mock(monkeypatch)
+    upload_binary_mock.side_effect = [None, UploadError("Failed to upload binary")]
+
+    update_record_mock = _set_up_update_record_mock(monkeypatch)
+
+    binary_record_transform_mock = _set_up_binary_record_transform_mock(monkeypatch)
+    attachments_transform_mock = _set_up_attachments_transform_mock(monkeypatch)
+
+    delete_record_mock = MagicMock()
+    monkeypatch.setattr(
+        "fedora_to_cora.attachments_migrate.delete_record", delete_record_mock
+    )
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <attachments>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <path>test.pdf</path>
+                </attachment>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <path>test2.pdf</path>
+                </attachment>
+            </attachments>
+        </publication>
+        """
+    )
+
+    cora_record = ET.fromstring(
+        """
+        <record>
+            <data>
+                <output> 
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                </output>
+            </data>
+        </record>
+        """
+    )
+
+    success, errors = attachments_migrate(
+        source_record,
+        cora_record,
+        MockContext(),
+        xml_dir="test/xml",
+    )
+
+    assert binary_record_transform_mock.call_count == 2
+    assert create_record_mock.call_count == 2
+    assert upload_binary_mock.call_count == 2
+    assert attachments_transform_mock.call_count == 1
+    assert update_record_mock.call_count == 0
+    assert delete_record_mock.call_count == 1
+
+    assert not success
+    assert errors is not None
+    assert len(errors) == 1
+    assert errors[0] == "UploadError: Failed to upload binary"
+
+
 def _set_up_create_record_mock(monkeypatch, fail=False):
     create_record_mock = MagicMock(
         return_value=(
