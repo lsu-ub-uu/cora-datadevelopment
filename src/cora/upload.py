@@ -1,12 +1,12 @@
 import os
 import requests
 import xml.etree.ElementTree as ET
+from requests_toolbelt.multipart.encoder import MultipartEncoder
 from common.xml_utils import pretty_print_xml
 from cora.context import Context
 
 
 def upload_binary(binary_record: ET.Element, file_path: str, context: Context):
-    # Check if file exists
     if not os.path.exists(file_path):
         context.log(f"Error: File '{file_path}' does not exist", level="error")
         raise UploadError(f"File '{file_path}' does not exist")
@@ -21,11 +21,22 @@ def upload_binary(binary_record: ET.Element, file_path: str, context: Context):
 
     try:
         with open(file_path, "rb") as file:
+            multipart_data = MultipartEncoder(
+                fields={
+                    "file": (
+                        os.path.basename(file_path),
+                        file,
+                        "application/octet-stream",
+                    )
+                }
+            )
+
             response = requests.post(
                 request_url,
-                files={"file": file},
+                data=multipart_data,
                 headers={
                     "Authtoken": context.get_auth_token(),
+                    "Content-Type": multipart_data.content_type,
                 },
             )
     except (OSError, IOError) as e:
