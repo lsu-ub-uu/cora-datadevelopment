@@ -18,15 +18,15 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - language <- `originalPublicationTitle/language`
 - artisticWork type="outputType" <- `artisticWork`
 - titleInfo type="alternative" <- `alternativePublicationTitles`
-- name type="personal" <- merge ` authors/person` , ` editors/person` , ` examiners/person` , ` supervisors/person` , ` opponents/person`
-- ❌ name type="corporate" <- skipped
-- note type="creatorCount"
+- name type="personal" <- merge ` authors/person` , ` editors/person` , ` examiners/person` , ` supervisors/person` , ` opponents/personal` ⚠️ Linked persons are not handled
+- 🆕 name type="corporate" <- skipped
+- note type="creatorCount" <- `noOfContributors`
 - abstract <- `abstracts/abstract`
 - originInfo
   - dateIssued <- `publicationDate`
-  - ❌copyrightDate <- skipped
-  - ❌ dateOther type="online" <- skipped
-  - agent <- `publisher/publisherName`
+  - 🆕 copyrightDate <- skipped
+  - 🆕 dateOther type="online" <- skipped
+  - agent <- `publisher/publisherName` and `publishingHouse/publishingHouseId`
   - place <- `publisher/city`
   - edition <- `edition`
 - extent <- `pages`
@@ -43,7 +43,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - identifier type type="pmid" <- `pmid`
 - identifier type type="wos" <- `isi`
 - identifier type type="scopus" <- `scopusId`
-- location <- `urls/url` (openAccess behöver hanteras)
+- location <- `urls/url` (⚠️ openAccess behöver hanteras. Ska det in på accessCondition authority="kb.se"?)
 - ⚠️ location displayLabel="orderLink" (Kolla upp orderProfileId i höst, är generiska texter i Classic för displayLabel, url från orderURL)
 - note type="external" <- `note`
 - relatedItem type="series" <- `seriesInfo` och `uncontrolledSeriesInfo`
@@ -51,22 +51,22 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - titleInfo/mainTitle <- `uncontrolledSeriesInfo/series/seriesNameUncontrolled`
   - identifier type="issn" displayLabel="pissn" <- `uncontrolledSeriesInfo/series/issn`
   - identifier type="issn" displayLabel="eissn" <- `uncontrolledSeriesInfo/series/eissn`
-  - partNumber <- `uncontrolledSeriesInfo>numberInSeries` (?)
-  - ❌ No mapping: `uncontrolledSeriesInfos/seriesAlternativeTitles>, subjects, <relationships`
+  - partNumber <- `uncontrolledSeriesInfo/numberInSeries` (?)
+  - ❌ No mapping: `uncontrolledSeriesInfos/seriesAlternativeTitles, subjects, relationships` (⚠️ behöver de tas hand om?)
 - 🆕 relatedItem type="researchData"
 - relatedItem type="project" <- `projects`
 - 🆕 relatedItem type="initiative"
-- 🆕 accessCondition authority="kb.se"
+- 🆕 accessCondition authority="kb.se" (⚠️ Ligger på post nivå, inte per url)
 - 🆕 localGenericMarkup
 - adminInfo
   - failed <- `failed`
   - reviewed <- `reviewed`
   - note type="internal" <- `internalNote`
 
-### Behövs ej för Sammlingsverk
+### Fields not yet mapped:
 
-- genre type="subcategory" <- `subType` (behöver mappas om till värden i Cora)
-- note type="publicationStatus" <- `publicationStatus` (behöver mappas om till värden i Cora)
+- genre type="subcategory" <- `subType` (⚠️ behöver mappas om till värden i Cora)
+- note type="publicationStatus" <- `publicationStatus` (⚠️ behöver mappas om till värden i Cora)
 - typeOfResource <- `mediaType`
 - type <- `mediaInformation/physicalDescriptions`
 - material <- `mediaInformation/materials`

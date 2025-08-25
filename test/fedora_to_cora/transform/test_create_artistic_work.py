@@ -7,7 +7,7 @@ def test_create_artistic_work():
     source_record = ET.fromstring(
         """
         <publication>
-            <artisticWork>true </artisticWork>
+            <artisticWork>true</artisticWork>
         </publication>
         """
     )
