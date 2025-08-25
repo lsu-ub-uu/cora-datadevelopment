@@ -27,7 +27,9 @@ def attachments_migrate(
     errors = []
     attachments = source_record.findall("./attachments/attachment")
     for attachment in attachments:
-        attachment, error = _migrate_attachment(attachment, context, xml_dir)
+        attachment, error = _migrate_attachment(
+            attachment, context, xml_dir, created_binary_records
+        )
         if attachment is not None:
             output.append(attachment)
         if error is not None:
@@ -55,9 +57,9 @@ def _migrate_attachment(
         record_type="binary",
         context=context,
     )
-    created_binary_records.append(create_binary_result.response_data)
 
     if is_success_result(create_binary_result):
+        created_binary_records.append(create_binary_result.response_data)
         file_path = _get_file_path(attachment, xml_dir)
         try:
             upload_binary(create_binary_result.response_data, file_path, context)

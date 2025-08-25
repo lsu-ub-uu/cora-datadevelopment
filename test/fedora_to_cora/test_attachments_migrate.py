@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.create import CreateRecordFailureResult, CreateRecordSuccessResult
+from cora.update import UpdateRecordResult
 from cora.upload import UploadError
 from fedora_to_cora.attachments_migrate import attachments_migrate
 from cora.context import MockContext
@@ -162,6 +163,7 @@ def test_failed_to_upload_binary(monkeypatch):
     update_record_mock = _set_up_update_record_mock(monkeypatch)
     binary_record_transform_mock = _set_up_binary_record_transform_mock(monkeypatch)
     attachments_transform_mock = _set_up_attachments_transform_mock(monkeypatch)
+    delete_record_mock = _set_up_delete_record_mock(monkeypatch)
 
     source_record = ET.fromstring(
         """
@@ -204,6 +206,7 @@ def test_failed_to_upload_binary(monkeypatch):
     assert upload_binary_mock.call_count == 1
     assert attachments_transform_mock.call_count == 0
     assert update_record_mock.call_count == 0
+    assert delete_record_mock.call_count == 1
 
     assert not success
     assert errors is not None
@@ -329,7 +332,7 @@ def test_roll_back_binary_records_when_something_fails(monkeypatch):
     assert upload_binary_mock.call_count == 2
     assert attachments_transform_mock.call_count == 1
     assert update_record_mock.call_count == 0
-    assert delete_record_mock.call_count == 1
+    assert delete_record_mock.call_count == 2
 
     assert not success
     assert errors is not None
@@ -363,8 +366,15 @@ def _set_up_upload_binary_mock(monkeypatch, fail=False):
     return upload_binary_mock
 
 
-def _set_up_update_record_mock(monkeypatch):
-    update_record_mock = MagicMock()
+def _set_up_update_record_mock(monkeypatch, fail=False):
+    update_record_mock = MagicMock(
+        return_value=UpdateRecordResult(
+            success=not fail,
+            record_id="test" if not fail else None,
+            response_data=ET.Element("data") if not fail else None,
+            error="Failed to update record" if fail else None,
+        )
+    )
     monkeypatch.setattr(
         "fedora_to_cora.attachments_migrate.update_record", update_record_mock
     )
@@ -403,3 +413,11 @@ def _set_up_attachments_transform_mock(monkeypatch):
         attachments_transform_mock,
     )
     return attachments_transform_mock
+
+
+def _set_up_delete_record_mock(monkeypatch):
+    delete_record_mock = MagicMock()
+    monkeypatch.setattr(
+        "fedora_to_cora.attachments_migrate.delete_record", delete_record_mock
+    )
+    return delete_record_mock
