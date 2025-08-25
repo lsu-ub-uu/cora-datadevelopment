@@ -28,7 +28,7 @@ def attachments_migrate(
     attachments = source_record.findall("./attachments/attachment")
     for attachment in attachments:
         attachment, error = _migrate_attachment(
-            attachment, context, xml_dir, created_binary_records
+            attachment, context, xml_dir, created_binary_records, source_record
         )
         if attachment is not None:
             output.append(attachment)
@@ -50,6 +50,7 @@ def _migrate_attachment(
     context: Context,
     xml_dir: str,
     created_binary_records: list[ET.Element],
+    source_record: ET.Element,
 ) -> Tuple[ET.Element | None, str | None]:
     binary_record = binary_record_transform(attachment)
     create_binary_result = create_record(
@@ -70,6 +71,9 @@ def _migrate_attachment(
         cora_attachment = attachment_transform(
             attachment,
             binary_record_id=create_binary_result.record_id,
+            file_upload_message=source_record.findtext(
+                "./administrativeInfo/fileUploadMessage"
+            ),
         )
         return cora_attachment, None
     else:

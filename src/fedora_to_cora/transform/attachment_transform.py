@@ -1,3 +1,4 @@
+from typing import Optional
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
 from common.xml_utils import append_if_value
@@ -5,7 +6,9 @@ from fedora_to_cora.transform.binary.get_attachment_type import get_attachment_t
 
 
 def attachment_transform(
-    source_attachment: ET.Element, binary_record_id: str
+    source_attachment: ET.Element,
+    binary_record_id: str,
+    file_upload_message: Optional[str] = None,
 ) -> ET.Element:
     attachment = ET.Element("attachment", repeatId=binary_record_id)
     attachment.append(
@@ -24,7 +27,9 @@ def attachment_transform(
             attachment_version
         )
 
-    append_if_value(attachment, _create_admin_info(source_attachment))
+    append_if_value(
+        attachment, _create_admin_info(source_attachment, file_upload_message)
+    )
 
     return attachment
 
@@ -48,7 +53,9 @@ def _get_attachment_version(source_attachment: ET.Element) -> str | None:
     return None
 
 
-def _create_admin_info(source_attachment: ET.Element) -> ET.Element:
+def _create_admin_info(
+    source_attachment: ET.Element, file_upload_message: Optional[str]
+) -> ET.Element:
     admin_info = ET.Element("adminInfo")
     ET.SubElement(admin_info, "availability").text = "availableNow"
 
@@ -61,4 +68,8 @@ def _create_admin_info(source_attachment: ET.Element) -> ET.Element:
             registration_number
         )
 
+    if file_upload_message is not None:
+        ET.SubElement(admin_info, "note", type="attachment").text = (
+            f"""**The following note was migrated from a DiVA Classic file upload message, and may not refer to this attachment**:\n\n{file_upload_message}"""
+        )
     return admin_info

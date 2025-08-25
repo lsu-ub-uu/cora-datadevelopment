@@ -22,7 +22,6 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - ❌ name type="corporate" <- skipped
 - note type="creatorCount"
 - abstract <- `abstracts/abstract`
-
 - originInfo
   - dateIssued <- `publicationDate`
   - ❌copyrightDate <- skipped

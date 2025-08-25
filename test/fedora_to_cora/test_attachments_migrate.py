@@ -340,6 +340,68 @@ def test_roll_back_binary_records_when_something_fails(monkeypatch):
     assert errors[0] == "UploadError: Failed to upload binary"
 
 
+def test_file_upload_message(monkeypatch):
+    create_record_mock = _set_up_create_record_mock(monkeypatch)
+    upload_binary_mock = _set_up_upload_binary_mock(monkeypatch)
+    update_record_mock = _set_up_update_record_mock(monkeypatch)
+    binary_record_transform_mock = _set_up_binary_record_transform_mock(monkeypatch)
+    attachments_transform_mock = _set_up_attachments_transform_mock(monkeypatch)
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <administrativeInfo>
+                <fileUploadMessage>Some note about the attachment</fileUploadMessage>
+            </administrativeInfo>
+            <attachments>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <path>test.pdf</path>
+                </attachment>
+                 <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <path>test2.pdf</path>
+                </attachment>
+            </attachments>
+        </publication>
+        """
+    )
+
+    cora_record = ET.fromstring(
+        """
+        <record>
+            <data>
+                <output> 
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                </output>
+            </data>
+        </record>
+        """
+    )
+
+    attachments_migrate(
+        source_record,
+        cora_record,
+        MockContext(),
+        xml_dir="test/xml",
+    )
+
+    assert (
+        attachments_transform_mock.mock_calls[0].kwargs["file_upload_message"]
+        == "Some note about the attachment"
+    )
+    assert (
+        attachments_transform_mock.mock_calls[1].kwargs["file_upload_message"]
+        == "Some note about the attachment"
+    )
+
+
 def _set_up_create_record_mock(monkeypatch, fail=False):
     create_record_mock = MagicMock(
         return_value=(
