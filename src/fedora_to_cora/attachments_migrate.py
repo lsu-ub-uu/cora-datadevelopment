@@ -19,6 +19,7 @@ def attachments_migrate(
     context: Context,
     xml_dir: str,
 ) -> Tuple[bool, list[str] | None]:
+    created_binary_records = []
     record_to_update = copy.deepcopy(cora_record)
     output = record_to_update.find("./data/output")
     assert output is not None, "Output element not found in created record"
@@ -26,7 +27,9 @@ def attachments_migrate(
     errors = []
     attachments = source_record.findall("./attachments/attachment")
     for attachment in attachments:
-        attachment, error = _migrate_attachment(attachment, context, xml_dir)
+        attachment, error = _migrate_attachment(
+            attachment, context, xml_dir, created_binary_records
+        )
         if attachment is not None:
             output.append(attachment)
         if error is not None:
@@ -34,12 +37,19 @@ def attachments_migrate(
 
     if not errors:
         update_record(record_to_update, context)
+    else:
+        # roll back all created binary records if there are errors
+        for binary_record in created_binary_records:
+            delete_record(binary_record, context)
 
     return len(errors) == 0, errors if errors else None
 
 
 def _migrate_attachment(
-    attachment: ET.Element, context: Context, xml_dir: str
+    attachment: ET.Element,
+    context: Context,
+    xml_dir: str,
+    created_binary_records: list[ET.Element],
 ) -> Tuple[ET.Element | None, str | None]:
     binary_record = binary_record_transform(attachment)
     create_binary_result = create_record(
@@ -49,6 +59,7 @@ def _migrate_attachment(
     )
 
     if is_success_result(create_binary_result):
+        created_binary_records.append(create_binary_result.response_data)
         file_path = _get_file_path(attachment, xml_dir)
         try:
             upload_binary(create_binary_result.response_data, file_path, context)
