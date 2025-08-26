@@ -45,3 +45,8 @@ def append_if_value(
     else:
         if len(child) > 0 or child.text:
             parent.append(child)
+
+
+def save_to_file(xml: ET.Element, filename: str) -> None:
+    with open(filename, "w", encoding="utf-8") as file:
+        file.write(pretty_print_xml(xml))
