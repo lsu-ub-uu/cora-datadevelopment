@@ -29,3 +29,4 @@ def import_publications_from_fedora(domain: str):
 def _import_publication(domain: str, pid: str) -> None:
     publication = get_record_by_pid(pid)
     save_to_file(publication, f"{domain}_{pid}.xml")
+    # download_attachments(publication, domain)
