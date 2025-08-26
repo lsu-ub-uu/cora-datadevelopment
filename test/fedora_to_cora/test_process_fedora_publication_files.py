@@ -28,6 +28,11 @@ def test_process_fedora_publication_files(monkeypatch):
         "os.listdir", MagicMock(return_value=["test1.xml", "test2.xml", "test3.xml"])
     )
 
+    monkeypatch.setattr(
+        "fedora_to_cora.process_fedora_publication_files.run_with_threads",
+        lambda items, func, workers, desc: [func(item) for item in items],
+    )
+
     output_migrate_mock = MagicMock(
         side_effect=[
             (True, []),  # test1.xml - success
