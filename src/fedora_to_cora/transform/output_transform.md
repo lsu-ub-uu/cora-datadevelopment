@@ -124,7 +124,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - 🆕 related
 - 🆕 related type="retracted"
 - ⚠️ related type="constituent" (länkade avhandligar)
-- ⚠️ note type="statementOfResponsibility"/
+- ⚠️ note type="statementOfResponsibility"
 
 ### Behöver mer information för att migrera
 

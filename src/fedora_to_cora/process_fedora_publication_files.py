@@ -1,6 +1,7 @@
 from common.common_data import read_source_xml
 import os
 import traceback
+from common.threads import run_with_threads
 from cora.context import CoraContext, Context
 from fedora_to_cora.output_migrate import output_migrate
 
@@ -23,14 +24,12 @@ def process_fedora_publication_files(
     )
     context.log("==================================================")
 
-    for filename in os.listdir(xml_dir):
-        if filename.endswith(".xml"):
-            try:
-                _process_file(filename, context, xml_dir, dry_run)
-            except Exception as e:
-                context.log(f"Error processing {filename}: {e}", "error")
-                traceback.print_exc()
-                continue
+    run_with_threads(
+        os.listdir(xml_dir),
+        lambda filename: _process_file(filename, context, xml_dir, dry_run),
+        workers=8,
+        desc="Processing publication files",
+    )
 
     context.log("==== Processing complete ====")
 
@@ -50,6 +49,9 @@ def process_fedora_publication_files(
 
 def _process_file(filename: str, context: Context, xml_dir: str, dry_run: bool):
     context.log(f"--- Processing file: {filename} ---")
+    if not filename.endswith(".xml"):
+        context.log(f"Skipping non-XML file: {filename}")
+        return
     source_record = _read_source_record_from_file(xml_dir, filename)
     valid, errors = output_migrate(source_record, context, xml_dir, dry_run)
     if valid:
