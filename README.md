@@ -34,7 +34,7 @@ ptw --now .
 
 - `-h`, `--help`: show the helper
 - `--xml-dir`: the directory where the fedora XML publications are located.
-- `--system`: the system where you whant to put the migrated posts.
+- `--system`: the system where you want to put the migrated posts.
 - `--login-id`: the id for the user used to migrate the posts.
 - `--app-token`: the token for the user.
 - `--wet-run`: if you want to do a dry-run of the script without creating the migrated files.

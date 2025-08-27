@@ -8,7 +8,9 @@ dependencies = [
     "tqdm",
     "pytest",
     "pytest-cov",
-    "pytest-watcher"
+    "pytest-watcher",
+    "paramiko < 3.5.1",
+    "sshtunnel"
 ]
 license = "GPL-3.0"
 
