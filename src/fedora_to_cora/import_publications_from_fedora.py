@@ -13,9 +13,9 @@ def import_publications_from_fedora(domain: str):
         "data", f"logs/import_publications_from_fedora.log"
     ).get()
 
-    logger.info("==== Begin importing publications from Fedora ====")
-    logger.info(f"==== domain={domain} ====")
-    logger.info("==================================================")
+    logger.info(
+        f"==== Begin importing publications from Fedora ====\n==== domain={domain} ====\n{'='*50}"
+    )
 
     pids = get_pids_for_domain(domain)
 
