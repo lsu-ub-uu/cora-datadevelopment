@@ -30,7 +30,7 @@ def test_required_xml():
         </recordInfo>
         <titleInfo>
             <title>some title</title>
-            <subtitle> some subtitle</subtitle>
+            <subtitle>some subtitle</subtitle>
         </titleInfo>
     </journal>
     """
@@ -46,8 +46,8 @@ def test_complete_xml():
             <subtitle> some subtitle</subtitle>
             <end_date>2025-05-06</end_date>
             <url>url.se</url>
-            <identifier_eissn>1234-1234</identifier_eissn>
             <identifier_pissn>5678-5678</identifier_pissn>
+            <identifier_eissn>1234-1234</identifier_eissn>
         </DATA_RECORD>
         """
     )
@@ -79,8 +79,8 @@ def test_complete_xml():
                 <day>06</day>
             </dateIssued>
         </originInfo>
-        <identifier displayLabel="eissn" type="issn">1234-1234</identifier>
         <identifier displayLabel="pissn" type="issn">5678-5678</identifier>
+        <identifier displayLabel="eissn" type="issn">1234-1234</identifier>
         <location>
             <url>url.se</url>
         </location>

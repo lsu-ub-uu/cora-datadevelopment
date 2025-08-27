@@ -26,10 +26,10 @@ def main():
     source_records = _read_source_records(context)
 
     cora_journals = _transform_to_cora_journals(source_records)
-    
+#    
 #    for elem in cora_journals:
 #        print(ET.tostring(elem, encoding='unicode'))
-    
+#    
     validation_results = validate_record_list(cora_journals, RECORD_TYPE, context)
 
     if not dry_run and all(valid for (valid, _) in validation_results):
