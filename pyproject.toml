@@ -9,8 +9,7 @@ dependencies = [
     "pytest",
     "pytest-cov",
     "pytest-watcher",
-    "paramiko < 3.5.1",
-    "sshtunnel"
+    "fabric"
 ]
 license = "GPL-3.0"
 
