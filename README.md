@@ -30,7 +30,13 @@ ptw --now .
 
 ## Run scripts
 
-`output-migrate` to migrate posts with the fedora format into the Cora format
+`outputs-export` to export outputs from fedora to disk
+
+- `-h`, `--help`: show the helper
+- `--domain`: The domain to export
+- `--workers`: The number of worker threads (default 16)
+
+`outputs-import` to import outputs with the fedora format to Cora
 
 - `-h`, `--help`: show the helper
 - `--xml-dir`: the directory where the fedora XML publications are located.
@@ -41,4 +47,4 @@ ptw --now .
 
 For more information about output migration, see [here](./src/fedora_to_cora/transform/output_transform.md)
 
-`output-testdata-create` to create a dummy post in the Cora format, it uses the same arguments but does not include the `--wet-run` and always creates a post.
+`outputs-testdata-create` to create a dummy post in the Cora format, it uses the same arguments but does not include the `--wet-run` and always creates a post.

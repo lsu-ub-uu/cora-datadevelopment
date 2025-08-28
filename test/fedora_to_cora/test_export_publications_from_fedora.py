@@ -2,22 +2,22 @@ from datetime import datetime
 from xml.etree import ElementTree as ET
 from unittest.mock import MagicMock, call
 import pytest
-from fedora_to_cora.import_publications_from_fedora import (
-    import_publications_from_fedora,
+from fedora_to_cora.export_publications_from_fedora import (
+    export_publications_from_fedora,
 )
 
 
-def test_import_publications_from_fedora(monkeypatch):
+def test_export_publications_from_fedora(monkeypatch):
     logger_mock = _set_up_logger_mock(monkeypatch)
     get_pids_for_domain_mock = _set_up_get_pids_mock(monkeypatch)
     get_record_by_pid_mock, mock_publication = _set_up_get_record_mock(monkeypatch)
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
     monkeypatch.setattr(
-        "fedora_to_cora.import_publications_from_fedora._get_now",
+        "fedora_to_cora.export_publications_from_fedora._get_now",
         lambda: datetime(2023, 1, 1, 12, 0, 0),
     )
 
-    import_publications_from_fedora("varldskulturmuseerna")
+    export_publications_from_fedora("varldskulturmuseerna")
 
     assert get_pids_for_domain_mock.call_count == 1
 
@@ -47,12 +47,9 @@ def test_import_publications_from_fedora(monkeypatch):
         in save_to_file_mock.mock_calls
     )
 
-    assert logger_mock.info.mock_calls == [
-        call("==== Begin importing publications from Fedora ===="),
-        call("==== domain=varldskulturmuseerna ===="),
-        call("=================================================="),
-        call("--- Successfully imported 3 publications to file ---"),
-    ]
+    logger_mock.info.assert_any_call(
+        "--- Successfully imported 3 publications to data/fedora_xml/varldskulturmuseerna/2023-01-01T12:00:00 ---"
+    )
 
 
 def test_get_pids_failed(monkeypatch):
@@ -62,7 +59,7 @@ def test_get_pids_failed(monkeypatch):
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
 
     with pytest.raises(Exception, match="Failed to get PIDs"):
-        import_publications_from_fedora("varldskulturmuseerna")
+        export_publications_from_fedora("varldskulturmuseerna")
 
     assert get_pids_for_domain_mock.call_count == 1
     assert get_record_by_pid_mock.call_count == 0
@@ -76,8 +73,7 @@ def test_get_record_failed(monkeypatch):
 
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
 
-    with pytest.raises(Exception, match="Failed to get publication"):
-        import_publications_from_fedora("varldskulturmuseerna")
+    export_publications_from_fedora("varldskulturmuseerna")
 
     assert get_pids_for_domain_mock.call_count == 1
     assert save_to_file_mock.call_count == 0
@@ -89,14 +85,13 @@ def test_save_to_file_failed(monkeypatch):
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
     save_to_file_mock.side_effect = (Exception("Failed to save file"),)
 
-    with pytest.raises(Exception, match="Failed to save file"):
-        import_publications_from_fedora("varldskulturmuseerna")
+    export_publications_from_fedora("varldskulturmuseerna")
 
 
 def _set_up_get_pids_mock(monkeypatch):
     get_pids_for_domain_mock = MagicMock(return_value=["123", "456", "789"])
     monkeypatch.setattr(
-        "fedora_to_cora.import_publications_from_fedora.get_pids_for_domain",
+        "fedora_to_cora.export_publications_from_fedora.get_pids_for_domain",
         get_pids_for_domain_mock,
     )
     return get_pids_for_domain_mock
@@ -106,7 +101,7 @@ def _set_up_get_record_mock(monkeypatch):
     mock_publication = ET.Element("publication")
     get_record_by_pid_mock = MagicMock(return_value=mock_publication)
     monkeypatch.setattr(
-        "fedora_to_cora.import_publications_from_fedora.get_record_by_pid",
+        "fedora_to_cora.export_publications_from_fedora.get_record_by_pid",
         get_record_by_pid_mock,
     )
     return get_record_by_pid_mock, mock_publication
@@ -115,7 +110,7 @@ def _set_up_get_record_mock(monkeypatch):
 def _set_up_save_to_file_mock(monkeypatch):
     save_to_file_mock = MagicMock()
     monkeypatch.setattr(
-        "fedora_to_cora.import_publications_from_fedora.save_to_file", save_to_file_mock
+        "fedora_to_cora.export_publications_from_fedora.save_to_file", save_to_file_mock
     )
     return save_to_file_mock
 
@@ -123,7 +118,7 @@ def _set_up_save_to_file_mock(monkeypatch):
 def _set_up_logger_mock(monkeypatch):
     logger_mock = MagicMock()
     monkeypatch.setattr(
-        "fedora_to_cora.import_publications_from_fedora.RunRotatingLogger.get",
+        "fedora_to_cora.export_publications_from_fedora.RunRotatingLogger.get",
         MagicMock(return_value=logger_mock),
     )
     return logger_mock

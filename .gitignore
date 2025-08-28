@@ -12,6 +12,6 @@ sql_script/
 /output_xml
 /logs
 /.pytest_cache/
-/data/fedora_xml/uu/
+/data/fedora_xml/
  
 /build/
