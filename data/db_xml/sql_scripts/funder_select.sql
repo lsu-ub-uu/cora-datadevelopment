@@ -12,6 +12,6 @@ SELECT
 	f.funder_name_locale as locale_swe,
 	fn.locale as locale_eng,
 	fn.funder_name_id
-from
+FROM
 	funder f
 	left join funder_name fn on f.funder_id = fn.funder_id
