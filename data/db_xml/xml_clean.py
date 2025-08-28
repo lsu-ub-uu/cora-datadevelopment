@@ -45,7 +45,7 @@ def clean_xml(input_file, output_file):
 
 
 # Exempel på användning
-clean_xml("input file path", "output file path")
+clean_xml("input file ", "output file path")
 print("clean_xml done")
 
 
