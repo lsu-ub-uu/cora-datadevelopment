@@ -11,6 +11,7 @@ def test_import_publications_from_fedora(monkeypatch):
     get_pids_for_domain_mock = _set_up_get_pids_mock(monkeypatch)
     get_record_by_pid_mock, mock_publication = _set_up_get_record_mock(monkeypatch)
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
+    # download_attachments_mock = _set_up_download_attachments_mock(monkeypatch)
 
     import_publications_from_fedora("varldskulturmuseerna")
 
@@ -33,10 +34,12 @@ def test_import_publications_from_fedora(monkeypatch):
         in save_to_file_mock.mock_calls
     )
 
+    #  assert download_attachments_mock.call_count == 3
+
     assert logger_mock.info.mock_calls == [
-        call("==== Begin importing publications from Fedora ===="),
-        call("==== domain=varldskulturmuseerna ===="),
-        call("=================================================="),
+        call(
+            "==== Begin importing publications from Fedora ====\n==== domain=varldskulturmuseerna ====\n=================================================="
+        ),
         call("--- Successfully imported 3 publications to file ---"),
     ]
 
@@ -113,3 +116,12 @@ def _set_up_logger_mock(monkeypatch):
         MagicMock(return_value=logger_mock),
     )
     return logger_mock
+
+
+def _set_up_download_attachments_mock(monkeypatch):
+    download_attachments_mock = MagicMock()
+    monkeypatch.setattr(
+        "fedora_to_cora.import_publications_from_fedora.download_attachments",
+        download_attachments_mock,
+    )
+    return download_attachments_mock
