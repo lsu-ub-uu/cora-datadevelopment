@@ -9,12 +9,13 @@ SSH_PORT = 22
 SSH_USER = "support"
 
 LOCAL_PORT = 8080
-# REMOTE_HOST = "diva-node7"
 REMOTE_HOST = "diva-node4"
-# REMOTE_PORT = 8083
 REMOTE_PORT = 8080
-# SOLR_SEARCH_URL = f"http://localhost:{LOCAL_PORT}/solr-admin/diva/select"
 SOLR_SEARCH_URL = f"http://localhost:{LOCAL_PORT}/diva-search/diva/select"
+
+# REMOTE_HOST = "diva-node7"
+# REMOTE_PORT = 8083
+# SOLR_SEARCH_URL = f"http://localhost:{LOCAL_PORT}/solr-admin/diva/select"
 
 
 def get_pids_for_domain(domain: str) -> list[str]:
