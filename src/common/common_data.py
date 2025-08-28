@@ -91,6 +91,26 @@ def create_record_link_using_name_type_id(
     ET.SubElement(link, "linkedRecordId").text = record_id
     return link
 
+def create_record_link_test(
+    old_record_id: str, link_repeat_id: dict, record_type: str, name_in_data: str, related_type: str) -> ET.Element:
+    
+    link = ET.Element(name_in_data)
+    link.set(
+        "type", related_type
+        )
+    link.set(
+        "repeatId", str(
+            link_repeat_id["repeatId"]
+        )
+    )
+    link_repeat_id["repeatId"] = link_repeat_id["repeatId"] + 1
+    
+    topic = ET.SubElement(link, "topic")
+    ET.SubElement(topic, "linkedRecordType").text = record_type
+    ET.SubElement(topic, "linkedRecordId").text = old_record_id
+    
+    return link
+
 
 def create_authority_or_variant_lang_with_child_topic(
     name_lang: str, element_name: str, language: str) -> ET.Element:

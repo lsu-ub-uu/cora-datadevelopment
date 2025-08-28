@@ -100,8 +100,8 @@ def test_complete_xml():
             <end_date>2025-08-20</end_date>
             <name_swe>En test</name_swe>
             <name_eng>en testpost</name_eng>
-            <broader_id>diva-subject:21791953769339960</broader_id>
-            <earlier_id>diva-subject:21791953769339960</earlier_id>
+            <broader_id>1234</broader_id>
+            <earlier_id>9876</earlier_id>
         </DATA_RECORD>  
         """
     )
@@ -136,16 +136,16 @@ def test_complete_xml():
                 <month>08</month>
                 <day>20</day>
             </endDate>
-            <related repeatId="0" type="earlier">
+            <related repeatId="0" type="broader">
                 <topic>
                     <linkedRecordType>diva-subject</linkedRecordType>
-                    <linkedRecordId>diva-subject:21791953769339960</linkedRecordId>
+                    <linkedRecordId>1234</linkedRecordId>
                 </topic>
             </related>
-            <related repeatId="1" type="broader">
+            <related repeatId="1" type="earlier">
                 <topic>
                     <linkedRecordType>diva-subject</linkedRecordType>
-                    <linkedRecordId>diva-subject:21791953769339960</linkedRecordId>
+                    <linkedRecordId>9876</linkedRecordId>
                 </topic>
             </related>
         </subject>
