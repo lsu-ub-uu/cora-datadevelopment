@@ -16,12 +16,10 @@ This file is part of DiVA Client.
     You should have received a copy of the GNU General Public License
 """
 
-from fabric import Connection
-
 import xml.etree.ElementTree as ET
 import requests
-import urllib3
 from common.xml_utils import pretty_print_xml
+import urllib3  # type: ignore
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
