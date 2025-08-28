@@ -1,3 +1,4 @@
+from datetime import datetime
 from common.run_rotating_logger import RunRotatingLogger
 from common.threads import run_with_threads
 from cora.context import Context
@@ -9,6 +10,7 @@ from common.threads import run_with_threads
 
 
 def import_publications_from_fedora(domain: str):
+    time_started = _get_now()
     logger = RunRotatingLogger(
         "data", f"logs/import_publications_from_fedora.log"
     ).get()
@@ -21,12 +23,23 @@ def import_publications_from_fedora(domain: str):
 
     run_with_threads(
         pids,
-        lambda pid: _import_publication(domain, pid),
+        lambda pid: _import_publication(domain, pid, time_started),
     )
     logger.info(f"--- Successfully imported {len(pids)} publications to file ---")
 
 
-def _import_publication(domain: str, pid: str) -> None:
+def _import_publication(domain: str, pid: str, time_started: datetime) -> None:
     publication = get_record_by_pid(pid)
-    save_to_file(publication, f"{domain}_{pid}.xml")
+    save_to_file(
+        publication,
+        f"data/fedora_xml/{domain}/{time_started.isoformat()}/{pid}.xml",
+    )
     # download_attachments(publication, domain)
+
+
+if __name__ == "__main__":
+    import_publications_from_fedora("uu")
+
+
+def _get_now() -> datetime:
+    return datetime.now()

@@ -1,3 +1,4 @@
+from datetime import datetime
 from xml.etree import ElementTree as ET
 from unittest.mock import MagicMock, call
 import pytest
@@ -11,6 +12,10 @@ def test_import_publications_from_fedora(monkeypatch):
     get_pids_for_domain_mock = _set_up_get_pids_mock(monkeypatch)
     get_record_by_pid_mock, mock_publication = _set_up_get_record_mock(monkeypatch)
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
+    monkeypatch.setattr(
+        "fedora_to_cora.import_publications_from_fedora._get_now",
+        lambda: datetime(2023, 1, 1, 12, 0, 0),
+    )
 
     import_publications_from_fedora("varldskulturmuseerna")
 
@@ -21,15 +26,24 @@ def test_import_publications_from_fedora(monkeypatch):
     assert call("789") in get_record_by_pid_mock.mock_calls
 
     assert (
-        call(mock_publication, "varldskulturmuseerna_123.xml")
+        call(
+            mock_publication,
+            "data/fedora_xml/varldskulturmuseerna/2023-01-01T12:00:00/123.xml",
+        )
         in save_to_file_mock.mock_calls
     )
     assert (
-        call(mock_publication, "varldskulturmuseerna_456.xml")
+        call(
+            mock_publication,
+            "data/fedora_xml/varldskulturmuseerna/2023-01-01T12:00:00/456.xml",
+        )
         in save_to_file_mock.mock_calls
     )
     assert (
-        call(mock_publication, "varldskulturmuseerna_789.xml")
+        call(
+            mock_publication,
+            "data/fedora_xml/varldskulturmuseerna/2023-01-01T12:00:00/789.xml",
+        )
         in save_to_file_mock.mock_calls
     )
 
