@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from common.record_info_create import record_info_create
-from common.name_type_corporate_create import name_type_corporate_create
+from common.common_data import name_type_corporate_create
 
 nameInData = "publisher"
 

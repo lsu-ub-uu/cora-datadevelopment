@@ -1,8 +1,8 @@
 import xml.etree.ElementTree as ET
 from common.xml_utils import append_if_value
 from common.record_info_create import record_info_create
-from common.create_authority_or_variant_lang import create_authority_or_variant_lang_using_name_type_corporate
-from common.create_end_date import create_end_date
+from common.common_data import create_authority_or_variant_lang_using_name_type_corporate
+from common.common_data import create_end_date
 from common.common_data import create_identifiers_from_source
 
 
@@ -43,18 +43,21 @@ def _create_authority_or_variant_lang(source_record: ET.Element, element_name: s
     name_lang = source_record.find(f".//name_{language}")
     if name_lang is not None and name_lang.text:
         return create_authority_or_variant_lang_using_name_type_corporate(
-            name_lang.text, element_name, language)
+            name_lang.text, element_name, language
+            )
 
 def _create_end_date(source_record: ET.Element)-> ET.Element | None:
     end_date = source_record.find(".//end_date")
     if end_date is not None and end_date.text:
         return create_end_date(
-            end_date.text)
+            end_date.text
+            )
         
 def _create_identifiers_from_source(source_record: ET.Element, identifier_type: str) -> ET.Element | None:
     identifier = source_record.find(f".//identifier_{identifier_type}")
     if identifier is not None and identifier.text:
         return create_identifiers_from_source(
-            identifier.text, identifier_type)
+            identifier.text, identifier_type
+            )
     
     

@@ -165,3 +165,4 @@ def test_create_record_link_using_name_type_id():
                     """
 
     assert_equal_for_xml_and_xml_string(link, expected_xml)
+   

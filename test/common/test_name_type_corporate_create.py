@@ -1,4 +1,4 @@
-from common.name_type_corporate_create import name_type_corporate_create
+from common.common_data import name_type_corporate_create
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 

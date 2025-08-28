@@ -43,22 +43,26 @@ def _create_title_info(source_record: ET.Element) -> ET.Element:
     subtitle = source_record.find(f".//subtitle")
     if title is not None and title.text:
         return create_title_info(
-            title.text, subtitle)
+            title.text, subtitle
+            )
     
 def _create_origin_info(source_record: ET.Element, origin_type: str) -> ET.Element | None:
     end_date = source_record.find(".//end_date")
     if end_date is not None and end_date.text:
         return create_origin_info(
-            end_date.text, origin_type)
+            end_date.text, origin_type
+            )
 
 def _create_identifiers_from_source_with_type_issn(source_record: ET.Element, identifier_type: str) -> ET.Element | None:
     identifier = source_record.find(f".//identifier_{identifier_type}")
     if identifier is not None and identifier.text:
         return create_identifiers_from_source_with_type_issn(
-            identifier.text, identifier_type)
+            identifier.text, identifier_type
+            )
 
 def _create_location(source_record: ET.Element) -> ET.Element | None:
     url = source_record.find(".//url")
     if url is not None and url.text:
         return create_location(
-            url.text)
+            url.text
+            )
