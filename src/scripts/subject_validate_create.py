@@ -9,7 +9,7 @@ from db_to_cora.subject_transform import transform_subject
 
 RECORD_TYPE = "diva-subject"
 
-source_xml_file_path = "data/db_xml/subjects.xml"
+source_xml_file_path = "data/db_xml/subjects_varldskulturmuseerna.xml"
 system = "preview"
 login_id = "divaAdmin@cora.epc.ub.uu.se"
 app_token = "49ce00fb-68b5-4089-a5f7-1c225d3cf156"

@@ -19,7 +19,7 @@ def transform_publisher(source_record: ET.Element) -> ET.Element:
 
 
 def _create_record_info(source_record: ET.Element) -> ET.Element:
-    source_old_id = source_record.find(".//old_id")
+    source_old_id = source_record.find(f".//old_id")
     assert (
         source_old_id is not None and source_old_id.text is not None
     ), "old_id is missing in source record"
@@ -32,7 +32,7 @@ def _create_record_info(source_record: ET.Element) -> ET.Element:
 
 
 def _create_name(source_record: ET.Element) -> ET.Element:
-    name = source_record.find(".//name")
+    name = source_record.find(f".//name")
     assert (
         name is not None and name.text is not None
     ), "name is missing in source record"

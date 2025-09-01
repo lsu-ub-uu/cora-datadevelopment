@@ -1,4 +1,4 @@
--- hämtar alla subject från databasen; subject, subject_name
+-- hämtar alla subject baserat på domän från databasen; subject, subject_name
 -- placerar alla uppgifter för ett id på en rad.
 -- export data, export to XML file, formatsetting - advanced setting: "value display format - editable".
 

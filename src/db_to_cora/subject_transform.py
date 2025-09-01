@@ -31,7 +31,7 @@ def transform_subject(source_record: ET.Element) -> ET.Element:
 
 
 def _create_record_info(source_record: ET.Element) -> ET.Element:
-    source_old_id = source_record.find(".//old_id")
+    source_old_id = source_record.find(f".//old_id")
     assert (
         source_old_id is not None and source_old_id.text is not None
     ), "old_id is missing in source record"
@@ -50,12 +50,13 @@ def _create_authority_or_variant_lang(source_record: ET.Element, element_name: s
             )
         
 def _create_end_date(source_record: ET.Element)-> ET.Element | None:
-    end_date = source_record.find(".//end_date")
+    end_date = source_record.find(f".//end_date")
     if end_date is not None and end_date.text:
         return create_end_date(
             end_date.text
             )
 
+# fix link-function
 def _create_record_link_test(source_record: ET.Element, link_repeat_id: dict, record_type: str, name_in_data: str, related_type: str)-> ET.Element | None:
     old_record_id = source_record.find(f".//{related_type}_id")
     if old_record_id is not None and old_record_id.text:
