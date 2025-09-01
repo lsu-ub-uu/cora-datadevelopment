@@ -7,6 +7,7 @@ def read_source_xml(filePath_sourceXml) -> ET.Element:
     return root
 
 
+
 def create_title_info(title: str, subtitle: str) -> ET.Element:
     title_info = ET.Element("titleInfo")
     title_info.append(
@@ -16,13 +17,22 @@ def create_title_info(title: str, subtitle: str) -> ET.Element:
         title_info.append(
             create_element_from_source("subtitle", subtitle.text)
             )
+            
     return title_info
 
+def create_title_info_type_alternative(title:str, subtitle: str) -> ET.Element:
+    title_info = create_title_info(title, subtitle)
+    title_info.set(
+        "type", "alternative"
+        )
+    return title_info
+    
 
 def create_element_from_source(tag_name: str, value: str) -> ET.Element:
     element = ET.Element(tag_name)
     element.text = value
     return element
+
 
 
 def create_identifiers_from_source_with_repeat_id(identifier: str, identifier_type: str, identifier_repeat_id: dict) -> ET.Element:
@@ -61,6 +71,7 @@ def create_identifiers_from_source(identifier: str, identifier_type: str) -> ET.
     return identifiers
 
 
+
 def create_origin_info(date: str, origin_type: str):
     origin_info = ET.Element(origin_type)
     date_issued = ET.Element("dateIssued", point="end")
@@ -76,12 +87,23 @@ def create_origin_info(date: str, origin_type: str):
     return origin_info
 
 
+
 def create_location(url:str) -> ET.Element:
     location = ET.Element("location")
     location.append(
         create_element_from_source("url", url)
         )
     return location
+
+
+
+def create_note(note: str, note_type: str) -> ET.Element:
+    note_element = create_element_from_source("note", note)
+    note_element.set(
+            "type", note_type
+        )
+    return note_element
+
 
 
 def create_record_link_using_name_type_id(
@@ -91,6 +113,7 @@ def create_record_link_using_name_type_id(
     ET.SubElement(link, "linkedRecordId").text = record_id
     return link
 
+# record_link_test ska bytas ut
 def create_record_link_test(
     old_record_id: str, link_repeat_id: dict, record_type: str, name_in_data: str, related_type: str) -> ET.Element:
     
@@ -110,6 +133,7 @@ def create_record_link_test(
     ET.SubElement(topic, "linkedRecordId").text = old_record_id
     
     return link
+
 
 
 def create_authority_or_variant_lang_with_child_topic(
@@ -140,6 +164,7 @@ def name_type_corporate_create(name: str) -> ET.Element:
     return name_type_corporate
 
 
+
 def create_end_date(date: str) -> ET.Element:
     end_date = ET.Element("endDate")
     year, month, day = map(
@@ -163,10 +188,47 @@ def append_year_month_day(element: ET.Element, year: str, month: str, day:str):
 
 
 
+def create_genre(publication_type: str, genre_repeat_id: dict):
+    genre = ET.Element("genre")
+    genre_value = publication_map[publication_type]
+    genre.text = genre_value
+    genre.set(
+        "repeatId", str(
+            genre_repeat_id["repeatId"]
+            )
+        )
+    genre.set(
+        "type", "outputType"
+        )
+    genre_repeat_id["repeatId"] = genre_repeat_id["repeatId"] + 1
+    return genre
+
+publication_map = {
+    "50": "publication_journal-article",
+    "51": "publication_review-article",
+    "52": "publication_book-review",
+    "53": "publication_doctoral-thesis-compilation",
+    "54": "publication_doctoral-thesis-monograph",
+    "55": "publication_licentiate-thesis-compilation",
+    "56": "publication_licentiate-thesis-monograph",
+    "57": "publication_book",
+    "58": "publication_book-chapter",
+    "59": "conference_paper",
+    "60": "conference_proceeding",
+    "61": "intellectual-property_patent",
+    "62": "publication_report",
+    "63": "publication_edited-book",
+    "64": "publicationPreprintItem",
+    "65": "diva_degree-project",
+    "66": "publication_other",
+    "67": "diva_dissertation",
+    "71": "artistic-work_original-creative-work",
+}
 
 
-
-
+"""
+Allt nedan ska tas bort
+"""
 
 
 
