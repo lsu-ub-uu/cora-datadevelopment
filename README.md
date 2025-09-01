@@ -5,8 +5,8 @@ This repository contains scripts for creating and migrating data.
 ## Dev installation
 
 ```sh
-python -m venv venv
-source venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
 pip install -e .
 ```
 

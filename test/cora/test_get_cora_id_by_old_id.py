@@ -1,7 +1,6 @@
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id, _cache
 from common.xml_utils import inline_xml_string
 import pytest
-from cora.error import LinkedRecordNotFoundError
 from logging import Logger
 from unittest.mock import MagicMock
 from cora.context import MockContext
