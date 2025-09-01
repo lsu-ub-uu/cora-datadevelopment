@@ -1,3 +1,4 @@
+import os
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
 
@@ -5,9 +6,8 @@ import xml.dom.minidom
 def pretty_print_xml_string(xml_string: str) -> str:
     reparsed = xml.dom.minidom.parseString(xml_string)
     pretty_xml = reparsed.toprettyxml(indent="  ")
-    return '<?xml version="1.0" encoding="UTF-8"?>\n' + "\n".join(
-        pretty_xml.split("\n")[1:]
-    )
+    lines = [line for line in pretty_xml.split("\n")[1:] if line.strip()]
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' + "\n".join(lines)
 
 
 def pretty_print_xml(element: ET.Element) -> str:
@@ -48,5 +48,9 @@ def append_if_value(
 
 
 def save_to_file(xml: ET.Element, filename: str) -> None:
+    directory = os.path.dirname(filename)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
+
     with open(filename, "w", encoding="utf-8") as file:
         file.write(pretty_print_xml(xml))

@@ -1,7 +1,6 @@
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id, _cache
 from common.xml_utils import inline_xml_string
 import pytest
-from cora.error import LinkedRecordNotFoundError
 from logging import Logger
 from unittest.mock import MagicMock
 from cora.context import MockContext
@@ -90,7 +89,7 @@ def test_get_two_different_organisations(requests_mock):
     assert response2 == expected_cora_id2
 
 
-def test_raises_error_when_no_result(requests_mock):
+def test_returns_error_text_when_no_result(requests_mock):
     old_id_not_found = "404404"
 
     requests_mock.get(
@@ -99,14 +98,13 @@ def test_raises_error_when_no_result(requests_mock):
         text="<dataList><data></data></dataList>",
     )
 
-    with pytest.raises(LinkedRecordNotFoundError) as exc_info:
-        get_cora_id_by_old_id(
-            old_id_not_found,
-            record_type="diva-organisation",
-            context=mock_context,
-        )
-    assert "diva-organisation not found for old ID: 404404" == str(exc_info.value)
-    assert requests_mock.call_count == 1
+    response = get_cora_id_by_old_id(
+        old_id_not_found,
+        record_type="diva-organisation",
+        context=mock_context,
+    )
+
+    assert response == "diva-organisation not found for old ID: 404404"
 
 
 def test_logs_warning_and_returns_first_id_when_multiple_results(

@@ -18,11 +18,14 @@ This file is part of DiVA Client.
 
 import xml.etree.ElementTree as ET
 import requests
+import urllib3  # type: ignore
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def get_record_by_pid(pid: str) -> ET.Element:
     response = requests.get(
-        f"https://localhost:8443/fedora/get/diva2:{pid}/MODEL_NOREF", verify=False
+        f"https://uu.diva-portal.org:8443/fedora/get/{pid}/MODEL_NOREF", verify=False
     )
     response.encoding = response.apparent_encoding
     if response.status_code == 200:

@@ -1,9 +1,6 @@
 import xml.etree.ElementTree as ET
 import requests
-from cora.constants import BASE_URL
 from common.xml_utils import inline_xml_string
-from cora.error import LinkedRecordNotFoundError
-from logging import Logger
 from typing import Literal
 from cora.context import Context
 
@@ -84,7 +81,7 @@ def get_cora_id_by_old_id(
             "warning",
         )
     elif len(record_ids) == 0:
-        raise LinkedRecordNotFoundError(record_type, old_id=old_id)
+        return f"{record_type} not found for old ID: {old_id}"
 
     record_id = record_ids[0]
 

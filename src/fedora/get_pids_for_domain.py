@@ -1,4 +1,51 @@
+import xml.etree.ElementTree as ET
+from fabric import Connection
+import requests
+from fedora.get_record_by_pid import get_record_by_pid
+
+
+SSH_HOST = "130.238.7.110"
+SSH_PORT = 22
+SSH_USER = "support"
+
+LOCAL_PORT = 8080
+
+# REMOTE_HOST = "diva-node4"
+# REMOTE_PORT = 8080
+# SOLR_SEARCH_URL = f"http://localhost:{LOCAL_PORT}/diva-search/diva/select"
+
+REMOTE_HOST = "diva-node7"
+REMOTE_PORT = 8083
+SOLR_SEARCH_URL = f"http://localhost:{LOCAL_PORT}/solr-admin/dream/select"
+
+
 def get_pids_for_domain(domain: str) -> list[str]:
-    if domain == "varldskulturmuseerna":
-        return ["1775040", "1703518", "1707279", "1681782", "1781879"]
+    with Connection(host=SSH_HOST, port=SSH_PORT, user=SSH_USER) as connection:
+        with connection.forward_local(
+            local_port=LOCAL_PORT, remote_host=REMOTE_HOST, remote_port=REMOTE_PORT
+        ):
+            number_of_records_response = requests.get(
+                f"{SOLR_SEARCH_URL}?q=domain%3A{domain}&start=0&rows=0&wt=xml&indent=true"
+            )
+
+            number_of_records_response.raise_for_status()
+
+            result = ET.fromstring(number_of_records_response.text).find("result")
+
+            assert result is not None, "No result element found in response"
+            number_of_records = result.get("numFound")
+            get_pids_response = requests.get(
+                f"{SOLR_SEARCH_URL}?q=*%3A*&fq=domain%3A{domain}&rows={number_of_records}&fl=PID&wt=xml&indent=true"
+            )
+
+            get_pids_response.raise_for_status()
+            pids = [
+                pid.text
+                for pid in ET.fromstring(get_pids_response.text).findall(
+                    "./result/doc/str[@name='PID']"
+                )
+                if pid.text is not None
+            ]
+            return pids
+
     return []

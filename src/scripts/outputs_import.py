@@ -14,9 +14,9 @@ DEFAULT_ENV = {
 
 
 def main():
-    """Main entry point for the outputs migrate script."""
+    """Main entry point for the outputs import script."""
     parser = argparse.ArgumentParser(
-        description="Process Fedora XML publication files and migrate them to Cora"
+        description="Process Fedora XML publication files and import them to Cora"
     )
 
     parser.add_argument(
