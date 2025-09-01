@@ -13,7 +13,7 @@ source_xml_file_path = "data/db_xml/journals.xml"
 system = "preview"
 login_id = "divaAdmin@cora.epc.ub.uu.se"
 app_token = "49ce00fb-68b5-4089-a5f7-1c225d3cf156"
-dry_run = True
+apply = False
 workers = 16
 
 
@@ -26,10 +26,10 @@ def main():
     source_records = _read_source_records(context)
 
     cora_journals = _transform_to_cora_journals(source_records)
-   
+
     validation_results = validate_record_list(cora_journals, RECORD_TYPE, context)
 
-    if not dry_run and all(valid for (valid, _) in validation_results):
+    if apply and all(valid for (valid, _) in validation_results):
         create_record_list(cora_journals, RECORD_TYPE, context)
 
     context.log(f"Run time: {time.time() - starttime}")
@@ -56,5 +56,3 @@ def _transform_to_cora_journals(source_records: list[ET.Element]):
 
 if __name__ == "__main__":
     main()
-    
-    

@@ -6,7 +6,7 @@ from fedora_to_cora.output_migrate import output_migrate
 
 
 def process_fedora_publication_files(
-    xml_dir: str, system: str, login_id: str, app_token: str, dry_run: bool = True
+    xml_dir: str, system: str, login_id: str, app_token: str, apply: bool = False
 ):
     successful_transformations = []
     failed_transformations = []
@@ -19,7 +19,7 @@ def process_fedora_publication_files(
 
     context.log("==== Begin processing Fedora XML publications ====")
     context.log(
-        f"==== xml_dir={xml_dir}, system={system}, login_id={login_id}, dry_run={dry_run} ===="
+        f"==== xml_dir={xml_dir}, system={system}, login_id={login_id}, apply={apply} ===="
     )
     context.log("==================================================")
 
@@ -29,7 +29,7 @@ def process_fedora_publication_files(
         context.log(f"--- Processing file: {filename} ---")
         try:
             source_record = _read_source_record_from_file(xml_dir, filename)
-            valid, errors = output_migrate(source_record, context, xml_dir, dry_run)
+            valid, errors = output_migrate(source_record, context, xml_dir, apply)
             if valid:
                 successful_transformations.append(filename)
             else:

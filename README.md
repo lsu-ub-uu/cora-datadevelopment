@@ -43,8 +43,8 @@ ptw --now .
 - `--system`: the system where you want to put the migrated posts.
 - `--login-id`: the id for the user used to migrate the posts.
 - `--app-token`: the token for the user.
-- `--wet-run`: if you want to do a dry-run of the script without creating the migrated files.
+- `--apply`: if you want to do a dry-run of the script without creating the migrated files.
 
 For more information about output migration, see [here](./src/fedora_to_cora/transform/output_transform.md)
 
-`outputs-testdata-create` to create a dummy post in the Cora format, it uses the same arguments but does not include the `--wet-run` and always creates a post.
+`outputs-testdata-create` to create a dummy post in the Cora format, it uses the same arguments but does not include the `--apply` and always creates a post.

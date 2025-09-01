@@ -5,7 +5,7 @@ from fedora_to_cora.output_migrate import output_migrate
 from cora.context import MockContext
 
 
-def test_migrate_with_dry_run(monkeypatch):
+def test_migrate_with_apply_false(monkeypatch):
     mock_context = MockContext()
 
     source_record = ET.fromstring(
@@ -39,7 +39,7 @@ def test_migrate_with_dry_run(monkeypatch):
     monkeypatch.setattr("fedora_to_cora.output_migrate.create_record", mock_create)
 
     valid, errors = output_migrate(
-        source_record, mock_context, xml_dir="test/xml", dry_run=True
+        source_record, mock_context, xml_dir="test/xml", apply=False
     )
 
     assert valid is True
@@ -56,7 +56,7 @@ def test_migrate_with_dry_run(monkeypatch):
     mock_create.assert_not_called()
 
 
-def test_migrate_with_wet_run_when_create_record_success(monkeypatch):
+def test_migrate_with_apply_when_create_record_success(monkeypatch):
     mock_context = MockContext()
 
     source_record = ET.fromstring(
@@ -102,7 +102,7 @@ def test_migrate_with_wet_run_when_create_record_success(monkeypatch):
 
     mock_xml_dir = "test/xml"
     valid, errors = output_migrate(
-        source_record, mock_context, xml_dir=mock_xml_dir, dry_run=False
+        source_record, mock_context, xml_dir=mock_xml_dir, apply=True
     )
 
     assert valid is True
@@ -130,7 +130,7 @@ def test_migrate_with_wet_run_when_create_record_success(monkeypatch):
     )
 
 
-def test_migrate_with_wet_run_when_create_record_error(monkeypatch):
+def test_rollback_when_failed_to_migrate_attachment(monkeypatch):
     mock_context = MockContext()
 
     source_record = ET.fromstring(
@@ -183,7 +183,7 @@ def test_migrate_with_wet_run_when_create_record_error(monkeypatch):
 
     mock_xml_dir = "test/xml"
     valid, errors = output_migrate(
-        source_record, mock_context, xml_dir=mock_xml_dir, dry_run=False
+        source_record, mock_context, xml_dir=mock_xml_dir, apply=True
     )
 
     assert valid is False
@@ -191,7 +191,7 @@ def test_migrate_with_wet_run_when_create_record_error(monkeypatch):
     mock_delete_record.assert_called_once_with(mock_created_record, mock_context)
 
 
-def test_migrate_with_dry_run_validation_errors(monkeypatch):
+def test_migrate_with_apply_validation_errors(monkeypatch):
     mock_context = MockContext()
 
     source_record = ET.fromstring(
@@ -223,7 +223,7 @@ def test_migrate_with_dry_run_validation_errors(monkeypatch):
     monkeypatch.setattr("fedora_to_cora.output_migrate.validate_record", mock_validate)
 
     valid, errors = output_migrate(
-        source_record, mock_context, xml_dir="test/xml", dry_run=True
+        source_record, mock_context, xml_dir="test/xml", apply=False
     )
 
     assert valid is False

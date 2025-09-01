@@ -9,7 +9,7 @@ DEFAULT_ENV = {
     "system": "pre",
     "login_id": "divaAdmin@cora.epc.ub.uu.se",
     "app_token": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
-    "dry_run": True,  # Set to True to skip actual transformations
+    "apply": False,
 }
 
 
@@ -42,11 +42,11 @@ def main():
         default=DEFAULT_ENV["app_token"],
         help="Application token for authentication (default: uses preset token)",
     )
-
+cc
     parser.add_argument(
-        "--wet-run",
+        "--apply",
         action="store_true",
-        help="Perform actual transformations (default is dry run)",
+        help="Perform actual transformations (default is false)",
     )
 
     args = parser.parse_args()
@@ -56,7 +56,7 @@ def main():
         "system": args.system,
         "login_id": args.login_id,
         "app_token": args.app_token,
-        "dry_run": not args.wet_run,  # dry_run is opposite of wet_run
+        "apply": args.apply,
     }
 
     process_fedora_publication_files(**env)

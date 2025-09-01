@@ -10,7 +10,7 @@ from cora.create import create_record, is_success_result
 
 
 def output_migrate(
-    source_record: ET.Element, context: Context, xml_dir: str, dry_run: bool = True
+    source_record: ET.Element, context: Context, xml_dir: str, apply: bool = False
 ) -> Tuple[bool, list[str] | None]:
     """
     Migrates a Fedora XML publication record and its attached binaries to Cora.
@@ -29,7 +29,7 @@ def output_migrate(
     if not valid:
         return False, errors
 
-    if not dry_run:
+    if apply:
         create_record_result = create_record(
             cora_output,
             record_type="diva-output",

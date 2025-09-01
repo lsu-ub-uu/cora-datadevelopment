@@ -11,7 +11,7 @@ def test_process_fedora_publication_files(monkeypatch):
     system = "test_system"
     login_id = "test_login"
     app_token = "test_token"
-    dry_run = True
+    apply = False
 
     mock_read_source_xml = MagicMock(return_value=ET.Element("publication"))
     monkeypatch.setattr(
@@ -45,7 +45,7 @@ def test_process_fedora_publication_files(monkeypatch):
         output_migrate_mock,
     )
 
-    process_fedora_publication_files(xml_dir, system, login_id, app_token, dry_run)
+    process_fedora_publication_files(xml_dir, system, login_id, app_token, apply)
 
     assert output_migrate_mock.call_count == 3
 
@@ -59,7 +59,7 @@ def test_handles_raised_exception_in_processing(monkeypatch):
     system = "test_system"
     login_id = "test_login"
     app_token = "test_token"
-    dry_run = True
+    apply = False
 
     mock_read_source_xml = MagicMock(return_value=ET.Element("publication"))
     monkeypatch.setattr(
@@ -93,7 +93,7 @@ def test_handles_raised_exception_in_processing(monkeypatch):
         output_migrate_mock,
     )
 
-    process_fedora_publication_files(xml_dir, system, login_id, app_token, dry_run)
+    process_fedora_publication_files(xml_dir, system, login_id, app_token, apply)
 
     assert output_migrate_mock.call_count == 3
 
