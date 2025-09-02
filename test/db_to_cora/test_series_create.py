@@ -53,7 +53,7 @@ def test_complete_without_links_xml():
             <title>Some title</title>
             <subtitle>Some subtitle</subtitle>
             <alternative_title>Some alternative title</alternative_title>
-            <alterantive_subtitle>Some alternative subtitle</alterantive_subtitle>
+            <alternative_subtitle>Some alternative subtitle</alternative_subtitle>
             <end_date>2025-08-05</end_date>
             <identifier_pissn>1234-1234</identifier_pissn>
             <identifier_eissn>9876-9876</identifier_eissn>
@@ -122,7 +122,7 @@ def skip_test_complete_xml_with_series_links():
             <title>Some title</title>
             <subtitle>Some subtitle</subtitle>
             <alternative_title>Some alternative title</alternative_title>
-            <alterantive_subtitle>Some alternative subtitle</alterantive_subtitle>
+            <alternative_subtitle>Some alternative subtitle</alternative_subtitle>
             <end_date>2025-08-05</end_date>
             <identifier_pissn>1234-1234</identifier_pissn>
             <identifier_eissn>9876-9876</identifier_eissn>

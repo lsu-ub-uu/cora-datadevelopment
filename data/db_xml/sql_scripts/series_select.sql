@@ -9,7 +9,7 @@ SELECT
 	st.main_title as title,
 	st.sub_title as subtitle,
 	sat.main_title as alternative_title,
-	sat.sub_title as alterantive_subtitle,
+	sat.sub_title as alternative_subtitle,
 	s.closed_date as end_date,
 	s.issn as identifier_pissn,
 	s.eissn as identifier_eissn,

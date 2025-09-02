@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<SELECT_s_domain_s_series_id_as_old_id_st_main_title_as_title_st_sub_title_as_subTitle_sat_main_title_as_alternative_title_sat_sub_title_as_alterantive_sub_title_s_closed_date_as_end_date_s_issn_as_identifier_pissn_s_eissn_as_identifier_eissn_s_format_id_f_format_code_s_url_s_notes_as_external_note_s_publication_type_id_pt_publication_type_code_srp_relation_type_id_srp_relative_id_as_relative_id_host_srp_series_id_sre_relation_type_id_string_agg_sre_relative_id_text_as_relative_id_preceding_sre_series_id_s_organisation_id_from_series_s_left_join_series_title_st_on_s_series_id_st_series_id_left_join_series_alternative_title_sat_on_s_series_id_sat_series_id_left_join_format_f_on_s_format_id_f_format_id_left_join_series_relation_srp_on_s_series_id_srp_series_id_and_srp_relation_type_id_52_left_join_series_relation_sre_on_s_series_id_sre_series_id_and_sre_relation_type_id_50_left_join_publication_type_pt_on_s_publication_type_id_pt_publication_type_id_borde_vara_string_agg_where_s_domain_norden_group_by_s_domain_s_series_id_st_main_title_st_sub_title_sat_main_title_sat_sub_title_s_closed_date_s_issn_s_eissn_s_format_id_f_format_code_s_url_s_notes_s_publication_type_id_pt_publication_type_code_srp_relation_type_id_srp_relative_id_srp_series_id_sre_relation_type_id_sre_series_id_s_organisation_id>
+<SELECT_s_domain_s_series_id_as_old_id_st_main_title_as_title_st_sub_title_as_subTitle_sat_main_title_as_alternative_title_sat_sub_title_as_alternative_sub_title_s_closed_date_as_end_date_s_issn_as_identifier_pissn_s_eissn_as_identifier_eissn_s_format_id_f_format_code_s_url_s_notes_as_external_note_s_publication_type_id_pt_publication_type_code_srp_relation_type_id_srp_relative_id_as_relative_id_host_srp_series_id_sre_relation_type_id_string_agg_sre_relative_id_text_as_relative_id_preceding_sre_series_id_s_organisation_id_from_series_s_left_join_series_title_st_on_s_series_id_st_series_id_left_join_series_alternative_title_sat_on_s_series_id_sat_series_id_left_join_format_f_on_s_format_id_f_format_id_left_join_series_relation_srp_on_s_series_id_srp_series_id_and_srp_relation_type_id_52_left_join_series_relation_sre_on_s_series_id_sre_series_id_and_sre_relation_type_id_50_left_join_publication_type_pt_on_s_publication_type_id_pt_publication_type_id_borde_vara_string_agg_where_s_domain_norden_group_by_s_domain_s_series_id_st_main_title_st_sub_title_sat_main_title_sat_sub_title_s_closed_date_s_issn_s_eissn_s_format_id_f_format_code_s_url_s_notes_s_publication_type_id_pt_publication_type_code_srp_relation_type_id_srp_relative_id_srp_series_id_sre_relation_type_id_sre_series_id_s_organisation_id>
   <DATA_RECORD>
     <domain>norden</domain>
     <old_id>10653</old_id>
     <title>Nordiske Arbejdspapirer</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn></identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -23,7 +23,7 @@
     <title>Policy Papers</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>1504-8640</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -40,7 +40,7 @@
     <title>Nordregio Policy Brief</title>
     <subTitle></subTitle>
     <alternative_title>Nordregio Policy Brief</alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>2001-3876</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -57,7 +57,7 @@
     <title>Nordregio Report</title>
     <subTitle></subTitle>
     <alternative_title>Nordregio Report</alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>1403-2503</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -74,7 +74,7 @@
     <title>NHV Reports and Doctor of Public Health-Theses</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>0283-1961</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -91,7 +91,7 @@
     <title>TemaNord</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>0908-6692</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -108,7 +108,7 @@
     <title>PolitikNord</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn></identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -125,7 +125,7 @@
     <title>Nordregio News</title>
     <subTitle></subTitle>
     <alternative_title>Nordregio News</alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>2001-1725</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -142,7 +142,7 @@
     <title>NordGen Publication Series</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn></identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -159,7 +159,7 @@
     <title>Nordregio Working Paper</title>
     <subTitle></subTitle>
     <alternative_title>Nordregio Working Paper</alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>1403-2511</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -176,7 +176,7 @@
     <title>NordForsk Magazine</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>1890-0429</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -193,7 +193,7 @@
     <title>Master of Public Health, MPH</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>1104-5701</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -210,7 +210,7 @@
     <title>ANP</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn></identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -227,7 +227,7 @@
     <title>Fact sheet</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn></identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -244,7 +244,7 @@
     <title>Nordic Research Programme 2005-2008</title>
     <subTitle></subTitle>
     <alternative_title>Nordic Research Programme 2005-2008</alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>1654-2290</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -261,7 +261,7 @@
     <title>Master of Science in Public Health, MScPH</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>1404-904X</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -278,7 +278,7 @@
     <title>Nord</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>0903-7004</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -295,7 +295,7 @@
     <title>Nordforsk Magasin</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn>1890-0929</identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -312,7 +312,7 @@
     <title>Nordera Reports</title>
     <subTitle></subTitle>
     <alternative_title></alternative_title>
-    <alterantive_sub_title></alterantive_sub_title>
+    <alternative_sub_title></alternative_sub_title>
     <end_date></end_date>
     <identifier_pissn></identifier_pissn>
     <identifier_eissn></identifier_eissn>
@@ -323,4 +323,4 @@
     <relative_id_preceding></relative_id_preceding>
     <organisation_id></organisation_id>
   </DATA_RECORD>
-</SELECT_s_domain_s_series_id_as_old_id_st_main_title_as_title_st_sub_title_as_subTitle_sat_main_title_as_alternative_title_sat_sub_title_as_alterantive_sub_title_s_closed_date_as_end_date_s_issn_as_identifier_pissn_s_eissn_as_identifier_eissn_s_format_id_f_format_code_s_url_s_notes_as_external_note_s_publication_type_id_pt_publication_type_code_srp_relation_type_id_srp_relative_id_as_relative_id_host_srp_series_id_sre_relation_type_id_string_agg_sre_relative_id_text_as_relative_id_preceding_sre_series_id_s_organisation_id_from_series_s_left_join_series_title_st_on_s_series_id_st_series_id_left_join_series_alternative_title_sat_on_s_series_id_sat_series_id_left_join_format_f_on_s_format_id_f_format_id_left_join_series_relation_srp_on_s_series_id_srp_series_id_and_srp_relation_type_id_52_left_join_series_relation_sre_on_s_series_id_sre_series_id_and_sre_relation_type_id_50_left_join_publication_type_pt_on_s_publication_type_id_pt_publication_type_id_borde_vara_string_agg_where_s_domain_norden_group_by_s_domain_s_series_id_st_main_title_st_sub_title_sat_main_title_sat_sub_title_s_closed_date_s_issn_s_eissn_s_format_id_f_format_code_s_url_s_notes_s_publication_type_id_pt_publication_type_code_srp_relation_type_id_srp_relative_id_srp_series_id_sre_relation_type_id_sre_series_id_s_organisation_id>
+</SELECT_s_domain_s_series_id_as_old_id_st_main_title_as_title_st_sub_title_as_subTitle_sat_main_title_as_alternative_title_sat_sub_title_as_alternative_sub_title_s_closed_date_as_end_date_s_issn_as_identifier_pissn_s_eissn_as_identifier_eissn_s_format_id_f_format_code_s_url_s_notes_as_external_note_s_publication_type_id_pt_publication_type_code_srp_relation_type_id_srp_relative_id_as_relative_id_host_srp_series_id_sre_relation_type_id_string_agg_sre_relative_id_text_as_relative_id_preceding_sre_series_id_s_organisation_id_from_series_s_left_join_series_title_st_on_s_series_id_st_series_id_left_join_series_alternative_title_sat_on_s_series_id_sat_series_id_left_join_format_f_on_s_format_id_f_format_id_left_join_series_relation_srp_on_s_series_id_srp_series_id_and_srp_relation_type_id_52_left_join_series_relation_sre_on_s_series_id_sre_series_id_and_sre_relation_type_id_50_left_join_publication_type_pt_on_s_publication_type_id_pt_publication_type_id_borde_vara_string_agg_where_s_domain_norden_group_by_s_domain_s_series_id_st_main_title_st_sub_title_sat_main_title_sat_sub_title_s_closed_date_s_issn_s_eissn_s_format_id_f_format_code_s_url_s_notes_s_publication_type_id_pt_publication_type_code_srp_relation_type_id_srp_relative_id_srp_series_id_sre_relation_type_id_sre_series_id_s_organisation_id>

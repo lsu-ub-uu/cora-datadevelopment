@@ -101,7 +101,7 @@ def _create_title_info(source_record: ET.Element) -> ET.Element:
 
 def _create_title_info_type_alternative(source_record: ET.Element) -> ET.Element | None:
     title = source_record.findtext(f".//alternative_title")
-    subtitle = source_record.findtext(f".//alterantive_subtitle")
+    subtitle = source_record.findtext(f".//alternative_subtitle")
     if title is not None:
         return create_title_info_type_alternative(title, subtitle)
 
