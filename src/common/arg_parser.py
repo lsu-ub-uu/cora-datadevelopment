@@ -45,3 +45,33 @@ def create_argument_parser(
         parser.add_argument(name, **config)
 
     return parser
+
+
+common_arguments: dict[str, ArgumentConfig] = {
+    "--xml-path": {
+        "help": "Path to the XML file containing source data",
+        "required": True,
+    },
+    "--system": {
+        "help": "Cora system to connect to (e.g., 'preview', 'production')",
+        "type": str,
+        "default": "preview",
+    },
+    "--login-id": {
+        "default": "divaAdmin@cora.epc.ub.uu.se",
+        "help": "Login ID for authentication",
+    },
+    "--app-token": {
+        "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
+        "help": "Application token for authentication",
+    },
+    "--apply": {
+        "help": "Apply changes to the Cora system (dry run if not present)",
+        "action": "store_true",
+    },
+    "--workers": {
+        "help": "Number of worker threads for processing",
+        "type": int,
+        "default": 16,
+    },
+}

@@ -2,11 +2,10 @@ import time
 from cora.context import CoraContext, Context
 from common import common_data
 import xml.etree.ElementTree as ET
-from common.threads import run_with_threads
 from cora.validate import validate_record_list
 from cora.create import create_record_list
 from db_to_cora.funder_transform import transform_funder
-from common.arg_parser import create_argument_parser
+from common.arg_parser import create_argument_parser, common_arguments
 
 RECORD_TYPE = "diva-funder"
 
@@ -14,34 +13,7 @@ RECORD_TYPE = "diva-funder"
 def main():
     parser = create_argument_parser(
         description="Import funder data from XML",
-        arguments={
-            "--xml-path": {
-                "help": "Path to the XML file containing funder data",
-                "default": "data/db_xml/funders.xml",
-            },
-            "--system": {
-                "help": "Cora system to connect to (e.g., 'preview', 'production')",
-                "type": str,
-                "default": "pre",
-            },
-            "--login-id": {
-                "default": "divaAdmin@cora.epc.ub.uu.se",
-                "help": "Login ID for authentication",
-            },
-            "--app-token": {
-                "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
-                "help": "Application token for authentication",
-            },
-            "--apply": {
-                "help": "Apply changes to the Cora system (dry run if not present)",
-                "action": "store_true",
-            },
-            "--workers": {
-                "help": "Number of worker threads for processing",
-                "type": int,
-                "default": 16,
-            },
-        },
+        arguments=common_arguments,
     )
 
     args = parser.parse_args()
