@@ -14,7 +14,7 @@ def test_journals_import_does_not_create_when_not_apply(
 
     mock_validate_record_list.return_value = [(True, None), (True, None)]
 
-    journals_import(MockContext(), "some/data.xml", 16, False)
+    journals_import(MockContext(), "some/data.xml", False)
 
     mock_create_record_list.assert_not_called()
 
@@ -29,7 +29,7 @@ def test_journals_import_does_not_create_records_when_invalid(
 
     mock_validate_record_list.return_value = [(False, "Invalid"), (True, None)]
 
-    journals_import(MockContext(), "some/data.xml", 16, True)
+    journals_import(MockContext(), "some/data.xml", True)
 
     mock_create_record_list.assert_not_called()
 
@@ -44,7 +44,7 @@ def test_journals_import_does_create_when_valid_and_apply(
 
     mock_validate_record_list.return_value = [(True, None), (True, None)]
 
-    journals_import(MockContext(), "some/data.xml", 16, True)
+    journals_import(MockContext(), "some/data.xml", True)
 
     mock_create_record_list.assert_called_once()
 

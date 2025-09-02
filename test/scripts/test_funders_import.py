@@ -43,7 +43,7 @@ def test_funders_import_does_not_create_records_when_not_apply(
     mock_read_source_xml.return_value = funder_xml
     mock_validate_record_list.return_value = [(True, None), (True, None)]
 
-    funders_import("some/path", 16, MockContext(), False)
+    funders_import("some/path", MockContext(), False)
 
     mock_validate_record_list.assert_called_once()
     mock_create_record_list.assert_not_called()
@@ -58,7 +58,7 @@ def test_funders_import_does_not_create_records_when_invalid(
     mock_read_source_xml.return_value = funder_xml
     mock_validate_record_list.return_value = [(True, None), (False, ["Invalid record"])]
 
-    funders_import("some/path", 16, MockContext(), True)
+    funders_import("some/path", MockContext(), True)
 
     mock_validate_record_list.assert_called_once()
     mock_create_record_list.assert_not_called()
@@ -73,7 +73,7 @@ def test_funders_import_does_create_records_when_valid_and_apply(
     mock_read_source_xml.return_value = funder_xml
     mock_validate_record_list.return_value = [(True, None), (True, None)]
 
-    funders_import("some/path", 16, MockContext(), True)
+    funders_import("some/path", MockContext(), True)
 
     mock_validate_record_list.assert_called_once()
     mock_create_record_list.assert_called_once()

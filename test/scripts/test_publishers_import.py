@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, patch
 
 from cora.context import MockContext
 from scripts.publishers_import import publishers_import
-import common.common_data
 
 
 @patch("scripts.publishers_import.create_record_list")
@@ -33,7 +32,7 @@ def test_publishers_import_does_not_create_when_apply_false(
     mock_read_source_xml.return_value = ET.fromstring(mock_source_xml)
     mock_validate_record_list.return_value = [(True, None), (True, None), (True, None)]
 
-    publishers_import(MockContext(), "some/path.xml", 4, False)
+    publishers_import(MockContext(), "some/path.xml", False)
 
     mock_create_record_list.assert_not_called()
 
@@ -68,7 +67,7 @@ def test_publishers_import_does_not_create_when_apply_true_and_not_valid(
         (True, None),
     ]
 
-    publishers_import(MockContext(), "some/path.xml", 4, True)
+    publishers_import(MockContext(), "some/path.xml", True)
 
     mock_create_record_list.assert_not_called()
 
@@ -103,7 +102,7 @@ def test_publishers_import_when_apply_true_and_valid(
         (True, None),
     ]
 
-    publishers_import(MockContext(), "some/path.xml", 4, True)
+    publishers_import(MockContext(), "some/path.xml", True)
 
     mock_create_record_list.assert_called_once()
     transformed_records = mock_create_record_list.call_args.args[0]

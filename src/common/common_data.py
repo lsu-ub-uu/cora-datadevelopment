@@ -105,14 +105,6 @@ def create_record_link_test(
     return link
 
 
-def create_authority_or_variant_lang_with_child_topic(
-    name_lang: str, element_name: str, language: str
-) -> ET.Element:
-    element = ET.Element(element_name, lang=language)
-    ET.SubElement(element, "topic").text = name_lang
-    return element
-
-
 def name_type_corporate_create(name: str) -> ET.Element:
     name_type_corporate = ET.Element("name", type="corporate")
     name_part = ET.SubElement(name_type_corporate, "namePart")
@@ -133,13 +125,12 @@ def append_year_month_day(element: ET.Element, year: str, month: str, day: str):
     element.append(create_element_from_source("day", day))
 
 
-def create_genre(publication_type: str, genre_repeat_id: dict):
+def create_genre(publication_type: str, repeat_id: str):
     genre = ET.Element("genre")
     genre_value = publication_map[publication_type]
     genre.text = genre_value
-    genre.set("repeatId", str(genre_repeat_id["repeatId"]))
+    genre.set("repeatId", repeat_id)
     genre.set("type", "outputType")
-    genre_repeat_id["repeatId"] = genre_repeat_id["repeatId"] + 1
     return genre
 
 

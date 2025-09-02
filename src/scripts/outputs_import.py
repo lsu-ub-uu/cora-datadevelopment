@@ -45,6 +45,7 @@ def main():
         system=args.system,
         login_id=args.login_id,
         app_token=args.app_token,
+        workers=args.workers,
     )
 
     process_fedora_publication_files(

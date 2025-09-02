@@ -11,15 +11,6 @@ from common.arg_parser import create_argument_parser
 
 RECORD_TYPE = "diva-publisher"
 
-DEFAULT_ENV = {
-    "xml_path": "data/db_xml/publishers.xml",
-    "system": "preview",
-    "login_id": "divaAdmin@cora.epc.ub.uu.se",
-    "app_token": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
-    "apply": False,
-    "workers": 16,
-}
-
 
 def main():
     """Main entry point for the publishers import script."""
@@ -27,24 +18,24 @@ def main():
         description="Process publisher db xml files and import them to Cora",
         arguments={
             "--xml-path": {
-                "default": DEFAULT_ENV["xml_path"],
+                "default": "data/db_xml/publishers.xml",
                 "help": "Path to XML containing publisher source data",
             },
             "--system": {
-                "default": DEFAULT_ENV["system"],
+                "default": "preview",
                 "help": "Target system for migration",
             },
             "--login-id": {
-                "default": DEFAULT_ENV["login_id"],
+                "default": "divaAdmin@cora.epc.ub.uu.se",
                 "help": "Login ID for authentication",
             },
             "--app-token": {
-                "default": DEFAULT_ENV["app_token"],
+                "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
                 "help": "Application token for authentication",
             },
             "--workers": {
                 "type": int,
-                "default": DEFAULT_ENV["workers"],
+                "default": 16,
                 "help": "Number of worker threads",
             },
             "--apply": {
@@ -55,24 +46,25 @@ def main():
     )
     args = parser.parse_args()
 
-    context = CoraContext(args.system, args.login_id, args.app_token)
+    context = CoraContext(
+        args.system, args.login_id, args.app_token, workers=args.workers
+    )
 
     publishers_import(
         context,
         xml_path=args.xml_path,
-        workers=args.workers,
         apply=args.apply,
     )
 
 
-def publishers_import(context: Context, xml_path: str, workers: int, apply: bool):
+def publishers_import(context: Context, xml_path: str, apply: bool):
 
     context.log("Data processing started")
     starttime = time.time()
 
     source_records = _read_source_records(context, xml_path)
 
-    cora_publishers = _transform_to_cora_publishers(source_records, workers)
+    cora_publishers = _transform_to_cora_publishers(source_records)
 
     validation_results = validate_record_list(cora_publishers, RECORD_TYPE, context)
 
@@ -92,13 +84,8 @@ def _read_source_records(context: Context, xml_path: str):
     return source_records
 
 
-def _transform_to_cora_publishers(source_records: list[ET.Element], workers: int):
-    return run_with_threads(
-        source_records,
-        transform_publisher,
-        workers=workers,
-        desc="Transforming new records",
-    )
+def _transform_to_cora_publishers(source_records: list[ET.Element]):
+    return [transform_publisher(publisher) for publisher in source_records]
 
 
 if __name__ == "__main__":

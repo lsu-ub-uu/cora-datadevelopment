@@ -117,7 +117,7 @@ def skip_test_complete_xml_with_series_links():
     source_record = ET.fromstring(
         """
         <DATA_RECORD>
-            <domain>varldskulturmuseerna</domain>
+            <domain>someDomain</domain>
             <old_id>1234</old_id>
             <title>Some title</title>
             <subtitle>Some subtitle</subtitle>
@@ -151,7 +151,7 @@ def skip_test_complete_xml_with_series_links():
                 </dataDivider>
                 <permissionUnit>
                     <linkedRecordType>permissionUnit</linkedRecordType>
-                    <linkedRecordId>varldskulturmuseerna</linkedRecordId>
+                    <linkedRecordId>someDomain</linkedRecordId>
                 </permissionUnit>
                 <oldId>1234</oldId>
             </recordInfo>
@@ -193,6 +193,43 @@ def skip_test_complete_xml_with_series_links():
                     <linkedRecordId>diva-series:22116988688327947</linkedRecordId>
                 </series>
             </related>
+        </series>
+    """
+
+    assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
+def test_no_title():
+    source_record = ET.fromstring(
+        """
+        <DATA_RECORD>
+            <domain>varldskulturmuseerna</domain>
+            <old_id>1234</old_id>
+            <title></title>
+            <subtitle></subtitle>
+        </DATA_RECORD>       
+        """
+    )
+
+    result = transform_series(source_record)
+
+    expected_xml = """
+        <series>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>diva-series</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <permissionUnit>
+                    <linkedRecordType>permissionUnit</linkedRecordType>
+                    <linkedRecordId>varldskulturmuseerna</linkedRecordId>
+                </permissionUnit>
+                <oldId>1234</oldId>
+            </recordInfo>
         </series>
     """
 

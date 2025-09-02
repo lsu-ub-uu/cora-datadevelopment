@@ -48,19 +48,22 @@ def main():
     args = parser.parse_args()
 
     context = CoraContext(
-        system=args.system, login_id=args.login_id, app_token=args.app_token
+        system=args.system,
+        login_id=args.login_id,
+        app_token=args.app_token,
+        workers=args.workers,
     )
 
-    journals_import(context, args.xml_path, args.workers, args.apply)
+    journals_import(context, args.xml_path, args.apply)
 
 
-def journals_import(context: Context, xml_path: str, workers: int, apply: bool):
+def journals_import(context: Context, xml_path: str, apply: bool):
     context.log("Data processing started")
     starttime = time.time()
 
     source_records = _read_source_records(context, xml_path)
 
-    cora_journals = _transform_to_cora_journals(source_records, workers)
+    cora_journals = _transform_to_cora_journals(source_records)
 
     validation_results = validate_record_list(cora_journals, RECORD_TYPE, context)
 
@@ -80,13 +83,8 @@ def _read_source_records(context: Context, xml_path: str):
     return source_records
 
 
-def _transform_to_cora_journals(source_records: list[ET.Element], workers: int):
-    return run_with_threads(
-        source_records,
-        transform_journal,
-        workers=workers,
-        desc="Transforming new records",
-    )
+def _transform_to_cora_journals(source_records: list[ET.Element]):
+    return [transform_journal(record) for record in source_records]
 
 
 if __name__ == "__main__":
