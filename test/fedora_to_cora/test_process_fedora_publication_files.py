@@ -8,20 +8,13 @@ from fedora_to_cora.process_fedora_publication_files import (
 
 def test_process_fedora_publication_files(monkeypatch):
     xml_dir = "test/xml"
-    system = "test_system"
-    login_id = "test_login"
-    app_token = "test_token"
+    mock_context = MockContext()
     apply = False
 
     mock_read_source_xml = MagicMock(return_value=ET.Element("publication"))
     monkeypatch.setattr(
         "fedora_to_cora.process_fedora_publication_files.read_source_xml",
         mock_read_source_xml,
-    )
-    mock_context = MockContext()
-    monkeypatch.setattr(
-        "fedora_to_cora.process_fedora_publication_files.CoraContext",
-        MagicMock(return_value=mock_context),
     )
 
     monkeypatch.setattr(
@@ -45,7 +38,7 @@ def test_process_fedora_publication_files(monkeypatch):
         output_migrate_mock,
     )
 
-    process_fedora_publication_files(xml_dir, system, login_id, app_token, apply)
+    process_fedora_publication_files(xml_dir, mock_context, apply)
 
     assert output_migrate_mock.call_count == 3
 
@@ -56,9 +49,6 @@ def test_process_fedora_publication_files(monkeypatch):
 
 def test_handles_raised_exception_in_processing(monkeypatch):
     xml_dir = "test/xml"
-    system = "test_system"
-    login_id = "test_login"
-    app_token = "test_token"
     apply = False
 
     mock_read_source_xml = MagicMock(return_value=ET.Element("publication"))
@@ -67,10 +57,6 @@ def test_handles_raised_exception_in_processing(monkeypatch):
         mock_read_source_xml,
     )
     mock_context = MockContext()
-    monkeypatch.setattr(
-        "fedora_to_cora.process_fedora_publication_files.CoraContext",
-        MagicMock(return_value=mock_context),
-    )
 
     monkeypatch.setattr(
         "os.listdir", MagicMock(return_value=["test1.xml", "test2.xml", "test3.xml"])
@@ -93,7 +79,7 @@ def test_handles_raised_exception_in_processing(monkeypatch):
         output_migrate_mock,
     )
 
-    process_fedora_publication_files(xml_dir, system, login_id, app_token, apply)
+    process_fedora_publication_files(xml_dir, mock_context, apply)
 
     assert output_migrate_mock.call_count == 3
 

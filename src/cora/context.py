@@ -22,6 +22,7 @@ class Context(Protocol):
     ) -> None: ...
     def get_log_file_path(self) -> str: ...
     def get_workers(self) -> int: ...
+    def get_system(self) -> str: ...
 
 
 class CoraContext(Context):
@@ -43,6 +44,14 @@ class CoraContext(Context):
             }
         )
         self._workers = workers
+
+    def get_system(self) -> str:
+        """
+        Get the system name for the Cora API.
+
+        :return: The system name as a string.
+        """
+        return self.system
 
     def get_base_url(self) -> str:
         """
@@ -135,3 +144,6 @@ class MockContext(Context):
 
     def get_workers(self) -> int:
         return self._workers
+
+    def get_system(self) -> str:
+        return "mock_system"

@@ -6,20 +6,14 @@ from fedora_to_cora.output_migrate import output_migrate
 
 
 def process_fedora_publication_files(
-    xml_dir: str, system: str, login_id: str, app_token: str, apply: bool = False
+    xml_dir: str, context: Context, apply: bool = False
 ):
     successful_transformations = []
     failed_transformations = []
 
-    context = CoraContext(
-        system=system,
-        login_id=login_id,
-        app_token=app_token,
-    )
-
     context.log("==== Begin processing Fedora XML publications ====")
     context.log(
-        f"==== xml_dir={xml_dir}, system={system}, login_id={login_id}, apply={apply} ===="
+        f"==== xml_dir={xml_dir}, system={context.get_system()}, apply={apply} ===="
     )
     context.log("==================================================")
 

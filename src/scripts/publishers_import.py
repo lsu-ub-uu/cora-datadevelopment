@@ -7,6 +7,7 @@ from common.threads import run_with_threads
 from cora.validate import validate_record_list
 from cora.create import create_record_list
 from db_to_cora.publisher_transform import transform_publisher
+from common.arg_parser import create_argument_parser
 
 RECORD_TYPE = "diva-publisher"
 
@@ -18,6 +19,50 @@ DEFAULT_ENV = {
     "apply": False,
     "workers": 16,
 }
+
+
+def main():
+    """Main entry point for the publishers import script."""
+    parser = create_argument_parser(
+        description="Process publisher db xml files and import them to Cora",
+        arguments={
+            "--xml-path": {
+                "default": DEFAULT_ENV["xml_path"],
+                "help": "Path to XML containing publisher source data",
+            },
+            "--system": {
+                "default": DEFAULT_ENV["system"],
+                "help": "Target system for migration",
+            },
+            "--login-id": {
+                "default": DEFAULT_ENV["login_id"],
+                "help": "Login ID for authentication",
+            },
+            "--app-token": {
+                "default": DEFAULT_ENV["app_token"],
+                "help": "Application token for authentication",
+            },
+            "--workers": {
+                "type": int,
+                "default": DEFAULT_ENV["workers"],
+                "help": "Number of worker threads",
+            },
+            "--apply": {
+                "action": "store_true",
+                "help": "Perform actual transformations (default is dry run)",
+            },
+        },
+    )
+    args = parser.parse_args()
+
+    context = CoraContext(args.system, args.login_id, args.app_token)
+
+    publishers_import(
+        context,
+        xml_path=args.xml_path,
+        workers=args.workers,
+        apply=args.apply,
+    )
 
 
 def publishers_import(context: Context, xml_path: str, workers: int, apply: bool):
@@ -56,60 +101,5 @@ def _transform_to_cora_publishers(source_records: list[ET.Element], workers: int
     )
 
 
-def _create_argument_parser():
-    """Create and configure argument parser declaratively."""
-    parser = argparse.ArgumentParser(
-        description="Process publisher db xml files and import them to Cora"
-    )
-
-    # Define arguments with their configurations
-    arguments = {
-        "--xml-path": {
-            "default": DEFAULT_ENV["xml_path"],
-            "help": "Path to XML containing publisher source data",
-        },
-        "--system": {
-            "default": DEFAULT_ENV["system"],
-            "help": "Target system for migration",
-        },
-        "--login-id": {
-            "default": DEFAULT_ENV["login_id"],
-            "help": "Login ID for authentication",
-        },
-        "--app-token": {
-            "default": DEFAULT_ENV["app_token"],
-            "help": "Application token for authentication",
-        },
-        "--workers": {
-            "type": int,
-            "default": DEFAULT_ENV["workers"],
-            "help": "Number of worker threads",
-        },
-        "--apply": {
-            "action": "store_true",
-            "help": "Perform actual transformations (default is dry run)",
-        },
-    }
-
-    # Add arguments and auto-generate help text with defaults
-    for name, config in arguments.items():
-        if "default" in config and config.get("action") != "store_true":
-            config["help"] += f" (default: {config['default']})"
-        parser.add_argument(name, **config)
-
-    return parser
-
-
 if __name__ == "__main__":
-    """Main entry point for the publishers import script."""
-    parser = _create_argument_parser()
-    args = parser.parse_args()
-
-    context = CoraContext(args.system, args.login_id, args.app_token)
-
-    publishers_import(
-        context,
-        xml_path=args.xml_path,
-        workers=args.workers,
-        apply=args.apply,
-    )
+    main()
