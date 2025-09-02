@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from unittest.mock import patch
 
 from cora.context import MockContext
-from scripts.funder_import import funder_import
+from scripts.funders_import import funders_import
 
 funder_xml = ET.fromstring(
     """<?xml version="1.0" encoding="UTF-8"?>
@@ -34,46 +34,46 @@ funder_xml = ET.fromstring(
 )
 
 
-@patch("scripts.funder_import.common_data.read_source_xml")
-@patch("scripts.funder_import.validate_record_list")
-@patch("scripts.funder_import.create_record_list")
-def test_funder_import_does_not_create_records_when_not_apply(
+@patch("scripts.funders_import.common_data.read_source_xml")
+@patch("scripts.funders_import.validate_record_list")
+@patch("scripts.funders_import.create_record_list")
+def test_funders_import_does_not_create_records_when_not_apply(
     mock_create_record_list, mock_validate_record_list, mock_read_source_xml
 ):
     mock_read_source_xml.return_value = funder_xml
     mock_validate_record_list.return_value = [(True, None), (True, None)]
 
-    funder_import("some/path", 16, MockContext(), False)
+    funders_import("some/path", 16, MockContext(), False)
 
     mock_validate_record_list.assert_called_once()
     mock_create_record_list.assert_not_called()
 
 
-@patch("scripts.funder_import.common_data.read_source_xml")
-@patch("scripts.funder_import.validate_record_list")
-@patch("scripts.funder_import.create_record_list")
-def test_funder_import_does_not_create_records_when_invalid(
+@patch("scripts.funders_import.common_data.read_source_xml")
+@patch("scripts.funders_import.validate_record_list")
+@patch("scripts.funders_import.create_record_list")
+def test_funders_import_does_not_create_records_when_invalid(
     mock_create_record_list, mock_validate_record_list, mock_read_source_xml
 ):
     mock_read_source_xml.return_value = funder_xml
     mock_validate_record_list.return_value = [(True, None), (False, ["Invalid record"])]
 
-    funder_import("some/path", 16, MockContext(), True)
+    funders_import("some/path", 16, MockContext(), True)
 
     mock_validate_record_list.assert_called_once()
     mock_create_record_list.assert_not_called()
 
 
-@patch("scripts.funder_import.common_data.read_source_xml")
-@patch("scripts.funder_import.validate_record_list")
-@patch("scripts.funder_import.create_record_list")
-def test_funder_import_does_create_records_when_valid_and_apply(
+@patch("scripts.funders_import.common_data.read_source_xml")
+@patch("scripts.funders_import.validate_record_list")
+@patch("scripts.funders_import.create_record_list")
+def test_funders_import_does_create_records_when_valid_and_apply(
     mock_create_record_list, mock_validate_record_list, mock_read_source_xml
 ):
     mock_read_source_xml.return_value = funder_xml
     mock_validate_record_list.return_value = [(True, None), (True, None)]
 
-    funder_import("some/path", 16, MockContext(), True)
+    funders_import("some/path", 16, MockContext(), True)
 
     mock_validate_record_list.assert_called_once()
     mock_create_record_list.assert_called_once()

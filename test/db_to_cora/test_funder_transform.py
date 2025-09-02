@@ -69,6 +69,49 @@ def test_without_name():
     assert_equal_for_xml_and_xml_string(result, expected_xml)
 
 
+def test_with_with_empty_tag():
+    source_record = ET.fromstring(
+        """
+        <DATA_RECORD>
+            <old_id>65</old_id>
+            <name_swe>Ecosystem dynamics in the Baltic Sea in a changing climate perspective - ECOCHANGE</name_swe>
+            <name_eng></name_eng>
+            <end_date></end_date>
+            <identifier_organisationNumber></identifier_organisationNumber>
+            <identifier_doi></identifier_doi>
+            <locale_swe>sv</locale_swe>
+            <locale_eng></locale_eng>
+            <funder_name_id></funder_name_id>
+        </DATA_RECORD>    
+        """
+    )
+
+    result = transform_funder(source_record)
+
+    expected_xml = """
+    <funder>
+        <recordInfo>
+            <validationType>
+            <linkedRecordType>validationType</linkedRecordType>
+            <linkedRecordId>diva-funder</linkedRecordId>
+            </validationType>
+            <dataDivider>
+            <linkedRecordType>system</linkedRecordType>
+            <linkedRecordId>divaData</linkedRecordId>
+            </dataDivider>
+            <oldId>65</oldId>
+        </recordInfo>
+        <authority lang="swe">
+            <name type="corporate">
+            <namePart>Ecosystem dynamics in the Baltic Sea in a changing climate perspective - ECOCHANGE</namePart>
+            </name>
+        </authority>
+    </funder>
+    """
+
+    assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
 def test_complete_xml():
     source_record = ET.fromstring(
         """

@@ -55,7 +55,7 @@ def _create_record_info(source_record: ET.Element) -> ET.Element:
 def _create_title_info(source_record: ET.Element) -> ET.Element | None:
     title = source_record.findtext(f".//title")
     subtitle = source_record.findtext(f".//subtitle")
-    if title is not None:
+    if title:
         return create_title_info(title, subtitle)
 
 

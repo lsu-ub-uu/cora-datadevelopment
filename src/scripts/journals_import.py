@@ -5,20 +5,20 @@ import xml.etree.ElementTree as ET
 from common.threads import run_with_threads
 from cora.validate import validate_record_list
 from cora.create import create_record_list
-from db_to_cora.funder_transform import transform_funder
+from db_to_cora.journal_transform import transform_journal
 from common.arg_parser import create_argument_parser
 
-RECORD_TYPE = "diva-funder"
+RECORD_TYPE = "diva-journal"
 
 
 def main():
+
     parser = create_argument_parser(
-        description="Import funder data from XML",
+        description="Import journals from XML",
         arguments={
             "--xml-path": {
-                "help": "Path to the XML file containing funder data",
-                "type": str,
-                "required": True,
+                "help": "Path to the XML file containing journal data",
+                "default": "data/db_xml/journals.xml",
             },
             "--system": {
                 "help": "Cora system to connect to (e.g., 'preview', 'production')",
@@ -51,23 +51,21 @@ def main():
         system=args.system, login_id=args.login_id, app_token=args.app_token
     )
 
-    funder_import(
-        xml_path=args.xml_path, workers=args.workers, context=context, apply=args.apply
-    )
+    journals_import(context, args.xml_path, args.workers, args.apply)
 
 
-def funder_import(xml_path: str, workers: int, context: Context, apply: bool):
+def journals_import(context: Context, xml_path: str, workers: int, apply: bool):
     context.log("Data processing started")
     starttime = time.time()
 
-    source_records = _read_source_records(xml_path, context)
+    source_records = _read_source_records(context, xml_path)
 
-    cora_funders = _transform_to_cora_funders(source_records, workers)
+    cora_journals = _transform_to_cora_journals(source_records, workers)
 
-    validation_results = validate_record_list(cora_funders, RECORD_TYPE, context)
+    validation_results = validate_record_list(cora_journals, RECORD_TYPE, context)
 
     if apply and all(valid for (valid, _) in validation_results):
-        create_record_list(cora_funders, RECORD_TYPE, context)
+        create_record_list(cora_journals, RECORD_TYPE, context)
 
     context.log(f"Run time: {time.time() - starttime}")
     print(
@@ -75,17 +73,17 @@ def funder_import(xml_path: str, workers: int, context: Context, apply: bool):
     )
 
 
-def _read_source_records(xml_path, context: Context):
+def _read_source_records(context: Context, xml_path: str):
     source_data = common_data.read_source_xml(xml_path)
     source_records = [record for record in source_data.findall(".//DATA_RECORD")]
     context.log(f"Number of records read: {len(source_records)}")
     return source_records
 
 
-def _transform_to_cora_funders(source_records: list[ET.Element], workers: int):
+def _transform_to_cora_journals(source_records: list[ET.Element], workers: int):
     return run_with_threads(
         source_records,
-        transform_funder,
+        transform_journal,
         workers=workers,
         desc="Transforming new records",
     )

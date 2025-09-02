@@ -56,7 +56,7 @@ def _create_record_info(source_record: ET.Element) -> ET.Element:
 
 def _create_authority(source_record: ET.Element) -> ET.Element | None:
     name = source_record.findtext(f".//name_swe")
-    if name is not None:
+    if name:
         authority = ET.Element("authority", lang="swe")
         authority.append(name_type_corporate_create(name))
         return authority
@@ -64,7 +64,7 @@ def _create_authority(source_record: ET.Element) -> ET.Element | None:
 
 def _create_variant(source_record: ET.Element) -> ET.Element | None:
     name = source_record.findtext(f".//name_eng")
-    if name is not None:
+    if name:
         variant = ET.Element("variant", lang="eng")
         variant.append(name_type_corporate_create(name))
         return variant

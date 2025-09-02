@@ -2,6 +2,7 @@ import requests
 import xml.etree.ElementTree as ET
 from common.common_data import validateRecord_build
 from typing import Tuple, List, Optional
+from common.xml_utils import pretty_print_xml
 from cora.context import Context
 from common.threads import run_with_threads
 
@@ -52,7 +53,7 @@ def validate_record(
 
         if response.status_code != 200 or not response.text:
             context.log(
-                f"⚠️ Failed to validate {record_type} with oldId {old_id_text}: {response.status_code}.",
+                f"⚠️ Failed to validate {record_type} with oldId {old_id_text}: {response.status_code}.\nRecord XML: \n{pretty_print_xml(record)}",
                 "error",
             )
             return (False, [f"Validation failed with status {response.status_code}"])
@@ -67,7 +68,7 @@ def validate_record(
             msg.text for msg in response_data.findall(".//errorMessage") if msg.text
         ]
         context.log(
-            f"❌ Validation failed for {record_type} with oldId {old_id_text}.\n\nErrors:\n - {"\n - ".join(errors)}\n",
+            f"❌ Validation failed for {record_type} with oldId {old_id_text}.\n\nErrors:\n - {"\n - ".join(errors)}\n\nRecord XML: \n{pretty_print_xml(record)}",
             "error",
         )
         return (False, errors)

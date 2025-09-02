@@ -121,3 +121,41 @@ def test_no_title():
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
+def test_empty_tags():
+    source_record = ET.fromstring(
+        """
+        <DATA_RECORD>
+            <old_id>141</old_id>
+            <title>some title</title>
+            <subtitle />
+            <end_date />
+            <identifier_eissn />
+            <identifier_pissn />
+            <url />
+	    </DATA_RECORD>"""
+    )
+
+    result = transform_journal(source_record)
+
+    expected_xml = """
+    <journal>
+        <recordInfo>
+            <validationType>
+                <linkedRecordType>validationType</linkedRecordType>
+                <linkedRecordId>diva-journal</linkedRecordId>
+            </validationType>
+            <dataDivider>
+                <linkedRecordType>system</linkedRecordType>
+                <linkedRecordId>divaData</linkedRecordId>
+            </dataDivider>
+            <oldId>141</oldId>
+        </recordInfo>
+        <titleInfo>
+            <title>some title</title>
+        </titleInfo>
+    </journal>
+    """
+
+    assert_equal_for_xml_and_xml_string(result, expected_xml)

@@ -10,7 +10,7 @@ def read_source_xml(filePath_sourceXml) -> ET.Element:
 def create_title_info(title: str, subtitle: str | None) -> ET.Element:
     title_info = ET.Element("titleInfo")
     title_info.append(create_element_from_source("title", title))
-    if subtitle is not None:
+    if subtitle:
         title_info.append(create_element_from_source("subtitle", subtitle))
 
     return title_info

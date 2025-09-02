@@ -14,8 +14,10 @@ dependencies = [
 license = "GPL-3.0"
 
 [project.scripts]
-outputs-import = "scripts.outputs_import:main"
 publishers-import = "scripts.publishers_import:main"
+funders-import = "scripts.funders_import:main"
+journals-import = "scripts.journals_import:main"
+outputs-import = "scripts.outputs_import:main"
 outputs-export = "scripts.outputs_export:main"
 outputs-testdata-create = "scripts.outputs_testdata_create:main"
 
