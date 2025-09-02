@@ -11,7 +11,7 @@ filePath_validateBase = r"data/cora/validate/validation_order_base.xml"
 def validate_record_list(
     record_list: list[ET.Element], record_type: str, context: Context
 ):
-    validation_results = run_with_threads(
+    validation_results: List[Tuple[bool, Optional[List[str]]]] = run_with_threads(
         record_list,
         lambda record: validate_record(
             record, record_type=record_type, context=context

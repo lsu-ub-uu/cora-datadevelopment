@@ -36,7 +36,7 @@ def _create_title_info(source_title: ET.Element) -> ET.Element:
     ET.SubElement(titleInfo, "title").text = title
     sub_title = source_title.find(".//subTitle")
     if sub_title is not None and sub_title.text:
-        ET.SubElement(titleInfo, "subTitle").text = sub_title.text
+        ET.SubElement(titleInfo, "subtitle").text = sub_title.text
 
     return titleInfo
 

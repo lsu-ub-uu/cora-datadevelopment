@@ -22,7 +22,7 @@ def create_related_item_type_journal(
         title_element.text = title_text
 
     if sub_title_text is not None:
-        sub_title_element = ET.SubElement(title_info, "subTitle")
+        sub_title_element = ET.SubElement(title_info, "subtitle")
         sub_title_element.text = sub_title_text
     append_if_value(related_item, title_info)
 

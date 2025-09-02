@@ -156,7 +156,7 @@ def test_output_transform(requests_mock):
         <relatedItem type="journal">
             <titleInfo>
                 <title>Design, Automation and Test in Europe</title>
-                <subTitle>Journal of Testing</subTitle>
+                <subtitle>Journal of Testing</subtitle>
             </titleInfo>
             <identifier type="issn" displayLabel="pissn">
                 1530-1591

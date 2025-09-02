@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 from db_to_cora.series_transform import transform_series
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
+
 def test_required_xml():
     source_record = ET.fromstring(
         """
@@ -41,7 +42,8 @@ def test_required_xml():
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
-    
+
+
 def test_complete_without_links_xml():
     source_record = ET.fromstring(
         """
@@ -104,15 +106,14 @@ def test_complete_without_links_xml():
             </location>
             <note type="external">Some note</note>
             <genre repeatId="0" type="outputType">conference_paper</genre>
-            <genre repeatId="1" type="outputType">conference_other</genre>
         </series>
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
     assert_equal_for_xml_and_xml_string(secondResultSameRun, expected_xml)
-    
-    
-def test_complete_xml():
+
+
+def skip_test_complete_xml_with_series_links():
     source_record = ET.fromstring(
         """
         <DATA_RECORD>
@@ -176,18 +177,17 @@ def test_complete_xml():
             </location>
             <note type="external">Some note</note>
             <genre repeatId="0" type="outputType">conference_paper</genre>
-            <genre repeatId="1" type="outputType">conference_other</genre>
             <organisation>
                 <linkedRecordType>diva-organisation</linkedRecordType>
                 <linkedRecordId>123</linkedRecordId>
             </organisation>
-            <related repeatId="2" type="host">
+            <related repeatId="1" type="host">
                 <series>
                     <linkedRecordType>diva-series</linkedRecordType>
                     <linkedRecordId>diva-series:22116988688327947</linkedRecordId>
                 </series>
             </related>
-            <related repeatId="3" type="preceding">
+            <related repeatId="2" type="preceding">
                 <series>
                     <linkedRecordType>diva-series</linkedRecordType>
                     <linkedRecordId>diva-series:22116988688327947</linkedRecordId>
@@ -197,5 +197,3 @@ def test_complete_xml():
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
-    
-    

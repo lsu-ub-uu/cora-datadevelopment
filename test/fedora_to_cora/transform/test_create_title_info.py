@@ -45,7 +45,7 @@ def test_create_title_info():
     title = title_info.find("title")
     assert title is not None
     assert title.text == "Bulletin of the Museum of Far Eastern Antiquities (BMFEA)"
-    assert title_info.find("subTitle") is None
+    assert title_info.find("subtitle") is None
 
 
 def test_create_title_info_with_subtitle():
@@ -68,7 +68,7 @@ def test_create_title_info_with_subtitle():
     title = title_info.find("title")
     assert title is not None
     assert title.text == "Bulletin of the Museum of Far Eastern Antiquities (BMFEA)"
-    sub_title = title_info.find("subTitle")
+    sub_title = title_info.find("subtitle")
     assert sub_title is not None
     assert sub_title.text == "subtitle"
 

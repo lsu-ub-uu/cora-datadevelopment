@@ -42,7 +42,7 @@ def main():
         default=DEFAULT_ENV["app_token"],
         help="Application token for authentication (default: uses preset token)",
     )
-cc
+
     parser.add_argument(
         "--apply",
         action="store_true",

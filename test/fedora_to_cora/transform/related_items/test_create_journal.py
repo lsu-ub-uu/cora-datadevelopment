@@ -33,7 +33,7 @@ def test_create_related_item_type_journal_with_title():
         <relatedItem type="journal">
             <titleInfo>
                 <title>Design, Automation and Test in Europe</title>
-                <subTitle>Journal of Testing</subTitle>
+                <subtitle>Journal of Testing</subtitle>
             </titleInfo>
         </relatedItem>
         """,

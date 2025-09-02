@@ -60,7 +60,7 @@ def test_create_title_info_type_alternative_with_subtitle():
         """
         <titleInfo type="alternative" lang="eng" repeatId="0">
             <title>Alternative Title</title>
-            <subTitle>A subtitle</subTitle>
+            <subtitle>A subtitle</subtitle>
         </titleInfo>
         """,
     )
