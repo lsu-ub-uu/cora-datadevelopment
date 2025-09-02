@@ -1,25 +1,23 @@
-import argparse
+from common.arg_parser import create_argument_parser
 from fedora_to_cora.export_publications_from_fedora import (
     export_publications_from_fedora,
 )
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Export publications from Fedora for a domain"
-    )
-
-    parser.add_argument(
-        "--domain",
-        required=True,
-        help="Domain to export publications from (e.g., 'varldskulturmuserna')",
-    )
-
-    parser.add_argument(
-        "--workers",
-        type=int,
-        default=16,
-        help="Number of worker threads to use (default: 16)",
+    parser = create_argument_parser(
+        description="Export publications from Fedora for a specified domain and save to disk",
+        arguments={
+            "--domain": {
+                "required": True,
+                "help": "Domain to export publications from (e.g., 'varldskulturmuserna')",
+            },
+            "--workers": {
+                "type": int,
+                "default": 16,
+                "help": "Number of worker threads to use (default: 16)",
+            },
+        },
     )
 
     args = parser.parse_args()
