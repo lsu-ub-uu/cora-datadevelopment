@@ -1,8 +1,39 @@
-# Output migration script
+# Outputs import
 
-This script migrates all outputs and binaries belonging to a member
+This script imports outputs from XML files exported from Diva Classic database, transforms them to Cora format and imports them to the specified DiVA Cora system.
 
-## Mappings for output
+## Prerequisites
+
+- Python 3 and PIP installed
+- An XML file with exported outputs from DiVA Classic Database
+- Binaries that are referenced by attachments are saved in the `binaries` subdirectory
+- **Important**: Publishers, Funders, Journals, Subjects, Series and Organisations that are referenced by the outputs that are to be imported, have already been imported to the Cora system
+
+## Installing the package
+
+```bash
+pip install .
+```
+
+## Running the script (dry run)
+
+```bash
+outputs-import --xml-dir path/to/outputs --system mig
+```
+
+## Running the script and create records in Cora
+
+```bash
+outputs-import --xml-dir path/to/outputs --system mig --apply
+```
+
+## Show script help, with all available parameters
+
+```bash
+outputs-import --help
+```
+
+## Detailed information about field mapping
 
 Below is specified how each field in the Cora diva-output metadata model is mapped from the DiVA Classic publication model.
 

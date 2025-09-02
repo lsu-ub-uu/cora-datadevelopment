@@ -2,7 +2,20 @@
 
 This repository contains scripts for creating and migrating data.
 
-## Dev installation
+## Scripts
+
+- [Publisher import](docs/publishers_import.md)
+- [Funder import](docs/funders_import.md)
+- [Journal import](docs/journals_import.md)
+- [Subject import](docs/subjects_import.md)
+- [Series import](docs/series_import.md)
+- [Organisations import](docs/organisations_import.md)
+- [Outputs export](docs/outputs_export.md)
+- [Outputs import](docs/outputs_import.md)
+
+## Development
+
+### Dev installation
 
 ```sh
 python -m venv .venv
@@ -10,40 +23,23 @@ source .venv/bin/activate
 pip install -e .
 ```
 
-## Run tests
+### Run tests
 
 ```sh
 pytest
 ```
 
-## Run tests with coverage report
+### Run tests with coverage report
 
 ```sh
 pytest --cov=src
 ```
 
-## Run tests in watch mode
+### Run tests in watch mode
 
 ```sh
 ptw --now .
 ```
-
-## Run scripts
-
-`outputs-export` to export outputs from fedora to disk
-
-- `-h`, `--help`: show the helper
-- `--domain`: The domain to export
-- `--workers`: The number of worker threads (default 16)
-
-`outputs-import` to import outputs with the fedora format to Cora
-
-- `-h`, `--help`: show the helper
-- `--xml-dir`: the directory where the fedora XML publications are located.
-- `--system`: the system where you want to put the migrated posts.
-- `--login-id`: the id for the user used to migrate the posts.
-- `--app-token`: the token for the user.
-- `--apply`: if you want to do a dry-run of the script without creating the migrated files.
 
 For more information about output migration, see [here](./src/fedora_to_cora/transform/output_transform.md)
 
