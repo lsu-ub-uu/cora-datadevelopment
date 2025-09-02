@@ -8,8 +8,6 @@ from common.common_data import create_identifiers_from_source_with_type_issn
 from common.common_data import create_location
 from common.common_data import create_note
 from common.common_data import create_genre
-from common.common_data import create_record_link_test
-from common.common_data import create_record_link_using_name_type_id
 
 
 nameInData = "series"
@@ -43,12 +41,6 @@ def transform_series(source_record: ET.Element) -> ET.Element:
     append_if_value(series, _create_location(source_record))
     append_if_value(series, _create_note(source_record, note_type="external"))
     append_if_value(series, _create_genre(source_record))
-    append_if_value(
-        series,
-        _create_record_link_using_name_type_id(
-            source_record, name_in_data="organisation", record_type="diva-organisation"
-        ),
-    )
 
     return series
 
@@ -123,13 +115,3 @@ def _create_genre(source_record: ET.Element) -> ET.Element | None:
     publication_type = source_record.find(f"./publication_type_id")
     if publication_type is not None and publication_type.text:
         return create_genre(publication_type.text, "0")
-
-
-def _create_record_link_using_name_type_id(
-    source_record: ET.Element, name_in_data: str, record_type: str
-) -> ET.Element | None:
-    record_id = source_record.find(f"./organisation_id")
-    if record_id is not None and record_id.text:
-        return create_record_link_using_name_type_id(
-            name_in_data, record_type, record_id.text
-        )

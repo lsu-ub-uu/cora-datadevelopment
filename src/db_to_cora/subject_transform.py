@@ -24,7 +24,7 @@ def transform_subject(source_record: ET.Element) -> ET.Element:
 
 
 def _create_record_info(source_record: ET.Element) -> ET.Element:
-    source_old_id = source_record.find(f".//old_id")
+    source_old_id = source_record.find(f"./old_id")
     assert (
         source_old_id is not None and source_old_id.text is not None
     ), "old_id is missing in source record"
@@ -37,13 +37,13 @@ def _create_record_info(source_record: ET.Element) -> ET.Element:
 
 
 def _create_end_date(source_record: ET.Element) -> ET.Element | None:
-    end_date = source_record.find(f".//end_date")
+    end_date = source_record.find(f"./end_date")
     if end_date is not None and end_date.text:
         return create_end_date(end_date.text)
 
 
 def _create_authority(source_record: ET.Element) -> ET.Element | None:
-    name = source_record.findtext(f".//name_swe")
+    name = source_record.findtext(f"./name_swe")
     if name:
         authority = ET.Element("authority", lang="swe")
         authority.append(_create_topic(name))
@@ -51,7 +51,7 @@ def _create_authority(source_record: ET.Element) -> ET.Element | None:
 
 
 def _create_variant(source_record: ET.Element) -> ET.Element | None:
-    name = source_record.findtext(f".//name_eng")
+    name = source_record.findtext(f"./name_eng")
     if name:
         variant = ET.Element("variant", lang="eng")
         variant.append(_create_topic(name))
