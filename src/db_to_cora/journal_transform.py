@@ -5,6 +5,7 @@ from common.common_data import create_title_info
 from common.common_data import create_origin_info
 from common.common_data import create_identifiers_from_source_with_type_issn
 from common.common_data import create_location
+from db_to_cora.series_transform import _create_title_info
 
 nameInData = "journal"
 
@@ -17,7 +18,7 @@ def transform_journal(source_record: ET.Element) -> ET.Element:
     journal = ET.Element(nameInData)
 
     journal.append(_create_record_info(source_record))
-    journal.append(_create_title_info(source_record))
+    append_if_value(journal, _create_title_info(source_record))
     append_if_value(
         journal, _create_origin_info(source_record, origin_type="originInfo")
     )
@@ -51,7 +52,7 @@ def _create_record_info(source_record: ET.Element) -> ET.Element:
     )
 
 
-def _create_title_info(source_record: ET.Element) -> ET.Element:
+def _create_title_info(source_record: ET.Element) -> ET.Element | None:
     title = source_record.findtext(f".//title")
     subtitle = source_record.findtext(f".//subtitle")
     if title is not None:
