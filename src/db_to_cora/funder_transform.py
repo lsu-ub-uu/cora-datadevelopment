@@ -1,7 +1,9 @@
 import xml.etree.ElementTree as ET
 from common.xml_utils import append_if_value
 from common.record_info_create import record_info_create
-from common.common_data import create_authority_or_variant_lang_using_name_type_corporate
+from common.common_data import (
+    name_type_corporate_create,
+)
 from common.common_data import create_end_date
 from common.common_data import create_identifiers_from_source
 
@@ -17,12 +19,25 @@ def transform_funder(source_record: ET.Element) -> ET.Element:
     funder = ET.Element(nameInData)
 
     funder.append(_create_record_info(source_record))
-    funder.append(_create_authority_or_variant_lang(source_record, element_name="authority", language="swe"))
-    append_if_value(funder, _create_authority_or_variant_lang(source_record, element_name="variant", language="eng"))
+    append_if_value(
+        funder,
+        _create_authority(source_record),
+    )
+    append_if_value(
+        funder,
+        _create_variant(source_record),
+    )
     append_if_value(funder, _create_end_date(source_record))
-    append_if_value(funder, _create_identifiers_from_source(source_record, identifier_type="doi"))
-    append_if_value(funder, _create_identifiers_from_source(source_record, identifier_type="organisationNumber"))
-        
+    append_if_value(
+        funder, _create_identifiers_from_source(source_record, identifier_type="doi")
+    )
+    append_if_value(
+        funder,
+        _create_identifiers_from_source(
+            source_record, identifier_type="organisationNumber"
+        ),
+    )
+
     return funder
 
 
@@ -39,25 +54,31 @@ def _create_record_info(source_record: ET.Element) -> ET.Element:
     )
 
 
-def _create_authority_or_variant_lang(source_record: ET.Element, element_name: str, language: str) -> ET.Element | None:
-    name_lang = source_record.find(f".//name_{language}")
-    if name_lang is not None and name_lang.text:
-        return create_authority_or_variant_lang_using_name_type_corporate(
-            name_lang.text, element_name, language
-            )
+def _create_authority(source_record: ET.Element) -> ET.Element | None:
+    name = source_record.findtext(f".//name_swe")
+    if name is not None:
+        authority = ET.Element("authority", lang="swe")
+        authority.append(name_type_corporate_create(name))
+        return authority
 
-def _create_end_date(source_record: ET.Element)-> ET.Element | None:
+
+def _create_variant(source_record: ET.Element) -> ET.Element | None:
+    name = source_record.findtext(f".//name_eng")
+    if name is not None:
+        variant = ET.Element("variant", lang="eng")
+        variant.append(name_type_corporate_create(name))
+        return variant
+
+
+def _create_end_date(source_record: ET.Element) -> ET.Element | None:
     end_date = source_record.find(f".//end_date")
     if end_date is not None and end_date.text:
-        return create_end_date(
-            end_date.text
-            )
-        
-def _create_identifiers_from_source(source_record: ET.Element, identifier_type: str) -> ET.Element | None:
+        return create_end_date(end_date.text)
+
+
+def _create_identifiers_from_source(
+    source_record: ET.Element, identifier_type: str
+) -> ET.Element | None:
     identifier = source_record.find(f".//identifier_{identifier_type}")
     if identifier is not None and identifier.text:
-        return create_identifiers_from_source(
-            identifier.text, identifier_type
-            )
-    
-    
+        return create_identifiers_from_source(identifier.text, identifier_type)

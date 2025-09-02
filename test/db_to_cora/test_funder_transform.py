@@ -12,7 +12,7 @@ def test_required_xml():
         </DATA_RECORD>       
         """
     )
-    
+
     result = transform_funder(source_record)
 
     expected_xml = """
@@ -38,6 +38,37 @@ def test_required_xml():
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
 
+
+def test_without_name():
+    source_record = ET.fromstring(
+        """
+        <DATA_RECORD>
+            <old_id>1234</old_id>
+        </DATA_RECORD>       
+        """
+    )
+
+    result = transform_funder(source_record)
+
+    expected_xml = """
+    <funder>
+        <recordInfo>
+            <validationType>
+                <linkedRecordType>validationType</linkedRecordType>
+                <linkedRecordId>diva-funder</linkedRecordId>
+            </validationType>
+            <dataDivider>
+                <linkedRecordType>system</linkedRecordType>
+                <linkedRecordId>divaData</linkedRecordId>
+            </dataDivider>
+            <oldId>1234</oldId>
+        </recordInfo>
+    </funder>
+    """
+
+    assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
 def test_complete_xml():
     source_record = ET.fromstring(
         """
@@ -51,7 +82,7 @@ def test_complete_xml():
         </DATA_RECORD>       
         """
     )
-    
+
     result = transform_funder(source_record)
 
     expected_xml = """
@@ -88,5 +119,3 @@ def test_complete_xml():
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
-    
-    

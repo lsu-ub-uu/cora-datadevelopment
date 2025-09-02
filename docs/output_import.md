@@ -7,7 +7,7 @@ This script imports outputs from XML files exported from Diva Classic database, 
 - Python 3 and PIP installed
 - An XML file with exported outputs from DiVA Classic Database
 - Binaries that are referenced by attachments are saved in the `binaries` subdirectory
-- **Important**: Publishers, Funders, Journals, Subjects, Series and Organisations that are referenced by the outputs that are to be imported, have already been imported to the Cora system
+- **Important**: Publishers, Funders, Journals, Subjects, Series and Organisations that are referenced by the outputs that are to be imported, have already been imported to the Cora systemc
 
 ## Installing the package
 

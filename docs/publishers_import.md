@@ -11,7 +11,7 @@ This script imports publishers from XML files exported from Diva Classic databas
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<SELECT_p_publishing_house_id_as_old_id_p_name_FROM_publishing_house_p>
+<SELECT>
     <DATA_RECORD>
         <old_id>8204</old_id>
         <name>The Society for the Study of Ethnic Relations and International Migration (ETMU)</name>
@@ -20,7 +20,7 @@ This script imports publishers from XML files exported from Diva Classic databas
         <old_id>55</old_id>
         <name>Blackwell Publishing</name>
     </DATA_RECORD>
-</SELECT_p_publishing_house_id_as_old_id_p_name_FROM_publishing_house_p>
+</SELECT>
 ```
 
 ## Installing the package

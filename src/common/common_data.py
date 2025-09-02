@@ -108,24 +108,9 @@ def create_record_link_test(
 def create_authority_or_variant_lang_with_child_topic(
     name_lang: str, element_name: str, language: str
 ) -> ET.Element:
-    element_name = ET.Element(element_name, lang=language)
-    ET.SubElement(element_name, "topic").text = name_lang
-
-    #    element_name.append(
-    #        name_type_corporate_create(name_lang)
-    #    )
-    return element_name
-
-
-def create_authority_or_variant_lang_using_name_type_corporate(
-    name_lang: str, element_name: str, language: str
-) -> ET.Element:
-    """
-    Create a Cora authority or variant element from a source record.
-    """
-    element_name = ET.Element(element_name, lang=language)
-    element_name.append(name_type_corporate_create(name_lang))
-    return element_name
+    element = ET.Element(element_name, lang=language)
+    ET.SubElement(element, "topic").text = name_lang
+    return element
 
 
 def name_type_corporate_create(name: str) -> ET.Element:

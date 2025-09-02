@@ -16,8 +16,12 @@ def create_record_list(
         desc="Creating records",
     )
 
-    successful_creates = [valid for (valid, _) in creation_results if valid]
-    creation_errors = [errors for (valid, errors) in creation_results if not valid]
+    successful_creates = [
+        result for result in creation_results if is_success_result(result)
+    ]
+    creation_errors = [
+        result for result in creation_results if not is_success_result(result)
+    ]
 
     context.log(
         f"Created {len(record_list)} records. {len(successful_creates)} succeeded, {len(creation_errors)} failed."
