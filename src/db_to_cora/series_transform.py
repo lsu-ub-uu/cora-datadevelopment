@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, assert_no_unknown_elements
 from common.record_info_create import record_info_create
 from common.common_data import create_title_info
 from common.common_data import create_title_info_type_alternative
@@ -9,14 +9,38 @@ from common.common_data import create_location
 from common.common_data import create_note
 from common.common_data import create_genre
 
-
 nameInData = "series"
+allowed_children = {
+    "domain",
+    "old_id",
+    "title",
+    "subtitle",
+    "alternative_title",
+    "alternative_subtitle",
+    "end_date",
+    "identifier_pissn",
+    "identifier_eissn",
+    "format_id",
+    "format_code",
+    "url",
+    "external_note",
+    "publication_type_id",
+    "publication_type_code",
+    "relation_type_id",
+    "relative_id_host",
+    "series_id",
+    "relation_type_id",
+    "relative_id_preceding",
+    "series_id",
+    "organisation_id",
+}
 
 
 def transform_series(source_record: ET.Element) -> ET.Element:
     """
     Create a Cora series element from a DB export series.
     """
+    assert_no_unknown_elements(source_record, allowed_children)
 
     series = ET.Element(nameInData)
 

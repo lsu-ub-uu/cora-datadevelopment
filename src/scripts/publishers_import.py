@@ -1,4 +1,5 @@
 import time
+from common.xml_utils import transform_record_list
 from cora.context import CoraContext, Context
 from common import common_data
 import xml.etree.ElementTree as ET
@@ -36,7 +37,9 @@ def publishers_import(context: Context, xml_path: str, apply: bool):
 
     source_records = _read_source_records(context, xml_path)
 
-    cora_publishers = _transform_to_cora_publishers(source_records)
+    cora_publishers = transform_record_list(
+        source_records, transform_publisher, context
+    )
 
     validation_results = validate_record_list(cora_publishers, RECORD_TYPE, context)
 
@@ -54,10 +57,6 @@ def _read_source_records(context: Context, xml_path: str):
     source_records = [record for record in source_data.findall(".//DATA_RECORD")]
     context.log(f"Number of records read: {len(source_records)}")
     return source_records
-
-
-def _transform_to_cora_publishers(source_records: list[ET.Element]):
-    return [transform_publisher(publisher) for publisher in source_records]
 
 
 if __name__ == "__main__":

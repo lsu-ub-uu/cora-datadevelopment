@@ -1,4 +1,5 @@
 import time
+from common.xml_utils import transform_record_list
 from cora.context import CoraContext, Context
 from common import common_data
 import xml.etree.ElementTree as ET
@@ -35,7 +36,7 @@ def journals_import(context: Context, xml_path: str, apply: bool):
 
     source_records = _read_source_records(context, xml_path)
 
-    cora_journals = _transform_to_cora_journals(source_records)
+    cora_journals = transform_record_list(source_records, transform_journal, context)
 
     validation_results = validate_record_list(cora_journals, RECORD_TYPE, context)
 
@@ -53,10 +54,6 @@ def _read_source_records(context: Context, xml_path: str):
     source_records = [record for record in source_data.findall(".//DATA_RECORD")]
     context.log(f"Number of records read: {len(source_records)}")
     return source_records
-
-
-def _transform_to_cora_journals(source_records: list[ET.Element]):
-    return [transform_journal(record) for record in source_records]
 
 
 if __name__ == "__main__":

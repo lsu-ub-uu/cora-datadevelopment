@@ -1,4 +1,6 @@
+import pytest
 import xml.etree.ElementTree as ET
+from common.xml_utils import ValidationError
 from db_to_cora.journal_transform import transform_journal
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
@@ -159,3 +161,21 @@ def test_empty_tags():
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
+def test_raises_error_when_unknown_element():
+    source_record = ET.fromstring(
+        """
+        <DATA_RECORD>
+            <old_id>1234</old_id>
+            <title>some title</title>
+            <some_unknown_element>some unknown value</some_unknown_element>
+        </DATA_RECORD>       
+        """
+    )
+
+    with pytest.raises(
+        ValidationError,
+        match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
+    ):
+        transform_journal(source_record)

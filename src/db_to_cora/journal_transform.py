@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, assert_no_unknown_elements
 from common.record_info_create import record_info_create
 from common.common_data import create_title_info
 from common.common_data import create_origin_info
@@ -8,12 +8,22 @@ from common.common_data import create_location
 from db_to_cora.series_transform import _create_title_info
 
 nameInData = "journal"
+allowed_children = {
+    "old_id",
+    "title",
+    "subtitle",
+    "end_date",
+    "identifier_eissn",
+    "identifier_pissn",
+    "url",
+}
 
 
 def transform_journal(source_record: ET.Element) -> ET.Element:
     """
     Create a Cora journal element from a DB export journal.
     """
+    assert_no_unknown_elements(source_record, allowed_children)
 
     journal = ET.Element(nameInData)
 

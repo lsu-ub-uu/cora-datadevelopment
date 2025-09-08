@@ -1,5 +1,6 @@
 import time
 from common.arg_parser import create_argument_parser, common_arguments
+from common.xml_utils import transform_record_list
 from cora.context import CoraContext, Context
 from common import common_data
 import xml.etree.ElementTree as ET
@@ -34,7 +35,7 @@ def series_import(context: Context, xml_path: str, apply: bool):
 
     source_records = _read_source_records(context, xml_path)
 
-    cora_series = _transform_to_cora_series(source_records)
+    cora_series = transform_record_list(source_records, transform_series, context)
 
     validation_results = validate_record_list(cora_series, RECORD_TYPE, context)
 
@@ -52,10 +53,6 @@ def _read_source_records(context: Context, xml_path: str):
     source_records = [record for record in source_data.findall(".//DATA_RECORD")]
     context.log(f"Number of records read: {len(source_records)}")
     return source_records
-
-
-def _transform_to_cora_series(source_records: list[ET.Element]):
-    return [transform_series(serie) for serie in source_records]
 
 
 if __name__ == "__main__":

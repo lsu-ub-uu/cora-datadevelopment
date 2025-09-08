@@ -1,5 +1,6 @@
 import time
 from common.arg_parser import create_argument_parser, common_arguments
+from common.xml_utils import transform_record_list
 from cora.context import CoraContext, Context
 from common import common_data
 import xml.etree.ElementTree as ET
@@ -33,7 +34,7 @@ def subjects_import(context: Context, xml_path: str, apply: bool):
 
     source_records = _read_source_records(context, xml_path)
 
-    cora_subjects = _transform_to_cora_subjects(source_records)
+    cora_subjects = transform_record_list(source_records, transform_subject, context)
 
     validation_results = validate_record_list(cora_subjects, RECORD_TYPE, context)
 

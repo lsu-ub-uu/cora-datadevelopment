@@ -1,4 +1,7 @@
 import xml.etree.ElementTree as ET
+
+import pytest
+from common.xml_utils import ValidationError
 from db_to_cora.subject_transform import transform_subject
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
@@ -178,3 +181,27 @@ def test_no_name_swe():
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
+def test_raises_error_when_unknown_element():
+    source_record = ET.fromstring(
+        """
+        <DATA_RECORD>
+            <domain>varldskulturmuseerna</domain>
+            <old_id>40100</old_id>
+            <end_date></end_date>
+            <name_swe>Hotade kulturarv</name_swe>
+            <name_eng>Hotade kulturarv</name_eng>
+            <broader_id></broader_id>
+            <parent_subject_id></parent_subject_id>
+            <earlier_id></earlier_id>
+            <some_unknown_element>some unknown value</some_unknown_element>
+        </DATA_RECORD>       
+        """
+    )
+
+    with pytest.raises(
+        ValidationError,
+        match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
+    ):
+        transform_subject(source_record)

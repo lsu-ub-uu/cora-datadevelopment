@@ -1,4 +1,7 @@
 import xml.etree.ElementTree as ET
+
+import pytest
+from common.xml_utils import ValidationError
 from db_to_cora.series_transform import transform_series
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
@@ -234,3 +237,34 @@ def test_no_title():
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
+def test_raises_error_when_unknown_element():
+    source_record = ET.fromstring(
+        """
+        <DATA_RECORD>
+            <domain>someDomain</domain>
+            <old_id>1234</old_id>
+            <title>Some title</title>
+            <subtitle>Some subtitle</subtitle>
+            <alternative_title>Some alternative title</alternative_title>
+            <alternative_subtitle>Some alternative subtitle</alternative_subtitle>
+            <end_date>2025-08-05</end_date>
+            <identifier_pissn>1234-1234</identifier_pissn>
+            <identifier_eissn>9876-9876</identifier_eissn>
+            <url>www.enurl.se</url>
+            <external_note>Some note</external_note>
+            <publication_type_id>59</publication_type_id>
+            <relative_id_host>diva-series:22116988688327947</relative_id_host>
+            <relative_id_preceding>diva-series:22116988688327947</relative_id_preceding>
+            <organisation_id>123</organisation_id>
+            <some_unknown_element>some unknown value</some_unknown_element>
+        </DATA_RECORD>       
+        """
+    )
+
+    with pytest.raises(
+        ValidationError,
+        match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
+    ):
+        transform_series(source_record)

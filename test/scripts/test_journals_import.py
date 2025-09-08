@@ -1,5 +1,8 @@
 from unittest.mock import patch
 import xml.etree.ElementTree as ET
+
+import pytest
+from common.xml_utils import ValidationError
 from cora.context import MockContext
 from scripts.journals_import import journals_import
 
@@ -73,3 +76,64 @@ mock_source_data = ET.fromstring(
         </SELECT>
     """
 )
+
+
+@patch("scripts.journals_import.common_data.read_source_xml")
+@patch("scripts.journals_import.validate_record_list")
+@patch("scripts.journals_import.create_record_list")
+def test_journals_import_raises_error_when_invalid_source_data(
+    mock_create_record_list, mock_validate_record_list, mock_read_source_xml
+):
+    funder_xml = ET.fromstring(
+        """<?xml version="1.0" encoding="UTF-8"?>
+        <SELECT>
+            <DATA_RECORD>
+                <old_id>103</old_id>
+                <title>Journal of Development Economics</title>
+                <subtitle />
+                <end_date />
+                <identifier_eissn>1872-6089</identifier_eissn>
+                <identifier_pissn>0304-3878</identifier_pissn>
+                <url />
+                <SOME_UNKNOWN_ELEMENT>Some unhandled value</SOME_UNKNOWN_ELEMENT>
+            </DATA_RECORD>
+            <DATA_RECORD>
+               <old_id>401</old_id>
+                <title>Journal of Development Economics</title>
+                <subtitle />
+                <end_date />
+                <identifier_eissn>1872-6089</identifier_eissn>
+                <identifier_pissn>0304-3878</identifier_pissn>
+                <url />
+                <SOME_OTHER_UNKNOWN_ELEMENT>Some other unhandled value</SOME_OTHER_UNKNOWN_ELEMENT>
+            </DATA_RECORD>
+            <DATA_RECORD>
+                <old_id>200</old_id>
+                <title>Journal of Development Economics</title>
+                <subtitle />
+                <end_date />
+                <identifier_eissn>1872-6089</identifier_eissn>
+                <identifier_pissn>0304-3878</identifier_pissn>
+                <url />
+            </DATA_RECORD>
+        </SELECT>
+        """
+    )
+
+    mock_read_source_xml.return_value = funder_xml
+    mock_validate_record_list.return_value = [(True, None), (True, None)]
+    mock_context = MockContext()
+
+    with pytest.raises(ValidationError):
+        journals_import(mock_context, "some/path", True)
+
+    mock_validate_record_list.assert_not_called()
+    mock_create_record_list.assert_not_called()
+    mock_context.log.assert_any_call(  # pyright: ignore[reportAttributeAccessIssue]
+        "Error transforming record with oldId 103: Unknown child element <SOME_UNKNOWN_ELEMENT> found in <DATA_RECORD>",
+        "error",
+    )
+    mock_context.log.assert_any_call(  # pyright: ignore[reportAttributeAccessIssue]
+        "Error transforming record with oldId 401: Unknown child element <SOME_OTHER_UNKNOWN_ELEMENT> found in <DATA_RECORD>",
+        "error",
+    )

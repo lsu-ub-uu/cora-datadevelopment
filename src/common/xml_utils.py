@@ -1,6 +1,9 @@
 import os
+from typing import Callable
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
+
+from cora.context import Context
 
 
 def pretty_print_xml_string(xml_string: str) -> str:
@@ -54,3 +57,41 @@ def save_to_file(xml: ET.Element, filename: str) -> None:
 
     with open(filename, "w", encoding="utf-8") as file:
         file.write(pretty_print_xml(xml))
+
+
+class ValidationError(Exception):
+    def __init__(self, message: str, original_exception: Exception | None = None):
+        super().__init__(message)
+        self.original_exception = original_exception
+
+
+def assert_no_unknown_elements(element: ET.Element, allowed_children: set[str]) -> None:
+    for child in element:
+        if child.tag not in allowed_children:
+            raise ValidationError(
+                f"Unknown child element <{child.tag}> found in <{element.tag}>"
+            )
+
+
+def transform_record_list(
+    source_records: list[ET.Element],
+    transform_function: Callable[[ET.Element], ET.Element],
+    context: Context,
+) -> list[ET.Element]:
+    success = True
+    transformed_records = []
+    for record in source_records:
+        try:
+            transformed_records.append(transform_function(record))
+        except Exception as e:
+            context.log(
+                f"Error transforming record with oldId {record.findtext("old_id")}: {str(e)}",
+                "error",
+            )
+            success = False
+            continue
+
+    if not success:
+        raise ValidationError("One or more records failed to transform.")
+
+    return transformed_records

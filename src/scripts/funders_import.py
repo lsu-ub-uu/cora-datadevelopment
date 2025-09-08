@@ -1,4 +1,5 @@
 import time
+from common.xml_utils import transform_record_list
 from cora.context import CoraContext, Context
 from common import common_data
 import xml.etree.ElementTree as ET
@@ -34,7 +35,7 @@ def funders_import(xml_path: str, context: Context, apply: bool):
 
     source_records = _read_source_records(xml_path, context)
 
-    cora_funders = _transform_to_cora_funders(source_records)
+    cora_funders = transform_record_list(source_records, transform_funder, context)
 
     validation_results = validate_record_list(cora_funders, RECORD_TYPE, context)
 
@@ -57,10 +58,6 @@ def _read_source_records(xml_path, context: Context):
     source_records = [record for record in source_data.findall(".//DATA_RECORD")]
     context.log(f"Number of records read: {len(source_records)}")
     return source_records
-
-
-def _transform_to_cora_funders(source_records: list[ET.Element]):
-    return [transform_funder(record) for record in source_records]
 
 
 if __name__ == "__main__":
