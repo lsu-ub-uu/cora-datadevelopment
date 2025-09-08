@@ -1,12 +1,12 @@
 import xml.etree.ElementTree as ET
 from common.record_info_create import record_info_create
 from common.common_data import name_type_corporate_create
-from common.xml_utils import assert_no_unknown_elements
+from common.xml_validate import XMLSpec, validate_xml
 
 nameInData = "publisher"
-allowed_children = {
-    "old_id",
-    "name",
+allowed_children: XMLSpec = {
+    "old_id": "text",
+    "name": "text",
 }
 
 
@@ -15,7 +15,7 @@ def transform_publisher(source_record: ET.Element) -> ET.Element:
     Create a Cora publisher element from a DB export publisher.
     """
 
-    assert_no_unknown_elements(source_record, allowed_children)
+    validate_xml(source_record, allowed_children)
 
     publisher = ET.Element(nameInData)
 

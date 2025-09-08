@@ -1,5 +1,5 @@
 import os
-from typing import Callable
+from typing import Callable, Union, Dict, List, TypedDict, Optional
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
 
@@ -59,20 +59,6 @@ def save_to_file(xml: ET.Element, filename: str) -> None:
         file.write(pretty_print_xml(xml))
 
 
-class ValidationError(Exception):
-    def __init__(self, message: str, original_exception: Exception | None = None):
-        super().__init__(message)
-        self.original_exception = original_exception
-
-
-def assert_no_unknown_elements(element: ET.Element, allowed_children: set[str]) -> None:
-    for child in element:
-        if child.tag not in allowed_children:
-            raise ValidationError(
-                f"Unknown child element <{child.tag}> found in <{element.tag}>"
-            )
-
-
 def transform_record_list(
     source_records: list[ET.Element],
     transform_function: Callable[[ET.Element], ET.Element],
@@ -92,6 +78,6 @@ def transform_record_list(
             continue
 
     if not success:
-        raise ValidationError("One or more records failed to transform.")
+        raise Exception("One or more records failed to transform.")
 
     return transformed_records

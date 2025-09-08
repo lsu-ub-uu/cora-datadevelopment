@@ -3,7 +3,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from common.xml_utils import ValidationError
 from cora.context import MockContext
 from scripts.publishers_import import publishers_import
 
@@ -143,7 +142,7 @@ def test_publishers_import_raises_error_when_invalid_source_data(
     mock_validate_record_list.return_value = [(True, None), (True, None)]
     mock_context = MockContext()
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(Exception):
         publishers_import(mock_context, "some/path", True)
 
     mock_validate_record_list.assert_not_called()

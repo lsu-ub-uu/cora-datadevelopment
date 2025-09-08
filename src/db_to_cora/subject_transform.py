@@ -1,20 +1,21 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import append_if_value, assert_no_unknown_elements
+from common.xml_utils import append_if_value
 from common.record_info_create import record_info_create
 from common.common_data import create_end_date
+from common.xml_validate import ChildSpec, XMLSpec, validate_xml
 
 
 nameInData = "subject"
 permissionUnit = "varldskulturmuseerna"
-allowed_children = {
-    "domain",
-    "old_id",
-    "end_date",
-    "name_swe",
-    "name_eng",
-    "broader_id",
-    "parent_subject_id",
-    "earlier_id",
+allowed_children: XMLSpec = {
+    "domain": "text",
+    "old_id": "text",
+    "end_date": "text",
+    "name_swe": "text",
+    "name_eng": "text",
+    "broader_id": "text",
+    "parent_subject_id": "text",
+    "earlier_id": "text",
 }
 
 
@@ -22,7 +23,7 @@ def transform_subject(source_record: ET.Element) -> ET.Element:
     """
     Create a Cora subject element from a DB export subject.
     """
-    assert_no_unknown_elements(source_record, allowed_children)
+    validate_xml(source_record, allowed_children)
 
     subject = ET.Element(nameInData)
 

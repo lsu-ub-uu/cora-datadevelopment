@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import append_if_value, assert_no_unknown_elements
+from common.xml_utils import append_if_value
+from common.xml_validate import XMLSpec, validate_xml
 from common.record_info_create import record_info_create
 from common.common_data import (
     name_type_corporate_create,
@@ -9,16 +10,17 @@ from common.common_data import create_identifiers_from_source
 
 
 nameInData = "funder"
-allowed_children = {
-    "old_id",
-    "name_swe",
-    "name_eng",
-    "end_date",
-    "identifier_organisationNumber",
-    "identifier_doi",
-    "locale_swe",
-    "locale_eng",
-    "funder_name_id",
+
+allowed_children: XMLSpec = {
+    "old_id": "text",
+    "name_swe": "text",
+    "name_eng": "text",
+    "end_date": "text",
+    "identifier_organisationNumber": "text",
+    "identifier_doi": "text",
+    "locale_swe": "text",
+    "locale_eng": "text",
+    "funder_name_id": "text",
 }
 
 
@@ -26,7 +28,7 @@ def transform_funder(source_record: ET.Element) -> ET.Element:
     """
     Create a Cora funder element from a DB export funder.
     """
-    assert_no_unknown_elements(source_record, allowed_children)
+    validate_xml(source_record, allowed_children)
 
     funder = ET.Element(nameInData)
 

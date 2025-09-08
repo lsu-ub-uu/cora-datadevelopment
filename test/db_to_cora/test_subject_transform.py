@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 import pytest
-from common.xml_utils import ValidationError
+from common.xml_validate import XMLValidationError
 from db_to_cora.subject_transform import transform_subject
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
@@ -201,7 +201,7 @@ def test_raises_error_when_unknown_element():
     )
 
     with pytest.raises(
-        ValidationError,
+        XMLValidationError,
         match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
     ):
         transform_subject(source_record)

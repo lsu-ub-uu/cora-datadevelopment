@@ -3,7 +3,6 @@ from unittest.mock import patch
 
 import pytest
 
-from common.xml_utils import ValidationError
 from cora.context import MockContext
 from scripts.funders_import import funders_import
 
@@ -134,7 +133,7 @@ def test_funders_import_raises_error_when_invalid_source_data(
     mock_validate_record_list.return_value = [(True, None), (True, None)]
     mock_context = MockContext()
 
-    with pytest.raises(ValidationError):
+    with pytest.raises(Exception):
         funders_import("some/path", mock_context, True)
 
     mock_validate_record_list.assert_not_called()
