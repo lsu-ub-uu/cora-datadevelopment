@@ -12,8 +12,25 @@ class XMLValidationError(Exception):
 
 def validate_xml(element: ET.Element, spec: XMLSpec) -> None:
     """
-    Validate that the given XML element conforms to the provided specification.
+    Validate that the given XML element does not contain unknown tags, according to the provided specification.
+
     Raises XMLValidationError if the element does not conform to the spec.
+
+    All tags are handled as optional.
+
+    Example spec:
+    ```
+    {
+        "child1": "text",  # Text node
+        "child2": { # Nested element
+            "subchild1": "text",
+            "subchild2": "text"
+        }
+    }
+    ```
+
+
+
     """
     for child in element:
         child_spec = spec.get(child.tag)

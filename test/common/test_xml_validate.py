@@ -136,3 +136,13 @@ def test_validate_xml_does_not_raise_error_when_child_is_missing_element():
     )
 
     validate_xml(source, spec)
+
+
+def test_validate_xml_does_not_raise_error_for_empty_element():
+    spec: XMLSpec = {
+        "known1": "text",
+        "known2": {"known2.1": "text", "known2.2": "text"},
+    }
+    source = ET.fromstring("""<source></source>""")
+
+    validate_xml(source, spec)
