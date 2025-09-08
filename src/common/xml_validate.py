@@ -28,9 +28,6 @@ def validate_xml(element: ET.Element, spec: XMLSpec) -> None:
         }
     }
     ```
-
-
-
     """
     for child in element:
         child_spec = spec.get(child.tag)
