@@ -1,6 +1,9 @@
 import xml.etree.ElementTree as ET
 import pytest
+from common.common_data import read_source_xml
 from common.xml_validate import XMLSpec, XMLValidationError, validate_xml
+from fedora_to_cora import fedora_publication_spec
+from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
 
 
 def test_validate_xml_raises_error_on_unknown_child():
@@ -104,7 +107,7 @@ def test_validate_xml_raises_error_when_child_has_unknown_element():
         """
             <source>
                 <known1>value1</known1>
-                <known2>
+                <known2>{"child": {"subchild": "text", "ignoredchild": "ignore"}}
                     <known2.1></known2.1>
                     <unknown></unknown>
                 </known2>
@@ -145,4 +148,93 @@ def test_validate_xml_does_not_raise_error_for_empty_element():
     }
     source = ET.fromstring("""<source></source>""")
 
+    validate_xml(source, spec)
+
+
+def test_validate_xml_does_not_raise_error_for_repeating_element():
+    spec: XMLSpec = {
+        "known1": "text",
+        "known2": {"known2.1": "text", "known2.2": "text"},
+    }
+    source = ET.fromstring(
+        """
+            <source>
+                <known1>value1</known1>
+                <known2>
+                    <known2.1>value2.1</known2.1>
+                </known2>
+                <known2>
+                    <known2.1>value2.1</known2.1>
+                </known2>
+            </source>
+        """
+    )
+
+    validate_xml(source, spec)
+
+
+def test_validate_xml_raises_error_for_repeating_element():
+    spec: XMLSpec = {
+        "known1": "text",
+        "known2": {"known2.1": "text", "known2.2": "text"},
+    }
+    source = ET.fromstring(
+        """
+            <source>
+                <known1>value1</known1>
+                <known2>
+                    <known2.1>value2.1</known2.1>
+                </known2>
+                <known2>
+                    <known2.1>value2.1</known2.1>
+                    <unknown>value2.2</unknown>
+                </known2>
+            </source>
+        """
+    )
+
+    with pytest.raises(
+        XMLValidationError, match="Unknown child element <unknown> found in <known2>"
+    ):
+        validate_xml(source, spec)
+
+
+def test_validates_with_empty_spec():
+    spec: XMLSpec = {"child": {}}
+
+    source = ET.fromstring(
+        """
+            <source>
+                <child></child>
+            </source>
+        """
+    )
+
+    validate_xml(source, spec)
+
+
+def test_does_not_raise_error_for_ignored_child():
+    spec: XMLSpec = {"child": {"subchild": "text", "ignoredchild": "ignore"}}
+
+    source = ET.fromstring(
+        """
+            <source>
+                <child>
+                    <subchild>value</subchild>
+                    <ignoredchild>
+                        <ignoredsubchild>value</ignoredsubchild>
+                        <otherignoredsubchild>value</otherignoredsubchild>
+                    </ignoredchild>
+                </child>
+            </source>
+        """
+    )
+
+    validate_xml(source, spec)
+
+
+def test_does_not_raise_error23():
+    spec: XMLSpec = fedora_publication_xml_spec
+
+    source = read_source_xml("test/data/fedora/mock_varldskulturmuserna.xml")
     validate_xml(source, spec)
