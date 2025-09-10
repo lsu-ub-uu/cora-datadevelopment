@@ -238,3 +238,25 @@ def test_does_not_raise_error23():
 
     source = read_source_xml("test/data/fedora/mock_varldskulturmuserna.xml")
     validate_xml(source, spec)
+
+
+def test_error_can_contain_multiple_validation_errors():
+    spec: XMLSpec = {"child": {"subchild": "text"}, "child2": "text"}
+
+    source = ET.fromstring(
+        """
+            <source>
+                <unknown1>value</unknown1>
+                <child>
+                    <subchild>value</subchild>
+                    <unknown2>value</unknown2>
+                </child>
+            </source>
+        """
+    )
+
+    with pytest.raises(
+        XMLValidationError,
+        match="Unknown child element <unknown1> found in <source>\nUnknown child element <unknown2> found in <child>",
+    ):
+        validate_xml(source, spec)

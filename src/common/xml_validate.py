@@ -29,22 +29,43 @@ def validate_xml(element: ET.Element, spec: XMLSpec) -> None:
     }
     ```
     """
-    for child in element:
-        child_spec = spec.get(child.tag)
 
-        if child_spec is None:
-            raise XMLValidationError(
-                f"Unknown child element <{child.tag}> found in <{element.tag}>"
-            )
-        if child_spec == "ignore":
-            continue
-        if child_spec == "text" and len(child):
-            raise XMLValidationError(
-                f"Expected text content in <{child.tag}>, but found child elements"
-            )
-        if child_spec != "text":
-            if len(child) == 0 and child.text is not None:
-                raise XMLValidationError(
-                    f"Expected child elements in <{child.tag}>, but found text content"
+    def validate_element(element: ET.Element, spec: XMLSpec) -> list[str]:
+        errors: list[str] = []
+
+        for child in element:
+            child_spec = spec.get(child.tag)
+
+            if child_spec is None:
+                # Unknown child tag
+                errors.append(
+                    f"Unknown child element <{child.tag}> found in <{element.tag}>"
                 )
-            validate_xml(child, child_spec)
+                continue
+
+            if child_spec == "ignore":
+                # Child is ignored
+                continue
+
+            if child_spec == "text" and len(child):
+                # Child is text node
+                errors.append(
+                    f"Expected text content in <{child.tag}>, but found child elements"
+                )
+                continue
+
+            if child_spec != "text":
+                # Child is a group
+                if len(child) == 0 and child.text is not None:
+                    errors.append(
+                        f"Expected child elements in <{child.tag}>, but found text content"
+                    )
+                    continue
+
+                child_errors = validate_element(child, child_spec)
+                errors.extend(child_errors)
+        return errors
+
+    errors = validate_element(element, spec)
+    if len(errors) > 0:
+        raise XMLValidationError("\n".join(errors))
