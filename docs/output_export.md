@@ -1,6 +1,6 @@
-# Publishers import
+# Outputs export
 
-This script imports publishers from XML files exported from Diva Classic database, transforms them to Cora format and imports them to the specified DiVA Cora system.
+This script gets all publications for a domain from DiVA Classic, using Solr and Fedora and saves them as XML files.
 
 ## Prerequisites
 

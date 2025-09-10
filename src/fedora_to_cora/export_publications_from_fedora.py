@@ -3,8 +3,8 @@ from common.run_rotating_logger import RunRotatingLogger
 from common.threads import run_with_threads
 from cora.context import Context
 import xml.etree.ElementTree as ET
-from fedora.get_pids_for_domain import get_pids_for_domain
-from fedora.get_record_by_pid import get_record_by_pid
+from classic.get_pids_for_domain import get_pids_for_domain
+from classic.get_record_by_pid import get_record_by_pid
 from common.xml_utils import save_to_file
 from common.threads import run_with_threads
 

@@ -1,4 +1,4 @@
-from fedora.get_record_by_pid import get_record_by_pid
+from classic.get_record_by_pid import get_record_by_pid
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 

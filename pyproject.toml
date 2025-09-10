@@ -9,12 +9,14 @@ dependencies = [
     "pytest",
     "pytest-cov",
     "pytest-watcher",
-    "fabric"
+    "fabric",
+    "psycopg2-binary"
 ]
 license = "GPL-3.0"
 
 [project.scripts]
 publishers-import = "scripts.publishers_import:main"
+funders-export = "scripts.funders_export:main"
 funders-import = "scripts.funders_import:main"
 journals-import = "scripts.journals_import:main"
 series-import = "scripts.series_import:main"

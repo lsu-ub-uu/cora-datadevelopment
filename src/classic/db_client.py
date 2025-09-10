@@ -1,0 +1,49 @@
+from fabric import Connection
+import psycopg2
+import xml.etree.ElementTree as ET
+from typing import Optional
+
+SSH_HOST = "130.238.7.110"
+SSH_PORT = 22
+SSH_USER = "support"
+
+LOCAL_PORT = 8080
+
+REMOTE_HOST = "localhost"
+REMOTE_PORT = 5432
+
+DB_NAME = "yourdbname"
+DB_USER = "your_dbuser"
+DB_PASSWORD = "your_dbpassword"
+
+
+def execute_sql(query: str, params: Optional[tuple[str]] = None) -> ET.Element:
+    with Connection(host=SSH_HOST, port=SSH_PORT, user=SSH_USER).forward_local(
+        local_port=LOCAL_PORT,
+        remote_port=REMOTE_PORT,
+        remote_host=REMOTE_HOST,
+        local_host="localhost",
+    ):
+        with psycopg2.connect(
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host="localhost",
+            port=LOCAL_PORT,
+        ) as database_connection:
+            with database_connection.cursor() as cursor:
+                cursor.execute(query, params)
+                rows = cursor.fetchall()
+                assert cursor.description is not None
+                colnames = [name for name, *_ in cursor.description]
+                return _parse_response_to_xml(rows, colnames)
+
+
+def _parse_response_to_xml(rows: list[tuple], colnames: list[str]) -> ET.Element:
+    root = ET.Element("ROOT")
+    for row in rows:
+        data_record = ET.SubElement(root, "DATA_RECORD")
+        for colname, colval in zip(colnames, row):
+            elem = ET.SubElement(data_record, colname)
+            elem.text = str(colval)
+    return root

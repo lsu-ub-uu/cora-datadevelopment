@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from fabric import Connection
 import requests
-from fedora.get_record_by_pid import get_record_by_pid
+from classic.get_record_by_pid import get_record_by_pid
 
 
 SSH_HOST = "130.238.7.110"
