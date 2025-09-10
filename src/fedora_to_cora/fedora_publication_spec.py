@@ -1,4 +1,4 @@
-from common.xml_validate import XMLSpec, validate_xml
+from common.xml_validate import XMLSpec, XMLValidationError, validate_xml
 from common.common_data import read_source_xml
 
 fedora_user_information_spec: XMLSpec = {
@@ -18,7 +18,19 @@ fedora_country_spec: XMLSpec = {
             "locale": "text",
             "countryName": "text",
         },
-        "showsOnLists": "text",
+    },
+    "showsOnList": "text",
+}
+
+fedora_frida_level_spec: XMLSpec = {
+    "fridaLevelId": "text",
+    "fridaLevelCode": "text",
+    "fridaLevelNames": {
+        "fridaLevelName": {
+            "fridaLevelNameId": "text",
+            "locale": "text",
+            "fridaLevelName": "text",
+        }
     },
 }
 
@@ -52,6 +64,7 @@ fedora_organisation_spec: XMLSpec = {
     "organisationNumber": "text",
     "oldDivaDb": "text",
     "oldDivaId": "text",
+    "oldParentId": "text",
     "organisationAlternativeNames": {
         "organisationName": {
             "organisationNameId": "text",
@@ -101,28 +114,8 @@ fedora_person_spec: XMLSpec = {
     "email": "text",
     "birthYear": "text",
     "deathYear": "text",
-    "researchGroup": "text",
-    "identifiers": {
-        "entry": {
-            "personIdentifierType": "text",
-            "personIdentifier": {
-                "value": "text",
-                "type": "text",
-            },
-        }
-    },
-    "authorityPid": "text",
-}
-
-fedora_academic_person_spec: XMLSpec = {
-    "firstName": "text",
-    "lastName": "text",
-    "localId": "text",
-    "organisations": {
-        "organisation": fedora_organisation_spec,
-    },
-    "email": "text",
     "title": "text",
+    "researchGroup": "text",
     "identifiers": {
         "entry": {
             "personIdentifierType": "text",
@@ -169,6 +162,7 @@ fedora_publication_type_spec: XMLSpec = {
     "roles": "text",
     "comprehensiveSummary": "text",
     "domainAdminOnly": "text",
+    "contentTypes": "ignore",
 }
 
 fedora_content_type_spec: XMLSpec = {
@@ -212,34 +206,30 @@ fedora_series_spec: XMLSpec = {
         },
     },
     "notes": "text",
-    "subjects": {},  # Always empty according to wiki
-    "relationships": {
-        "seriesRelation": {
-            "relationId": "text",
-            "relationType": {
-                "relationTypeId": "text",
-                "relationTypeCode": "text",
-                "relationTypeNames": {
-                    "relationTypeName": {
-                        "relationTypeNameId": "text",
-                        "locale": "text",
-                        "relationTypeName": "text",
-                    }
-                },
-            },
-        }
-    },
+    "subjects": "ignore",
     "publicationType": fedora_publication_type_spec,
     "organisation": fedora_organisation_spec,
     "domain": "text",
     "closedDate": "text",
     "controlled": "text",
 }
-
-# Add circular reference
-fedora_series_spec["relationships"]["seriesRelation"][  # type: ignore
-    "relative"
-] = fedora_series_spec
+fedora_series_spec["relationships"] = {
+    "seriesRelation": {
+        "relationId": "text",
+        "relationType": {
+            "relationTypeId": "text",
+            "relationTypeCode": "text",
+            "relationTypeNames": {
+                "relationTypeName": {
+                    "relationTypeNameId": "text",
+                    "locale": "text",
+                    "relationTypeName": "text",
+                }
+            },
+        },
+        "relative": fedora_series_spec,
+    }
+}
 
 
 fedora_subject_spec: XMLSpec = {
@@ -265,6 +255,8 @@ fedora_subject_spec: XMLSpec = {
     "subjectCode": "text",
     "domain": "text",
     "notEligible": "text",
+    "oldDivaDb": "text",
+    "oldDivaId": "text",
     "organisations": {"organisation": fedora_organisation_spec},
 }
 fedora_subject_spec["parents"] = {"subject": fedora_subject_spec}
@@ -308,7 +300,7 @@ fedora_student_degree_spec: XMLSpec = {
                 "thesisLevelName": "text",
             }
         },
-        "degrees": {},  # Always empty ?
+        "degrees": "ignore",
         "domain": "text",
     },
     "universityPoints": {
@@ -338,78 +330,65 @@ fedora_journal_spec: XMLSpec = {
     "journalTitle": fedora_title_spec,
     "printedIssn": "text",
     "electronicIssn": "text",
-    "fridaLevel": {
-        "fridaLevelId": "text",
-        "fridaLevelCode": "text",
-        "fridaLevelNames": {
-            "fridaLevelName": {
-                "fridaLevelNameId": "text",
-                "locale": "text",
-                "fridaLevelName": "text",
-            }
-        },
-    },
+    "fridaLevel": fedora_frida_level_spec,
     "controlled": "text",
     "openAccess": "text",
-    "subjects": {},  # Always empty?
-    "relationships": {},  # Always empty?
+    "subjects": "ignore",
+    "relationships": "ignore",
 }
 
 fedora_attachment_spec: XMLSpec = {
-    "no-comparator": "ignore",  # TODO check
-    "attachment": {
-        "mimeType": {
-            "mimeTypeId": "text",
-            "mimeTypeName": "text",
-            "fileSuffix": "text",
-            "datasetOnly": "text",
-        },
-        "fileLabel": {
-            "fileLabelId": "text",
-            "fileLabelCode": "text",
-            "fileLabelNames": {
-                "fileLabelName": {
-                    "fileLabelNameId": "text",
-                    "locale": "text",
-                    "fileLabelName": "text",
-                }
-            },
-        },
-        "fileName": "text",
-        "fileSize": "text",
-        "selectedFileName": "text",
-        "path": "text",
-        "checksums": {
-            "checksum": {
-                "type": "text",
-                "digest": "text",
+    "mimeType": {
+        "mimeTypeId": "text",
+        "mimeTypeName": "text",
+        "fileSuffix": "text",
+        "datasetOnly": "text",
+    },
+    "fileLabel": {
+        "fileLabelId": "text",
+        "fileLabelCode": "text",
+        "fileLabelNames": {
+            "fileLabelName": {
+                "fileLabelNameId": "text",
+                "locale": "text",
+                "fileLabelName": "text",
             }
         },
-        "order": "text",
-        "uploadDate": "text",
-        "asyncUpload": "text",
-        "availableUntil": "text",
-        "availableFrom": "text",
-        "tempAvailableFrom": "text",
-        "deleteDate": "text",
-        "onHold": "text",
-        "deleted": "text",
-        "prePrint": "text",
-        "postPrint": "text",
-        "print": "text",
-        "archiveOnly": "text",
-        "printOnDemand": "text",
-        "toBePublished": "text",
-        "toBeArchived": "text",
-        "digitized": "text",
-        "hasCoverPage": "text",
-        "coverPageConditions": "text",
-        "description": "text",
-        "secrecyInfo": {
-            "secrecy": "text",
-        },
-        "registrationNumber": "text",
     },
+    "fileName": "text",
+    "fileSize": "text",
+    "selectedFileName": "text",
+    "path": "text",
+    "checksums": {
+        "checksum": {
+            "type": "text",
+            "digest": "text",
+        }
+    },
+    "order": "text",
+    "uploadDate": "text",
+    "asyncUpload": "text",
+    "availableUntil": "text",
+    "availableFrom": "text",
+    "tempAvailableFrom": "text",
+    "deleteDate": "text",
+    "onHold": "text",
+    "deleted": "text",
+    "prePrint": "text",
+    "postPrint": "text",
+    "print": "text",
+    "archiveOnly": "text",
+    "printOnDemand": "text",
+    "toBePublished": "text",
+    "toBeArchived": "text",
+    "digitized": "text",
+    "hasCoverPage": "text",
+    "coverPageConditions": "text",
+    "description": "text",
+    "secrecyInfo": {
+        "secrecy": "text",
+    },
+    "registrationNumber": "text",
 }
 
 
@@ -438,11 +417,11 @@ fedora_publication_xml_spec: XMLSpec = {
     },
     "uncontrolledSeriesInfo": {
         "series": {
-            "seriesAlternativeTitles": "ignore",  # TODO check,
+            "seriesAlternativeTitles": {},  # Always empty for uncontrolled series
             "issn": "text",
             "eissn": "text",
-            "subjects": "ignore",  # TODO check
-            "relationships": "ignore",  # TODO check
+            "subjects": {},  # Always empty for uncontrolled series
+            "relationships": {},  # Always empty for uncontrolled series
             "seriesNameUncontrolled": "text",
             "controlled": "text",
         },
@@ -462,8 +441,11 @@ fedora_publication_xml_spec: XMLSpec = {
         "city": "text",
         "publisherName": "text",
         "publishingHouse": {
+            "externalId": "text",
             "publishingHouseId": "text",
             "name": "text",
+            "nordicListId": "text",
+            "fridaLevel": fedora_frida_level_spec,
         },
     },
     "urls": {
@@ -562,13 +544,13 @@ fedora_publication_xml_spec: XMLSpec = {
     "patentOrganisation": "text",
     "patentCountry": fedora_country_spec,
     "examiners": {
-        "person": fedora_academic_person_spec,
+        "person": fedora_person_spec,
     },
     "supervisors": {
-        "person": fedora_academic_person_spec,
+        "person": fedora_person_spec,
     },
     "opponents": {
-        "person": fedora_academic_person_spec,
+        "person": fedora_person_spec,
     },
     "otherContributors": {
         "contributor": {
@@ -719,7 +701,7 @@ fedora_publication_xml_spec: XMLSpec = {
             }
         },
     },
-    "attachments": {"attachment": fedora_attachment_spec},
+    "attachments": {"no-comparator": "text", "attachment": fedora_attachment_spec},
 }
 # Circular references for publication
 fedora_publication_xml_spec["hostPublications"] = {
@@ -747,10 +729,3 @@ fedora_publication_xml_spec["relations"] = {
         "relatedPublication": fedora_publication_xml_spec,
     }
 }
-
-
-if __name__ == "__main__":
-    spec: XMLSpec = fedora_publication_xml_spec
-
-    source = read_source_xml("test/data/fedora/mock_varldskulturmuserna.xml")
-    validate_xml(source, spec)
