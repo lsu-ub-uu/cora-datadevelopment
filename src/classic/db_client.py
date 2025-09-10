@@ -10,14 +10,14 @@ SSH_USER = "support"
 LOCAL_PORT = 8080
 
 REMOTE_HOST = "localhost"
-REMOTE_PORT = 5432
+REMOTE_PORT = 54320
 
-DB_NAME = "yourdbname"
-DB_USER = "your_dbuser"
-DB_PASSWORD = "your_dbpassword"
+DB_NAME = "auradb"
 
 
-def execute_sql(query: str, params: Optional[tuple[str]] = None) -> ET.Element:
+def execute_sql(
+    query: str, *, params: Optional[tuple[str]] = None, db_user: str, db_password: str
+) -> ET.Element:
     with Connection(host=SSH_HOST, port=SSH_PORT, user=SSH_USER).forward_local(
         local_port=LOCAL_PORT,
         remote_port=REMOTE_PORT,
@@ -26,8 +26,8 @@ def execute_sql(query: str, params: Optional[tuple[str]] = None) -> ET.Element:
     ):
         with psycopg2.connect(
             dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD,
+            user=db_user,
+            password=db_password,
             host="localhost",
             port=LOCAL_PORT,
         ) as database_connection:

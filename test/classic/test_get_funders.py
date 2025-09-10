@@ -25,8 +25,11 @@ FROM
     mock_funders = ET.Element("FUNDERS")
     mock_execute_sql.return_value = mock_funders
 
-    result = get_funders()
+    result = get_funders(db_user="test_user", db_password="test_password")
 
     assert result == mock_funders
     mock_execute_sql.assert_called_once()
+
     assert_equal_for_sql(mock_execute_sql.mock_calls[0].args[0], expected_query)
+    assert mock_execute_sql.mock_calls[0].kwargs["db_user"] == "test_user"
+    assert mock_execute_sql.mock_calls[0].kwargs["db_password"] == "test_password"
