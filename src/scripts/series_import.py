@@ -3,7 +3,6 @@ from common.arg_parser import create_argument_parser, common_arguments
 from common.xml_utils import transform_record_list
 from cora.context import CoraContext, Context
 from common import common_data
-import xml.etree.ElementTree as ET
 from cora.validate import validate_record_list
 from cora.create import create_record_list
 from db_to_cora.series_transform import transform_series

@@ -1,4 +1,3 @@
-from common.arg_parser import create_argument_parser
 from common.xml_utils import save_to_file
 from classic.get_publishers import get_publishers
 from datetime import datetime

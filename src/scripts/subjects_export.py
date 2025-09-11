@@ -3,7 +3,6 @@ from common.xml_utils import save_to_file
 from classic.get_subjects import get_subjects
 from datetime import datetime
 import getpass
-import xml.etree.ElementTree as ET
 
 
 def main():

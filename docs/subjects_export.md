@@ -1,8 +1,8 @@
-# Publishers export
+# Subjects export
 
-This script gets all publishers from DiVA Classic database and saves them to an XML file, that can be imported using the [`publishers-export`](./publishers_export.md) script.
+This script gets all subjects from DiVA Classic database and saves them to an XML file, that can be imported using the [`subjects-export`](./subjects_export.md) script.
 
-The output is saved to `data/db_xml/publishers_{TIMESTAMP}.xml`
+The output is saved to `data/db_xml/subjects_{TIMESTAMP}.xml`
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ pip install .
 ## Running the script
 
 ```bash
-publishers-export
+subjects-export --domain someDomain
 ```
 
 You will be prompted for the database username and password.
