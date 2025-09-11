@@ -39,7 +39,7 @@ FROM
 	left join series_relation sre on s.series_id = sre.series_id and sre.relation_type_id = '50'
 	left join publication_type pt on s.publication_type_id = pt.publication_type_id --borde_vara_string_agg?
 WHERE
-	s.domain = 'varldskulturmuseerna'
+	s.domain = %(domain)s
 GROUP BY
 	s.domain, s.series_id, st.main_title, st.sub_title, sat.main_title, sat.sub_title, s.closed_date, 
 	s.issn, s.eissn, s.format_id, f.format_code, s.url, s.notes, s.publication_type_id, 
@@ -50,11 +50,14 @@ GROUP BY
     mock_series = ET.Element("series")
     mock_execute_sql.return_value = mock_series
 
-    result = get_series(db_user="test_user", db_password="test_password")
+    result = get_series(
+        domain="norden", db_user="test_user", db_password="test_password"
+    )
 
     assert result == mock_series
     mock_execute_sql.assert_called_once()
 
     assert_equal_for_sql(mock_execute_sql.mock_calls[0].args[0], expected_query)
+    assert mock_execute_sql.mock_calls[0].kwargs["params"] == {"domain": "norden"}
     assert mock_execute_sql.mock_calls[0].kwargs["db_user"] == "test_user"
     assert mock_execute_sql.mock_calls[0].kwargs["db_password"] == "test_password"

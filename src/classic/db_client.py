@@ -7,16 +7,20 @@ SSH_HOST = "130.238.7.110"
 SSH_PORT = 22
 SSH_USER = "support"
 
-LOCAL_PORT = 8080
+LOCAL_PORT = 5432
 
-REMOTE_HOST = "localhost"
-REMOTE_PORT = 54320
+REMOTE_HOST = "diva-storage1"
+REMOTE_PORT = 5432
 
 DB_NAME = "auradb"
 
 
 def execute_sql(
-    query: str, *, params: Optional[tuple[str]] = None, db_user: str, db_password: str
+    query: str,
+    *,
+    params: Optional[dict[str, str]] = None,
+    db_user: str,
+    db_password: str
 ) -> ET.Element:
     with Connection(host=SSH_HOST, port=SSH_PORT, user=SSH_USER).forward_local(
         local_port=LOCAL_PORT,
@@ -45,5 +49,6 @@ def _parse_response_to_xml(rows: list[tuple], colnames: list[str]) -> ET.Element
         data_record = ET.SubElement(root, "DATA_RECORD")
         for colname, colval in zip(colnames, row):
             elem = ET.SubElement(data_record, colname)
-            elem.text = str(colval)
+            if colval is not None:
+                elem.text = str(colval)
     return root

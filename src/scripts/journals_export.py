@@ -1,9 +1,7 @@
-from common.arg_parser import create_argument_parser
 from common.xml_utils import save_to_file
-from classic.get_funders import get_funders
+from classic.get_journals import get_journals
 from datetime import datetime
 import getpass
-import xml.etree.ElementTree as ET
 
 
 def main():
@@ -18,10 +16,10 @@ def main():
         return
 
     print("Password entered. Starting export...")
-    funders = get_funders(db_user=db_user, db_password=password)
-    filename = f"data/db_xml/funders_{_get_now().isoformat()}.xml"
-    save_to_file(funders, filename)
-    print(f"--- Successfully exported funders to {filename} ---")
+    journals = get_journals(db_user=db_user, db_password=password)
+    filename = f"data/db_xml/journals_{_get_now().isoformat()}.xml"
+    save_to_file(journals, filename)
+    print(f"--- Successfully exported journals to {filename} ---")
 
 
 def _get_now():

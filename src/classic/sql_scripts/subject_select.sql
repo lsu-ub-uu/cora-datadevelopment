@@ -18,6 +18,6 @@ FROM
     left join subject_parent sp on s.subject_id = sp.parent_subject_id
     left join subject_predecessor pre on s.subject_id = pre.predecessor_subject_id
 WHERE
-    s.subject_type_id = '53' and s.domain = 'norden'
+    s.subject_type_id = '53' and s.domain = %(domain)s
 GROUP BY
     s.domain, s.subject_type_id, s.closed_date, sn_swe.subject_name, sn_eng.subject_name, s.subject_id, sp.subject_id, sp.parent_subject_id;

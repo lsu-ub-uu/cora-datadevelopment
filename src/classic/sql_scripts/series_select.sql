@@ -35,7 +35,7 @@ FROM
 	left join series_relation sre on s.series_id = sre.series_id and sre.relation_type_id = '50'
 	left join publication_type pt on s.publication_type_id = pt.publication_type_id --borde_vara_string_agg?
 WHERE
-	s.domain = 'varldskulturmuseerna'
+	s.domain = %(domain)s
 GROUP BY
 	s.domain, s.series_id, st.main_title, st.sub_title, sat.main_title, sat.sub_title, s.closed_date, 
 	s.issn, s.eissn, s.format_id, f.format_code, s.url, s.notes, s.publication_type_id, 

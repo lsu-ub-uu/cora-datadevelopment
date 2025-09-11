@@ -13,7 +13,7 @@ RECORD_TYPE = "diva-series"
 
 def main():
     parser = create_argument_parser(
-        description="Import journals from XML",
+        description="Import series from XML",
         arguments=common_arguments,
     )
 

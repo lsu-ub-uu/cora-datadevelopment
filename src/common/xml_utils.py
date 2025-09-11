@@ -17,8 +17,8 @@ def pretty_print_xml(element: ET.Element) -> str:
     """
     Convert an XML Element to a pretty-printed XML string.
     """
-    xml_string = ET.tostring(element, encoding="utf-8", method="xml")
-    return pretty_print_xml_string(xml_string)
+    ET.indent(element)
+    return ET.tostring(element, encoding="unicode")
 
 
 def inline_xml_string(xml: str) -> str:
@@ -55,8 +55,9 @@ def save_to_file(xml: ET.Element, filename: str) -> None:
     if directory:
         os.makedirs(directory, exist_ok=True)
 
-    with open(filename, "w", encoding="utf-8") as file:
-        file.write(pretty_print_xml(xml))
+    ET.indent(xml)
+    tree = ET.ElementTree(xml)
+    tree.write(filename, encoding="utf-8", xml_declaration=True)
 
 
 def transform_record_list(
