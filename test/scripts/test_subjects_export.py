@@ -123,8 +123,13 @@ def test_subjects_export_empty_password(
 @patch("scripts.subjects_export.save_to_file")
 @patch("getpass.getpass")
 @patch("builtins.input")
+@patch("scripts.subjects_export.create_argument_parser")
 def test_database_query_failed(
-    mock_input, mock_getpass, mock_save_to_file, mock_get_subjects
+    mock_create_argument_parser,
+    mock_input,
+    mock_getpass,
+    mock_save_to_file,
+    mock_get_subjects,
 ):
     mock_input.return_value = "testuser"
     mock_getpass.return_value = "testpassword"
@@ -140,8 +145,13 @@ def test_database_query_failed(
 @patch("scripts.subjects_export.save_to_file")
 @patch("getpass.getpass")
 @patch("builtins.input")
+@patch("scripts.subjects_export.create_argument_parser")
 def test_failed_to_save_file(
-    mock_input, mock_getpass, mock_save_to_file, mock_get_subjects
+    mock_create_argument_parser,
+    mock_input,
+    mock_getpass,
+    mock_save_to_file,
+    mock_get_subjects,
 ):
     mock_input.return_value = "testuser"
     mock_getpass.return_value = "testpassword"
