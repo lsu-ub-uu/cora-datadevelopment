@@ -81,7 +81,7 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
 
     append_if_value(target_record, create_origin_info(source_record, context))
 
-    append_if_value(target_record, create_extent(source_record))
+    # append_if_value(target_record, create_extent(source_record))
 
     append_if_value(target_record, create_classification_authority_ssif(source_record))
 

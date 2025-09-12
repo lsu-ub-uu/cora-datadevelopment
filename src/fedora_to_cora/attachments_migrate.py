@@ -2,6 +2,8 @@ from typing import Tuple
 import xml.etree.ElementTree as ET
 import os
 import copy
+
+import requests
 from cora.context import Context
 from fedora_to_cora.transform.binary.binary_record_transform import (
     binary_record_transform,
@@ -52,6 +54,8 @@ def _migrate_attachment(
     created_binary_records: list[ET.Element],
     source_record: ET.Element,
 ) -> Tuple[ET.Element | None, str | None]:
+    pid = source_record.findtext(".//pid")
+    assert pid is not None, "PID not found in source record"
     binary_record = binary_record_transform(attachment)
     create_binary_result = create_record(
         binary_record,
@@ -61,7 +65,7 @@ def _migrate_attachment(
 
     if is_success_result(create_binary_result):
         created_binary_records.append(create_binary_result.response_data)
-        file_path = _get_file_path(attachment, xml_dir)
+        file_path = _get_file_path(pid, attachment, xml_dir)
         try:
             upload_binary(create_binary_result.response_data, file_path, context)
         except UploadError as e:
@@ -84,7 +88,8 @@ def _migrate_attachment(
         return None, create_binary_result.error
 
 
-def _get_file_path(attachment: ET.Element, xml_dir: str) -> str:
-    path = attachment.findtext("./path")
-    assert path is not None, "Path not found in attachment"
-    return os.path.join(xml_dir, "binaries", path)
+def _get_file_path(pid: str, attachment: ET.Element, xml_dir: str) -> str:
+    file_name = attachment.findtext("./fileName")
+    file_suffix = attachment.findtext("./mimeType/fileSuffix")
+    file_path = f"{xml_dir}/binaries/{pid}/{file_name}.{file_suffix}"
+    return file_path
