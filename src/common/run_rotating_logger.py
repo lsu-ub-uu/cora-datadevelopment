@@ -37,6 +37,7 @@ class RunRotatingLogger:
             handler.setFormatter(formatter)
 
             self.logger.addHandler(handler)
+        print(f"***Logging to {log_file}***")
 
     def get(self):
         return self.logger
