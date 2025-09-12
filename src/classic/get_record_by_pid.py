@@ -21,11 +21,19 @@ import requests
 import urllib3  # type: ignore
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+SSH_HOST = "130.238.7.110"
+SSH_PORT = 22
+SSH_USER = "support"
+
+LOCAL_PORT = 8088
+
+REMOTE_HOST = "10.0.2.68"
+REMOTE_PORT = 8088
 
 
 def get_record_by_pid(pid: str) -> ET.Element:
     response = requests.get(
-        f"https://uu.diva-portal.org:8443/fedora/get/{pid}/MODEL_NOREF", verify=False
+        f"https://localhost:{LOCAL_PORT}/fedora/get/{pid}/MODEL_NOREF", verify=False
     )
     response.encoding = response.apparent_encoding
     if response.status_code == 200:
