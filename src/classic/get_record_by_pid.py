@@ -33,7 +33,7 @@ REMOTE_PORT = 8088
 
 def get_record_by_pid(pid: str) -> ET.Element:
     response = requests.get(
-        f"https://localhost:{LOCAL_PORT}/fedora/get/{pid}/MODEL_NOREF", verify=False
+        f"http://localhost:{LOCAL_PORT}/fedora/get/{pid}/MODEL_NOREF", verify=False
     )
     response.encoding = response.apparent_encoding
     if response.status_code == 200:
@@ -42,3 +42,7 @@ def get_record_by_pid(pid: str) -> ET.Element:
         raise Exception(
             f"Error fetching record {pid}: {response.status_code} - {response.text}"
         )
+
+
+if __name__ == "__main__":
+    print(ET.tostring(get_record_by_pid("diva2:1681782")))

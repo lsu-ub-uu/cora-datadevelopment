@@ -6,33 +6,33 @@ This repository contains scripts for creating and migrating data.
 
 ### Publishers
 
-- [Publisher export](docs/publishers_export.md)
-- [Publisher import](docs/publishers_import.md)
+- [Publisher export from Classic](docs/publishers_export.md)
+- [Publisher import to Cora](docs/publishers_import.md)
 
 ### Funders
 
-- [Funder import](docs/funders_import.md)
-- [Funder export](docs/funders_export.md)
+- [Funder import from Classic](docs/funders_import.md)
+- [Funder export to Cora](docs/funders_export.md)
 
 ### Journals
 
-- [Journal import](docs/journals_import.md)
-- [Journal export](docs/journals_export.md)
+- [Journal export from Classic](docs/journals_export.md)
+- [Journal import to Cora](docs/journals_import.md)
 
 ### Subjects
 
-- [Subject export](docs/subjects_export.md)
-- [Subject import](docs/subjects_import.md)
+- [Subject export from Classic](docs/subjects_export.md)
+- [Subject import to Cora](docs/subjects_import.md)
 
 ### Series
 
-- [Series export](docs/series_export.md)
-- [Series import](docs/series_import.md)
+- [Series export from Classic](docs/series_export.md)
+- [Series import to Cora](docs/series_import.md)
 
 ### Outputs
 
-- [Outputs export](docs/outputs_export.md)
-- [Outputs import](docs/outputs_import.md)
+- [Outputs export from Classic](docs/outputs_export.md)
+- [Outputs import to Cora](docs/outputs_import.md)
 
 ## Development
 
