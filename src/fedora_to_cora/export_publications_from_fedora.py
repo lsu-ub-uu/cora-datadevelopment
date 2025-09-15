@@ -19,16 +19,12 @@ def export_publications_from_fedora(domain: str, workers=16):
     logger.info(f"==== domain={domain} ====")
     logger.info("==================================================")
 
-    def _on_export(record: ET.Element) -> None:
-        pid = record.findtext(".//pid")
-        logger.info(f"Successfully exported publication {pid}")
-
     with diva_ssh_connection() as ssh_connection:
         pids = get_pids_for_domain(ssh_connection, domain)
         logger.info(f"Found {len(pids)} publications in domain {domain}")
 
         get_publications_from_fedora(
-            ssh_connection, pids, on_export=_on_export, workers=workers, dirname=dirname
+            ssh_connection, pids, workers=workers, dirname=dirname
         )
 
     logger.info(f"--- Successfully exported {len(pids)} publications to {dirname} ---")

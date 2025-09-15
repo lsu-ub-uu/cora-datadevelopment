@@ -19,6 +19,7 @@ def test_attachments_migrate(monkeypatch):
     source_record = ET.fromstring(
         """
         <publication>
+        <pid>some-pid</pid>
             <attachments>
                 <attachment>
                     <fileLabel>
@@ -112,6 +113,7 @@ def test_failed_to_create_binary_record(monkeypatch):
     source_record = ET.fromstring(
         """
         <publication>
+        <pid>some-pid</pid>
             <attachments>
                 <attachment>
                     <fileLabel>
@@ -168,6 +170,7 @@ def test_failed_to_upload_binary(monkeypatch):
     source_record = ET.fromstring(
         """
         <publication>
+        <pid>some-pid</pid>
             <attachments>
                 <attachment>
                     <fileLabel>
@@ -214,16 +217,18 @@ def test_failed_to_upload_binary(monkeypatch):
     assert errors[0] == "UploadError: Failed to upload binary"
 
 
-def failed_to_update_record(monkeypatch):
+def test_failed_to_update_record(monkeypatch):
     create_record_mock = _set_up_create_record_mock(monkeypatch)
     upload_binary_mock = _set_up_upload_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch, fail=True)
     binary_record_transform_mock = _set_up_binary_record_transform_mock(monkeypatch)
     attachments_transform_mock = _set_up_attachments_transform_mock(monkeypatch)
+    delete_record_mock = _set_up_delete_record_mock(monkeypatch)
 
     source_record = ET.fromstring(
         """
         <publication>
+        <pid>some-pid</pid>
             <attachments>
                 <attachment>
                     <fileLabel>
@@ -260,13 +265,14 @@ def failed_to_update_record(monkeypatch):
     assert binary_record_transform_mock.call_count == 1
     assert create_record_mock.call_count == 1
     assert upload_binary_mock.call_count == 1
-    assert attachments_transform_mock.call_count == 0
-    assert update_record_mock.call_count == 0
+    assert attachments_transform_mock.call_count == 1
+    assert update_record_mock.call_count == 1
+    assert delete_record_mock.call_count == 1
 
     assert not success
     assert errors is not None
     assert len(errors) == 1
-    assert errors[0] == "UploadError: Failed to upload binary"
+    assert errors[0] == "Failed to update record some-pid: Failed to update record"
 
 
 def test_roll_back_binary_records_when_something_fails(monkeypatch):
@@ -288,6 +294,7 @@ def test_roll_back_binary_records_when_something_fails(monkeypatch):
     source_record = ET.fromstring(
         """
         <publication>
+        <pid>some-pid</pid>
             <attachments>
                 <attachment>
                     <fileLabel>
@@ -350,6 +357,7 @@ def test_file_upload_message(monkeypatch):
     source_record = ET.fromstring(
         """
         <publication>
+        <pid>some-pid</pid>
             <administrativeInfo>
                 <fileUploadMessage>Some note about the attachment</fileUploadMessage>
             </administrativeInfo>

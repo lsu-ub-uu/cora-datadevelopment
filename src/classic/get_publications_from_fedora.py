@@ -16,13 +16,11 @@ This file is part of DiVA Client.
     You should have received a copy of the GNU General Public License
 """
 
-from collections.abc import Callable
 import os
 import xml.etree.ElementTree as ET
 import requests
 from fabric import Connection
 from common.threads import run_with_threads
-from common.ssh_tunnel import diva_ssh_connection
 from common.xml_utils import save_to_file
 
 LOCAL_PORT = 8088
@@ -33,10 +31,13 @@ REMOTE_PORT = 8088
 def get_publications_from_fedora(
     ssh_connection: Connection,
     pids: list[str],
-    on_export: Callable[[ET.Element], None],
     dirname: str,
     workers=16,
 ) -> list[ET.Element]:
+    """
+    Downloads a publication from Fedora by its PID and saves it to a file.
+    Also downloads any attachments associated with the publication.
+    """
     with ssh_connection.forward_local(
         local_port=LOCAL_PORT, remote_host=REMOTE_HOST, remote_port=REMOTE_PORT
     ):

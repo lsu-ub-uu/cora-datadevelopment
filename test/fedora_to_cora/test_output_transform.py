@@ -70,7 +70,6 @@ def test_output_transform(requests_mock):
             </place>
             <edition>3</edition>
         </originInfo>
-        <extent>208</extent>
         <classification authority="ssif" repeatId="0">30224</classification>
         <classification authority="ssif" repeatId="1">60301</classification>
         <subject authority="diva">

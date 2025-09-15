@@ -38,11 +38,15 @@ def attachments_migrate(
             errors.append(error)
 
     if not errors:
-        update_record(record_to_update, context)
+        update_record_result = update_record(record_to_update, context)
+        if not update_record_result.success:
+            errors.append(
+                f"Failed to update record {source_record.findtext('./pid')}: {update_record_result.error}"
+            )
+            _roll_back_binary_records(created_binary_records, context)
+
     else:
-        # roll back all created binary records if there are errors
-        for binary_record in created_binary_records:
-            delete_record(binary_record, context)
+        _roll_back_binary_records(created_binary_records, context)
 
     return len(errors) == 0, errors if errors else None
 
@@ -93,3 +97,11 @@ def _get_file_path(pid: str, attachment: ET.Element, xml_dir: str) -> str:
     file_suffix = attachment.findtext("./mimeType/fileSuffix")
     file_path = f"{xml_dir}/binaries/{pid}/{file_name}.{file_suffix}"
     return file_path
+
+
+def _roll_back_binary_records(
+    created_binary_records: list[ET.Element],
+    context: Context,
+) -> None:
+    for binary_record in created_binary_records:
+        delete_record(binary_record, context)
