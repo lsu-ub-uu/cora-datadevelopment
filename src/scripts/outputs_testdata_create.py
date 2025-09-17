@@ -74,15 +74,15 @@ def process_file(xml_dir: str, filename: str, context: CoraContext):
     print(f"Processing {filename}...")
     filepath = os.path.join(xml_dir, filename)
     source_record = read_source_xml(filepath)
-    valid, errors = create_record(
+    result = create_record(
         source_record,
         record_type="diva-output",
         context=context,
     )
-    if valid:
+    if result.success:
         print(f"✅ Successfully created record for {filename}")
     else:
-        print(f"❌ Failed to create record for {filename}: {errors}")
+        print(f"❌ Failed to create record for {filename}: {result.error}")
 
 
 if __name__ == "__main__":

@@ -55,13 +55,13 @@
 	<genre type="contentType">pop</genre>
 	<titleInfo lang="eng">
 		<title>Future fisheries</title>
-		<subTitle>Status, trends and future perspectives concerning the energy transition of fisheries with focus on Nordic countries
-        </subTitle>
+		<subtitle>Status, trends and future perspectives concerning the energy transition of fisheries with focus on Nordic countries
+        </subtitle>
 	</titleInfo>
 	<titleInfo lang="abk" repeatId="24" type="alternative">
 		<title>Framtidens fiske</title>
-		<subTitle>Status, trender och framtidsperspektiv gällande energiomställningen inom fisket med fokus på Norden odefinierad
-        </subTitle>
+		<subtitle>Status, trender och framtidsperspektiv gällande energiomställningen inom fisket med fokus på Norden odefinierad
+        </subtitle>
 	</titleInfo>
 	<name repeatId="0" type="personal">
 		<namePart type="family">Hornborg</namePart>
@@ -224,7 +224,6 @@
 		</place>
 	</originInfo>
 	<imprint>Hamburg, Tyskland</imprint>
-	<extent>100s</extent>
 	<classification authority="ssif" repeatId="0">1</classification>
 	<identifier displayLabel="print" repeatId="12" type="isbn">978-92-893-8293-9</identifier>
 	<identifier displayLabel="online" repeatId="15" type="isbn">978-92-893-8293-2</identifier>
@@ -315,7 +314,7 @@
 	</adminInfo>
 	<titleInfo lang="heb" repeatId="32" type="alternative">
 		<title>דיג עתידי</title>
-		<subTitle>מצב, מגמות ופרספקטיבות עתידיות בנוגע למעבר האנרגטי של דיג בדגש על מדינות סקנדינביות</subTitle>
+		<subtitle>מצב, מגמות ופרספקטיבות עתידיות בנוגע למעבר האנרגטי של דיג בדגש על מדינות סקנדינביות</subtitle>
 	</titleInfo>
 	<relatedItem type="journal">
 		<titleInfo><title>Some journal</title></titleInfo>
