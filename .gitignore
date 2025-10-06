@@ -16,3 +16,5 @@ sql_script/
 /data/db_xml/
  
 /build/
+/out/
+/.idea/
