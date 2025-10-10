@@ -9,7 +9,7 @@ from scripts.create_new_validationTypes import (
     create_new_id_and_update_mapping, skip_if_already_processed,
     process_graph_bottom_up_and_store, link_parent_child_relationship,
     find_top_level_children, clean_and_unwrap_xml, remove_unwanted_elements,
-    to_xml_bytes
+    to_xml_bytes, prepare_and_try_to_save_record, process_and_possibly_save
 )
 
 
@@ -193,6 +193,41 @@ def record_node(sample_xml):
 
 
 # XML Parsing & Node Tests
+def test_process_and_possibly_save(record_node, monkeypatch):
+    saved_nodes = []
+
+    def fake_prepare_and_try_to_save_record(node):
+        saved_nodes.append(node.record_id)
+        return True
+
+    monkeypatch.setattr("scripts.create_new_validationTypes.prepare_and_try_to_save_record",
+                        fake_prepare_and_try_to_save_record)
+
+    result = process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    assert result is True
+    assert "divaTextNewGroup" in saved_nodes
+
+
+def test_process_and_possibly_save_not_saved(record_node, monkeypatch):
+    def fake_prepare_and_try_to_save_record(node):
+        return False
+
+    monkeypatch.setattr("scripts.create_new_validationTypes.prepare_and_try_to_save_record",
+                        fake_prepare_and_try_to_save_record)
+
+    result = process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    assert result is False
+
+
+def test_prepare_and_try_to_save_record(record_node):
+    prepare_and_try_to_save_record(record_node)
+    assert record_node.record_id == "divaTextNewGroup"
+    assert record_node.record_type == "validationType"
+    assert record_node.url == "http://example.com/record/divaTextNewGroup"
+    assert isinstance(record_node.xml_root, ET.Element)
+    assert record_node.new_record_id is None
+
+
 def test_parse_record_from_xml(sample_xml):
     node = parse_record_from_xml(sample_xml, "http://url")
     assert node.record_id == "divaTextNewGroup"
@@ -208,10 +243,18 @@ def test_find_child_urls(record_node):
 
 
 def test_find_top_level_children(record_node):
-    # Add top-level ids
-    ET.SubElement(record_node.xml_root.find(".//recordInfo"), "metadataId")
+    record_info = record_node.xml_root.find(".//recordInfo")
+
+    metadata_id = ET.SubElement(record_info, "metadataId")
+    action_links = ET.SubElement(metadata_id, "actionLinks")
+    read = ET.SubElement(action_links, "read")
+    url = ET.SubElement(read, "url")
+    url.text = "http://HOSTURL/someTopLevelChild"
+
     urls = find_top_level_children(record_node.xml_root)
+
     assert isinstance(urls, list)
+    assert urls == ["http://HOSTURL/someTopLevelChild"]
 
 
 # XML Transformations
@@ -280,10 +323,16 @@ def test_create_new_id_and_update_mapping(record_node):
 
 
 def test_skip_if_already_processed(record_node):
-    id_mapping = {"divaTextNewGroup": "XYZ_divaTextNewGroup"}
+    id_mapping = {"divaTextNewGroup": "apa"}
     skipped = skip_if_already_processed(record_node, id_mapping)
     assert skipped
-    assert record_node.new_record_id == "XYZ_divaTextNewGroup"
+    assert record_node.new_record_id == "apa"
+
+
+def test_skip_if_already_processed_false(record_node):
+    id_mapping = {"NotProcessedGroup": "apa"}
+    skipped = skip_if_already_processed(record_node, id_mapping)
+    assert not skipped
 
 
 # Graph processing
@@ -301,15 +350,15 @@ def test_link_parent_child_relationship(record_node):
 
 # Graph bottom-up processing with mocks
 def test_process_graph_with_complex_relationships(monkeypatch):
-    '''
-
-    A      B
-   / \    /
-  C   D__/
-   \ /  /
-    E__/
-
-    '''
+    #    '''
+    #
+    #    A      B
+    #   / \    /
+    #  C   D  /
+    #   \ /__/
+    #    E
+    #
+    #    '''
     # Create nodes
     node_A = RecordNode("A", "typeA", "urlA", ET.Element("rootA"))
     node_B = RecordNode("B", "typeB", "urlB", ET.Element("rootB"))
@@ -319,14 +368,14 @@ def test_process_graph_with_complex_relationships(monkeypatch):
 
     # Define children relationships
     node_A.children = [node_C, node_D]
-    node_B.children = [node_D, node_E]
+    node_B.children = [node_E]
     node_C.children = [node_E]
     node_D.children = [node_E]
     node_E.children = []  # leaf
 
     # Define parents relationships
     node_C.parents = [node_A]
-    node_D.parents = [node_A, node_B]
+    node_D.parents = [node_A]
     node_E.parents = [node_C, node_D, node_B]
 
     # Build graph

@@ -11,6 +11,7 @@ GLOBAL_ID_MAPPING = {}
 TOTAL_RECORDS = 0
 TOTAL_UPDATES = 0
 TOTAL_ERRORS = []
+TOTAL_FETCHED = 0
 
 
 # Represent a record and its relationships ----------------------------------
@@ -75,8 +76,12 @@ def create_new_validation_types(root_urls):
     process_graph_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
 
     print("\n=== Script finished ===")
+    print(f"  Total records fetched:   {TOTAL_FETCHED}")
     print(f"  Total records processed: {TOTAL_RECORDS}")
     print(f"  Total records created:   {TOTAL_UPDATES}")
+
+    if TOTAL_FETCHED != TOTAL_RECORDS:
+        print(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_RECORDS} records.")
 
     if TOTAL_ERRORS:
         print("\n=== Errors reported ===")
@@ -87,6 +92,7 @@ def create_new_validation_types(root_urls):
 
 
 def build_graph_from_child_references(root_url, node_map):
+    global TOTAL_FETCHED
     """
     - Top-level: newMetadataId + metadataId
     - Lower levels: only childReferences
@@ -100,6 +106,7 @@ def build_graph_from_child_references(root_url, node_map):
     link_parent_child_relationship(node_map)
 
     print(f"\nFetched {len(node_map)} unique records.")
+    TOTAL_FETCHED = len(node_map)
     return node_map
 
 def print_graph_summary():
@@ -272,6 +279,13 @@ def normalize_regex_patterns(xml_root):
 
 def normalize_child_reference_repeat(xml_root):
     updated = False
+    updated = possibly_update_min_max(updated, xml_root)
+    if updated:
+        print("Normalized childReference repeatMin to '0' and repeatMax to 'X'")
+    return updated
+
+
+def possibly_update_min_max(updated: bool, xml_root) -> bool:
     for child_reference in xml_root.findall(".//childReferences/childReference"):
         repeat_min_element = child_reference.find("repeatMin")
         repeat_max_element = child_reference.find("repeatMax")
@@ -282,8 +296,6 @@ def normalize_child_reference_repeat(xml_root):
         if repeat_max_element is not None and repeat_max_element.text != "X":
             repeat_max_element.text = "X"
             updated = True
-    if updated:
-        print("Normalized childReference repeatMin to '0' and repeatMax to 'X'")
     return updated
 
 
