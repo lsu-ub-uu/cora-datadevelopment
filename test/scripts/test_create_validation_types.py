@@ -4,6 +4,7 @@ from collections import deque
 import pytest
 
 import scripts.create_new_validationTypes as Script
+from scripts.create_new_validationTypes import BASE_URL
 
 
 @pytest.fixture
@@ -196,6 +197,29 @@ def create_mock_top_level_child(record_node):
 
 
 # XML Parsing & Node Tests
+def test_create_validation_types(monkeypatch):
+    global_node_map = {}
+    Script.BASE_URL = "http://baseUrl/"
+
+    def fake_build_node_map_from_child_references(root_url, node_map):
+        nonlocal  global_node_map
+        global_node_map[root_url] = {"record_id": "some_id",}
+
+    def fake_process_graph_bottom_up_and_store(node_map, id_map):
+        pass
+
+    def fake_check_for_unprocessed_nodes(node_map, processed):
+        pass
+
+    monkeypatch.setattr(Script, "build_node_map_from_child_references", fake_build_node_map_from_child_references)
+    monkeypatch.setattr(Script, "process_graph_bottom_up_and_store", fake_process_graph_bottom_up_and_store)
+    monkeypatch.setattr(Script, "check_for_unprocessed_nodes", fake_check_for_unprocessed_nodes)
+
+    Script.create_new_validation_types(["someValidationType"])
+    assert "http://baseUrl/validationType/someValidationType" in global_node_map
+    assert len(global_node_map) == 1
+
+
 def test_build_node_map_from_child_references_root_url_already_in_map(record_node):
     global_node_map = {"root_url": record_node}
 
