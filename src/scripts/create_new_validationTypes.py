@@ -8,7 +8,7 @@ BASE_URL = "http://192.168.49.2:30982/rest/record/"
 TYPE_PREFIX = "XYZ_"
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
-TOTAL_RECORDS = 0
+TOTAL_PROCESSED_RECORDS = 0
 TOTAL_UPDATES = 0
 TOTAL_ERRORS = []
 TOTAL_FETCHED = 0
@@ -16,11 +16,11 @@ TOTAL_FETCHED = 0
 
 # Represent a record and its relationships ----------------------------------
 class RecordNode:
-    def __init__(self, record_id, record_type, url, xml_root):
+    def __init__(self, record_id, record_type, url, xml_content):
         self.record_id = record_id
         self.record_type = record_type
         self.url = url
-        self.xml_root = xml_root
+        self.xml_content = xml_content
         self.child_urls = []
         self.children = []
         self.parents = []
@@ -68,20 +68,20 @@ def create_new_validation_types(root_urls):
     print("\n=== Building graph ===")
     root_urls = [BASE_URL + "validationType/" + string for string in root_urls]
     for root_url in root_urls:
-        build_graph_from_child_references(root_url, GLOBAL_NODE_MAP)
+        build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
 
-    #print_graph_summary()
+    # print_graph_summary()
 
     print("\n=== Processing graph ===")
     process_graph_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
 
     print("\n=== Script finished ===")
     print(f"  Total records fetched:   {TOTAL_FETCHED}")
-    print(f"  Total records processed: {TOTAL_RECORDS}")
+    print(f"  Total records processed: {TOTAL_PROCESSED_RECORDS}")
     print(f"  Total records created:   {TOTAL_UPDATES}")
 
-    if TOTAL_FETCHED != TOTAL_RECORDS:
-        print(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_RECORDS} records.")
+    if TOTAL_FETCHED != TOTAL_PROCESSED_RECORDS:
+        print(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
 
     if TOTAL_ERRORS:
         print("\n=== Errors reported ===")
@@ -91,23 +91,24 @@ def create_new_validation_types(root_urls):
         print("\nNo errors reported.")
 
 
-def build_graph_from_child_references(root_url, node_map):
+def build_node_map_from_child_references(root_url, global_node_map):
     global TOTAL_FETCHED
     """
     - Top-level: newMetadataId + metadataId
     - Lower levels: only childReferences
     - Reuses previously fetched nodes stored in `node_map`.
     """
-    if root_url in node_map:
-        return node_map
+    if root_url in global_node_map:
+        return global_node_map
 
     queue = deque([root_url])
-    process_queue(queue, root_url, node_map)
-    link_parent_child_relationship(node_map)
+    process_queue_and_collect_nodes(queue, root_url, global_node_map)
+    link_parent_child_relationship(global_node_map)
 
-    print(f"\nFetched {len(node_map)} unique records.")
-    TOTAL_FETCHED = len(node_map)
-    return node_map
+    print(f"\nFetched {len(global_node_map)} unique records.")
+    TOTAL_FETCHED = len(global_node_map)
+    return global_node_map
+
 
 def print_graph_summary():
     print("\n=== Graph Summary ===")
@@ -115,143 +116,144 @@ def print_graph_summary():
         print(f"{url} → {len(node.children)} children, {len(node.parents)} parents")
 
 
-def process_queue(queue: deque[str], root_url: str, node_map: dict[str, RecordNode]) -> None:
+def process_queue_and_collect_nodes(queue: deque[str], root_url: str, global_node_map: dict[str, RecordNode]) -> None:
     while queue:
         url = queue.popleft()
-        if url in node_map:
+        if url in global_node_map:
             continue
 
         xml_text = fetch_xml_from_api(url)
         node = parse_record_from_xml(xml_text, url)
-        node_map[url] = node
+        global_node_map[url] = node
 
         child_urls = collect_child_urls(node, root_url, url)
 
         for child_url in child_urls:
-            if child_url not in node_map:
+            if child_url not in global_node_map:
                 queue.append(child_url)
 
 
 def collect_child_urls(node: RecordNode, root_url, url) -> list[Any]:
     if url == root_url:
-        child_urls = find_top_level_children(node.xml_root)
+        child_urls = find_top_level_children(node.xml_content)
     else:
-        child_urls = find_child_urls(node.xml_root)
+        child_urls = find_child_urls(node.xml_content)
 
     node.child_urls = child_urls
     return child_urls
 
 
-def link_parent_child_relationship(node_map: dict[Any, Any]):
-    for node in node_map.values():
+def link_parent_child_relationship(global_node_map: dict[Any, Any]):
+    for node in global_node_map.values():
         for child_url in node.child_urls:
-            if child_url in node_map:
-                node.children.append(node_map[child_url])
-                node_map[child_url].parents.append(node)
+            if child_url in global_node_map:
+                node.children.append(global_node_map[child_url])
+                global_node_map[child_url].parents.append(node)
 
 
-def process_graph_bottom_up_and_store(graph, id_mapping):
+def process_graph_bottom_up_and_store(global_node_map, global_id_mapping):
     """
     Kahn's algorithm for topological sorting.
     Processes nodes only after all their children have been processed.
     Detects and reports unprocessed nodes (cycles or disconnected).
     """
-    global TOTAL_RECORDS, TOTAL_UPDATES, TOTAL_ERRORS
 
-    # Build a map of unprocessed child counts
-    unprocessed_child_count: dict[str, int] = {url: len(node.children) for url, node in graph.items()}
+    # Build a map keeping track of unprocessed children
+    unprocessed_child_map: dict[str, int] = {url: len(node.children) for url, node in global_node_map.items()}
 
-    # Create leaf node queue
-    leaf_queue: deque[str] = deque([url for url, count in unprocessed_child_count.items() if count == 0])
-
+    # Create a queue of leaf nodes
+    leaf_queue: deque[str] = deque([url for url, count in unprocessed_child_map.items() if count == 0])
 
     processed: set[str] = set()
 
     while leaf_queue:
-        url = leaf_queue.popleft()
-        node = graph[url]
+        child_reference_url = leaf_queue.popleft()
+        node = global_node_map[child_reference_url]
 
-        if url in processed:
-            continue
+        process_node(global_id_mapping, node)
+        processed.add(child_reference_url)
+        update_parent_dependencies(leaf_queue, node, unprocessed_child_map)
 
-        process_node(id_mapping, node)
-        processed.add(url)
-        update_parent_dependencies(leaf_queue, node, unprocessed_child_count)
-
-    check_for_unprocessed_nodes(graph, processed)
+    check_for_unprocessed_nodes(global_node_map, processed)
 
 
-def process_node(id_mapping, node):
-    global TOTAL_RECORDS, TOTAL_UPDATES, TOTAL_ERRORS
+def process_node(global_id_mapping, node):
+    global TOTAL_PROCESSED_RECORDS, TOTAL_UPDATES, TOTAL_ERRORS
 
     try:
-        TOTAL_RECORDS += 1
-        TOTAL_UPDATES += 1 if process_and_possibly_save(node, id_mapping) else 0
+        TOTAL_PROCESSED_RECORDS += 1
+        if process_and_possibly_save(node, global_id_mapping):
+            TOTAL_UPDATES += 1
     except Exception as e:
         TOTAL_ERRORS.append(f"Error processing {node.record_id}: {e}")
         print(f"Error processing {node.record_id}: {e}")
 
 
-def update_parent_dependencies(leaf_queue: deque[str], node, unprocessed_child_count: dict[str, int]):
+def update_parent_dependencies(leaf_queue: deque[str], node, unprocessed_child_map: dict[str, int]):
     for parent in node.parents:
-        if parent.url in unprocessed_child_count:
-            unprocessed_child_count[parent.url] -= 1
-            if unprocessed_child_count[parent.url] == 0:
+        if parent.url in unprocessed_child_map:
+            unprocessed_child_map[parent.url] -= 1
+            if unprocessed_child_map[parent.url] == 0:
                 leaf_queue.append(parent.url)
 
 
-def check_for_unprocessed_nodes(graph, processed: set[str]):
-    unprocessed = [url for url in graph if url not in processed]
+def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
+    unprocessed = [url for url in global_node_map if url not in processed]
     if unprocessed:
         print(f"\n>>> WARNING!! -  {len(unprocessed)} records were never processed:")
         for url in unprocessed:
-            print(f" - {url}")
+            TOTAL_ERRORS.append("Warning: Record: " + url + " was never processed")
 
 
-def process_and_possibly_save(node, id_mapping):
+def process_and_possibly_save(node, global_id_mapping):
     old_id = node.record_id
 
-    if skip_if_already_processed(node, id_mapping):
+    if skip_if_already_processed(node, global_id_mapping):
         return False
 
     updated = False
-    updated |= normalize_regex_patterns(node.xml_root)
-    updated |= normalize_child_reference_repeat(node.xml_root)
+    if normalize_regex_patterns(node.xml_content):
+        print(f"> Normalized regex pattern(s) to '.+' in {old_id}")
+        updated = True
 
-    child_renamed = any(c.record_id in id_mapping for c in node.children)
+    if normalize_child_reference_repeat(node.xml_content):
+        print(f"> Normalized childReference(s) Min Max to '0-X' in {old_id}")
+        updated = True
+
+    child_renamed = any(c.record_id in global_id_mapping for c in node.children)
 
     if not (updated or child_renamed):
-        update_child_references(node.xml_root, id_mapping)
+        update_child_references(node.xml_content, global_id_mapping)
         return False
 
-    new_id = create_new_id_and_update_mapping(id_mapping, node, old_id)
-    update_record_id_in_xml(node.xml_root, new_id)
-    update_child_references(node.xml_root, id_mapping)
-    remove_action_links(node.xml_root)
+    new_id = create_new_id_and_update_mapping(global_id_mapping, node, old_id)
+    update_record_id_in_xml(node.xml_content, new_id)
+    update_child_references(node.xml_content, global_id_mapping)
+    remove_action_links(node.xml_content)
     updated = prepare_and_try_to_save_record(node)
     return updated
 
 
-def create_new_id_and_update_mapping(id_mapping, node, old_id) -> str:
+def create_new_id_and_update_mapping(global_id_mapping, node, old_id) -> str:
     new_id = f"{TYPE_PREFIX}{old_id}"
     node.new_record_id = new_id
-    id_mapping[old_id] = new_id
+    global_id_mapping[old_id] = new_id
     return new_id
 
 
-def skip_if_already_processed(node: RecordNode, id_mapping: dict) -> bool:
+def skip_if_already_processed(node: RecordNode, global_id_mapping: dict) -> bool:
     old_id = node.record_id
-    if old_id in id_mapping:
-        node.new_record_id = id_mapping[old_id]
+    if old_id in global_id_mapping:
+        node.new_record_id = global_id_mapping[old_id]
         print(f"Skipping already processed {old_id} -> {node.new_record_id}")
         return True
     return False
 
 
 def prepare_and_try_to_save_record(node):
-    record_type = node.xml_root.findtext(".//recordInfo/type/linkedRecordId")
+    record_type = node.xml_content.findtext(".//recordInfo/type/linkedRecordId")
 
-    content_root = clean_and_unwrap_xml(node.xml_root)
+    content_root = clean_and_unwrap_xml(node.xml_content)
     xml_bytes = to_xml_bytes(content_root)
 
     base_url = f"{BASE_URL}"
@@ -267,25 +269,16 @@ def prepare_and_try_to_save_record(node):
 # XML utilities ----------------------------------
 def normalize_regex_patterns(xml_root):
     updated = False
-    for tag in ["regex", "regEx", "pattern"]:
+    for tag in ("regex", "regEx", "pattern"):
         for element in xml_root.findall(f".//{tag}"):
-            old_value = (element.text or "").strip()
-            if old_value and old_value != ".+":
+            if element.text and element.text.strip() not in (None, ".+"):
                 element.text = ".+"
-                print(f"Replaced regex {tag}: '{old_value}' -> '.+'")
                 updated = True
     return updated
 
 
 def normalize_child_reference_repeat(xml_root):
     updated = False
-    updated = possibly_update_min_max(updated, xml_root)
-    if updated:
-        print("Normalized childReference repeatMin to '0' and repeatMax to 'X'")
-    return updated
-
-
-def possibly_update_min_max(updated: bool, xml_root) -> bool:
     for child_reference in xml_root.findall(".//childReferences/childReference"):
         repeat_min_element = child_reference.find("repeatMin")
         repeat_max_element = child_reference.find("repeatMax")
@@ -377,7 +370,7 @@ def fetch_xml_from_api(url):
 def try_to_store_record(node, record_type_url: str, xml_bytes: bytes | Any) -> bool:
     try:
         headers = {
-            "Authtoken": "f6e8c358-214d-44ed-82f3-801b862f06f0",
+            "Authtoken": "189b5e3a-4a16-478c-b2ef-2c8a66de3e14",
             "Content-Type": "application/vnd.cora.recordgroup+xml",
             "Accept": "application/vnd.cora.record+xml", }
 

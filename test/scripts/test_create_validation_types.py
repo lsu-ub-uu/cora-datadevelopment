@@ -1,16 +1,9 @@
 import xml.etree.ElementTree as ET
+from collections import deque
 
 import pytest
 
-from scripts.create_new_validationTypes import (
-    RecordNode, parse_record_from_xml, find_child_urls,
-    normalize_regex_patterns, normalize_child_reference_repeat,
-    update_child_references, update_record_id_in_xml, remove_action_links,
-    create_new_id_and_update_mapping, skip_if_already_processed,
-    process_graph_bottom_up_and_store, link_parent_child_relationship,
-    find_top_level_children, clean_and_unwrap_xml, remove_unwanted_elements,
-    to_xml_bytes, prepare_and_try_to_save_record, process_and_possibly_save
-)
+import scripts.create_new_validationTypes as Script
 
 
 @pytest.fixture
@@ -189,10 +182,94 @@ def sample_xml():
 @pytest.fixture
 def record_node(sample_xml):
     root = ET.fromstring(sample_xml)
-    return RecordNode("divaTextNewGroup", "validationType", "http://example.com/record/divaTextNewGroup", root)
+    return Script.RecordNode("divaTextNewGroup", "validationType", "http://example.com/record/divaTextNewGroup", root)
+
+
+def create_mock_top_level_child(record_node):
+    record_info = record_node.xml_content.find(".//recordInfo")
+
+    metadata_id = ET.SubElement(record_info, "metadataId")
+    action_links = ET.SubElement(metadata_id, "actionLinks")
+    read = ET.SubElement(action_links, "read")
+    url = ET.SubElement(read, "url")
+    url.text = "http://HOSTURL/someTopLevelChild"
 
 
 # XML Parsing & Node Tests
+def test_build_node_map_from_child_references_root_url_already_in_map(record_node):
+    global_node_map = {"root_url": record_node}
+
+    Script.build_node_map_from_child_references("root_url", global_node_map)
+    assert len(global_node_map) == 1
+
+
+def test_build_node_map_from_child_references_new_url_added(record_node, monkeypatch):
+    global_node_map = {}
+
+    def fake_process_queue(queue, root_url, node_map):
+        node_map[root_url] = record_node
+
+    monkeypatch.setattr(Script, "process_queue_and_collect_nodes", fake_process_queue)
+
+    Script.build_node_map_from_child_references("http://root_url", global_node_map)
+    assert len(global_node_map) == 1
+    assert "http://root_url" in global_node_map
+
+
+def test_process_queue_already_in_node_map(record_node, monkeypatch):
+    queue = deque(["some_url"])
+    global_node_map = {"some_url": record_node}
+    called = False
+
+    def fake_fetch(url):
+        nonlocal called
+        called = True
+        return "<xml></xml>"
+
+    monkeypatch.setattr(Script, "fetch_xml_from_api", fake_fetch)
+    Script.process_queue_and_collect_nodes(queue, "http://root_url", global_node_map)
+    assert called == False
+
+
+def test_process_queue_and_add_note_to_map(sample_xml, monkeypatch):
+    queue = deque(["http://HOSTURL/recordInfoNewDivaTextGroup",
+                   "http://HOSTURL/textPartEnGroup",
+                   "http://HOSTURL/textPartSvGroup"])
+    global_node_map = {}
+    called = False
+
+    def fake_fetch(url):
+        nonlocal called
+        called = True
+        return sample_xml
+
+    monkeypatch.setattr(Script, "fetch_xml_from_api", fake_fetch)
+    Script.process_queue_and_collect_nodes(queue, "http://root_url", global_node_map)
+    assert called == True
+    assert global_node_map["http://HOSTURL/recordInfoNewDivaTextGroup"].record_id == "divaTextNewGroup"
+    assert global_node_map["http://HOSTURL/textPartEnGroup"].record_id == "divaTextNewGroup"
+    assert global_node_map["http://HOSTURL/textPartSvGroup"].record_id == "divaTextNewGroup"
+
+
+def test_process_and_possibly_save_not_saved_due_to_not_updated(record_node, monkeypatch):
+    monkeypatch.setattr(Script, "skip_if_already_processed", lambda node, mapping: False)
+    monkeypatch.setattr(Script, "normalize_regex_patterns", lambda node: False)
+    monkeypatch.setattr(Script, "normalize_child_reference_repeat", lambda node: False)
+
+    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    assert result is False
+
+
+def test_process_and_possibly_save_not_saved_due_to_already_processed(record_node, monkeypatch):
+    def fake_skip_if_already_processed(node, mapping):
+        return True
+
+    monkeypatch.setattr("scripts.create_new_validationTypes.skip_if_already_processed", fake_skip_if_already_processed)
+
+    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    assert result is False
+
+
 def test_process_and_possibly_save(record_node, monkeypatch):
     saved_nodes = []
 
@@ -203,7 +280,7 @@ def test_process_and_possibly_save(record_node, monkeypatch):
     monkeypatch.setattr("scripts.create_new_validationTypes.prepare_and_try_to_save_record",
                         fake_prepare_and_try_to_save_record)
 
-    result = process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
     assert result is True
     assert "divaTextNewGroup" in saved_nodes
 
@@ -215,35 +292,35 @@ def test_process_and_possibly_save_not_saved(record_node, monkeypatch):
     monkeypatch.setattr("scripts.create_new_validationTypes.prepare_and_try_to_save_record",
                         fake_prepare_and_try_to_save_record)
 
-    result = process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
     assert result is False
 
 
 def test_prepare_and_try_to_save_record(record_node):
-    prepare_and_try_to_save_record(record_node)
+    Script.prepare_and_try_to_save_record(record_node)
     assert record_node.record_id == "divaTextNewGroup"
     assert record_node.record_type == "validationType"
     assert record_node.url == "http://example.com/record/divaTextNewGroup"
-    assert isinstance(record_node.xml_root, ET.Element)
+    assert isinstance(record_node.xml_content, ET.Element)
     assert record_node.new_record_id is None
 
 
 def test_parse_record_from_xml(sample_xml):
-    node = parse_record_from_xml(sample_xml, "http://url")
+    node = Script.parse_record_from_xml(sample_xml, "http://url")
     assert node.record_id == "divaTextNewGroup"
     assert node.record_type == "metadata"
     assert node.url == "http://url"
-    assert isinstance(node.xml_root, ET.Element)
+    assert isinstance(node.xml_content, ET.Element)
 
 
 def test_find_child_urls(record_node):
-    urls = find_child_urls(record_node.xml_root)
+    urls = Script.find_child_urls(record_node.xml_content)
     assert urls == ['http://HOSTURL/recordInfoNewDivaTextGroup', 'http://HOSTURL/textPartSvGroup',
                     'http://HOSTURL/textPartEnGroup']
 
 
 def test_find_top_level_children(record_node):
-    record_info = record_node.xml_root.find(".//recordInfo")
+    record_info = record_node.xml_content.find(".//recordInfo")
 
     metadata_id = ET.SubElement(record_info, "metadataId")
     action_links = ET.SubElement(metadata_id, "actionLinks")
@@ -251,7 +328,7 @@ def test_find_top_level_children(record_node):
     url = ET.SubElement(read, "url")
     url.text = "http://HOSTURL/someTopLevelChild"
 
-    urls = find_top_level_children(record_node.xml_root)
+    urls = Script.find_top_level_children(record_node.xml_content)
 
     assert isinstance(urls, list)
     assert urls == ["http://HOSTURL/someTopLevelChild"]
@@ -259,15 +336,15 @@ def test_find_top_level_children(record_node):
 
 # XML Transformations
 def test_normalize_regex_patterns(record_node):
-    updated = normalize_regex_patterns(record_node.xml_root)
-    regex_text = record_node.xml_root.find(".//regEx").text
+    updated = Script.normalize_regex_patterns(record_node.xml_content)
+    regex_text = record_node.xml_content.find(".//regEx").text
     assert updated
     assert regex_text == ".+"
 
 
 def test_normalize_child_reference_repeat(record_node):
-    updated = normalize_child_reference_repeat(record_node.xml_root)
-    child = record_node.xml_root.find(".//childReference")
+    updated = Script.normalize_child_reference_repeat(record_node.xml_content)
+    child = record_node.xml_content.find(".//childReference")
     assert updated
     assert child.find("repeatMin").text == "0"
     assert child.find("repeatMax").text == "X"
@@ -280,8 +357,8 @@ def test_update_child_references_multiple(record_node):
         "textPartEnGroup": "XYZ_textPartEnGroup",
     }
 
-    update_child_references(record_node.xml_root, id_mapping)
-    after = [el.text.strip() for el in record_node.xml_root.findall(".//linkedRecordId")]
+    Script.update_child_references(record_node.xml_content, id_mapping)
+    after = [el.text.strip() for el in record_node.xml_content.findall(".//linkedRecordId")]
 
     for old, new in id_mapping.items():
         assert new in after
@@ -289,34 +366,68 @@ def test_update_child_references_multiple(record_node):
 
 
 def test_update_record_id_in_xml(record_node):
-    update_record_id_in_xml(record_node.xml_root, "XYZ_999")
-    assert record_node.xml_root.find(".//recordInfo/id").text == "XYZ_999"
+    Script.update_record_id_in_xml(record_node.xml_content, "XYZ_999")
+    assert record_node.xml_content.find(".//recordInfo/id").text == "XYZ_999"
 
 
 def test_remove_action_links(record_node):
-    remove_action_links(record_node.xml_root)
-    urls = record_node.xml_root.findall(".//actionLinks")
+    Script.remove_action_links(record_node.xml_content)
+    urls = record_node.xml_content.findall(".//actionLinks")
     assert not urls
 
 
 def test_clean_and_unwrap_xml(record_node):
-    content = clean_and_unwrap_xml(record_node.xml_root)
+    content = Script.clean_and_unwrap_xml(record_node.xml_content)
     assert content.tag == "metadata"
-    remove_unwanted_elements(content)
+    Script.remove_unwanted_elements(content)
     for tag in ["type", "createdBy", "tsCreated", "updated"]:
         assert content.find(tag) is None
 
 
 def test_to_xml_bytes(record_node):
-    xml_bytes = to_xml_bytes(record_node.xml_root)
+    xml_bytes = Script.to_xml_bytes(record_node.xml_content)
     assert isinstance(xml_bytes, bytes)
     assert xml_bytes.startswith(b"<?xml")
 
 
 # Node processing utilities
+def test_collect_child_urls(record_node):
+    urls = Script.collect_child_urls(record_node, "http://root_url", "http://some_url")
+    assert urls == ['http://HOSTURL/recordInfoNewDivaTextGroup', 'http://HOSTURL/textPartSvGroup',
+                    'http://HOSTURL/textPartEnGroup']
+
+
+def test_collect_top_level_children(record_node):
+    create_mock_top_level_child(record_node)
+
+    urls = Script.collect_child_urls(record_node, "http://root_url", "http://root_url")
+
+    assert isinstance(urls, list)
+    assert urls == ["http://HOSTURL/someTopLevelChild"]
+
+
+def test_check_for_unprocessed_nodes_updates_total_errors(monkeypatch):
+    Script.TOTAL_ERRORS.clear()
+    global_node_map = {"url1": object(), "url2": object()}
+    processed = {"url1"}
+
+    Script.check_for_unprocessed_nodes(global_node_map, processed)
+    assert any("url2" in err for err in Script.TOTAL_ERRORS)
+    assert not any("url1" in err for err in Script.TOTAL_ERRORS)
+
+
+def test_check_for_unprocessed_nodes_no_unprocessed(monkeypatch):
+    Script.TOTAL_ERRORS.clear()
+    global_node_map = {"url1": object()}
+    processed = {"url1"}
+
+    Script.check_for_unprocessed_nodes(global_node_map, processed)
+    assert Script.TOTAL_ERRORS == []
+
+
 def test_create_new_id_and_update_mapping(record_node):
     id_mapping = {}
-    new_id = create_new_id_and_update_mapping(id_mapping, record_node, "123")
+    new_id = Script.create_new_id_and_update_mapping(id_mapping, record_node, "123")
     assert new_id == "XYZ_123"
     assert id_mapping["123"] == "XYZ_123"
     assert record_node.new_record_id == "XYZ_123"
@@ -324,47 +435,74 @@ def test_create_new_id_and_update_mapping(record_node):
 
 def test_skip_if_already_processed(record_node):
     id_mapping = {"divaTextNewGroup": "apa"}
-    skipped = skip_if_already_processed(record_node, id_mapping)
+    skipped = Script.skip_if_already_processed(record_node, id_mapping)
     assert skipped
     assert record_node.new_record_id == "apa"
 
 
 def test_skip_if_already_processed_false(record_node):
     id_mapping = {"NotProcessedGroup": "apa"}
-    skipped = skip_if_already_processed(record_node, id_mapping)
+    skipped = Script.skip_if_already_processed(record_node, id_mapping)
     assert not skipped
 
 
-# Graph processing
 def test_link_parent_child_relationship(record_node):
-    child_node = RecordNode("child1", "type1", "http://child1", record_node.xml_root)
-    record_node.child_urls = ["http://child1"]
+    child_node = Script.RecordNode("child_node", "someType", "http://child_node", record_node.xml_content)
+    record_node.child_urls = ["http://child_node"]
     visited = {
-        "http://parent": record_node,
-        "http://child1": child_node
+        "http://parent_node": record_node,
+        "http://child_node": child_node
     }
-    link_parent_child_relationship(visited)
+    Script.link_parent_child_relationship(visited)
     assert child_node.parents == [record_node]
     assert record_node.children == [child_node]
 
 
-# Graph bottom-up processing with mocks
-def test_process_graph_with_complex_relationships(monkeypatch):
+def test_process_node_success(monkeypatch, record_node):
+    Script.TOTAL_PROCESSED_RECORDS = 0
+    Script.TOTAL_UPDATES = 0
+    Script.TOTAL_ERRORS.clear()
+
+    monkeypatch.setattr(Script, "process_and_possibly_save", lambda node, mapping: True)
+    Script.process_node({}, record_node)
+    assert Script.TOTAL_PROCESSED_RECORDS == 1
+    assert Script.TOTAL_UPDATES == 1
+    assert Script.TOTAL_ERRORS == []
+
+
+def test_process_node_failure(monkeypatch, record_node):
+    Script.TOTAL_PROCESSED_RECORDS = 0
+    Script.TOTAL_UPDATES = 0
+    Script.TOTAL_ERRORS.clear()
+
+    def throw_exception(node, mapping):
+        raise ValueError("fail to save")
+
+    monkeypatch.setattr(Script, "process_and_possibly_save", throw_exception)
+    Script.process_node({}, record_node)
+    assert Script.TOTAL_PROCESSED_RECORDS == 1
+    assert Script.TOTAL_UPDATES == 0
+    assert len(Script.TOTAL_ERRORS) == 1
+    assert "Error processing divaTextNewGroup: fail to save" in Script.TOTAL_ERRORS[0]
+
+
+# Node map bottom-up processing with mocks
+def test_process_graph_with_relationships(monkeypatch):
     #    '''
     #
-    #    A      B
-    #   / \    /
-    #  C   D  /
-    #   \ /__/
-    #    E
+    #    A     B
+    #   / \    |
+    #  C   D   |
+    #   \ /   /
+    #    E___/
     #
     #    '''
     # Create nodes
-    node_A = RecordNode("A", "typeA", "urlA", ET.Element("rootA"))
-    node_B = RecordNode("B", "typeB", "urlB", ET.Element("rootB"))
-    node_C = RecordNode("C", "typeC", "urlC", ET.Element("rootC"))
-    node_D = RecordNode("D", "typeD", "urlD", ET.Element("rootD"))
-    node_E = RecordNode("E", "typeE", "urlE", ET.Element("rootE"))
+    node_A = Script.RecordNode("A", "typeA", "urlA", ET.Element("xmlrootA"))
+    node_B = Script.RecordNode("B", "typeB", "urlB", ET.Element("nodeB"))
+    node_C = Script.RecordNode("C", "typeC", "urlC", ET.Element("nodeC"))
+    node_D = Script.RecordNode("D", "typeD", "urlD", ET.Element("nodeD"))
+    node_E = Script.RecordNode("E", "typeE", "urlE", ET.Element("nodeE"))
 
     # Define children relationships
     node_A.children = [node_C, node_D]
@@ -397,7 +535,7 @@ def test_process_graph_with_complex_relationships(monkeypatch):
 
     monkeypatch.setattr("scripts.create_new_validationTypes.process_node", fake_process_node)
 
-    process_graph_bottom_up_and_store(graph, id_mapping)
+    Script.process_graph_bottom_up_and_store(graph, id_mapping)
 
     # Check order of processing
     assert processed_order[0] == "E"
