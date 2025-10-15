@@ -1,4 +1,5 @@
 import json
+import time
 import xml.etree.ElementTree as ET
 from collections import deque
 from typing import Any
@@ -9,7 +10,7 @@ from common.arg_parser import create_argument_parser, common_arguments
 from cora.context import CoraContext, Context
 
 RECORD_TYPE = "diva-output"
-TYPE_PREFIX = "__ZZ_"
+TYPE_PREFIX = "__dada_"
 BLACKLIST_TYPES = ["diva-output", "tempContainerOutput"]
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
@@ -54,32 +55,48 @@ def main():
 
 
 def create_new_validation_types_for_record_type():
+    print("Creating new validationTypes for recordType:", RECORD_TYPE, "using prefix:", TYPE_PREFIX)
+    CTX.log("Creating new validationTypes for recordType: " + RECORD_TYPE + " using prefix: " + TYPE_PREFIX)
+
+    starttime = time.time()
     validation_types = get_validation_types_for_record_type()
 
     print("\n=== Building node map ===")
+    CTX.log("\n=== Building node map ===")
     root_urls = [CTX.get_base_url() + "validationType/" + string for string in validation_types]
     for root_url in root_urls:
         build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
 
+    print(f"\nFetched {len(GLOBAL_NODE_MAP)} records in total.")
+    CTX.log(f"\nAll records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
     # print_node_map_summary()
 
     print("\n=== Processing node map ===")
+    CTX.log("\n=== Processing node map ===")
     process_node_map_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
 
-    print("\n=== Script finished ===")
-    print(f"  Total records fetched:   {TOTAL_FETCHED}")
-    print(f"  Total records processed: {TOTAL_PROCESSED_RECORDS}")
-    print(f"  Total records created:   {TOTAL_UPDATES}")
+    CTX.log("\n=== Script finished ===")
+    log_results()
+
+    print(
+    f"\n=== Processing completed in {time.time() - starttime}s. Output logged to {CTX.get_log_file_path()} ==="
+)
+
+
+def log_results():
+    CTX.log(f"  Total records fetched:   {TOTAL_FETCHED}")
+    CTX.log(f"  Total records processed: {TOTAL_PROCESSED_RECORDS}")
+    CTX.log(f"  Total records created:   {TOTAL_UPDATES}")
 
     if TOTAL_FETCHED != TOTAL_PROCESSED_RECORDS:
-        print(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
+        CTX.log(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
 
     if TOTAL_ERRORS:
-        print("\n=== Errors reported ===")
+        CTX.log("\n=== Errors reported ===")
         for (error) in TOTAL_ERRORS:
-            print(f" > {error}")
+            CTX.log(f" > {error}")
     else:
-        print("\nNo errors reported.")
+        CTX.log("\nNo errors reported.")
 
 
 def build_node_map_from_child_references(root_url, global_node_map):
@@ -96,15 +113,14 @@ def build_node_map_from_child_references(root_url, global_node_map):
     process_queue_and_collect_nodes(queue, root_url, global_node_map)
     link_parent_child_relationship(global_node_map)
 
-    print(f"\nFetched {len(global_node_map)} unique records.")
     TOTAL_FETCHED = len(global_node_map)
     return global_node_map
 
 
 def print_node_map_summary():
-    print("\n=== Graph Summary ===")
+    CTX.log("\n=== Graph Summary ===")
     for url, node in GLOBAL_NODE_MAP.items():
-        print(f"{url} → {len(node.children)} children, {len(node.parents)} parents")
+        CTX.log(f"{url} → {len(node.children)} children, {len(node.parents)} parents")
 
 
 def process_queue_and_collect_nodes(queue: deque[str], root_url: str, global_node_map: dict[str, RecordNode]) -> None:
@@ -177,7 +193,7 @@ def process_node(global_id_mapping, node):
             TOTAL_UPDATES += 1
     except Exception as e:
         TOTAL_ERRORS.append(f"Error processing {node.record_id}: {e}")
-        print(f"Error processing {node.record_id}: {e}")
+        CTX.log(f"Error processing {node.record_id}: {e}")
 
 
 def update_parent_dependencies(leaf_queue: deque[str], node, unprocessed_child_map: dict[str, int]):
@@ -191,7 +207,7 @@ def update_parent_dependencies(leaf_queue: deque[str], node, unprocessed_child_m
 def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
     unprocessed = [url for url in global_node_map if url not in processed]
     if unprocessed:
-        print(f"\n>>> WARNING!! -  {len(unprocessed)} records were never processed:")
+        CTX.log(f"\n>>> WARNING!! -  {len(unprocessed)} records were never processed:")
         for url in unprocessed:
             TOTAL_ERRORS.append("Warning: Record: " + url + " was never processed")
 
@@ -204,11 +220,11 @@ def process_and_possibly_save(node, global_id_mapping):
 
     updated = False
     if normalize_regex_patterns(node.xml_content):
-        print(f"> Normalized regex pattern(s) to '.+' in {old_id}")
+        CTX.log(f"> Normalized regex pattern(s) to '.+' in {old_id}")
         updated = True
 
     if normalize_child_reference_repeat(node.xml_content):
-        print(f"> Normalized childReference(s) Min Max to '0-X' in {old_id}")
+        CTX.log(f"> Normalized childReference(s) Min Max to '0-X' in {old_id}")
         updated = True
 
     child_renamed = any(c.record_id in global_id_mapping for c in node.children)
@@ -235,7 +251,7 @@ def skip_if_already_processed(node: RecordNode, global_id_mapping: dict) -> bool
     old_id = node.record_id
     if old_id in global_id_mapping:
         node.new_record_id = global_id_mapping[old_id]
-        print(f"Skipping already processed {old_id} -> {node.new_record_id}")
+        CTX.log(f"Skipping already processed {old_id} -> {node.new_record_id}")
         return True
     return False
 
@@ -249,9 +265,9 @@ def prepare_and_try_to_save_record(node):
     base_url = f"{CTX.get_base_url()}"
     record_type_url = f"{base_url}{record_type}"
 
-    print(f">>> Creating {node.new_record_id} ({record_type})...")
-    print(f"  Endpoint: {record_type_url}")
-    print("  Payload: " + xml_bytes.decode("utf-8"))
+    CTX.log(f">>> Creating {node.new_record_id} ({record_type})...")
+    CTX.log(f"  Endpoint: {record_type_url}")
+    CTX.log("  Payload: " + xml_bytes.decode("utf-8"))
 
     return try_to_store_record(node, record_type_url, xml_bytes)
 
@@ -314,7 +330,7 @@ def find_child_urls(xml_root):
     urls = []
     for element in xml_root.findall(".//childReferences/childReference/ref/actionLinks/read/url"):
         urls.append((element.text or "").strip())
-    print(f"  Found {len(urls)} child URLs: {urls}")
+    # CTX.log(f"  Found {len(urls)} child URLs: {urls}")
     return urls
 
 
@@ -344,13 +360,13 @@ def find_top_level_children(xml_root):
         if element is not None:
             url = (element.text or "").strip()
             urls.append(url)
-    print(f"  Top-level children found ({len(urls)}): {urls}")
+    # CTX.log(f"  Top-level children found ({len(urls)}): {urls}")
     return urls
 
 
 # API utilities ----------------------------------
 def fetch_record_as_xml(url):
-    print(f"Fetching: {url}")
+    # CTX.log(f"Fetching: {url}")
     headers = {"Authtoken": CTX.get_auth_token(), "Accept": "application/vnd.cora.record+xml"}
     response = requests.get(url, headers=headers)
     response.raise_for_status()
@@ -365,14 +381,14 @@ def try_to_store_record(node, record_type_url: str, xml_bytes: bytes | Any) -> b
             "Accept": "application/vnd.cora.record+xml", }
 
         response = requests.post(record_type_url, data=xml_bytes, headers=headers, timeout=10)
-        print(f"  Response: ({response.status_code}) - {response.text}\n")
+        CTX.log(f"  Response: ({response.status_code}) - {response.text}\n")
         if response.status_code not in (200, 201):
             TOTAL_ERRORS.append(f"Failed to save {node.new_record_id} ({response.status_code} - {response.text})")
             return False
         else:
             return True
     except requests.RequestException as e:
-        print(f">>> Error saving {node.new_record_id}: {e}")
+        CTX.log(f">>> Error saving {node.new_record_id}: {e}")
         TOTAL_ERRORS.append(f"Error saving {node.new_record_id}: {e}")
         return False
 
