@@ -1,5 +1,4 @@
 import json
-import time
 import xml.etree.ElementTree as ET
 from collections import deque
 from typing import Any
@@ -9,16 +8,18 @@ import requests
 from common.arg_parser import create_argument_parser, common_arguments
 from cora.context import CoraContext, Context
 
+CTX: Context
+
 RECORD_TYPE = "diva-output"
-TYPE_PREFIX = "__dada_"
+TYPE_PREFIX = "__XYZ_"
 BLACKLIST_TYPES = ["diva-output", "tempContainerOutput"]
+
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
 TOTAL_PROCESSED_RECORDS = 0
 TOTAL_UPDATES = 0
 TOTAL_ERRORS = []
 TOTAL_FETCHED = 0
-CTX: Context
 
 
 # Representation of a record and its relationships ----------------------------------
@@ -58,29 +59,28 @@ def create_new_validation_types_for_record_type():
     print("Creating new validationTypes for recordType:", RECORD_TYPE, "using prefix:", TYPE_PREFIX)
     CTX.log("Creating new validationTypes for recordType: " + RECORD_TYPE + " using prefix: " + TYPE_PREFIX)
 
-    starttime = time.time()
     validation_types = get_validation_types_for_record_type()
 
     print("\n=== Building node map ===")
-    CTX.log("\n=== Building node map ===")
+    CTX.log("=== Building node map ===")
     root_urls = [CTX.get_base_url() + "validationType/" + string for string in validation_types]
     for root_url in root_urls:
         build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
 
     print(f"\nFetched {len(GLOBAL_NODE_MAP)} records in total.")
-    CTX.log(f"\nAll records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
-    # print_node_map_summary()
+    CTX.log(f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
+    log_node_map_summary()
 
     print("\n=== Processing node map ===")
-    CTX.log("\n=== Processing node map ===")
+    CTX.log("=== Processing node map ===")
     process_node_map_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
 
-    CTX.log("\n=== Script finished ===")
+    CTX.log("=== Script finished ===")
     log_results()
 
     print(
-    f"\n=== Processing completed in {time.time() - starttime}s. Output logged to {CTX.get_log_file_path()} ==="
-)
+        f"\n=== Processing completed. Output logged to {CTX.get_log_file_path()} ==="
+    )
 
 
 def log_results():
@@ -92,11 +92,11 @@ def log_results():
         CTX.log(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
 
     if TOTAL_ERRORS:
-        CTX.log("\n=== Errors reported ===")
+        CTX.log("=== Errors reported ===")
         for (error) in TOTAL_ERRORS:
             CTX.log(f" > {error}")
     else:
-        CTX.log("\nNo errors reported.")
+        CTX.log("No errors reported.")
 
 
 def build_node_map_from_child_references(root_url, global_node_map):
@@ -117,8 +117,8 @@ def build_node_map_from_child_references(root_url, global_node_map):
     return global_node_map
 
 
-def print_node_map_summary():
-    CTX.log("\n=== Graph Summary ===")
+def log_node_map_summary():
+    CTX.log("\n=== Node map Summary ===")
     for url, node in GLOBAL_NODE_MAP.items():
         CTX.log(f"{url} → {len(node.children)} children, {len(node.parents)} parents")
 
@@ -265,11 +265,15 @@ def prepare_and_try_to_save_record(node):
     base_url = f"{CTX.get_base_url()}"
     record_type_url = f"{base_url}{record_type}"
 
+    log_creation_summary(node, record_type, record_type_url, xml_bytes)
+
+    return try_to_store_record(node, record_type_url, xml_bytes)
+
+
+def log_creation_summary(node, record_type, record_type_url: str, xml_bytes: bytes | Any):
     CTX.log(f">>> Creating {node.new_record_id} ({record_type})...")
     CTX.log(f"  Endpoint: {record_type_url}")
     CTX.log("  Payload: " + xml_bytes.decode("utf-8"))
-
-    return try_to_store_record(node, record_type_url, xml_bytes)
 
 
 # XML utilities ----------------------------------
