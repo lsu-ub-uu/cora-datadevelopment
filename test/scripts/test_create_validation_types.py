@@ -401,7 +401,7 @@ def test_remove_action_links(record_node):
 
 
 def test_clean_and_unwrap_xml(record_node):
-    content = Script.clean_and_unwrap_xml(record_node.xml_content)
+    content = Script.unwrap_and_clean_xml_for_create(record_node.xml_content)
     assert content.tag == "metadata"
     Script.remove_unwanted_elements(content)
     for tag in ["type", "createdBy", "tsCreated", "updated"]:
@@ -559,7 +559,7 @@ def test_process_graph_with_relationships(monkeypatch):
 
     monkeypatch.setattr("scripts.create_new_validationTypes.process_node", fake_process_node)
 
-    Script.process_graph_bottom_up_and_store(graph, id_mapping)
+    Script.process_node_map_bottom_up_and_store(graph, id_mapping)
 
     # Check order of processing
     assert processed_order[0] == "E"

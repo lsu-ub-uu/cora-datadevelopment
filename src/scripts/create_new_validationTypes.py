@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+
 from collections import deque
 from typing import Any
 
@@ -65,15 +66,15 @@ def main():
 
 
 def create_new_validation_types(root_urls):
-    print("\n=== Building graph ===")
+    print("\n=== Building node map ===")
     root_urls = [BASE_URL + "validationType/" + string for string in root_urls]
     for root_url in root_urls:
         build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
 
-    # print_graph_summary()
+    # print_node_map_summary()
 
-    print("\n=== Processing graph ===")
-    process_graph_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
+    print("\n=== Processing node map ===")
+    process_node_map_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
 
     print("\n=== Script finished ===")
     print(f"  Total records fetched:   {TOTAL_FETCHED}")
@@ -110,7 +111,7 @@ def build_node_map_from_child_references(root_url, global_node_map):
     return global_node_map
 
 
-def print_graph_summary():
+def print_node_map_summary():
     print("\n=== Graph Summary ===")
     for url, node in GLOBAL_NODE_MAP.items():
         print(f"{url} → {len(node.children)} children, {len(node.parents)} parents")
@@ -151,7 +152,7 @@ def link_parent_child_relationship(global_node_map: dict[Any, Any]):
                 global_node_map[child_url].parents.append(node)
 
 
-def process_graph_bottom_up_and_store(global_node_map, global_id_mapping):
+def process_node_map_bottom_up_and_store(global_node_map, global_id_mapping):
     """
     Kahn's algorithm for topological sorting.
     Processes nodes only after all their children have been processed.
@@ -230,8 +231,7 @@ def process_and_possibly_save(node, global_id_mapping):
     update_record_id_in_xml(node.xml_content, new_id)
     update_child_references(node.xml_content, global_id_mapping)
     remove_action_links(node.xml_content)
-    updated = prepare_and_try_to_save_record(node)
-    return updated
+    return prepare_and_try_to_save_record(node)
 
 
 def create_new_id_and_update_mapping(global_id_mapping, node, old_id) -> str:
@@ -253,7 +253,7 @@ def skip_if_already_processed(node: RecordNode, global_id_mapping: dict) -> bool
 def prepare_and_try_to_save_record(node):
     record_type = node.xml_content.findtext(".//recordInfo/type/linkedRecordId")
 
-    content_root = clean_and_unwrap_xml(node.xml_content)
+    content_root = unwrap_and_clean_xml_for_create(node.xml_content)
     xml_bytes = to_xml_bytes(content_root)
 
     base_url = f"{BASE_URL}"
@@ -328,17 +328,17 @@ def find_child_urls(xml_root):
     return urls
 
 
-def clean_and_unwrap_xml(xml_root: ET.Element) -> ET.Element:
+def unwrap_and_clean_xml_for_create(xml_root: ET.Element) -> ET.Element:
     content = xml_root.find("data")[0]
     remove_unwanted_elements(content)
     return content
 
 
-def remove_unwanted_elements(el: ET.Element):
+def remove_unwanted_elements(element: ET.Element):
     tags_to_remove = {"type", "createdBy", "tsCreated", "updated"}
-    for child in list(el):
+    for child in list(element):
         if child.tag in tags_to_remove:
-            el.remove(child)
+            element.remove(child)
         else:
             remove_unwanted_elements(child)
 
