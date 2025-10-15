@@ -50,12 +50,12 @@ def create_argument_parser(
 common_arguments: dict[str, ArgumentConfig] = {
     "--xml-path": {
         "help": "Path to the XML file containing source data",
-        "required": True,
+        "required": False,
     },
     "--system": {
         "help": "Cora system to connect to (e.g., 'preview', 'production')",
         "type": str,
-        "default": "preview",
+        "default": "minikube",
     },
     "--login-id": {
         "default": "divaAdmin@cora.epc.ub.uu.se",

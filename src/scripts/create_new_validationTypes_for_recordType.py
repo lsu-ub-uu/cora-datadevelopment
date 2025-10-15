@@ -1,21 +1,26 @@
+import json
 import xml.etree.ElementTree as ET
-
 from collections import deque
 from typing import Any
 
 import requests
 
-BASE_URL = "http://192.168.49.2:30982/rest/record/"
-TYPE_PREFIX = "XYZ_"
+from common.arg_parser import create_argument_parser, common_arguments
+from cora.context import CoraContext, Context
+
+RECORD_TYPE = "diva-output"
+TYPE_PREFIX = "__ZZ_"
+BLACKLIST_TYPES = ["diva-output", "tempContainerOutput"]
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
 TOTAL_PROCESSED_RECORDS = 0
 TOTAL_UPDATES = 0
 TOTAL_ERRORS = []
 TOTAL_FETCHED = 0
+CTX: Context
 
 
-# Represent a record and its relationships ----------------------------------
+# Representation of a record and its relationships ----------------------------------
 class RecordNode:
     def __init__(self, record_id, record_type, url, xml_content):
         self.record_id = record_id
@@ -29,45 +34,30 @@ class RecordNode:
 
 
 def main():
-    validation_types = [
-        # "diva-output",
-        "diva_degree-project",
-        "publication_doctoral-thesis-monograph",
-        "publication_doctoral-thesis-compilation",
-        "publication_editorial-letter",
-        "publication_working-paper",
-        "publication_report-chapter",
-        "publication_foreword-afterword",
-        "publication_newspaper-article",
-        "intellectual-property_patent",
-        "conference_poster",
-        "publication_journal-issue",
-        "artistic-work_artistic-thesis",
-        "publication_book",
-        "diva_dissertation",
-        "artistic-work_original-creative-work",
-        "conference_paper",
-        "conference_other",
-        "publication_magazine-article",
-        "publication_book-chapter",
-        "publication_encyclopedia-entry",
-        "conference_proceeding",
-        "publication_edited-book",
-        "publication_licentiate-thesis-compilation",
-        "publication_book-review",
-        "publication_critical-edition",
-        "publication_report",
-        "publication_preprint",
-        "publication_journal-article",
-        "publication_licentiate-thesis-monograph",
-        "publication_other",
-    ]
-    create_new_validation_types(validation_types)
+    global CTX
+
+    parser = create_argument_parser(
+        description="Create new validationTypes with updated IDs",
+        arguments=common_arguments,
+    )
+
+    args = parser.parse_args()
+
+    CTX = CoraContext(
+        system=args.system,
+        login_id=args.login_id,
+        app_token=args.app_token,
+        workers=args.workers,
+    )
+
+    create_new_validation_types_for_record_type()
 
 
-def create_new_validation_types(root_urls):
+def create_new_validation_types_for_record_type():
+    validation_types = get_validation_types_for_record_type()
+
     print("\n=== Building node map ===")
-    root_urls = [BASE_URL + "validationType/" + string for string in root_urls]
+    root_urls = [CTX.get_base_url() + "validationType/" + string for string in validation_types]
     for root_url in root_urls:
         build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
 
@@ -123,7 +113,7 @@ def process_queue_and_collect_nodes(queue: deque[str], root_url: str, global_nod
         if url in global_node_map:
             continue
 
-        xml_text = fetch_xml_from_api(url)
+        xml_text = fetch_record_as_xml(url)
         node = parse_record_from_xml(xml_text, url)
         global_node_map[url] = node
 
@@ -256,7 +246,7 @@ def prepare_and_try_to_save_record(node):
     content_root = unwrap_and_clean_xml_for_create(node.xml_content)
     xml_bytes = to_xml_bytes(content_root)
 
-    base_url = f"{BASE_URL}"
+    base_url = f"{CTX.get_base_url()}"
     record_type_url = f"{base_url}{record_type}"
 
     print(f">>> Creating {node.new_record_id} ({record_type})...")
@@ -359,9 +349,9 @@ def find_top_level_children(xml_root):
 
 
 # API utilities ----------------------------------
-def fetch_xml_from_api(url):
+def fetch_record_as_xml(url):
     print(f"Fetching: {url}")
-    headers = {"Accept": "application/vnd.cora.record+xml"}
+    headers = {"Authtoken": CTX.get_auth_token(), "Accept": "application/vnd.cora.record+xml"}
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.text
@@ -370,7 +360,7 @@ def fetch_xml_from_api(url):
 def try_to_store_record(node, record_type_url: str, xml_bytes: bytes | Any) -> bool:
     try:
         headers = {
-            "Authtoken": "189b5e3a-4a16-478c-b2ef-2c8a66de3e14",
+            "Authtoken": CTX.get_auth_token(),
             "Content-Type": "application/vnd.cora.recordgroup+xml",
             "Accept": "application/vnd.cora.record+xml", }
 
@@ -385,6 +375,52 @@ def try_to_store_record(node, record_type_url: str, xml_bytes: bytes | Any) -> b
         print(f">>> Error saving {node.new_record_id}: {e}")
         TOTAL_ERRORS.append(f"Error saving {node.new_record_id}: {e}")
         return False
+
+
+def get_validation_types_for_record_type():
+    search_url = CTX.get_base_url() + "searchResult/validationTypeSearch"
+    headers = {"Authtoken": CTX.get_auth_token(), "Accept": "application/vnd.cora.recordList+xml",
+               "Content-Type": "application/vnd.cora.recordList+xml"}
+
+    response = requests.get(search_url, params={"searchData": get_search_data()}, headers=headers)
+    response.raise_for_status()
+    response_body = ET.fromstring(response.text)
+
+    return collect_validation_types_from_response(response_body)
+
+
+def collect_validation_types_from_response(response_body: ET.Element) -> list[Any]:
+    validation_types = []
+    for element in response_body.findall(".//validationType/recordInfo/id"):
+        if element.text is None or element.text.startswith("__") or element.text in BLACKLIST_TYPES:
+            continue
+        validation_types.append((element.text or "").strip())
+
+    return validation_types
+
+
+def get_search_data() -> bytes:
+    search_dict = {
+        "name": "validationTypeSearch",
+        "children": [
+            {
+                "name": "include",
+                "children": [
+                    {
+                        "name": "includePart",
+                        "children": [
+                            {
+                                "name": "validatesRecordTypeSearchTerm",
+                                "value": f"recordType_{RECORD_TYPE}"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+
+    return json.dumps(search_dict).encode("utf-8")
 
 
 if __name__ == "__main__":

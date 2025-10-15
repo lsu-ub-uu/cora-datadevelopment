@@ -3,8 +3,8 @@ from collections import deque
 
 import pytest
 
-import scripts.create_new_validationTypes as Script
-from scripts.create_new_validationTypes import BASE_URL
+import scripts.create_new_validationTypes_for_recordType as Script
+from scripts.create_new_validationTypes_for_recordType import BASE_URL
 
 
 @pytest.fixture
@@ -215,7 +215,7 @@ def test_create_validation_types(monkeypatch):
     monkeypatch.setattr(Script, "process_graph_bottom_up_and_store", fake_process_graph_bottom_up_and_store)
     monkeypatch.setattr(Script, "check_for_unprocessed_nodes", fake_check_for_unprocessed_nodes)
 
-    Script.create_new_validation_types(["someValidationType"])
+    Script.create_new_validation_types_for_record_type(["someValidationType"])
     assert "http://baseUrl/validationType/someValidationType" in global_node_map
     assert len(global_node_map) == 1
 
