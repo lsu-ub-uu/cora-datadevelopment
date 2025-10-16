@@ -1,10 +1,22 @@
 import xml.etree.ElementTree as ET
 from collections import deque
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
+import requests
 
 import scripts.create_new_validationTypes_for_recordType as Script
+
+
+class MockResponse:
+    def __init__(self, text, status_code=200):
+        self.text = text
+        self.status_code = status_code
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise requests.HTTPError(f"HTTP {self.status_code}: {self.text}")
 
 
 @pytest.fixture(autouse=True)
@@ -14,6 +26,22 @@ def mock_ctx():
     Script.CTX.get_auth_token.return_value = "authToken"
     yield Script.CTX
     del Script.CTX
+
+
+@pytest.fixture(autouse=True)
+def mock_requests(monkeypatch, sample_xml):
+    def fake_get(url, *args, **kwargs):
+        if "validationTypeSearch" in url:
+            return MockResponse(get_validation_type_search_response_as_xml(), 200)
+
+        else:
+            return MockResponse(sample_xml, 200)
+
+    def fake_post(url, data=None, *args, **kwargs):
+        return MockResponse(f"<created url='{url}'>{data}</created>", 201)
+
+    monkeypatch.setattr(requests, "get", fake_get)
+    monkeypatch.setattr(requests, "post", fake_post)
 
 
 @pytest.fixture
@@ -195,18 +223,6 @@ def record_node(sample_xml):
     return Script.RecordNode("divaTextNewGroup", "validationType", "http://example.com/record/divaTextNewGroup", root)
 
 
-def create_validation_type_xml():
-    return """<?xml version="1.0"?>
-            <records>
-               <validationType>
-                  <recordInfo>
-                    <id>someValidationType</id>
-                    <type><linkedRecordId>validationType</linkedRecordId></type>
-                  </recordInfo>
-               </validationType>
-            </records>"""
-
-
 def create_mock_top_level_child(record_node):
     record_info = record_node.xml_content.find(".//recordInfo")
 
@@ -215,10 +231,6 @@ def create_mock_top_level_child(record_node):
     read = ET.SubElement(action_links, "read")
     url = ET.SubElement(read, "url")
     url.text = "http://HOSTURL/someTopLevelChild"
-
-
-# XML Parsing & Node Tests
-#def test_create_validation_types(monkeypatch, sample_xml, record_node): - fix broken test
 
 
 def test_build_node_map_from_child_references_root_url_already_in_map(record_node):
@@ -360,7 +372,6 @@ def test_find_top_level_children(record_node):
     assert urls == ["http://HOSTURL/someTopLevelChild"]
 
 
-# XML Transformations
 def test_normalize_regex_patterns(record_node):
     updated = Script.normalize_regex_patterns(record_node.xml_content)
     regex_text = record_node.xml_content.find(".//regEx").text
@@ -416,7 +427,6 @@ def test_to_xml_bytes(record_node):
     assert xml_bytes.startswith(b"<?xml")
 
 
-# Node processing utilities
 def test_collect_child_urls(record_node):
     urls = Script.collect_child_urls(record_node, "http://root_url", "http://some_url")
     assert urls == ['http://HOSTURL/recordInfoNewDivaTextGroup', 'http://HOSTURL/textPartSvGroup',
@@ -570,3 +580,136 @@ def test_process_graph_with_relationships(monkeypatch):
     assert processed_order[-1] in {"A", "B"}
     assert processed_order[-2] in {"A", "B"}
     assert set(processed_order) == {"A", "B", "C", "D", "E"}
+
+
+def test_get_search_data():
+    data = Script.get_search_data()
+    assert data is not None
+
+
+def test_get_validation_types_for_record_type():
+    results = Script.get_validation_types_for_record_type()
+    assert results == ["valType1", "valType2"]
+
+
+def test_collect_validation_types_from_response(monkeypatch):
+    sample_response_as_xml = ET.fromstring(get_validation_type_search_response_as_xml())
+
+    list_of_types = Script.collect_validation_types_from_response(sample_response_as_xml)
+    assert list_of_types == ["valType1", "valType2"]
+
+
+def test_collect_validation_types_from_response_with_blacklisted_types(monkeypatch):
+    search_result = ET.fromstring(get_validation_type_search_response_as_xml())
+    for elem in search_result.iter("id"):
+        if elem.text == "valType2":
+            elem.text = "diva-output"
+            break
+
+    list_of_types = Script.collect_validation_types_from_response(search_result)
+    assert len(list_of_types) == 1
+    assert list_of_types == ["valType1"]
+
+
+def test_fetch_record_as_xml(monkeypatch, sample_xml):
+    xml = Script.fetch_record_as_xml("http://someurl/record")
+    assert sample_xml in xml
+
+
+def test_try_to_store_record_with_failed_response(monkeypatch, record_node):
+    def fake_post(url, data=None, *args, **kwargs):
+        return MockResponse("Error occurred", 400)
+
+    monkeypatch.setattr(requests, "post", fake_post)
+    success = Script.try_to_store_record(record_node, "someUrl", b"<xml></xml>")
+    assert not success
+
+
+def test_try_to_store_record_with_exception(monkeypatch, record_node):
+    def fake_post(url, data=None, *args, **kwargs):
+        raise requests.RequestException("Network error")
+
+    monkeypatch.setattr(requests, "post", fake_post)
+    success = Script.try_to_store_record(record_node, "someUrl", b"<xml></xml>")
+    assert not success
+
+
+def test_log_results(monkeypatch, mock_ctx):
+    Script.TOTAL_FETCHED = 10
+    Script.TOTAL_PROCESSED_RECORDS = 8
+    Script.TOTAL_UPDATES = 5
+    Script.TOTAL_ERRORS = ["Error 1", "Error 2"]
+    Script.log_results()
+
+    calls = [call.args[0] for call in mock_ctx.log.mock_calls]
+
+    assert "Total records fetched:   10" in calls[0]
+    assert "Total records processed: 8" in calls[1]
+    assert "Total records created:   5" in calls[2]
+
+    assert any("WARNING" in msg for msg in calls)
+
+    assert any("=== Errors reported ===" in msg for msg in calls)
+    assert any(" > Error 1" in msg for msg in calls)
+    assert any(" > Error 2" in msg for msg in calls)
+
+
+def test_log_results_no_errors(monkeypatch, mock_ctx):
+    Script.TOTAL_ERRORS = []
+    Script.log_results()
+
+    calls = [call.args[0] for call in mock_ctx.log.mock_calls]
+
+    assert any("No errors reported." in msg for msg in calls)
+
+
+def test_create_new_validation_types_for_record_type(monkeypatch, mock_ctx):
+    monkeypatch.setattr(Script, "get_validation_types_for_record_type", lambda: ["valType1", "valType2"])
+    monkeypatch.setattr(Script, "build_node_map_from_child_references", lambda url, mapping: mapping.update(
+        {url: Script.RecordNode("id", "type", url, ET.Element("xml"))}))
+    monkeypatch.setattr(Script, "process_node_map_bottom_up_and_store", lambda mapping, id_map: {})
+    monkeypatch.setattr(Script, "check_for_unprocessed_nodes", lambda mapping, processed: None)
+
+    Script.create_new_validation_types_for_record_type()
+
+    calls = [call.args[0] for call in mock_ctx.log.mock_calls]
+    assert any("=== Script finished ===" in msg for msg in calls)
+
+
+def test_main(monkeypatch, mock_ctx):
+    fake_args = SimpleNamespace(
+        system="testSystem",
+        login_id="user",
+        app_token="token",
+        workers=1
+    )
+
+    monkeypatch.setattr(Script, "create_argument_parser",
+                        lambda **kwargs: SimpleNamespace(parse_args=lambda: fake_args))
+    monkeypatch.setattr(Script, "CoraContext", lambda **kwargs: mock_ctx)
+
+    Script.main()
+
+    assert Script.CTX is mock_ctx
+
+
+def get_validation_type_search_response_as_xml() -> str:
+    sample_response_as_xml = """<?xml version="1.0" encoding="UTF-8"?>
+<recordList>
+    <record>
+    <validationType>
+        <recordInfo>
+            <id>valType1</id>
+            <title>Validation Type 1</title>
+        </recordInfo>
+    </validationType>
+    <validationType>
+        <recordInfo>
+            <id>valType2</id>
+            <title>Validation Type 2</title>
+        </recordInfo>
+    </validationType>
+    </record>
+</recordList>
+"""
+    return sample_response_as_xml

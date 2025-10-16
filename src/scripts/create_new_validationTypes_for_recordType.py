@@ -69,7 +69,7 @@ def create_new_validation_types_for_record_type():
 
     print(f"\nFetched {len(GLOBAL_NODE_MAP)} records in total.")
     CTX.log(f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
-    log_node_map_summary()
+    # log_node_map_summary()
 
     print("\n=== Processing node map ===")
     CTX.log("=== Processing node map ===")
@@ -115,12 +115,6 @@ def build_node_map_from_child_references(root_url, global_node_map):
 
     TOTAL_FETCHED = len(global_node_map)
     return global_node_map
-
-
-def log_node_map_summary():
-    CTX.log("\n=== Node map Summary ===")
-    for url, node in GLOBAL_NODE_MAP.items():
-        CTX.log(f"{url} → {len(node.children)} children, {len(node.parents)} parents")
 
 
 def process_queue_and_collect_nodes(queue: deque[str], root_url: str, global_node_map: dict[str, RecordNode]) -> None:
@@ -370,7 +364,6 @@ def find_top_level_children(xml_root):
 
 # API utilities ----------------------------------
 def fetch_record_as_xml(url):
-    # CTX.log(f"Fetching: {url}")
     headers = {"Authtoken": CTX.get_auth_token(), "Accept": "application/vnd.cora.record+xml"}
     response = requests.get(url, headers=headers)
     response.raise_for_status()
@@ -420,7 +413,7 @@ def collect_validation_types_from_response(response_body: ET.Element) -> list[An
 
 
 def get_search_data() -> bytes:
-    search_dict = {
+    search_data = {
         "name": "validationTypeSearch",
         "children": [
             {
@@ -440,7 +433,13 @@ def get_search_data() -> bytes:
         ]
     }
 
-    return json.dumps(search_dict).encode("utf-8")
+    return json.dumps(search_data).encode("utf-8")
+
+
+# def log_node_map_summary():
+#    CTX.log("\n=== Node map Summary ===")
+#    for url, node in GLOBAL_NODE_MAP.items():
+#        CTX.log(f"{url} → {len(node.children)} children, {len(node.parents)} parents")
 
 
 if __name__ == "__main__":
