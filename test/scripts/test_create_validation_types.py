@@ -220,7 +220,7 @@ def sample_xml():
 @pytest.fixture
 def record_node(sample_xml):
     root = ET.fromstring(sample_xml)
-    return Script.RecordNode("divaTextNewGroup", "validationType", "http://example.com/record/divaTextNewGroup", root)
+    return Script.RecordNode("divaTextNewGroup", "validationType", "http://HOSTURL/record/divaTextNewGroup", root)
 
 
 def create_mock_top_level_child(record_node):
@@ -339,7 +339,7 @@ def test_prepare_and_try_to_save_record(record_node, monkeypatch):
 
     assert record_node.record_id == "divaTextNewGroup"
     assert record_node.record_type == "validationType"
-    assert record_node.url == "http://example.com/record/divaTextNewGroup"
+    assert record_node.url == "http://HOSTURL/record/divaTextNewGroup"
     assert isinstance(record_node.xml_content, ET.Element)
 
 
@@ -673,6 +673,7 @@ def test_create_new_validation_types_for_record_type(monkeypatch, mock_ctx):
     Script.create_new_validation_types_for_record_type()
 
     calls = [call.args[0] for call in mock_ctx.log.mock_calls]
+    assert any("All records fetched: total unique records collected in node map: 2" in msg for msg in calls)
     assert any("=== Script finished ===" in msg for msg in calls)
 
 
