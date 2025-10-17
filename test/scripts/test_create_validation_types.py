@@ -9,6 +9,15 @@ import requests
 import scripts.create_new_validationTypes_for_recordType as Script
 
 
+@pytest.fixture(autouse=True)
+def mock_ctx():
+    Script.CTX = MagicMock()
+    Script.CTX.get_base_url.return_value = "http://baseUrl/"
+    Script.CTX.get_auth_token.return_value = "authToken"
+    yield Script.CTX
+    del Script.CTX
+
+
 class MockResponse:
     def __init__(self, text, status_code=200):
         self.text = text
@@ -20,19 +29,10 @@ class MockResponse:
 
 
 @pytest.fixture(autouse=True)
-def mock_ctx():
-    Script.CTX = MagicMock()
-    Script.CTX.get_base_url.return_value = "http://baseUrl/"
-    Script.CTX.get_auth_token.return_value = "authToken"
-    yield Script.CTX
-    del Script.CTX
-
-
-@pytest.fixture(autouse=True)
-def mock_requests(monkeypatch, sample_xml):
+def mock_requests(monkeypatch, sample_xml, validation_type_search_result_xml):
     def fake_get(url, *args, **kwargs):
         if "validationTypeSearch" in url:
-            return MockResponse(get_validation_type_search_response_as_xml(), 200)
+            return MockResponse(validation_type_search_result_xml, 200)
 
         else:
             return MockResponse(sample_xml, 200)
@@ -42,6 +42,28 @@ def mock_requests(monkeypatch, sample_xml):
 
     monkeypatch.setattr(requests, "get", fake_get)
     monkeypatch.setattr(requests, "post", fake_post)
+
+
+@pytest.fixture
+def validation_type_search_result_xml():
+    return """<?xml version="1.0" encoding="UTF-8"?>
+<recordList>
+    <record>
+    <validationType>
+        <recordInfo>
+            <id>valType1</id>
+            <title>Validation Type 1</title>
+        </recordInfo>
+    </validationType>
+    <validationType>
+        <recordInfo>
+            <id>valType2</id>
+            <title>Validation Type 2</title>
+        </recordInfo>
+    </validationType>
+    </record>
+</recordList>
+"""
 
 
 @pytest.fixture
@@ -592,15 +614,14 @@ def test_get_validation_types_for_record_type():
     assert results == ["valType1", "valType2"]
 
 
-def test_collect_validation_types_from_response(monkeypatch):
-    sample_response_as_xml = ET.fromstring(get_validation_type_search_response_as_xml())
-
-    list_of_types = Script.collect_validation_types_from_response(sample_response_as_xml)
+def test_collect_validation_types_from_response(monkeypatch, validation_type_search_result_xml):
+    validation_type_search_result = ET.fromstring(validation_type_search_result_xml)
+    list_of_types = Script.collect_validation_types_from_response(validation_type_search_result)
     assert list_of_types == ["valType1", "valType2"]
 
 
-def test_collect_validation_types_from_response_with_blacklisted_types(monkeypatch):
-    search_result = ET.fromstring(get_validation_type_search_response_as_xml())
+def test_collect_validation_types_from_response_with_blacklisted_types(monkeypatch, validation_type_search_result_xml):
+    search_result = ET.fromstring(validation_type_search_result_xml)
     for elem in search_result.iter("id"):
         if elem.text == "valType2":
             elem.text = "diva-output"
@@ -692,25 +713,3 @@ def test_main(monkeypatch, mock_ctx):
     Script.main()
 
     assert Script.CTX is mock_ctx
-
-
-def get_validation_type_search_response_as_xml() -> str:
-    sample_response_as_xml = """<?xml version="1.0" encoding="UTF-8"?>
-<recordList>
-    <record>
-    <validationType>
-        <recordInfo>
-            <id>valType1</id>
-            <title>Validation Type 1</title>
-        </recordInfo>
-    </validationType>
-    <validationType>
-        <recordInfo>
-            <id>valType2</id>
-            <title>Validation Type 2</title>
-        </recordInfo>
-    </validationType>
-    </record>
-</recordList>
-"""
-    return sample_response_as_xml

@@ -10,10 +10,22 @@ from cora.context import CoraContext, Context
 
 CTX: Context
 
+# The recordType to process
 RECORD_TYPE = "diva-output"
+
+# Prefix for new validationTypes
 TYPE_PREFIX = "__XYZ_"
+
+# Ignored validation types
 BLACKLIST_TYPES = ["diva-output", "tempContainerOutput"]
 
+# Ignore records with these nameInData values when normalizing
+BLACKLIST_NAME_IN_DATA = ["tsVisibility"]
+
+# Enable extensive logging of process
+EXTENSIVE_LOGGING = False
+
+# Global state
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
 TOTAL_PROCESSED_RECORDS = 0
@@ -62,25 +74,28 @@ def create_new_validation_types_for_record_type():
     validation_types = get_validation_types_for_record_type()
 
     print("\n=== Building node map ===")
+    print("\nFetching records...")
     CTX.log("=== Building node map ===")
+
     root_urls = [CTX.get_base_url() + "validationType/" + string for string in validation_types]
     for root_url in root_urls:
         build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
 
     print(f"\nFetched {len(GLOBAL_NODE_MAP)} records in total.")
     CTX.log(f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
-    # log_node_map_summary()
 
-    print("\n=== Processing node map ===")
+    if EXTENSIVE_LOGGING:
+        log_node_map_summary()
+
+    print("\n=== Processing node map ===\n")
     CTX.log("=== Processing node map ===")
+
     process_node_map_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
 
     CTX.log("=== Script finished ===")
     log_results()
 
-    print(
-        f"\n=== Processing completed. Output logged to {CTX.get_log_file_path()} ==="
-    )
+    print(f"\n=== Processing completed. Output logged to {CTX.get_log_file_path()} ===")
 
 
 def log_results():
@@ -175,6 +190,9 @@ def process_node_map_bottom_up_and_store(global_node_map, global_id_mapping):
         processed.add(child_reference_url)
         update_parent_dependencies(leaf_queue, node, unprocessed_child_map)
 
+        print(f"Records processed: {TOTAL_PROCESSED_RECORDS} - Records created: {TOTAL_UPDATES}", end="\r", flush=True)
+
+    print()
     check_for_unprocessed_nodes(global_node_map, processed)
 
 
@@ -185,6 +203,7 @@ def process_node(global_id_mapping, node):
         TOTAL_PROCESSED_RECORDS += 1
         if process_and_possibly_save(node, global_id_mapping):
             TOTAL_UPDATES += 1
+
     except Exception as e:
         TOTAL_ERRORS.append(f"Error processing {node.record_id}: {e}")
         CTX.log(f"Error processing {node.record_id}: {e}")
@@ -213,13 +232,18 @@ def process_and_possibly_save(node, global_id_mapping):
         return False
 
     updated = False
-    if normalize_regex_patterns(node.xml_content):
-        CTX.log(f"> Normalized regex pattern(s) to '.+' in {old_id}")
+    if update_final_value_of_validation_type(node.xml_content):
+        CTX.log(f"> Updated finalValue in the validationType link in {old_id}")
         updated = True
 
-    if normalize_child_reference_repeat(node.xml_content):
-        CTX.log(f"> Normalized childReference(s) Min Max to '0-X' in {old_id}")
-        updated = True
+    if not blacklisted_name_in_data(node.xml_content):
+        if normalize_regex_patterns(node.xml_content):
+            CTX.log(f"> Normalized regex pattern(s) to '.+' in {old_id}")
+            updated = True
+
+        if normalize_child_reference_repeat(node.xml_content):
+            CTX.log(f"> Normalized childReference(s) Min Max to '0-X' in {old_id}")
+            updated = True
 
     child_renamed = any(c.record_id in global_id_mapping for c in node.children)
 
@@ -271,28 +295,50 @@ def log_creation_summary(node, record_type, record_type_url: str, xml_bytes: byt
 
 
 # XML utilities ----------------------------------
+def record_info_group(xml_content):
+    name_in_data = xml_content.findtext(".//metadata[@type='group']/nameInData")
+    return name_in_data is not None and name_in_data == "recordInfo"
+
+def blacklisted_name_in_data(xml_content):
+    record_id = xml_content.findtext(".//metadata/nameInData")
+    return record_id in BLACKLIST_NAME_IN_DATA
+
+
+def update_final_value_of_validation_type(xml_content):
+    name_in_data = xml_content.findtext(".//metadata[@type='recordLink']/nameInData")
+    if name_in_data == "validationType":
+        final_value = xml_content.find(".//metadata[@type='recordLink']/finalValue")
+        if final_value is not None:
+            current_value = final_value.text or ""
+            final_value.text = TYPE_PREFIX + current_value
+            return True
+    return False
+
+
 def normalize_regex_patterns(xml_root):
     updated = False
-    for tag in ("regex", "regEx", "pattern"):
-        for element in xml_root.findall(f".//{tag}"):
-            if element.text and element.text.strip() not in (None, ".+"):
-                element.text = ".+"
-                updated = True
+    if not record_info_group(xml_root):
+        for tag in ("regex", "regEx", "pattern"):
+            for element in xml_root.findall(f".//{tag}"):
+                if element.text and element.text.strip() not in (None, ".+"):
+                    element.text = ".+"
+                    updated = True
     return updated
 
 
 def normalize_child_reference_repeat(xml_root):
     updated = False
-    for child_reference in xml_root.findall(".//childReferences/childReference"):
-        repeat_min_element = child_reference.find("repeatMin")
-        repeat_max_element = child_reference.find("repeatMax")
+    if not record_info_group(xml_root):
+        for child_reference in xml_root.findall(".//childReferences/childReference"):
+            repeat_min_element = child_reference.find("repeatMin")
+            repeat_max_element = child_reference.find("repeatMax")
 
-        if repeat_min_element is not None and repeat_min_element.text != "0":
-            repeat_min_element.text = "0"
-            updated = True
-        if repeat_max_element is not None and repeat_max_element.text != "X":
-            repeat_max_element.text = "X"
-            updated = True
+            if repeat_min_element is not None and repeat_min_element.text != "0":
+                repeat_min_element.text = "0"
+                updated = True
+            if repeat_max_element is not None and repeat_max_element.text != "X":
+                repeat_max_element.text = "X"
+                updated = True
     return updated
 
 
@@ -328,7 +374,10 @@ def find_child_urls(xml_root):
     urls = []
     for element in xml_root.findall(".//childReferences/childReference/ref/actionLinks/read/url"):
         urls.append((element.text or "").strip())
-    # CTX.log(f"  Found {len(urls)} child URLs: {urls}")
+
+    if EXTENSIVE_LOGGING:
+        CTX.log(f"  Found {len(urls)} child URLs: {urls}")
+
     return urls
 
 
@@ -358,7 +407,10 @@ def find_top_level_children(xml_root):
         if element is not None:
             url = (element.text or "").strip()
             urls.append(url)
-    # CTX.log(f"  Top-level children found ({len(urls)}): {urls}")
+
+    if EXTENSIVE_LOGGING:
+        CTX.log(f"  Top-level children found ({len(urls)}): {urls}")
+
     return urls
 
 
@@ -436,10 +488,10 @@ def get_search_data() -> bytes:
     return json.dumps(search_data).encode("utf-8")
 
 
-# def log_node_map_summary():
-#    CTX.log("\n=== Node map Summary ===")
-#    for url, node in GLOBAL_NODE_MAP.items():
-#        CTX.log(f"{url} → {len(node.children)} children, {len(node.parents)} parents")
+def log_node_map_summary():
+    CTX.log("\n=== Node map Summary ===")
+    for url, node in GLOBAL_NODE_MAP.items():
+        CTX.log(f"{url} → {len(node.children)} children, {len(node.parents)} parents")
 
 
 if __name__ == "__main__":
