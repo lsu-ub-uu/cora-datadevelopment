@@ -63,8 +63,8 @@ def test_create_agent_from_uncontrolled_publisher():
         agent,
         """
         <originInfo>
-            <agent>
-                <namePart repeatId="0">Uppsala Läroverk</namePart>
+            <agent otherType="text" repeatId="0">
+                <namePart>Uppsala Läroverk</namePart>
                 <role>
                     <roleTerm>pbl</roleTerm>
                 </role>
@@ -96,7 +96,6 @@ def test_create_agent_from_controlled_publisher(monkeypatch):
             <publisher>
                 <publishingHouse>
                     <publishingHouseId>{mock_old_id}</publishingHouseId>
-                    <name>Uppsala universitet</name>
                 </publishingHouse>
             </publisher>
         </publication>
@@ -109,8 +108,8 @@ def test_create_agent_from_controlled_publisher(monkeypatch):
         agent,
         f""" 
         <originInfo>
-            <agent>
-                <publisher repeatId="0">
+            <agent otherType="link" repeatId="0">
+                <publisher>
                     <linkedRecordType>diva-publisher</linkedRecordType>
                     <linkedRecordId>{expected_cora_id}</linkedRecordId>
                 </publisher>
