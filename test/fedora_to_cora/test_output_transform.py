@@ -48,6 +48,7 @@ def test_output_transform(requests_mock):
             <visibility>published</visibility>
             <oldId>diva2:1681782</oldId>
         </recordInfo>
+        <dataQuality>2026</dataQuality>
         <genre type="contentType">ref</genre>
         <titleInfo lang="eng">
             <title>Bulletin of the Museum of Far Eastern Antiquities (BMFEA)</title>

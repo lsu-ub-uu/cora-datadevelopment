@@ -76,6 +76,8 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
 
     append_if_value(target_record, create_record_info(source_record))
 
+    ET.SubElement(target_record, "dataQuality").text = "2026"
+
     append_if_value(target_record, create_genre_type_content_type(source_record))
 
     append_if_value(target_record, create_title_info(source_record))
