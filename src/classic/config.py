@@ -1,0 +1,3 @@
+SSH_HOST = "130.238.7.110"
+SSH_PORT = 22
+SSH_USER = "support"

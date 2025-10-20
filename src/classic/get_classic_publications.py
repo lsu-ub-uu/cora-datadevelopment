@@ -18,31 +18,41 @@ This file is part of DiVA Client.
 
 import xml.etree.ElementTree as ET
 import requests
-import urllib3  # type: ignore
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-SSH_HOST = "130.238.7.110"
-SSH_PORT = 22
-SSH_USER = "support"
+from typing import Callable
+from common.threads import run_with_threads
+from common.ssh_tunnel import SSHTunnel
+from classic.config import SSH_HOST, SSH_PORT, SSH_USER
 
 LOCAL_PORT = 8088
-
 REMOTE_HOST = "10.0.2.68"
 REMOTE_PORT = 8088
 
 
-def get_record_by_pid(pid: str) -> ET.Element:
+def get_classic_publications(
+    pids: list[str], workers: int, on_success: Callable, on_error: Callable
+):
+    with SSHTunnel(SSH_HOST, SSH_PORT, SSH_USER, LOCAL_PORT, REMOTE_HOST, REMOTE_PORT):
+        run_with_threads(
+            pids,
+            lambda pid: _get_record_by_pid(pid, on_success, on_error),
+            workers=workers,
+            desc="Importing publications from Classic Fedora",
+        )
+
+
+def _get_record_by_pid(
+    pid: str,
+    on_success: Callable[[str, ET.Element], None],
+    on_error: Callable[[str], None],
+):
     response = requests.get(
         f"http://localhost:{LOCAL_PORT}/fedora/get/{pid}/MODEL_NOREF", verify=False
     )
     response.encoding = response.apparent_encoding
+
     if response.status_code == 200:
-        return ET.fromstring(response.text)
+        on_success(pid, ET.fromstring(response.text))
     else:
-        raise Exception(
+        on_error(
             f"Error fetching record {pid}: {response.status_code} - {response.text}"
         )
-
-
-if __name__ == "__main__":
-    print(ET.tostring(get_record_by_pid("diva2:1681782")))

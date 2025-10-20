@@ -1,10 +1,8 @@
 import xml.etree.ElementTree as ET
-from fabric import Connection
 import requests
+from classic.config import SSH_HOST, SSH_PORT, SSH_USER
+from common.ssh_tunnel import SSHTunnel
 
-SSH_HOST = "130.238.7.110"
-SSH_PORT = 22
-SSH_USER = "support"
 
 LOCAL_PORT = 8080
 
@@ -27,21 +25,19 @@ def download_attachments(fedora_publication: ET.Element) -> None:
         if filename:
             filenames.append(filename)
 
-    # With SSH tunnel
-    with Connection(host=SSH_HOST, port=SSH_PORT, user=SSH_USER) as connection:
-        with connection.forward_local(LOCAL_PORT, REMOTE_HOST, REMOTE_PORT):
-            for filename in filenames:
-                print(f"Downloading {filename} from {pid}")
-                url = f"http://localhost:{LOCAL_PORT}/fedora/get/{pid}/{filename}"
-                print(f"URL: {url}")
-                response = requests.get(url, stream=True)
-                total = int(response.headers.get("content-length", 0))
-                downloaded = 0
-                for data in response.iter_content(chunk_size=4096):
-                    downloaded += len(data)
-                    print(f"Downloaded {downloaded} of {total} bytes", end="\r")
-                response.raise_for_status()
-                print(response.text)
+    with SSHTunnel(SSH_HOST, SSH_PORT, SSH_USER, LOCAL_PORT, REMOTE_HOST, REMOTE_PORT):
+        for filename in filenames:
+            print(f"Downloading {filename} from {pid}")
+            url = f"http://localhost:{LOCAL_PORT}/fedora/get/{pid}/{filename}"
+            print(f"URL: {url}")
+            response = requests.get(url, stream=True)
+            total = int(response.headers.get("content-length", 0))
+            downloaded = 0
+            for data in response.iter_content(chunk_size=4096):
+                downloaded += len(data)
+                print(f"Downloaded {downloaded} of {total} bytes", end="\r")
+            response.raise_for_status()
+            print(response.text)
 
 
 if __name__ == "__main__":

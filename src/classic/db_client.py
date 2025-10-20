@@ -2,16 +2,13 @@ from fabric import Connection
 import psycopg2
 import xml.etree.ElementTree as ET
 from typing import Optional
+from classic.config import SSH_HOST, SSH_PORT, SSH_USER
+from common.ssh_tunnel import SSHTunnel
 
-SSH_HOST = "130.238.7.110"
-SSH_PORT = 22
-SSH_USER = "support"
 
 LOCAL_PORT = 5432
-
 REMOTE_HOST = "diva-storage1"
 REMOTE_PORT = 5432
-
 DB_NAME = "auradb"
 
 
@@ -22,12 +19,7 @@ def execute_sql(
     db_user: str,
     db_password: str
 ) -> ET.Element:
-    with Connection(host=SSH_HOST, port=SSH_PORT, user=SSH_USER).forward_local(
-        local_port=LOCAL_PORT,
-        remote_port=REMOTE_PORT,
-        remote_host=REMOTE_HOST,
-        local_host="localhost",
-    ):
+    with SSHTunnel(SSH_HOST, SSH_PORT, SSH_USER, LOCAL_PORT, REMOTE_HOST, REMOTE_PORT):
         with psycopg2.connect(
             dbname=DB_NAME,
             user=db_user,

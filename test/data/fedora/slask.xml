@@ -1,0 +1,146 @@
+<output>
+    <recordInfo>
+        <validationType>
+            <linkedRecordType>validationType</linkedRecordType>
+            <linkedRecordId>publication_edited-book</linkedRecordId>
+        </validationType>
+        <dataDivider>
+            <linkedRecordType>system</linkedRecordType>
+            <linkedRecordId>divaData</linkedRecordId>
+        </dataDivider>
+        <permissionUnit>
+            <linkedRecordType>permissionUnit</linkedRecordType>
+            <linkedRecordId>varldskulturmuseerna</linkedRecordId>
+        </permissionUnit>
+        <visibility>published</visibility>
+        <oldId>diva2:1681782</oldId>
+    </recordInfo>
+    <genre type="contentType">ref</genre>
+    <titleInfo lang="eng">
+        <title>Bulletin of the Museum of Far Eastern Antiquities (BMFEA)</title>
+    </titleInfo>
+    <subject lang="eng" repeatId="0">
+        <topic>Sinologi, Arkeologi</topic>
+    </subject>
+    <originInfo>
+        <dateIssued>
+            <year>2023</year>
+        </dateIssued>
+        <agent otherType="text" repeatId="0">
+            <namePart>Uppsala Läroverk</namePart>
+            <role>
+                <roleTerm>pbl</roleTerm>
+            </role>
+        </agent>
+        <place repeatId="0">
+            <placeTerm>Stockholm</placeTerm>
+        </place>
+        <edition>3</edition>
+    </originInfo>
+    <extent>208</extent>
+    <classification authority="ssif" repeatId="0">30224</classification>
+    <classification authority="ssif" repeatId="1">60301</classification>
+    <subject authority="diva">
+        <topic repeatId="0">
+            <linkedRecordType>diva-subject</linkedRecordType>
+            <linkedRecordId>{subject_id}</linkedRecordId>
+        </topic>
+    </subject>
+    <genre type="outputType">publication_edited-book</genre>
+    <language repeatId="0">
+        <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
+    </language>
+    <artisticWork type="outputType">false</artisticWork>
+    <name repeatId="0" type="personal">
+        <namePart type="family">Östasiatiska museet</namePart>
+        <namePart type="given">Östasiatiska museet</namePart>
+        <role>
+            <roleTerm repeatId="0">edt</roleTerm>
+        </role>
+        <affiliation otherType="link" repeatId="0">
+            <organisation>
+                <linkedRecordType>diva-organisation</linkedRecordType>
+                <linkedRecordId>{affiliation_organisation_id}</linkedRecordId>
+            </organisation>
+        </affiliation>
+    </name>
+    <note type="creatorCount">1</note>
+    <abstract lang="swe" repeatId="0">
+        Lorem ipsum dolor sit amet
+    </abstract>
+    <adminInfo>
+        <note type="internal">This is an internal note.</note>
+        <reviewed>false</reviewed>
+    </adminInfo>
+    <subject authority="sdg">
+        <topic repeatId="0">sdg1</topic>
+    </subject>
+    <identifier displayLabel="print" repeatId="0" type="isbn">978-91-506-2649-0</identifier>
+    <identifier displayLabel="online" repeatId="1" type="isbn">978-92-893-7379-1</identifier>
+    <identifier displayLabel="undefined" repeatId="2" type="isbn">978-92-893-7380-7</identifier>
+    <identifier type="isrn">ISRN.01</identifier>
+    <identifier type="archiveNumber">Arkivnummer.01</identifier>
+    <identifier type="localId">LocalId.01</identifier>
+    <identifier type="pmid">pmid123</identifier>
+    <identifier type="wos">ISI.01</identifier>
+    <identifier type="scopus">Scopus.01</identifier>
+    <identifier type="patentNumber">Patentnummer01</identifier>
+    <location repeatId="0">
+        <url>http://example.com</url>
+        <displayLabel>BMFEA vol 1-75</displayLabel>
+    </location>
+    <note type="external">This is an external note.</note>
+    <relatedItem type="series" otherType="link" repeatId="controlled0">
+        <series>
+            <linkedRecordType>diva-series</linkedRecordType>
+            <linkedRecordId>{series_id}</linkedRecordId>
+        </series>
+    </relatedItem>
+    <studentDegree repeatId="0">
+        <degreeLevel>H2</degreeLevel>Z>
+        <universityPoints>20</universityPoints>
+    </studentDegree>...
+    <externalCollaboration>
+        <namePart repeatId="0">En extern partner</namePart>
+        <namePart repeatId="1">Ytterligare extern partner</namePart>
+    </externalCollaboration>
+    <academicSemester>
+        <year>2022</year>
+        <academicSemester>ht</academicSemester>
+    </academicSemester>
+    <externalCollaboration>
+        <namePart repeatId="0">
+            En extern partner
+        </namePart>
+        <namePart repeatId="1">
+            Ytterligare extern partner
+        </namePart>
+    </externalCollaboration>
+    <studentDegree repeatId="0">
+        <degreeLevel>H2</degreeLevel>
+        <universityPoints>20</universityPoints>
+    </studentDegree>
+    <relatedItem type="journal" otherType="text">
+        <titleInfo>
+            <title>Design, Automation and Test in Europe</title>
+            <subtitle>Journal of Testing</subtitle>
+        </titleInfo>
+        <identifier type="issn" displayLabel="pissn">
+            1530-1591
+        </identifier>
+        <identifier type="issn" displayLabel="eissn">
+            1558-1101
+        </identifier>
+    </relatedItem>
+    <relatedItem type="project" otherType="text" repeatId="uncontrolled0">
+        <titleInfo>
+            <title>Ett annat projekt</title>
+        </titleInfo>
+    </relatedItem>
+    <relatedItem type="project" otherType="text" repeatId="uncontrolled1">
+        <titleInfo>
+            <title>Ytterligare ett annat projekt</title>
+        </titleInfo>
+    </relatedItem>
+    <typeOfResource>stillImage</typeOfResource>
+</output>

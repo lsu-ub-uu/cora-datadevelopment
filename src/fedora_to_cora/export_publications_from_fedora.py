@@ -1,20 +1,15 @@
 from datetime import datetime
 from common.run_rotating_logger import RunRotatingLogger
-from common.threads import run_with_threads
-from cora.context import Context
 import xml.etree.ElementTree as ET
 from classic.get_pids_for_domain import get_pids_for_domain
-from classic.get_record_by_pid import get_record_by_pid
+from classic.get_classic_publications import get_classic_publications
 from common.xml_utils import save_to_file
-from common.threads import run_with_threads
 
 
 def export_publications_from_fedora(domain: str, workers=16):
     time_started = _get_now()
     dirname = f"data/fedora_xml/{domain}/{time_started.isoformat()}"
-    logger = RunRotatingLogger(
-        "data", f"logs/import_publications_from_fedora.log"
-    ).get()
+    logger = RunRotatingLogger("data", f"logs/outputs_export.log").get()
 
     logger.info("==== Begin importing publications from Fedora ====")
     logger.info(f"==== domain={domain} ====")
@@ -23,23 +18,19 @@ def export_publications_from_fedora(domain: str, workers=16):
     pids = get_pids_for_domain(domain)
     logger.info(f"Found {len(pids)} publications in domain {domain}")
 
-    def import_publication(pid: str) -> None:
+    def handle_record_import_success(pid, record: ET.Element):
         try:
-            publication = get_record_by_pid(pid)
-            save_to_file(
-                publication,
-                f"{dirname}/{pid}.xml",
-            )
+            save_to_file(record, f"{dirname}/{pid}.xml")
             logger.info(f"Successfully imported publication {pid}")
-            # download_attachments(publication, domain)
         except Exception as e:
-            logger.error(f"Failed to import publication {pid}: {e}")
+            logger.error(f"Failed to save publication {pid} to file: {str(e)}")
+            return
 
-    run_with_threads(
+    get_classic_publications(
         pids,
-        import_publication,
-        workers=workers,
-        desc="Importing publications from Fedora",
+        workers,
+        on_success=handle_record_import_success,
+        on_error=lambda error: logger.error(f"Failed to import publication {error}"),
     )
 
     logger.info(f"--- Successfully imported {len(pids)} publications to {dirname} ---")

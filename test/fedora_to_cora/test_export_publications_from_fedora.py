@@ -10,7 +10,19 @@ from fedora_to_cora.export_publications_from_fedora import (
 def test_export_publications_from_fedora(monkeypatch):
     logger_mock = _set_up_logger_mock(monkeypatch)
     get_pids_for_domain_mock = _set_up_get_pids_mock(monkeypatch)
-    get_record_by_pid_mock, mock_publication = _set_up_get_record_mock(monkeypatch)
+
+    mock_publication = ET.Element("publication")
+    get_classic_publications_mock = MagicMock()
+    get_classic_publications_mock.side_effect = (
+        lambda pids, workers, on_success, on_error: [
+            on_success(pid, mock_publication) for pid in pids
+        ]
+    )
+    monkeypatch.setattr(
+        "fedora_to_cora.export_publications_from_fedora.get_classic_publications",
+        get_classic_publications_mock,
+    )
+
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
     monkeypatch.setattr(
         "fedora_to_cora.export_publications_from_fedora._get_now",
@@ -21,9 +33,9 @@ def test_export_publications_from_fedora(monkeypatch):
 
     assert get_pids_for_domain_mock.call_count == 1
 
-    assert call("123") in get_record_by_pid_mock.mock_calls
-    assert call("456") in get_record_by_pid_mock.mock_calls
-    assert call("789") in get_record_by_pid_mock.mock_calls
+    assert get_classic_publications_mock.call_count == 1
+    assert get_classic_publications_mock.call_args[0][0] == ["123", "456", "789"]
+    assert get_classic_publications_mock.call_args[0][1] == 16  # workers
 
     assert (
         call(
@@ -53,24 +65,26 @@ def test_export_publications_from_fedora(monkeypatch):
 
 
 def test_get_pids_failed(monkeypatch):
+    _set_up_logger_mock(monkeypatch)
     get_pids_for_domain_mock = _set_up_get_pids_mock(monkeypatch)
     get_pids_for_domain_mock.side_effect = Exception("Failed to get PIDs")
-    get_record_by_pid_mock, _ = _set_up_get_record_mock(monkeypatch)
+    get_classic_publications_mock, _ = _set_up_get_classic_publications_mock(
+        monkeypatch
+    )
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
 
     with pytest.raises(Exception, match="Failed to get PIDs"):
         export_publications_from_fedora("varldskulturmuseerna")
 
     assert get_pids_for_domain_mock.call_count == 1
-    assert get_record_by_pid_mock.call_count == 0
+    assert get_classic_publications_mock.call_count == 0
     assert save_to_file_mock.call_count == 0
 
 
-def test_get_record_failed(monkeypatch):
+def test_get_classic_publications_failed(monkeypatch):
+    _set_up_logger_mock(monkeypatch)
     get_pids_for_domain_mock = _set_up_get_pids_mock(monkeypatch)
-    get_record_by_pid_mock, _ = _set_up_get_record_mock(monkeypatch)
-    get_record_by_pid_mock.side_effect = (Exception("Failed to get publication"),)
-
+    _set_up_get_classic_publications_mock(monkeypatch, error=True)
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
 
     export_publications_from_fedora("varldskulturmuseerna")
@@ -80,12 +94,14 @@ def test_get_record_failed(monkeypatch):
 
 
 def test_save_to_file_failed(monkeypatch):
+    _set_up_logger_mock(monkeypatch)
     _set_up_get_pids_mock(monkeypatch)
-    _set_up_get_record_mock(monkeypatch)
+    _set_up_get_classic_publications_mock(monkeypatch)
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
     save_to_file_mock.side_effect = (Exception("Failed to save file"),)
 
     export_publications_from_fedora("varldskulturmuseerna")
+    # Nothing happens
 
 
 def _set_up_get_pids_mock(monkeypatch):
@@ -97,14 +113,24 @@ def _set_up_get_pids_mock(monkeypatch):
     return get_pids_for_domain_mock
 
 
-def _set_up_get_record_mock(monkeypatch):
+def _set_up_get_classic_publications_mock(monkeypatch, error=False):
     mock_publication = ET.Element("publication")
-    get_record_by_pid_mock = MagicMock(return_value=mock_publication)
-    monkeypatch.setattr(
-        "fedora_to_cora.export_publications_from_fedora.get_record_by_pid",
-        get_record_by_pid_mock,
+    get_classic_publications_mock = MagicMock()
+    get_classic_publications_mock.side_effect = (
+        lambda pids, workers, on_success, on_error: [
+            (
+                on_error(f"Failed to get publication {pid}")
+                if error
+                else on_success(pid, mock_publication)
+            )
+            for pid in pids
+        ]
     )
-    return get_record_by_pid_mock, mock_publication
+    monkeypatch.setattr(
+        "fedora_to_cora.export_publications_from_fedora.get_classic_publications",
+        get_classic_publications_mock,
+    )
+    return get_classic_publications_mock, mock_publication
 
 
 def _set_up_save_to_file_mock(monkeypatch):
