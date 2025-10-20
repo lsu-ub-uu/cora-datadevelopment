@@ -45,7 +45,9 @@ def _create_controlled_project_link(
         pid, record_type="diva-project", context=context
     )
 
-    related_item = ET.Element("relatedItem", type="project", repeatId=repeat_id)
+    related_item = ET.Element(
+        "relatedItem", type="project", otherType="link", repeatId=repeat_id
+    )
     related_item.append(
         create_record_link_using_name_type_id(
             name_in_data="project",
@@ -72,7 +74,9 @@ def _create_uncontrolled_project(project_xml: ET.Element, repeat_id: str) -> ET.
     """
     Create a relatedItem element of type project with an uncontrolled project link.
     """
-    related_item = ET.Element("relatedItem", type="project", repeatId=repeat_id)
+    related_item = ET.Element(
+        "relatedItem", type="project", otherType="text", repeatId=repeat_id
+    )
 
     append_if_value(
         related_item,

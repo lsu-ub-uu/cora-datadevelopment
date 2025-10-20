@@ -45,7 +45,7 @@ def test_create_controlled_project_link(monkeypatch):
     assert_equal_for_xml_and_xml_string(
         project_item[0],
         f"""
-        <relatedItem type="project" repeatId="controlled0">
+        <relatedItem type="project" otherType="link" repeatId="controlled0">
             <project>
                 <linkedRecordType>diva-project</linkedRecordType>
                 <linkedRecordId>{project_cora_id_1}</linkedRecordId>
@@ -56,7 +56,7 @@ def test_create_controlled_project_link(monkeypatch):
     assert_equal_for_xml_and_xml_string(
         project_item[1],
         f"""
-        <relatedItem type="project" repeatId="controlled1">
+        <relatedItem type="project" otherType="link" repeatId="controlled1">
             <project>
                 <linkedRecordType>diva-project</linkedRecordType>
                 <linkedRecordId>{project_cora_id_2}</linkedRecordId>
@@ -87,7 +87,7 @@ def test_create_uncontrolled_project():
     assert_equal_for_xml_and_xml_string(
         project[0],
         """
-        <relatedItem type="project" repeatId="uncontrolled0">
+        <relatedItem type="project" otherType="text" repeatId="uncontrolled0">
             <titleInfo>
                 <title>Ett annat projekt</title>
             </titleInfo>
@@ -97,7 +97,7 @@ def test_create_uncontrolled_project():
     assert_equal_for_xml_and_xml_string(
         project[1],
         """
-        <relatedItem type="project" repeatId="uncontrolled1">
+        <relatedItem type="project" otherType="text" repeatId="uncontrolled1">
             <titleInfo>
                 <title>Ytterligare ett annat projekt</title>
             </titleInfo>
