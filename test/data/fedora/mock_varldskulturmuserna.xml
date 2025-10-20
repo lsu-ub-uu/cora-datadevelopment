@@ -226,6 +226,24 @@
   <isi>ISI.01</isi>
   <pmid>pmid123</pmid>
   <patentNumber>Patentnummer01</patentNumber>
+  <examiners>
+    <person>
+      <firstName>Erik</firstName>
+      <lastName>Examinator</lastName>
+    </person>
+  </examiners>
+  <supervisors>
+    <person>
+      <firstName>Helge</firstName>
+      <lastName>Handledare</lastName>
+    </person>
+  </supervisors>
+  <opponents>
+    <person>
+      <firstName>Olivia</firstName>
+      <lastName>Opponent</lastName>
+    </person>
+  </opponents>
   <scopusId>Scopus.01</scopusId>
   <nbn>urn:nbn:se:varldskulturmuseerna:diva-6</nbn>
   <oai>
@@ -712,36 +730,23 @@
           <street>Slottet</street>
           <city>Uppsala</city>
       </room>
-      <grantingInstitution>
-          <organisationName>
-              <name>Uppsala universitet</name>
-          </organisationName>
-          <organisationAddress>
-              <addressId>1956</addressId>
-              <postnumber>75105</postnumber>
-              <city>Uppsala</city>
-              <country>
-                  <countryCode>se</countryCode>
-              </country>
-          </organisationAddress>
-      </grantingInstitution>
+      <externalGrantingInstitution>
+          Uppsala universitet
+      </externalGrantingInstitution>
   </defence>
   <academicTerm>
       <year>2022</year>
       <term>HT</term>
   </academicTerm>
-  <journal>
-    <journalTitle>
-        <titleId>1082</titleId>
-        <mainTitle>Design, Automation and Test in Europe</mainTitle>
-        <subTitle>Journal of Testing</subTitle>
-        <locale>und</locale>
-    </journalTitle>
+  <uncontrolledJournal>
+    <journalNameUncontrolled>
+      Design, Automation and Test in Europe
+    </journalNameUncontrolled>
     <openAccess>false</openAccess>
     <printedIssn>1530-1591</printedIssn>
     <electronicIssn>1558-1101</electronicIssn>
     <openAccess>false</openAccess>
-  </journal>
+  </uncontrolledJournal>
   <identifiers>
     <entry>
         <publicationIdentifierType>doi</publicationIdentifierType>

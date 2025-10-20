@@ -1,0 +1,585 @@
+<?xml version='1.0' encoding='utf-8'?>
+<publication>
+  <contentType>
+    <contentTypeId>51</contentTypeId>
+    <contentTypeCode>science</contentTypeCode>
+    <contentTypeNames>
+      <contentTypeName>
+        <contentTypeNameId>107</contentTypeNameId>
+        <locale>no</locale>
+        <contentTypeName>Annet vitenskapelig</contentTypeName>
+      </contentTypeName>
+      <contentTypeName>
+        <contentTypeNameId>103</contentTypeNameId>
+        <locale>sv</locale>
+        <contentTypeName>Övrigt vetenskapligt</contentTypeName>
+      </contentTypeName>
+      <contentTypeName>
+        <contentTypeNameId>102</contentTypeNameId>
+        <locale>en</locale>
+        <contentTypeName>Other academic</contentTypeName>
+      </contentTypeName>
+    </contentTypeNames>
+    <sortOrder>2</sortOrder>
+  </contentType>
+  <publicationType>
+    <publicationTypeId>58</publicationTypeId>
+    <publicationTypeCode>chapter</publicationTypeCode>
+    <openUrlType>bookitem</openUrlType>
+    <publicationTypeNames>
+      <publicationTypeName>
+        <publicationTypeNameId>217</publicationTypeNameId>
+        <locale>en</locale>
+        <publicationTypeName>Chapter in book</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>216</publicationTypeNameId>
+        <locale>sv</locale>
+        <publicationTypeName>Kapitel i bok, del av antologi</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>242</publicationTypeNameId>
+        <locale>no</locale>
+        <publicationTypeName>Kapittel i bok, del av antologi</publicationTypeName>
+      </publicationTypeName>
+    </publicationTypeNames>
+    <roles />
+    <comprehensiveSummary>false</comprehensiveSummary>
+    <domainAdminOnly>false</domainAdminOnly>
+  </publicationType>
+  <pid>diva2:1365846</pid>
+  <administrativeInfo>
+    <domain>nordiskamuseet</domain>
+    <creatorInfo>
+      <userId>mathilda.angkvist@nordiskamuseet.se</userId>
+      <ip>193.10.45.2</ip>
+      <name>Mathilda Ängkvist</name>
+      <date>2019-10-25T15:53:04.462+02:00</date>
+      <userType>ADMIN</userType>
+      <userAction>CREATED</userAction>
+    </creatorInfo>
+    <updaters>
+      <userInformation>
+        <userId>mathilda.angkvist@nordiskamuseet.se</userId>
+        <ip>193.10.45.2</ip>
+        <name>Mathilda Ängkvist</name>
+        <date>2019-10-25T15:53:04.379+02:00</date>
+        <userType>ADMIN</userType>
+        <userAction>AUTOPUBLISHED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>mathilda.angkvist@nordiskamuseet.se</userId>
+        <ip>193.10.45.2</ip>
+        <name>Mathilda Ängkvist</name>
+        <date>2019-10-28T14:59:19.803+01:00</date>
+        <userType>ADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>system</userId>
+        <ip>130.238.171.117</ip>
+        <name>System</name>
+        <date>2025-01-31T23:39:48.463+01:00</date>
+        <userType>SERVICE</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>system</userId>
+        <ip>130.238.171.117</ip>
+        <name>System</name>
+        <date>2025-02-07T17:44:12.954+01:00</date>
+        <userType>SERVICE</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>system</userId>
+        <ip>130.238.171.117</ip>
+        <name>System</name>
+        <date>2025-06-12T18:25:20.624+02:00</date>
+        <userType>SERVICE</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+    </updaters>
+    <createdDate>2019-10-25T15:53:04.462+02:00</createdDate>
+    <updatedDate>2025-06-12T18:25:20.624+02:00</updatedDate>
+  </administrativeInfo>
+  <publicationDate>2019-10-25T15:53:00.000+02:00</publicationDate>
+  <authors>
+    <person>
+      <firstName>Cecilia</firstName>
+      <lastName>Hammarlund-Larsson</lastName>
+      <organisations>
+        <organisation>
+          <organisationId>877150</organisationId>
+          <organisationType>
+            <organisationTypeId>62</organisationTypeId>
+            <organisationTypeCode>museum</organisationTypeCode>
+            <organisationTypeNames>
+              <organisationTypeName>
+                <organisationTypeNameId>1927</organisationTypeNameId>
+                <locale>en</locale>
+                <organisationTypeName>Museum</organisationTypeName>
+              </organisationTypeName>
+              <organisationTypeName>
+                <organisationTypeNameId>1926</organisationTypeNameId>
+                <locale>sv</locale>
+                <organisationTypeName>Museum</organisationTypeName>
+              </organisationTypeName>
+            </organisationTypeNames>
+          </organisationType>
+          <organisationName>
+            <name>Nordiska museet</name>
+            <locale>sv</locale>
+          </organisationName>
+          <organisationHomepage>http://www.nordiskamuseet.se/</organisationHomepage>
+          <domain>nordiskamuseet</domain>
+          <organisationNumber>802002-4686</organisationNumber>
+          <organisationAlternativeNames>
+            <organisationName>
+              <organisationNameId>64350</organisationNameId>
+              <locale>en</locale>
+              <organisationName>The Nordic Museum</organisationName>
+            </organisationName>
+          </organisationAlternativeNames>
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <controlled>true</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>true</showInPortal>
+          <showInDefence>true</showInDefence>
+          <topLevel>true</topLevel>
+        </organisation>
+      </organisations>
+      <birthYear>1954</birthYear>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+  </authors>
+  <originalPublicationTitle>
+    <title>När två var ett</title>
+    <subTitle>Skansen och Nordiska museet</subTitle>
+    <language>
+      <languageCode3>swe</languageCode3>
+      <languageCode2>sv</languageCode2>
+      <languageNames>
+        <languageName>
+          <languageNameId>1723</languageNameId>
+          <locale>sv</locale>
+          <languageName>Svenska</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>10261</languageNameId>
+          <locale>no</locale>
+          <languageName>svensk</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>1722</languageNameId>
+          <locale>en</locale>
+          <languageName>Swedish</languageName>
+        </languageName>
+      </languageNames>
+      <showsOnList>true</showsOnList>
+    </language>
+  </originalPublicationTitle>
+  <seriesInfos>
+    <seriesInfo>
+      <series>
+        <seriesId>15700</seriesId>
+        <seriesTitle>
+          <titleId>57300</titleId>
+          <mainTitle>Fataburen</mainTitle>
+          <subTitle>Nordiska museets och Skansens årsbok</subTitle>
+          <locale>sv</locale>
+        </seriesTitle>
+        <seriesAlternativeTitles />
+        <issn>0348-971X</issn>
+        <subjects />
+        <relationships />
+        <domain>nordiskamuseet</domain>
+        <controlled>true</controlled>
+      </series>
+      <numberInSeries>2016</numberInSeries>
+    </seriesInfo>
+  </seriesInfos>
+  <bookTitle>
+    <title>Skansen 125</title>
+    <subTitle />
+  </bookTitle>
+  <dateIssued>2016</dateIssued>
+  <startPage>122</startPage>
+  <endPage>143</endPage>
+  <publisher>
+    <city>Stockholm</city>
+    <publisherName />
+    <publishingHouse>
+      <publishingHouseId>1999</publishingHouseId>
+      <nordicListId>22944</nordicListId>
+      <fridaLevel>
+        <fridaLevelId>52</fridaLevelId>
+        <fridaLevelCode>0</fridaLevelCode>
+        <fridaLevelNames>
+          <fridaLevelName>
+            <fridaLevelNameId>10005</fridaLevelNameId>
+            <locale>sv</locale>
+            <fridaLevelName>Övriga</fridaLevelName>
+          </fridaLevelName>
+          <fridaLevelName>
+            <fridaLevelNameId>10004</fridaLevelNameId>
+            <locale>en</locale>
+            <fridaLevelName>Other</fridaLevelName>
+          </fridaLevelName>
+        </fridaLevelNames>
+      </fridaLevel>
+      <name>Nordiska museets förlag</name>
+      <externalId>22944</externalId>
+    </publishingHouse>
+  </publisher>
+  <localId>96f315ed-b5cc-460e-897d-0f1dbad359af</localId>
+  <nbn>urn:nbn:se:nordiskamuseet:diva-2126</nbn>
+  <oai>oai:DiVA.org:nordiskamuseet-2126</oai>
+  <identifiers />
+  <categories />
+  <nationalCategories>
+    <subject>
+      <subjectId>11799</subjectId>
+      <subjectType>
+        <subjectTypeId>57</subjectTypeId>
+        <subjectTypeCode>hsv</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3722</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>HSV categories</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3721</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3723</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>28749</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Other Humanities</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>28748</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Annan humaniora och konst</subjectName>
+        </subjectName>
+      </subjectNames>
+      <subjectCode>605</subjectCode>
+      <parents>
+        <subject>
+          <subjectId>11772</subjectId>
+          <subjectType>
+            <subjectTypeId>57</subjectTypeId>
+            <subjectTypeCode>hsv</subjectTypeCode>
+            <subjectTypeNames>
+              <subjectTypeName>
+                <subjectTypeNameId>3722</subjectTypeNameId>
+                <locale>en</locale>
+                <subjectTypeName>HSV categories</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3721</subjectTypeNameId>
+                <locale>sv</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3723</subjectTypeNameId>
+                <locale>no</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+            </subjectTypeNames>
+          </subjectType>
+          <subjectNames>
+            <subjectName>
+              <subjectNameId>28695</subjectNameId>
+              <locale>en</locale>
+              <subjectName>Humanities and the Arts</subjectName>
+            </subjectName>
+            <subjectName>
+              <subjectNameId>28694</subjectNameId>
+              <locale>sv</locale>
+              <subjectName>Humaniora och konst</subjectName>
+            </subjectName>
+          </subjectNames>
+          <subjectCode>6</subjectCode>
+          <parents />
+          <predecessors />
+          <domain>diva</domain>
+          <notEligible>false</notEligible>
+          <organisations />
+        </subject>
+      </parents>
+      <predecessors />
+      <domain>diva</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+  </nationalCategories>
+  <researchSubjects>
+    <subject>
+      <subjectId>31850</subjectId>
+      <subjectType>
+        <subjectTypeId>53</subjectTypeId>
+        <subjectTypeCode>researchSubject</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3709</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>Forskningsämne</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3711</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3710</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>71100</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Skansen</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>71101</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Skansen</subjectName>
+        </subjectName>
+      </subjectNames>
+      <parents />
+      <predecessors />
+      <domain>nordiskamuseet</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+    <subject>
+      <subjectId>30200</subjectId>
+      <subjectType>
+        <subjectTypeId>53</subjectTypeId>
+        <subjectTypeCode>researchSubject</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3709</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>Forskningsämne</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3711</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3710</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>67550</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Nordiska museet: Historia</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>67551</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Nordiska museet: Historia</subjectName>
+        </subjectName>
+      </subjectNames>
+      <parents />
+      <predecessors />
+      <domain>nordiskamuseet</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+  </researchSubjects>
+  <keyWords class="hashtable">
+    <entry>
+      <language>
+        <languageCode3>swe</languageCode3>
+        <languageCode2>sv</languageCode2>
+        <languageNames>
+          <languageName>
+            <languageNameId>1723</languageNameId>
+            <locale>sv</locale>
+            <languageName>Svenska</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>10261</languageNameId>
+            <locale>no</locale>
+            <languageName>svensk</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1722</languageNameId>
+            <locale>en</locale>
+            <languageName>Swedish</languageName>
+          </languageName>
+        </languageNames>
+        <showsOnList>true</showsOnList>
+      </language>
+      <list>
+        <string>Skansen</string>
+        <string>Nordiska museet</string>
+      </list>
+    </entry>
+  </keyWords>
+  <note />
+  <internalNote />
+  <attachments class="tree-set">
+    <no-comparator />
+    <attachment>
+      <mimeType>
+        <mimeTypeId>50</mimeTypeId>
+        <mimeTypeName>application/pdf</mimeTypeName>
+        <fileSuffix>pdf</fileSuffix>
+        <datasetOnly>false</datasetOnly>
+      </mimeType>
+      <fileLabel>
+        <fileLabelId>50</fileLabelId>
+        <fileLabelCode>fulltext</fileLabelCode>
+        <fileLabelNames>
+          <fileLabelName>
+            <fileLabelNameId>3674</fileLabelNameId>
+            <locale>no</locale>
+            <fileLabelName>fulltekst</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3651</fileLabelNameId>
+            <locale>sv</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3650</fileLabelNameId>
+            <locale>en</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+        </fileLabelNames>
+      </fileLabel>
+      <fileName>FULLTEXT01</fileName>
+      <fileSize>18140170</fileSize>
+      <selectedFileName>När två var ett</selectedFileName>
+      <path>2429fb864011cb434aafaf0a69cc/nar_tva_var_ett.pdf</path>
+      <checksums>
+        <checksum>
+          <type>SHA512</type>
+          <digest>916406572ab1c61b92b7c9ecf98cb8bd9cabb5ba0cb5dff26c4b157b79780ed4480e7fac50461f1e0f76bdce8d86fdf93a93dd48c6b8f810fcd552d853476ed7</digest>
+        </checksum>
+      </checksums>
+      <order>1</order>
+      <uploadDate>2019-10-25T15:53:05.556+02:00</uploadDate>
+      <asyncUpload>false</asyncUpload>
+      <availableFrom>2019-10-25T15:53:04.517+02:00</availableFrom>
+      <onHold>false</onHold>
+      <deleted>false</deleted>
+      <prePrint>false</prePrint>
+      <postPrint>false</postPrint>
+      <print>true</print>
+      <archiveOnly>false</archiveOnly>
+      <printOnDemand>false</printOnDemand>
+      <toBePublished>false</toBePublished>
+      <toBeArchived>false</toBeArchived>
+      <digitized>true</digitized>
+      <hasCoverPage>false</hasCoverPage>
+      <coverPageConditions />
+    </attachment>
+    <attachment>
+      <mimeType>
+        <mimeTypeId>57</mimeTypeId>
+        <mimeTypeName>image/jpeg</mimeTypeName>
+        <fileSuffix>jpg</fileSuffix>
+        <datasetOnly>false</datasetOnly>
+      </mimeType>
+      <fileLabel>
+        <fileLabelId>64</fileLabelId>
+        <fileLabelCode>preview</fileLabelCode>
+        <fileLabelNames>
+          <fileLabelName>
+            <fileLabelNameId>3693</fileLabelNameId>
+            <locale>no</locale>
+            <fileLabelName>forhåndsvisningsbilde</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3691</fileLabelNameId>
+            <locale>sv</locale>
+            <fileLabelName>presentationsbild</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3692</fileLabelNameId>
+            <locale>en</locale>
+            <fileLabelName>preview image</fileLabelName>
+          </fileLabelName>
+        </fileLabelNames>
+      </fileLabel>
+      <fileName>PREVIEW01</fileName>
+      <fileSize>7598310</fileSize>
+      <selectedFileName>presentationsbild</selectedFileName>
+      <path>2429fb864011cb434aafaf0a69cc/omslag2016.jpg</path>
+      <checksums>
+        <checksum>
+          <type>SHA512</type>
+          <digest>24079a94db0aad515ea3008d0ec7d430d82098fbcf65b5dfdea26b8b4ad27ca020a73090aff935aa89a41073299b124adde31d1c24d16fc522671f54522d45d4</digest>
+        </checksum>
+      </checksums>
+      <order>2</order>
+      <uploadDate>2019-10-25T15:53:06.052+02:00</uploadDate>
+      <asyncUpload>false</asyncUpload>
+      <availableFrom>2019-10-25T15:53:04.517+02:00</availableFrom>
+      <onHold>false</onHold>
+      <deleted>false</deleted>
+      <prePrint>false</prePrint>
+      <postPrint>false</postPrint>
+      <print>true</print>
+      <archiveOnly>false</archiveOnly>
+      <printOnDemand>false</printOnDemand>
+      <toBePublished>false</toBePublished>
+      <toBeArchived>false</toBeArchived>
+      <digitized>true</digitized>
+      <hasCoverPage>false</hasCoverPage>
+      <coverPageConditions />
+    </attachment>
+  </attachments>
+  <formatElectronic>false</formatElectronic>
+  <formatPrint>false</formatPrint>
+  <agreementAccepted>true</agreementAccepted>
+  <reviewed>false</reviewed>
+  <reviewedBefore>false</reviewedBefore>
+  <migrated>false</migrated>
+  <importDuplicate>false</importDuplicate>
+  <registratedDuplicate>false</registratedDuplicate>
+  <artisticWork>false</artisticWork>
+  <failed>false</failed>
+  <hidden>false</hidden>
+  <publicationOrder>
+    <orderLink>false</orderLink>
+    <validFrom>2019-10-25T15:53:02.131+02:00</validFrom>
+    <parameters />
+  </publicationOrder>
+  <canOrderOnline>false</canOrderOnline>
+  <publicationChannel />
+</publication>

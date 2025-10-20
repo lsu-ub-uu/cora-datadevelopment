@@ -6,6 +6,9 @@ from fedora_to_cora.output_migrate import output_migrate
 from common.xml_validate import validate_xml, XMLValidationError
 from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
 import xml.etree.ElementTree as ET
+from fedora_to_cora.transform.get_validation_type_by_publication_type_id import (
+    get_validation_type_by_publication_type_id,
+)
 
 
 def process_fedora_publication_files(
@@ -92,3 +95,21 @@ def _migrate_records(
     print(
         f"{len(successful_transformations)} succeeded, {len(failed_transformations)} failed."
     )
+
+
+if __name__ == "__main__":
+    records = _read_source_records(
+        "data/fedora_xml/nordiskamuseet/2025-10-20T10:19:00.783965"
+    )
+    validation_types = [
+        get_validation_type_by_publication_type_id(
+            pub.findtext("./publicationType/publicationTypeId")
+        )
+        for pub in records
+    ]
+
+    # find number of records with each code
+    from collections import Counter
+
+    code_counts = Counter(validation_types)
+    print(code_counts)

@@ -5,7 +5,7 @@ from common.common_data import read_source_xml
 from cora.context import MockContext
 
 
-def xtest_output_transform(requests_mock):
+def test_output_transform(requests_mock):
     affiliation_organisation_id = "diva-organisation:15111790767789817"
     subject_id = "diva-subject:30224"
     series_id = "diva-series:17450"
@@ -137,6 +137,33 @@ def xtest_output_transform(requests_mock):
             <namePart repeatId="0">En extern partner</namePart>
             <namePart repeatId="1">Ytterligare extern partner</namePart>
         </externalCollaboration>
+        <degreeGrantingInstitution type="corporate" otherType="text">
+            <namePart>Uppsala universitet</namePart>
+            <role>
+                <roleTerm>dgg</roleTerm>
+            </role>
+        </degreeGrantingInstitution>
+        <supervisor type="personal" repeatId="0">
+            <namePart type="family">Handledare</namePart>
+            <namePart type="given">Helge</namePart>
+            <role>
+                <roleTerm repeatId="0">ths</roleTerm>
+            </role>
+        </supervisor>
+        <examiner type="personal" repeatId="0">
+            <namePart type="family">Examinator</namePart>
+            <namePart type="given">Erik</namePart>
+            <role>
+                <roleTerm repeatId="0">dgs</roleTerm>
+            </role>
+        </examiner>
+        <opponent type="personal" repeatId="0">
+            <namePart type="family">Opponent</namePart>
+            <namePart type="given">Olivia</namePart>
+            <role>
+                <roleTerm repeatId="0">opn</roleTerm>
+            </role>
+        </opponent>
         <academicSemester>
             <year>2022</year>
             <academicSemester>ht</academicSemester>
@@ -156,7 +183,6 @@ def xtest_output_transform(requests_mock):
         <relatedItem type="journal" otherType="text">
             <titleInfo>
                 <title>Design, Automation and Test in Europe</title>
-                <subtitle>Journal of Testing</subtitle>
             </titleInfo>
             <identifier type="issn" displayLabel="pissn">
                 1530-1591

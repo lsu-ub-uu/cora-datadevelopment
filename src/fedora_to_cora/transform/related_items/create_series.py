@@ -45,7 +45,9 @@ def _create_controlled_series_link(
         series_id, record_type="diva-series", context=context
     )
 
-    related_item = ET.Element("relatedItem", type="series", repeatId=repeat_id)
+    related_item = ET.Element(
+        "relatedItem", type="series", otherType="link", repeatId=repeat_id
+    )
     related_item.append(
         create_record_link_using_name_type_id(
             name_in_data="series",
@@ -59,10 +61,10 @@ def _create_controlled_series_link(
 def _create_related_items_from_uncontrolled_series(
     source_record: ET.Element,
 ) -> list[ET.Element]:
-    uncontrolled_series_ids = source_record.findall("./uncontrolledSeriesInfo")
+    uncontrolled_series_infos = source_record.findall("./uncontrolledSeriesInfo")
     return [
         _create_uncontrolled_series(series_xml, f"uncontrolled{i}")
-        for i, series_xml in enumerate(uncontrolled_series_ids)
+        for i, series_xml in enumerate(uncontrolled_series_infos)
     ]
 
 
@@ -70,7 +72,9 @@ def _create_uncontrolled_series(series_xml: ET.Element, repeat_id: str) -> ET.El
     """
     Create a relatedItem element of type series with an uncontrolled series link.
     """
-    related_item = ET.Element("relatedItem", type="series", repeatId=repeat_id)
+    related_item = ET.Element(
+        "relatedItem", type="series", otherType="text", repeatId=repeat_id
+    )
 
     append_if_value(
         related_item,

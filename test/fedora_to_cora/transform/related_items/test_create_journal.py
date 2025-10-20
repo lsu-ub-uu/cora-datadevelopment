@@ -12,28 +12,25 @@ def test_create_related_item_type_journal_with_title():
     source_record = ET.fromstring(
         """
         <publication>
-            <journal>
-                <journalTitle>
-                    <titleId>1082</titleId>
-                    <mainTitle>Design, Automation and Test in Europe</mainTitle>
-                    <subTitle>Journal of Testing</subTitle>
-                    <locale>und</locale>
-                </journalTitle>
+            <uncontrolledJournal>
+                <journalNameUncontrolled>
+                    Design, Automation and Test in Europe
+                </journalNameUncontrolled>
                 <openAccess>false</openAccess>
-            </journal>
+            </uncontrolledJournal>
         </publication>
         """
     )
 
-    related_item = create_related_item_type_journal(source_record, mock_context)
+    journals = create_related_item_type_journal(source_record, mock_context)
+    assert len(journals) == 1
 
     assert_equal_for_xml_and_xml_string(
-        related_item,
+        journals[0],
         """
-        <relatedItem type="journal">
+        <relatedItem type="journal" otherType="text">
             <titleInfo>
                 <title>Design, Automation and Test in Europe</title>
-                <subtitle>Journal of Testing</subtitle>
             </titleInfo>
         </relatedItem>
         """,
@@ -46,21 +43,22 @@ def test_create_related_item_type_journal_with_identifiers():
     source_record = ET.fromstring(
         """
         <publication>
-            <journal>
+            <uncontrolledJournal>
                 <printedIssn>1530-1591</printedIssn>
                 <electronicIssn>1558-1101</electronicIssn>
                 <openAccess>false</openAccess>
-            </journal>
+            </uncontrolledJournal>
         </publication>
         """
     )
 
-    related_item = create_related_item_type_journal(source_record, mock_context)
+    journals = create_related_item_type_journal(source_record, mock_context)
+    assert len(journals) == 1
 
     assert_equal_for_xml_and_xml_string(
-        related_item,
+        journals[0],
         """
-        <relatedItem type="journal">
+        <relatedItem type="journal" otherType="text">
             <identifier type="issn" displayLabel="pissn">
                 1530-1591
             </identifier>
@@ -72,7 +70,7 @@ def test_create_related_item_type_journal_with_identifiers():
     )
 
 
-def test_create_related_item_type_journal_with_linked_journal(monkeypatch):
+def test_create_controlled_journal(monkeypatch):
     journal_old_id = "985"
     journal_cora_id = "diva-journal:21849327760208536"
 
@@ -99,12 +97,14 @@ def test_create_related_item_type_journal_with_linked_journal(monkeypatch):
         """
     )
 
-    related_item = create_related_item_type_journal(source_record, mock_context)
+    journals = create_related_item_type_journal(source_record, mock_context)
+
+    assert len(journals) == 1
 
     assert_equal_for_xml_and_xml_string(
-        related_item,
+        journals[0],
         f"""
-        <relatedItem type="journal">
+        <relatedItem type="journal" otherType="link">
             <journal>
                 <linkedRecordType>diva-journal</linkedRecordType>
                 <linkedRecordId>{journal_cora_id}</linkedRecordId>
@@ -112,28 +112,3 @@ def test_create_related_item_type_journal_with_linked_journal(monkeypatch):
         </relatedItem>
         """,
     )
-    # <part>
-    #     <detail type="volume">
-    #         <number>
-    #             /.+/
-    #         </number>
-    #     </detail>
-    #     <detail type="issue">
-    #         <number>
-    #             /.+/
-    #         </number>
-    #     </detail>
-    #     <detail type="artNo">
-    #         <number>
-    #             /.+/
-    #         </number>
-    #     </detail>
-    #         <extent>
-    #             <start>
-    #                  /.+/
-    #             </start>
-    #             <end>
-    #                 /.+/
-    #             </end>
-    #         </extent>
-    #     </part>

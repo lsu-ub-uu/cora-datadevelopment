@@ -1,6 +1,9 @@
 from xml.etree import ElementTree as ET
 from fedora_to_cora.transform.create_name_type_personal import (
+    create_examiners,
     create_name_type_personals,
+    create_opponents,
+    create_supervisors,
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.context import MockContext
@@ -102,7 +105,7 @@ def test_creates_persons_for_roles():
         mock_context,
     )
 
-    assert len(names) == 7
+    assert len(names) == 4
 
     abel = names[0].find("./role/roleTerm")
     assert abel is not None and abel.text == "aut"
@@ -110,21 +113,12 @@ def test_creates_persons_for_roles():
     beata = names[1].find("./role/roleTerm")
     assert beata is not None and beata.text == "edt"
 
-    cecil = names[2].find("./role/roleTerm")
-    assert cecil is not None and cecil.text == "dgs"
-
-    diana = names[3].find("./role/roleTerm")
-    assert diana is not None and diana.text == "ths"
-
-    egil = names[4].find("./role/roleTerm")
-    assert egil is not None and egil.text == "opn"
-
-    fiona = names[5].findall("./role/roleTerm")
+    fiona = names[2].findall("./role/roleTerm")
     assert len(fiona) == 2
     assert fiona[0].text == "wdc"
     assert fiona[1].text == "act"
 
-    gunnar = names[6].find("./role/roleTerm")
+    gunnar = names[3].find("./role/roleTerm")
     assert gunnar is not None and gunnar.text == "dnc"
 
 
@@ -161,7 +155,7 @@ def test_creates_uncontrolled_affiliation():
             <namePart type="family">Andersson</namePart>
             <namePart type="given">Michaela</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
-            <affiliation repeatId="0">
+            <affiliation otherType="text" repeatId="0">
                 <name type="corporate">
                     <namePart>Extern organisation</namePart>
                 </name>
@@ -220,7 +214,7 @@ def test_creates_controlled_affiliation(monkeypatch):
             <namePart type="family">Andersson</namePart>
             <namePart type="given">Michaela</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
-            <affiliation repeatId="0">
+            <affiliation otherType="link" repeatId="0">
                 <organisation>
                     <linkedRecordType>diva-organisation</linkedRecordType>
                     <linkedRecordId>{expected_cora_id}</linkedRecordId>
@@ -259,5 +253,130 @@ def test_creates_for_author_only_validation_type():
             <namePart type="given">John</namePart>
             <role><roleTerm>aut</roleTerm></role>
         </name>
+        """,
+    )
+
+
+def test_create_supervisors():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+            </publicationType>
+            <supervisors>
+                <person>
+                    <firstName>Sarah</firstName>
+                    <lastName>Smith</lastName>
+                    <organisations>
+                        <organisation>
+                            <organisationNameUncontrolled>Extern organisation</organisationNameUncontrolled>
+                            <controlled>false</controlled>
+                        </organisation>
+                    </organisations>
+                </person>
+                <person>
+                    <firstName>Karah</firstName>
+                    <lastName>Kmith</lastName>
+                </person>
+            </supervisors>
+        </publication>
+        """
+    )
+    names = create_supervisors(
+        source_record,
+        mock_context,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <supervisor type="personal" repeatId="0">
+            <namePart type="family">Smith</namePart>
+            <namePart type="given">Sarah</namePart>
+            <role><roleTerm repeatId="0">ths</roleTerm></role>
+            <affiliation otherType="text" repeatId="0">
+                <name type="corporate">
+                    <namePart>Extern organisation</namePart>
+                </name>
+            </affiliation>
+        </supervisor>
+        """,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        names[1],
+        """
+        <supervisor type="personal" repeatId="1">
+            <namePart type="family">Kmith</namePart>
+            <namePart type="given">Karah</namePart>
+            <role><roleTerm repeatId="0">ths</roleTerm></role>
+        </supervisor>
+        """,
+    )
+
+
+def test_create_opponents():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+            </publicationType>
+            <opponents>
+                <person>
+                    <firstName>Oliver</firstName>
+                    <lastName>Olsen</lastName>
+                </person>
+            </opponents>
+        </publication>
+        """
+    )
+    names = create_opponents(
+        source_record,
+        mock_context,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <opponent type="personal" repeatId="0">
+            <namePart type="family">Olsen</namePart>
+            <namePart type="given">Oliver</namePart>
+            <role><roleTerm repeatId="0">opn</roleTerm></role>
+        </opponent>
+        """,
+    )
+
+
+def test_create_examiners():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+            </publicationType>
+            <examiners>
+                <person>
+                    <firstName>Erik</firstName>
+                    <lastName>Eriksson</lastName>
+                </person>
+            </examiners>
+        </publication>
+        """
+    )
+    names = create_examiners(
+        source_record,
+        mock_context,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <examiner type="personal" repeatId="0">
+            <namePart type="family">Eriksson</namePart>
+            <namePart type="given">Erik</namePart>
+            <role><roleTerm repeatId="0">dgs</roleTerm></role>
+        </examiner>
         """,
     )

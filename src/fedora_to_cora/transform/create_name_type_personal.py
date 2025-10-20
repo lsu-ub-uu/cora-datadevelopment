@@ -14,9 +14,6 @@ def create_name_type_personals(
     role_terms_by_selector = [
         (".//authors/person", "aut"),
         (".//editors/person", "edt"),
-        (".//examiners/person", "dgs"),
-        (".//supervisors/person", "ths"),
-        (".//opponents/person", "opn"),
     ]
 
     name_type_personals = []
@@ -51,17 +48,60 @@ def create_name_type_personals(
     return name_type_personals
 
 
+def create_supervisors(source_record: ET.Element, context: Context) -> list[ET.Element]:
+    supervisors = source_record.findall(".//supervisors/person")
+    return [
+        create_name_type_personal(
+            supervisor,
+            ["ths"],
+            i,
+            context,
+            tagName="supervisor",
+        )
+        for i, supervisor in enumerate(supervisors)
+    ]
+
+
+def create_opponents(source_record: ET.Element, context: Context) -> list[ET.Element]:
+    opponents = source_record.findall(".//opponents/person")
+    return [
+        create_name_type_personal(
+            opponent,
+            ["opn"],
+            i,
+            context,
+            tagName="opponent",
+        )
+        for i, opponent in enumerate(opponents)
+    ]
+
+
+def create_examiners(source_record: ET.Element, context: Context) -> list[ET.Element]:
+    examiners = source_record.findall(".//examiners/person")
+    return [
+        create_name_type_personal(
+            examiner,
+            ["dgs"],
+            i,
+            context,
+            tagName="examiner",
+        )
+        for i, examiner in enumerate(examiners)
+    ]
+
+
 def create_name_type_personal(
     person: ET.Element,
     role_terms: list[str],
     repeatId: int,
     context: Context,
     author_only: bool = False,
+    tagName: str = "name",
 ) -> ET.Element:
     """
-    Create a nameTypePersonal element from an author element.
+    Create a cora person element from a classic person element.
     """
-    name_type_personal = ET.Element("name", type="personal", repeatId=str(repeatId))
+    name_type_personal = ET.Element(tagName, type="personal", repeatId=str(repeatId))
 
     # TODO Handle linked person
 
@@ -110,7 +150,7 @@ def create_affiliation_for_controlled_organisation(
     Create an affiliation element for a controlled organisation.
     """
 
-    affiliation = ET.Element("affiliation", repeatId=str(repeat_id))
+    affiliation = ET.Element("affiliation", otherType="link", repeatId=str(repeat_id))
     organisation_id = organisation.find("./organisationId")
 
     assert organisation_id is not None and organisation_id.text
@@ -135,7 +175,7 @@ def create_affiliation_for_uncontrolled_organisation(
     """
     Create an affiliation element for an uncontrolled organisation.
     """
-    affiliation = ET.Element("affiliation", repeatId=str(repeat_id))
+    affiliation = ET.Element("affiliation", otherType="text", repeatId=str(repeat_id))
 
     uncontrolled_name = organisation.find("./organisationNameUncontrolled")
     if uncontrolled_name is not None and uncontrolled_name.text:

@@ -21,7 +21,10 @@ from fedora_to_cora.transform.create_genre_type_output_type import (
     create_genre_type_output_type,
 )
 from fedora_to_cora.transform.create_name_type_personal import (
+    create_examiners,
     create_name_type_personals,
+    create_opponents,
+    create_supervisors,
 )
 from fedora_to_cora.transform.create_abstracts import create_abstracts
 
@@ -176,6 +179,17 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
         target_record,
         create_external_collaboration(source_record),
     )
+
+    append_if_value(
+        target_record,
+        create_degree_granting_institution(source_record, context),
+    )
+
+    append_if_value(target_record, create_supervisors(source_record, context))
+
+    append_if_value(target_record, create_examiners(source_record, context))
+
+    append_if_value(target_record, create_opponents(source_record, context))
 
     append_if_value(target_record, create_academic_semester(source_record))
 
