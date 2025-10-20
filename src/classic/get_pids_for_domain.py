@@ -36,7 +36,7 @@ def get_pids_for_domain(domain: str) -> list[str]:
             for pid in ET.fromstring(get_pids_response.text).findall(
                 "./result/doc/str[@name='PID']"
             )
-            if pid.text is not None
+            if (pid.text is not None) and ("draft" not in pid.text)
         ]
         return pids
 
