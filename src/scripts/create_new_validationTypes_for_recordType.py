@@ -1,6 +1,6 @@
 import json
 import xml.etree.ElementTree as ET
-from collections import deque
+from collections import deque, defaultdict
 from typing import Any
 
 import requests
@@ -19,15 +19,13 @@ TYPE_PREFIX = "__XYZ_"
 # Ignored validation types
 BLACKLIST_TYPES = ["diva-output", "tempContainerOutput"]
 
-# Ignore records with these nameInData values when normalizing
-BLACKLIST_NAME_IN_DATA = ["tsVisibility"]
-
 # Enable extensive logging of process
-EXTENSIVE_LOGGING = False
+EXTENSIVE_LOGGING = True
 
 # Global state
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
+GLOBAL_RECORD_INFO_EXCLUSIVE_CHILDREN = {}
 TOTAL_PROCESSED_RECORDS = 0
 TOTAL_UPDATES = 0
 TOTAL_ERRORS = []
@@ -51,7 +49,7 @@ def main():
     global CTX
 
     parser = create_argument_parser(
-        description="Create new validationTypes with updated IDs",
+        description="Create new validationTypes with updated IDs and normalized values for a specific recordType.",
         arguments=common_arguments,
     )
 
@@ -73,21 +71,21 @@ def create_new_validation_types_for_record_type():
 
     validation_types = get_validation_types_for_record_type()
 
-    print("\n=== Building node map ===")
-    print("\nFetching records...")
+    print("\n=== Building node map ===\n")
     CTX.log("=== Building node map ===")
 
     root_urls = [CTX.get_base_url() + "validationType/" + string for string in validation_types]
     for root_url in root_urls:
         build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
 
-    print(f"\nFetched {len(GLOBAL_NODE_MAP)} records in total.")
     CTX.log(f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
+
+    collect_exclusive_record_info_children(GLOBAL_NODE_MAP)
 
     if EXTENSIVE_LOGGING:
         log_node_map_summary()
 
-    print("\n=== Processing node map ===\n")
+    print("\n\n=== Processing node map ===\n")
     CTX.log("=== Processing node map ===")
 
     process_node_map_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
@@ -96,6 +94,63 @@ def create_new_validation_types_for_record_type():
     log_results()
 
     print(f"\n=== Processing completed. Output logged to {CTX.get_log_file_path()} ===")
+
+
+def collect_exclusive_record_info_children(global_node_map):
+    visited = set()
+    potential_record_info_children = {}
+    parent_refs = defaultdict(set)
+
+    record_info_roots = find_record_info_roots(global_node_map)
+
+    collect_record_info_descendants(parent_refs, potential_record_info_children, record_info_roots, visited)
+
+    detect_children_used_outside_record_info(global_node_map,
+                                             parent_refs, potential_record_info_children)
+
+
+def detect_children_used_outside_record_info(global_node_map,
+                                             parent_refs: defaultdict[Any, set],
+                                             potential_record_info_children: dict[Any, Any]):
+    for node in global_node_map.values():
+        for child in node.children:
+            parent_refs[child.url].add(node.url)
+
+    for url, node in potential_record_info_children.items():
+        parents = parent_refs.get(url, set())
+        has_parents_outside_record_info = any(
+            parent not in potential_record_info_children for parent in parents
+        )
+
+        # Collect any nodes that does not have parents outside of recordInfo
+        if not has_parents_outside_record_info:
+            GLOBAL_RECORD_INFO_EXCLUSIVE_CHILDREN[url] = node
+
+
+def collect_record_info_descendants(parent_refs: defaultdict[Any, set], potential_recordinfo_children: dict[Any, Any],
+                                    recordinfo_roots: list[Any], visited: set[Any]):
+    queue = deque(recordinfo_roots)
+
+    while queue:
+        parent = queue.popleft()
+        if parent.url in visited:
+            continue
+        visited.add(parent.url)
+
+        potential_recordinfo_children[parent.url] = parent
+
+        for child in parent.children:
+            parent_refs[child.url].add(parent.url)
+            if child.url not in visited:
+                queue.append(child)
+
+
+def find_record_info_roots(global_node_map) -> list[Any]:
+    recordinfo_roots = [
+        node for node in global_node_map.values()
+        if record_info_group(node.xml_content)
+    ]
+    return recordinfo_roots
 
 
 def log_results():
@@ -107,10 +162,12 @@ def log_results():
         CTX.log(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
 
     if TOTAL_ERRORS:
+        print("Warning! There were errors reported during processing, please check the log file for details.")
         CTX.log("=== Errors reported ===")
         for (error) in TOTAL_ERRORS:
             CTX.log(f" > {error}")
     else:
+        print("\nNo errors reported.")
         CTX.log("No errors reported.")
 
 
@@ -141,6 +198,7 @@ def process_queue_and_collect_nodes(queue: deque[str], root_url: str, global_nod
         xml_text = fetch_record_as_xml(url)
         node = parse_record_from_xml(xml_text, url)
         global_node_map[url] = node
+        print(f"Fetching records... {len(global_node_map)}", end="\r", flush=True)
 
         child_urls = collect_child_urls(node, root_url, url)
 
@@ -233,10 +291,14 @@ def process_and_possibly_save(node, global_id_mapping):
 
     updated = False
     if update_final_value_of_validation_type(node.xml_content):
-        CTX.log(f"> Updated finalValue in the validationType link in {old_id}")
+        CTX.log(f"> Updated finalValue for {node.record_id} (validationType)")
         updated = True
 
-    if not blacklisted_name_in_data(node.xml_content):
+    elif record_is_a_record_info_exclusive(node):
+        CTX.log(f"> Skipping {node.record_id} (exclusive record info child)")
+        return False
+
+    else:
         if normalize_regex_patterns(node.xml_content):
             CTX.log(f"> Normalized regex pattern(s) to '.+' in {old_id}")
             updated = True
@@ -299,9 +361,9 @@ def record_info_group(xml_content):
     name_in_data = xml_content.findtext(".//metadata[@type='group']/nameInData")
     return name_in_data is not None and name_in_data == "recordInfo"
 
-def blacklisted_name_in_data(xml_content):
-    record_id = xml_content.findtext(".//metadata/nameInData")
-    return record_id in BLACKLIST_NAME_IN_DATA
+
+def record_is_a_record_info_exclusive(node) -> bool:
+    return node.url in GLOBAL_RECORD_INFO_EXCLUSIVE_CHILDREN
 
 
 def update_final_value_of_validation_type(xml_content):
@@ -323,6 +385,7 @@ def normalize_regex_patterns(xml_root):
                 if element.text and element.text.strip() not in (None, ".+"):
                     element.text = ".+"
                     updated = True
+
     return updated
 
 
@@ -375,9 +438,6 @@ def find_child_urls(xml_root):
     for element in xml_root.findall(".//childReferences/childReference/ref/actionLinks/read/url"):
         urls.append((element.text or "").strip())
 
-    if EXTENSIVE_LOGGING:
-        CTX.log(f"  Found {len(urls)} child URLs: {urls}")
-
     return urls
 
 
@@ -407,9 +467,6 @@ def find_top_level_children(xml_root):
         if element is not None:
             url = (element.text or "").strip()
             urls.append(url)
-
-    if EXTENSIVE_LOGGING:
-        CTX.log(f"  Top-level children found ({len(urls)}): {urls}")
 
     return urls
 

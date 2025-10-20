@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from collections import deque
+from collections import deque, defaultdict
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -16,6 +16,15 @@ def mock_ctx():
     Script.CTX.get_auth_token.return_value = "authToken"
     yield Script.CTX
     del Script.CTX
+
+
+@pytest.fixture(autouse=True)
+def reset_global_data():
+    Script.GLOBAL_RECORD_INFO_EXCLUSIVE_CHILDREN.clear()
+    Script.TOTAL_ERRORS.clear()
+    Script.TOTAL_PROCESSED_RECORDS = 0
+    Script.TOTAL_UPDATES = 0
+    Script.TOTAL_FETCHED = 0
 
 
 class MockResponse:
@@ -255,6 +264,88 @@ def create_mock_top_level_child(record_node):
     url.text = "http://HOSTURL/someTopLevelChild"
 
 
+def create_mock_node_custom_url(record_node, custom_url: str):
+    record_info = record_node.xml_content.find(".//recordInfo")
+
+    metadata_id = ET.SubElement(record_info, "metadataId")
+    action_links = ET.SubElement(metadata_id, "actionLinks")
+    read = ET.SubElement(action_links, "read")
+    url = ET.SubElement(read, "url")
+    url.text = "http://HOSTURL/someTopLevelChild"
+    record_node.url = custom_url
+    return record_node
+
+
+
+def test_collect_record_info_descendants_with_children(record_node):
+    root_parent = record_node
+    child1 = record_node
+    child2 = record_node
+    grandchild = record_node
+
+    root_parent.url = "url_recordinfo_root"
+    root_parent.children = [child1, child2]
+
+    child1.parents = [root_parent]
+    child1.url = "url_child_1"
+    child1.children = [grandchild]
+
+    child2.url = "url_child_2"
+    child2.parents = [root_parent]
+
+    grandchild.parents = [child1]
+    grandchild.url = "url_grandchild"
+
+    parent_refs = defaultdict(set)
+    potential_recordinfo_children = {}
+    recordinfo_roots = [root_parent]
+    visited = set()
+
+    Script.collect_record_info_descendants(
+        parent_refs,
+        potential_recordinfo_children,
+        recordinfo_roots,
+        visited
+    )
+
+    assert potential_recordinfo_children == {
+        root_parent.url: root_parent,
+        child1.url: child1,
+        child2.url: child2
+    }
+
+    assert visited == {
+        root_parent.url,
+        child1.url,
+        child2.url,
+        grandchild.url
+    }
+
+
+def test_detect_children_used_outside_record_info_with_shared_and_exclusive_children(record_node):
+    root_info = create_mock_node_custom_url(record_node, "url_recordinfo_root")
+    exclusive_child = create_mock_node_custom_url(record_node, "url_exclusive_child")
+    shared_child = create_mock_node_custom_url(record_node, "url_shared_child")
+    external_parent = create_mock_node_custom_url(record_node, "url_external_parent")
+
+    root_info.children = [exclusive_child, shared_child]
+    external_parent.children = [shared_child]
+
+    global_node_map = {
+        n.url: n
+        for n in [root_info, exclusive_child, shared_child, external_parent]
+    }
+
+    potential_record_info_children = {
+        exclusive_child.url: exclusive_child,
+        shared_child.url: shared_child,
+    }
+
+    Script.detect_children_used_outside_record_info(global_node_map, defaultdict(set), potential_record_info_children)
+
+    assert exclusive_child.url in Script.GLOBAL_RECORD_INFO_EXCLUSIVE_CHILDREN
+
+
 def test_build_node_map_from_child_references_root_url_already_in_map(record_node):
     global_node_map = {"root_url": record_node}
 
@@ -465,7 +556,6 @@ def test_collect_top_level_children(record_node):
 
 
 def test_check_for_unprocessed_nodes_updates_total_errors(monkeypatch):
-    Script.TOTAL_ERRORS.clear()
     global_node_map = {"url1": object(), "url2": object()}
     processed = {"url1"}
 
@@ -475,7 +565,6 @@ def test_check_for_unprocessed_nodes_updates_total_errors(monkeypatch):
 
 
 def test_check_for_unprocessed_nodes_no_unprocessed(monkeypatch):
-    Script.TOTAL_ERRORS.clear()
     global_node_map = {"url1": object()}
     processed = {"url1"}
 
@@ -517,10 +606,6 @@ def test_link_parent_child_relationship(record_node):
 
 
 def test_process_node_success(monkeypatch, record_node):
-    Script.TOTAL_PROCESSED_RECORDS = 0
-    Script.TOTAL_UPDATES = 0
-    Script.TOTAL_ERRORS.clear()
-
     monkeypatch.setattr(Script, "process_and_possibly_save", lambda node, mapping: True)
     Script.process_node({}, record_node)
     assert Script.TOTAL_PROCESSED_RECORDS == 1
