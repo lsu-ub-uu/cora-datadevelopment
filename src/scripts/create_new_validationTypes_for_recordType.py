@@ -267,7 +267,7 @@ def process_and_possibly_save(node, global_id_mapping):
         CTX.log(f"> Updated finalValue for {node.record_id} (validationType)")
         updated = True
 
-    elif record_is_a_record_info_exclusive(node):
+    elif record_is_a_child_of_record_info(node):
         CTX.log(f"> Skipping {node.record_id} (exclusive record info child)")
         return False
 
@@ -335,7 +335,7 @@ def record_info_group(xml_content):
     return name_in_data is not None and name_in_data == "recordInfo"
 
 
-def record_is_a_record_info_exclusive(node) -> bool:
+def record_is_a_child_of_record_info(node) -> bool:
     return node.url in GLOBAL_RECORD_INFO_CHILDREN
 
 

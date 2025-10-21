@@ -438,15 +438,15 @@ def test_process_and_possibly_save_update_final_value(record_node, monkeypatch):
         called = True
         return True
 
-    def fake_record_is_a_record_info_exclusive(node):
+    def fake_record_is_a_child_of_record_info(node):
         nonlocal not_called
         not_called = False
         return False
 
     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.update_final_value_of_validation_type",
                         fake_update_final_value_of_validation_type)
-    monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.record_is_a_record_info_exclusive",
-                        fake_record_is_a_record_info_exclusive)
+    monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.record_is_a_child_of_record_info",
+                        fake_record_is_a_child_of_record_info)
 
     result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
     assert result is True
@@ -463,15 +463,15 @@ def test_process_and_possibly_save_skip_record_info_child(record_node, monkeypat
         not_called = True
         return False
 
-    def fake_record_is_a_record_info_exclusive(node):
+    def fake_record_is_a_child_of_record_info(node):
         nonlocal called
         called = True
         return True
 
     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.update_final_value_of_validation_type",
                         fake_update_final_value_of_validation_type)
-    monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.record_is_a_record_info_exclusive",
-                        fake_record_is_a_record_info_exclusive)
+    monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.record_is_a_child_of_record_info",
+                        fake_record_is_a_child_of_record_info)
 
     result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
     assert result is False
