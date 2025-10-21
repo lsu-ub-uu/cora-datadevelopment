@@ -196,6 +196,14 @@ def validateRecord_build(record_type, filePath_validateBase, newRecordToCreate):
     record.append(newRecordToCreate)
     return validationOrder_root
 
+def validate_record_build_2(record_type, filePath_validateBase, new_record):
+    validationOrder_root = read_source_xml(filePath_validateBase)
+    validationOrder_root.find(".//recordType/linkedRecordId").text = record_type
+    validationOrder_root.find(".//validateLinks").text = "false"
+    validationOrder_root.find(".//metadataToValidate").text = "existing"
+    record = validationOrder_root.find(".//record")
+    record.append(new_record)
+    return validationOrder_root
 
 def record_info_build(recordType, permission_unit, data_record, newRecordElement):
     recordInfo = ET.SubElement(newRecordElement, "recordInfo")
