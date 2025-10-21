@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from collections import deque, defaultdict
+from collections import deque
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -20,11 +20,44 @@ def mock_ctx():
 
 @pytest.fixture(autouse=True)
 def reset_global_data():
-    Script.GLOBAL_RECORD_INFO_EXCLUSIVE_CHILDREN.clear()
+    Script.GLOBAL_RECORD_INFO_CHILDREN.clear()
     Script.TOTAL_ERRORS.clear()
     Script.TOTAL_PROCESSED_RECORDS = 0
     Script.TOTAL_UPDATES = 0
     Script.TOTAL_FETCHED = 0
+
+
+@pytest.fixture()
+def create_node_tree():
+    #    '''
+    #
+    #    A     B
+    #   / \    |
+    #  C   D   |
+    #   \ /   /
+    #    E___/
+    #
+    #    '''
+    # Create nodes
+    node_A = Script.RecordNode("A", "typeA", "urlA", ET.Element("xmlrootA"))
+    node_B = Script.RecordNode("B", "typeB", "urlB", ET.Element("nodeB"))
+    node_C = Script.RecordNode("C", "typeC", "urlC", ET.Element("nodeC"))
+    node_D = Script.RecordNode("D", "typeD", "urlD", ET.Element("nodeD"))
+    node_E = Script.RecordNode("E", "typeE", "urlE", ET.Element("nodeE"))
+
+    # Define children relationships
+    node_A.children = [node_C, node_D]
+    node_B.children = [node_E]
+    node_C.children = [node_E]
+    node_D.children = [node_E]
+    node_E.children = []  # leaf
+
+    # Define parents relationships
+    node_C.parents = [node_A]
+    node_D.parents = [node_A]
+    node_E.parents = [node_C, node_D, node_B]
+
+    return {"A": node_A, "B": node_B, "C": node_C, "D": node_D, "E": node_E}
 
 
 class MockResponse:
@@ -256,6 +289,8 @@ def record_node(sample_xml):
 
 def create_mock_top_level_child(record_node):
     record_info = record_node.xml_content.find(".//recordInfo")
+    name_in_data = record_node.xml_content.find(".//nameInData")
+    name_in_data.text = "recordInfo"
 
     metadata_id = ET.SubElement(record_info, "metadataId")
     action_links = ET.SubElement(metadata_id, "actionLinks")
@@ -264,86 +299,33 @@ def create_mock_top_level_child(record_node):
     url.text = "http://HOSTURL/someTopLevelChild"
 
 
-def create_mock_node_custom_url(record_node, custom_url: str):
-    record_info = record_node.xml_content.find(".//recordInfo")
+def test_collect_record_info_children(record_node):
+    create_mock_top_level_child(record_node)
+    record_node.children = [Script.RecordNode("child1", "type1", "http://child1", ET.Element("xml1")),
+                            Script.RecordNode("child1", "type1", "http://child1",
+                                              ET.Element("duplicate_for_branch_test")),
+                            Script.RecordNode("child2", "type2", "http://child2", ET.Element("xml2"))]
+    node_map = {"root_url": record_node}
+    Script.collect_record_info_children(node_map)
 
-    metadata_id = ET.SubElement(record_info, "metadataId")
-    action_links = ET.SubElement(metadata_id, "actionLinks")
-    read = ET.SubElement(action_links, "read")
-    url = ET.SubElement(read, "url")
-    url.text = "http://HOSTURL/someTopLevelChild"
-    record_node.url = custom_url
-    return record_node
-
-
-
-def test_collect_record_info_descendants_with_children(record_node):
-    root_parent = record_node
-    child1 = record_node
-    child2 = record_node
-    grandchild = record_node
-
-    root_parent.url = "url_recordinfo_root"
-    root_parent.children = [child1, child2]
-
-    child1.parents = [root_parent]
-    child1.url = "url_child_1"
-    child1.children = [grandchild]
-
-    child2.url = "url_child_2"
-    child2.parents = [root_parent]
-
-    grandchild.parents = [child1]
-    grandchild.url = "url_grandchild"
-
-    parent_refs = defaultdict(set)
-    potential_recordinfo_children = {}
-    recordinfo_roots = [root_parent]
-    visited = set()
-
-    Script.collect_record_info_descendants(
-        parent_refs,
-        potential_recordinfo_children,
-        recordinfo_roots,
-        visited
-    )
-
-    assert potential_recordinfo_children == {
-        root_parent.url: root_parent,
-        child1.url: child1,
-        child2.url: child2
-    }
-
-    assert visited == {
-        root_parent.url,
-        child1.url,
-        child2.url,
-        grandchild.url
-    }
+    assert "http://HOSTURL/someTopLevelChild" not in Script.GLOBAL_RECORD_INFO_CHILDREN
+    assert "http://child1" in Script.GLOBAL_RECORD_INFO_CHILDREN
+    assert "http://child2" in Script.GLOBAL_RECORD_INFO_CHILDREN
+    assert len(Script.GLOBAL_RECORD_INFO_CHILDREN) == 2
 
 
-def test_detect_children_used_outside_record_info_with_shared_and_exclusive_children(record_node):
-    root_info = create_mock_node_custom_url(record_node, "url_recordinfo_root")
-    exclusive_child = create_mock_node_custom_url(record_node, "url_exclusive_child")
-    shared_child = create_mock_node_custom_url(record_node, "url_shared_child")
-    external_parent = create_mock_node_custom_url(record_node, "url_external_parent")
+def test_update_final_value_of_validation_type(sample_xml):
+    root = ET.fromstring(sample_xml)
+    metadata = root.find(".//metadata")
+    metadata.set("type", "recordLink")
+    name_in_data = root.find(".//nameInData")
+    name_in_data.text = "validationType"
+    metadata.append(ET.Element("finalValue"))
 
-    root_info.children = [exclusive_child, shared_child]
-    external_parent.children = [shared_child]
-
-    global_node_map = {
-        n.url: n
-        for n in [root_info, exclusive_child, shared_child, external_parent]
-    }
-
-    potential_record_info_children = {
-        exclusive_child.url: exclusive_child,
-        shared_child.url: shared_child,
-    }
-
-    Script.detect_children_used_outside_record_info(global_node_map, defaultdict(set), potential_record_info_children)
-
-    assert exclusive_child.url in Script.GLOBAL_RECORD_INFO_EXCLUSIVE_CHILDREN
+    updated = Script.update_final_value_of_validation_type(root)
+    final_value = root.find(".//finalValue").text
+    final_value.startswith(Script.TYPE_PREFIX)
+    assert updated
 
 
 def test_build_node_map_from_child_references_root_url_already_in_map(record_node):
@@ -445,6 +427,56 @@ def test_process_and_possibly_save_not_saved(record_node, monkeypatch):
 
     result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
     assert result is False
+
+
+def test_process_and_possibly_save_update_final_value(record_node, monkeypatch):
+    called = False
+    not_called = True
+
+    def fake_update_final_value_of_validation_type(node):
+        nonlocal called
+        called = True
+        return True
+
+    def fake_record_is_a_record_info_exclusive(node):
+        nonlocal not_called
+        not_called = False
+        return False
+
+    monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.update_final_value_of_validation_type",
+                        fake_update_final_value_of_validation_type)
+    monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.record_is_a_record_info_exclusive",
+                        fake_record_is_a_record_info_exclusive)
+
+    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    assert result is True
+    assert called
+    assert not_called
+
+
+def test_process_and_possibly_save_skip_record_info_child(record_node, monkeypatch):
+    called = False
+    not_called = True
+
+    def fake_update_final_value_of_validation_type(node):
+        nonlocal not_called
+        not_called = True
+        return False
+
+    def fake_record_is_a_record_info_exclusive(node):
+        nonlocal called
+        called = True
+        return True
+
+    monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.update_final_value_of_validation_type",
+                        fake_update_final_value_of_validation_type)
+    monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.record_is_a_record_info_exclusive",
+                        fake_record_is_a_record_info_exclusive)
+
+    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    assert result is False
+    assert called
+    assert not_called
 
 
 def test_prepare_and_try_to_save_record(record_node, monkeypatch):
@@ -630,42 +662,15 @@ def test_process_node_failure(monkeypatch, record_node):
 
 
 # Node map bottom-up processing with mocks
-def test_process_graph_with_relationships(monkeypatch):
-    #    '''
-    #
-    #    A     B
-    #   / \    |
-    #  C   D   |
-    #   \ /   /
-    #    E___/
-    #
-    #    '''
-    # Create nodes
-    node_A = Script.RecordNode("A", "typeA", "urlA", ET.Element("xmlrootA"))
-    node_B = Script.RecordNode("B", "typeB", "urlB", ET.Element("nodeB"))
-    node_C = Script.RecordNode("C", "typeC", "urlC", ET.Element("nodeC"))
-    node_D = Script.RecordNode("D", "typeD", "urlD", ET.Element("nodeD"))
-    node_E = Script.RecordNode("E", "typeE", "urlE", ET.Element("nodeE"))
+def test_process_graph_with_relationships(monkeypatch, create_node_tree):
+    node_tree = create_node_tree
 
-    # Define children relationships
-    node_A.children = [node_C, node_D]
-    node_B.children = [node_E]
-    node_C.children = [node_E]
-    node_D.children = [node_E]
-    node_E.children = []  # leaf
-
-    # Define parents relationships
-    node_C.parents = [node_A]
-    node_D.parents = [node_A]
-    node_E.parents = [node_C, node_D, node_B]
-
-    # Build graph
-    graph = {
-        "urlA": node_A,
-        "urlB": node_B,
-        "urlC": node_C,
-        "urlD": node_D,
-        "urlE": node_E
+    node_map = {
+        "urlA": node_tree["A"],
+        "urlB": node_tree["B"],
+        "urlC": node_tree["C"],
+        "urlD": node_tree["D"],
+        "urlE": node_tree["E"]
     }
 
     id_mapping = {}
@@ -678,7 +683,7 @@ def test_process_graph_with_relationships(monkeypatch):
 
     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.process_node", fake_process_node)
 
-    Script.process_node_map_bottom_up_and_store(graph, id_mapping)
+    Script.process_node_map_bottom_up_and_store(node_map, id_mapping)
 
     # Check order of processing
     assert processed_order[0] == "E"

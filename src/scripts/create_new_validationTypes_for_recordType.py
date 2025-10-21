@@ -25,7 +25,7 @@ EXTENSIVE_LOGGING = True
 # Global state
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
-GLOBAL_RECORD_INFO_EXCLUSIVE_CHILDREN = {}
+GLOBAL_RECORD_INFO_CHILDREN = {}
 TOTAL_PROCESSED_RECORDS = 0
 TOTAL_UPDATES = 0
 TOTAL_ERRORS = []
@@ -80,7 +80,7 @@ def create_new_validation_types_for_record_type():
 
     CTX.log(f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
 
-    collect_exclusive_record_info_children(GLOBAL_NODE_MAP)
+    collect_record_info_children(GLOBAL_NODE_MAP)
 
     if EXTENSIVE_LOGGING:
         log_node_map_summary()
@@ -96,48 +96,21 @@ def create_new_validation_types_for_record_type():
     print(f"\n=== Processing completed. Output logged to {CTX.get_log_file_path()} ===")
 
 
-def collect_exclusive_record_info_children(global_node_map):
+def collect_record_info_children(global_node_map):
     visited = set()
-    potential_record_info_children = {}
     parent_refs = defaultdict(set)
 
     record_info_roots = find_record_info_roots(global_node_map)
 
-    collect_record_info_descendants(parent_refs, potential_record_info_children, record_info_roots, visited)
-
-    detect_children_used_outside_record_info(global_node_map,
-                                             parent_refs, potential_record_info_children)
-
-
-def detect_children_used_outside_record_info(global_node_map,
-                                             parent_refs: defaultdict[Any, set],
-                                             potential_record_info_children: dict[Any, Any]):
-    for node in global_node_map.values():
-        for child in node.children:
-            parent_refs[child.url].add(node.url)
-
-    for url, node in potential_record_info_children.items():
-        parents = parent_refs.get(url, set())
-        has_parents_outside_record_info = any(
-            parent not in potential_record_info_children for parent in parents
-        )
-
-        # Collect any nodes that does not have parents outside of recordInfo
-        if not has_parents_outside_record_info:
-            GLOBAL_RECORD_INFO_EXCLUSIVE_CHILDREN[url] = node
-
-
-def collect_record_info_descendants(parent_refs: defaultdict[Any, set], potential_recordinfo_children: dict[Any, Any],
-                                    recordinfo_roots: list[Any], visited: set[Any]):
-    queue = deque(recordinfo_roots)
-
+    queue = deque(record_info_roots)
     while queue:
         parent = queue.popleft()
         if parent.url in visited:
             continue
         visited.add(parent.url)
 
-        potential_recordinfo_children[parent.url] = parent
+        if parent.url not in {root.url for root in record_info_roots}:
+            GLOBAL_RECORD_INFO_CHILDREN[parent.url] = parent
 
         for child in parent.children:
             parent_refs[child.url].add(parent.url)
@@ -146,11 +119,11 @@ def collect_record_info_descendants(parent_refs: defaultdict[Any, set], potentia
 
 
 def find_record_info_roots(global_node_map) -> list[Any]:
-    recordinfo_roots = [
+    record_info_roots = [
         node for node in global_node_map.values()
         if record_info_group(node.xml_content)
     ]
-    return recordinfo_roots
+    return record_info_roots
 
 
 def log_results():
@@ -363,7 +336,7 @@ def record_info_group(xml_content):
 
 
 def record_is_a_record_info_exclusive(node) -> bool:
-    return node.url in GLOBAL_RECORD_INFO_EXCLUSIVE_CHILDREN
+    return node.url in GLOBAL_RECORD_INFO_CHILDREN
 
 
 def update_final_value_of_validation_type(xml_content):
