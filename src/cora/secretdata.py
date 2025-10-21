@@ -25,6 +25,7 @@ class  SecretData:
             raise
     token_url = {
     'local': 'http://localhost:8182/',
+    'minikube': 'http://minikube:30982/',
     'preview': 'https://cora.epc.ub.uu.se/diva/',
     'mig': 'https://mig.diva-portal.org/',
     'pre': 'https://pre.diva-portal.org/',

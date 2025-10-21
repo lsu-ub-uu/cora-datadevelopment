@@ -36,6 +36,11 @@ def main():
                 "action": "store_true",
                 "help": "Create records in Cora. (If not set, will behave as a dry-run)",
             },
+            "--limit": {
+                "type": int,
+                "help": "Limit the number of processed files (for testing purposes)",
+                "default": None
+            }
         },
     )
 
@@ -52,6 +57,7 @@ def main():
         xml_dir=args.xml_dir,
         context=context,
         apply=args.apply,
+        limit=args.limit,
     )
 
 

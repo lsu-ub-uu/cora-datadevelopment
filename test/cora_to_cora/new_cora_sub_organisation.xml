@@ -1,0 +1,45 @@
+<organisation>
+    <recordInfo>
+        <validationType>
+            <linkedRecordType>validationType</linkedRecordType>
+            <linkedRecordId>diva-partOfOrganisation</linkedRecordId>
+        </validationType>
+        <dataDivider>
+            <linkedRecordType>system</linkedRecordType>
+            <linkedRecordId>divaData</linkedRecordId>
+        </dataDivider>
+        <permissionUnit>
+            <linkedRecordType>permissionUnit</linkedRecordType>
+            <linkedRecordId>smhi</linkedRecordId>
+        </permissionUnit>
+        <oldId>16501</oldId>
+    </recordInfo>
+    <genre type="organisationType">partOfOrganisation</genre>
+    <authority lang="swe">
+        <name type="corporate">
+            <namePart>Något namn</namePart>
+        </name>
+    </authority>
+    <variant lang="eng">
+        <name type="corporate">
+            <namePart>Some name</namePart>
+        </name>
+    </variant>
+    <endDate>
+        <year>2023</year>
+        <month>12</month>
+        <day>31</day>
+    </endDate>
+    <address>
+        <postOfficeBox>PO Box 123</postOfficeBox>
+        <street>Some street 1</street>
+        <postcode>12345</postcode>
+        <place>Some city</place>
+        <country>sw</country>
+    </address>
+    <identifier type="organisationCode">someCode</identifier>
+    <identifier type="organisationNumber">202100-0696</identifier>
+    <location>
+        <url>https://www.example.com</url>
+    </location>
+</organisation>

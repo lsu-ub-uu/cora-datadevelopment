@@ -12,15 +12,15 @@ from fedora_to_cora.transform.get_validation_type_by_publication_type_id import 
 
 
 def process_fedora_publication_files(
-    xml_dir: str, context: Context, apply: bool = False
+    xml_dir: str, context: Context, apply: bool = False, limit: int | None = None
 ):
     context.log("==== Begin processing Fedora XML publications ====")
     context.log(
-        f"==== xml_dir={xml_dir}, system={context.get_system()}, apply={apply} ===="
+        f"==== xml_dir={xml_dir}, system={context.get_system()}, apply={apply} limit={limit} ===="
     )
     context.log("=" * 50)
 
-    source_records = _read_source_records(xml_dir)
+    source_records = _read_source_records(xml_dir, limit)
 
     source_records_valid = _validate_source_records(source_records, context)
 
@@ -30,12 +30,15 @@ def process_fedora_publication_files(
     print(f"Output logged to {context.get_logger().handlers[0].baseFilename}")  # type: ignore[attr-defined]
 
 
-def _read_source_records(xml_dir):
-    return [
+def _read_source_records(xml_dir: str, limit: int | None = None) -> list[ET.Element]:
+    records = [
         read_source_xml(os.path.join(xml_dir, filename))
         for filename in os.listdir(xml_dir)
         if filename.endswith(".xml")
     ]
+    if limit is not None:
+        return records[:limit]
+    return records
 
 
 def _validate_source_records(source_records, context: Context) -> bool:

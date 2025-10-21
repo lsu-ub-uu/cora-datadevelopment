@@ -68,10 +68,9 @@ def test_get_pids_for_domain_num_found_request_fail(monkeypatch, requests_mock):
         text="Internal Server Error",
     )
 
-    with pytest.raises(Exception) as exc_info:
+    with pytest.raises(Exception, match="500") as exc_info:
         get_pids_for_domain("test_domain")
         assert "500" in str(exc_info.value)
-        assert "Internal Server Error" in str(exc_info.value)
 
 
 def test_get_pids_for_domain_get_pids_fail(monkeypatch, requests_mock):

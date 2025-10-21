@@ -62,6 +62,4 @@ pytest --cov=src
 ptw --now .
 ```
 
-For more information about output migration, see [here](./src/fedora_to_cora/transform/output_transform.md)
-
 `outputs-testdata-create` to create a dummy post in the Cora format, it uses the same arguments but does not include the `--apply` and always creates a post.

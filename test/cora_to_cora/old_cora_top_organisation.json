@@ -1,0 +1,191 @@
+{
+  "record": {
+    "data": {
+      "children": [
+        {
+          "children": [
+            {
+              "name": "id",
+              "value": "16501"
+            },
+            {
+              "children": [
+                {
+                  "name": "linkedRecordType",
+                  "value": "recordType"
+                },
+                {
+                  "name": "linkedRecordId",
+                  "value": "topOrganisation"
+                }
+              ],
+              "actionLinks": {
+                "read": {
+                  "requestMethod": "GET",
+                  "rel": "read",
+                  "url": "https://cora.diva-portal.org/diva/rest/record/recordType/topOrganisation",
+                  "accept": "application/vnd.uub.record+json"
+                }
+              },
+              "name": "type"
+            },
+            {
+              "children": [
+                {
+                  "name": "linkedRecordType",
+                  "value": "system"
+                },
+                {
+                  "name": "linkedRecordId",
+                  "value": "diva"
+                }
+              ],
+              "actionLinks": {
+                "read": {
+                  "requestMethod": "GET",
+                  "rel": "read",
+                  "url": "https://cora.diva-portal.org/diva/rest/record/system/diva",
+                  "accept": "application/vnd.uub.record+json"
+                }
+              },
+              "name": "dataDivider"
+            },
+            {
+              "children": [
+                {
+                  "name": "linkedRecordType",
+                  "value": "coraUser"
+                },
+                {
+                  "name": "linkedRecordId",
+                  "value": "coraUser:4412982402853626"
+                }
+              ],
+              "name": "createdBy"
+            },
+            {
+              "name": "tsCreated",
+              "value": "2017-01-01T00:00:00.000000Z"
+            },
+            {
+              "repeatId": "0",
+              "children": [
+                {
+                  "children": [
+                    {
+                      "name": "linkedRecordType",
+                      "value": "coraUser"
+                    },
+                    {
+                      "name": "linkedRecordId",
+                      "value": "coraUser:4412982402853626"
+                    }
+                  ],
+                  "name": "updatedBy"
+                },
+                {
+                  "name": "tsUpdated",
+                  "value": "2017-01-01T00:00:00.000000Z"
+                }
+              ],
+              "name": "updated"
+            },
+            {
+              "name": "domain",
+              "value": "smhi"
+            },
+            {
+              "name": "selectable",
+              "value": "yes"
+            }
+          ],
+          "name": "recordInfo"
+        },
+        {
+          "children": [
+            {
+              "name": "name",
+              "value": "Något namn"
+            },
+            {
+              "name": "language",
+              "value": "sv"
+            }
+          ],
+          "name": "organisationName"
+        },
+        {
+          "children": [
+            {
+              "name": "language",
+              "value": "en"
+            },
+            {
+              "name": "name",
+              "value": "Some name"
+            }
+          ],
+          "name": "organisationAlternativeName"
+        },
+        {
+          "name": "closedDate",
+          "value": "2023-12-31"
+        },
+        {
+          "name": "organisationType",
+          "value": "authority"
+        },
+        {
+          "name": "URL",
+          "value": "https://www.example.com"
+        },
+        {
+          "name": "doctoralDegreeGrantor",
+          "value": "no"
+        },
+        {
+          "name": "organisationCode", 
+          "value": "someCode"
+        },
+        {
+          "name": "organisationNumber",
+          "value": "202100-0696"
+        },
+        {
+          "name": "address",
+          "children": [
+            {
+              "name": "box",
+              "value": "PO Box 123"
+            },
+            {
+              "name": "street",
+              "value": "Some street 1"
+            },
+            {
+              "name": "postcode",
+              "value": "12345"
+            },
+            {
+              "name": "city",
+              "value": "Some city"
+            },
+            {
+              "name": "country",
+              "value": "SE"
+            }
+          ]
+        }
+      ],
+      "name": "organisation"
+    },
+    "actionLinks": {
+      "read": {
+        "requestMethod": "GET",
+        "rel": "read",
+        "url": "https://cora.diva-portal.org/diva/rest/record/topOrganisation/16501",
+        "accept": "application/vnd.uub.record+json"
+      }
+    }
+  }
+}

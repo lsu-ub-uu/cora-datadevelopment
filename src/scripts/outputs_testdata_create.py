@@ -1,8 +1,9 @@
 import argparse
 import os
+from unittest import result
 from common.common_data import read_source_xml
 from cora.context import CoraContext
-from cora.create import create_record
+from cora.create import create_record, is_success_result
 
 # Default environment configuration
 DEFAULT_ENV = {
@@ -79,7 +80,7 @@ def process_file(xml_dir: str, filename: str, context: CoraContext):
         record_type="diva-output",
         context=context,
     )
-    if result.success:
+    if is_success_result(result):
         print(f"✅ Successfully created record for {filename}")
     else:
         print(f"❌ Failed to create record for {filename}: {result.error}")
