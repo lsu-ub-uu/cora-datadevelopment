@@ -268,7 +268,7 @@ def process_and_possibly_save(node, global_id_mapping):
         updated = True
 
     elif record_is_a_child_of_record_info(node):
-        CTX.log(f"> Skipping {node.record_id} (exclusive record info child)")
+        CTX.log(f"> Skipping {node.record_id} (record info child)")
         return False
 
     else:
