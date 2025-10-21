@@ -20,7 +20,7 @@ TYPE_PREFIX = "__XYZ_"
 BLACKLIST_TYPES = ["diva-output", "tempContainerOutput"]
 
 # Enable extensive logging of process
-EXTENSIVE_LOGGING = True
+EXTENSIVE_LOGGING = False
 
 # Global state
 GLOBAL_NODE_MAP = {}
@@ -82,7 +82,7 @@ def create_new_validation_types_for_record_type():
 
     collect_record_info_children(GLOBAL_NODE_MAP)
 
-    if EXTENSIVE_LOGGING:
+    if EXTENSIVE_LOGGING: # pragma: no cover
         log_node_map_summary()
 
     print("\n\n=== Processing node map ===\n")
@@ -135,7 +135,7 @@ def log_results():
         CTX.log(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
 
     if TOTAL_ERRORS:
-        print("Warning! There were errors reported during processing, please check the log file for details.")
+        print("\nWarning! There were errors reported during processing, please check the log file for details.")
         CTX.log("=== Errors reported ===")
         for (error) in TOTAL_ERRORS:
             CTX.log(f" > {error}")
@@ -154,15 +154,16 @@ def build_node_map_from_child_references(root_url, global_node_map):
     if root_url in global_node_map:
         return global_node_map
 
-    queue = deque([root_url])
-    process_queue_and_collect_nodes(queue, root_url, global_node_map)
+
+    collect_nodes_from_root(root_url, global_node_map)
     link_parent_child_relationship(global_node_map)
 
     TOTAL_FETCHED = len(global_node_map)
     return global_node_map
 
 
-def process_queue_and_collect_nodes(queue: deque[str], root_url: str, global_node_map: dict[str, RecordNode]) -> None:
+def collect_nodes_from_root(root_url: str, global_node_map: dict[str, RecordNode]) -> None:
+    queue = deque([root_url])
     while queue:
         url = queue.popleft()
         if url in global_node_map:
@@ -280,7 +281,7 @@ def process_and_possibly_save(node, global_id_mapping):
             CTX.log(f"> Normalized childReference(s) Min Max to '0-X' in {old_id}")
             updated = True
 
-    child_renamed = any(c.record_id in global_id_mapping for c in node.children)
+    child_renamed = any(child.record_id in global_id_mapping for child in node.children)
 
     if not (updated or child_renamed):
         update_child_references(node.xml_content, global_id_mapping)
@@ -464,8 +465,7 @@ def try_to_store_record(node, record_type_url: str, xml_bytes: bytes | Any) -> b
         if response.status_code not in (200, 201):
             TOTAL_ERRORS.append(f"Failed to save {node.new_record_id} ({response.status_code} - {response.text})")
             return False
-        else:
-            return True
+        return True
     except requests.RequestException as e:
         CTX.log(f">>> Error saving {node.new_record_id}: {e}")
         TOTAL_ERRORS.append(f"Error saving {node.new_record_id}: {e}")
@@ -518,11 +518,11 @@ def get_search_data() -> bytes:
     return json.dumps(search_data).encode("utf-8")
 
 
-def log_node_map_summary():
+def log_node_map_summary(): # pragma: no cover
     CTX.log("\n=== Node map Summary ===")
     for url, node in GLOBAL_NODE_MAP.items():
         CTX.log(f"{url} → {len(node.children)} children, {len(node.parents)} parents")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     main()

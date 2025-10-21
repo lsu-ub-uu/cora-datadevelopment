@@ -338,10 +338,10 @@ def test_build_node_map_from_child_references_root_url_already_in_map(record_nod
 def test_build_node_map_from_child_references_new_url_added(record_node, monkeypatch):
     global_node_map = {}
 
-    def fake_process_queue(queue, root_url, node_map):
+    def fake_collect_nodes_from_root(root_url, node_map):
         node_map[root_url] = record_node
 
-    monkeypatch.setattr(Script, "process_queue_and_collect_nodes", fake_process_queue)
+    monkeypatch.setattr(Script, "collect_nodes_from_root", fake_collect_nodes_from_root)
 
     Script.build_node_map_from_child_references("http://root_url", global_node_map)
     assert len(global_node_map) == 1
@@ -349,8 +349,7 @@ def test_build_node_map_from_child_references_new_url_added(record_node, monkeyp
 
 
 def test_process_queue_already_in_node_map(record_node, monkeypatch):
-    queue = deque(["some_url"])
-    global_node_map = {"some_url": record_node}
+    global_node_map = {"http://root_url": record_node}
     called = False
 
     def fake_fetch(url):
@@ -359,14 +358,11 @@ def test_process_queue_already_in_node_map(record_node, monkeypatch):
         return "<xml></xml>"
 
     monkeypatch.setattr(Script, "fetch_record_as_xml", fake_fetch)
-    Script.process_queue_and_collect_nodes(queue, "http://root_url", global_node_map)
+    Script.collect_nodes_from_root("http://root_url", global_node_map)
     assert called == False
 
 
 def test_process_queue_and_add_note_to_map(sample_xml, monkeypatch):
-    queue = deque(["http://HOSTURL/recordInfoNewDivaTextGroup",
-                   "http://HOSTURL/textPartEnGroup",
-                   "http://HOSTURL/textPartSvGroup"])
     global_node_map = {}
     called = False
 
@@ -375,12 +371,15 @@ def test_process_queue_and_add_note_to_map(sample_xml, monkeypatch):
         called = True
         return sample_xml
 
+    def fake_collect_child_urls(node, root_url, url):
+        return ["http://child_url", "http://another_child_url"]
+
     monkeypatch.setattr(Script, "fetch_record_as_xml", fake_fetch)
-    Script.process_queue_and_collect_nodes(queue, "http://root_url", global_node_map)
+    monkeypatch.setattr(Script, "collect_child_urls", fake_collect_child_urls)
+
+    Script.collect_nodes_from_root("http://root_url", global_node_map)
     assert called == True
-    assert global_node_map["http://HOSTURL/recordInfoNewDivaTextGroup"].record_id == "divaTextNewGroup"
-    assert global_node_map["http://HOSTURL/textPartEnGroup"].record_id == "divaTextNewGroup"
-    assert global_node_map["http://HOSTURL/textPartSvGroup"].record_id == "divaTextNewGroup"
+    assert global_node_map["http://root_url"].record_id == "divaTextNewGroup"
 
 
 def test_process_and_possibly_save_not_saved_due_to_not_updated(record_node, monkeypatch):
