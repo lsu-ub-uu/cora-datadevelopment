@@ -18,6 +18,8 @@ def transform_organisation(old_org: dict, context: Context) -> ET.Element:
     old_record_info = find_child_with_name_in_data(
         old_org_data["children"], "recordInfo"
     )
+    assert old_record_info is not None
+
     record_info = ET.SubElement(organisation, "recordInfo")
     record_info.append(_create_validation_type(old_record_info))
     record_info.append(_create_data_divider())
@@ -56,6 +58,7 @@ def _create_permission_unit(old_record_info: dict):
     domain = get_first_atomic_value_with_name_in_data(
         old_record_info["children"], "domain"
     )
+    assert domain is not None
     return create_record_link_using_name_type_id(
         "permissionUnit", "permissionUnit", domain_to_permission_unit(domain)
     )

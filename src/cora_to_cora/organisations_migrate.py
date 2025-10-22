@@ -23,14 +23,16 @@ def organisations_migrate(context, domain, apply):
         organisation_migration_pairs: list[Tuple[dict, ET.Element]] = []
         for old_org in old_organisations:
             new_org = transform_organisation(old_org, context)
-            created_org = create_record(new_org, context)
+            created_org = create_record(
+                new_org, record_type="diva-organisation", context=context
+            )
             if not is_success_result(created_org):
                 context.log(
                     f"Failed to create organisation for old ID {old_org.get('id')}: {created_org.error}"
                 )
                 raise Exception("Aborting migration due to create record failure.")
             organisation_migration_pairs.append((old_org, created_org.response_data))
-        update_organisation_relations(organisation_migration_pairs)
+        update_organisation_relations(organisation_migration_pairs, context)
     else:
         for org in old_organisations:
             new_org = transform_organisation(org, context)
@@ -38,12 +40,11 @@ def organisations_migrate(context, domain, apply):
 
 
 def _get_old_cora_organisations(context, domain):
-    try:
-        response = requests.get(
-            f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}}]}}'
-        )
-        return response.json()
-    except Exception as e:
+    response = requests.get(
+        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}}]}}'
+    )
+    if response.status_code != 200:
         raise Exception(
             f"Failed to fetch organisations from old Cora: {response.status_code} {response.text}"
-        ) from e
+        )
+    return response.json()

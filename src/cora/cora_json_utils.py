@@ -1,9 +1,20 @@
-def find_child_with_name_in_data(childrenList, nameInData):
+def find_child_with_name_in_data(childrenList, nameInData) -> dict | None:
     for child in childrenList:
         childNameInData = child["name"]
         if childNameInData == nameInData:
             return child
     return None
+
+
+def find_all_children_with_name_in_data(
+    childrenList: list[dict], nameInData: str
+) -> list[dict]:
+    matchingChildren = []
+    for child in childrenList:
+        childNameInData = child["name"]
+        if childNameInData == nameInData:
+            matchingChildren.append(child)
+    return matchingChildren
 
 
 def get_value_with_name_in_data(specificChild):

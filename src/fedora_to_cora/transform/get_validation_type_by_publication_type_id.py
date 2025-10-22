@@ -23,7 +23,7 @@ publication_map = {
 }
 
 
-def get_validation_type_by_publication_type_id(publication_type_id: str) -> str:
+def get_validation_type_by_publication_type_id(publication_type_id: str | None) -> str:
     """
     Returns the Cora DiVA validation type based on the DiVA Classic publication type ID.
 
