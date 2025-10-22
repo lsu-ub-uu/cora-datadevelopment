@@ -2,6 +2,7 @@ LOGIN_URLS = {
     "minikube": "http://192.168.49.2:30982/login/rest/apptoken",
     "local": "http://localhost:8182/login/rest/apptoken",
     "preview": "https://cora.epc.ub.uu.se/diva/login/rest/apptoken",
+    "dev": "http://130.238.171.238:38182/login/rest/apptoken",
     "mig": "https://mig.diva-portal.org/login/rest/apptoken",
     "pre": "https://pre.diva-portal.org/login/rest/apptoken",
 }
