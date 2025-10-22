@@ -5,19 +5,22 @@ from typing import Any
 
 import requests
 
-from common.arg_parser import create_argument_parser, common_arguments
+from common.arg_parser import create_argument_parser
 from cora.context import CoraContext, Context
 
 CTX: Context
 
 # The recordType to process
-RECORD_TYPE = "diva-output"
+RECORD_TYPE = ""
 
 # Prefix for new validationTypes
-TYPE_PREFIX = "__XYZ_"
+TYPE_PREFIX = ""
 
 # Ignored validation types
 BLACKLIST_TYPES = ["diva-output", "tempContainerOutput"]
+
+# DRY RUN MODE
+DRY_RUN = True
 
 # Enable extensive logging of process
 EXTENSIVE_LOGGING = False
@@ -30,6 +33,41 @@ TOTAL_PROCESSED_RECORDS = 0
 TOTAL_UPDATES = 0
 TOTAL_ERRORS = []
 TOTAL_FETCHED = 0
+
+script_arguments = {
+    "--system": {
+        "help": "Cora system to connect to (e.g., 'preview', 'production')",
+        "type": str,
+        "default": "minikube",
+    },
+    "--login-id": {
+        "default": "divaAdmin@cora.epc.ub.uu.se",
+        "help": "Login ID for authentication",
+    },
+    "--app-token": {
+        "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
+        "help": "Application token for authentication",
+    },
+    "--apply": {
+        "help": "Apply changes to the Cora system (dry run if not present)",
+        "action": "store_true",
+    },
+    "--workers": {
+        "help": "Number of worker threads for processing",
+        "type": int,
+        "default": 16,
+    },
+    "--recordtype": {
+        "help": "Which recordType to create new validationTypes for",
+        "type": str,
+        "required": True,
+    },
+    "--prefix": {
+        "help": "Which prefix to add to the new validationType IDs",
+        "type": str,
+        "required": True,
+    },
+}
 
 
 # Representation of a record and its relationships ----------------------------------
@@ -46,14 +84,18 @@ class RecordNode:
 
 
 def main():
-    global CTX
+    global CTX, DRY_RUN, TYPE_PREFIX, RECORD_TYPE
 
     parser = create_argument_parser(
         description="Create new validationTypes with updated IDs and normalized values for a specific recordType.",
-        arguments=common_arguments,
+        arguments=script_arguments
     )
 
     args = parser.parse_args()
+
+    DRY_RUN = not args.apply
+    TYPE_PREFIX = args.prefix
+    RECORD_TYPE = args.recordtype
 
     CTX = CoraContext(
         system=args.system,
@@ -61,6 +103,10 @@ def main():
         app_token=args.app_token,
         workers=args.workers,
     )
+
+    if DRY_RUN:
+        print("\n>>> [SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes\n")
+        CTX.log(">>> [DRY RUN MODE] - No changes will be applied to the system <<<")
 
     create_new_validation_types_for_record_type()
 
@@ -314,6 +360,9 @@ def prepare_and_try_to_save_record(node):
 
     log_creation_summary(node, record_type_url, xml_bytes)
 
+    if DRY_RUN:
+        CTX.log(f"  Dry run mode - not saving {node.new_record_id}\n")
+        return True
     return try_to_store_record(node, record_type_url, xml_bytes)
 
 

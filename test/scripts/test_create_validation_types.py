@@ -486,6 +486,16 @@ def test_prepare_and_try_to_save_record(record_node, monkeypatch):
     assert isinstance(record_node.xml_content, ET.Element)
 
 
+def test_prepare_and_try_to_save_record_not_dry_run(record_node, monkeypatch):
+    Script.DRY_RUN = False
+    Script.prepare_and_try_to_save_record(record_node)
+
+    assert record_node.record_id == "divaTextNewGroup"
+    assert record_node.record_type == "validationType"
+    assert record_node.url == "http://HOSTURL/record/divaTextNewGroup"
+    assert isinstance(record_node.xml_content, ET.Element)
+
+
 def test_parse_record_from_xml(sample_xml):
     node = Script.parse_record_from_xml(sample_xml, "http://url")
     assert node.record_id == "divaTextNewGroup"
@@ -604,6 +614,7 @@ def test_check_for_unprocessed_nodes_no_unprocessed(monkeypatch):
 
 def test_create_new_id_and_update_mapping(record_node):
     id_mapping = {}
+    Script.TYPE_PREFIX = "__XYZ_"
     new_id = Script.create_new_id_and_update_mapping(id_mapping, record_node, "123")
     assert new_id == "__XYZ_123"
     assert id_mapping["123"] == "__XYZ_123"
@@ -724,6 +735,15 @@ def test_fetch_record_as_xml(monkeypatch, sample_xml):
     assert sample_xml in xml
 
 
+def test_try_to_store_record_sucessful(monkeypatch, record_node):
+    def fake_post(url, data=None, *args, **kwargs):
+        return MockResponse("Record stored", 201)
+
+    monkeypatch.setattr(requests, "post", fake_post)
+    success = Script.try_to_store_record(record_node, "someUrl", b"<xml></xml>")
+    assert success
+
+
 def test_try_to_store_record_with_failed_response(monkeypatch, record_node):
     def fake_post(url, data=None, *args, **kwargs):
         return MockResponse("Error occurred", 400)
@@ -790,7 +810,10 @@ def test_main(monkeypatch, mock_ctx):
         system="testSystem",
         login_id="user",
         app_token="token",
-        workers=1
+        workers=1,
+        prefix="__XYZ_",
+        recordtype="diva-output",
+        apply=False
     )
 
     monkeypatch.setattr(Script, "create_argument_parser",
