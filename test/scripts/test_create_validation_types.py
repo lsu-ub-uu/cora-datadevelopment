@@ -1,5 +1,4 @@
 import xml.etree.ElementTree as ET
-from collections import deque
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -383,7 +382,7 @@ def test_process_queue_and_add_note_to_map(sample_xml, monkeypatch):
 
 
 def test_process_and_possibly_save_not_saved_due_to_not_updated(record_node, monkeypatch):
-    monkeypatch.setattr(Script, "skip_if_already_processed", lambda node, mapping: False)
+    monkeypatch.setattr(Script, "is_already_processed", lambda node, mapping: False)
     monkeypatch.setattr(Script, "normalize_regex_patterns", lambda node: False)
     monkeypatch.setattr(Script, "normalize_child_reference_repeat", lambda node: False)
 
@@ -392,13 +391,13 @@ def test_process_and_possibly_save_not_saved_due_to_not_updated(record_node, mon
 
 
 def test_process_and_possibly_save_not_saved_due_to_already_processed(record_node, monkeypatch):
-    def fake_skip_if_already_processed(node, mapping):
+    def fake_is_already_processed(node, mapping):
         return True
 
-    monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.skip_if_already_processed",
-                        fake_skip_if_already_processed)
+    monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.is_already_processed",
+                        fake_is_already_processed)
 
-    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    result = Script.process_and_possibly_save(record_node, {"divaTextNewGroup": "XYZ_divaTextNewGroup"})
     assert result is False
 
 
@@ -611,16 +610,15 @@ def test_create_new_id_and_update_mapping(record_node):
     assert record_node.new_record_id == "__XYZ_123"
 
 
-def test_skip_if_already_processed(record_node):
+def test_is_already_processed(record_node):
     id_mapping = {"divaTextNewGroup": "apa"}
-    skipped = Script.skip_if_already_processed(record_node, id_mapping)
+    skipped = Script.is_already_processed(record_node.record_id, id_mapping)
     assert skipped
-    assert record_node.new_record_id == "apa"
 
 
-def test_skip_if_already_processed_false(record_node):
+def test_is_already_processed_is_false(record_node):
     id_mapping = {"NotProcessedGroup": "apa"}
-    skipped = Script.skip_if_already_processed(record_node, id_mapping)
+    skipped = Script.is_already_processed(record_node.record_id, id_mapping)
     assert not skipped
 
 

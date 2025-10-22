@@ -82,7 +82,7 @@ def create_new_validation_types_for_record_type():
 
     collect_record_info_children(GLOBAL_NODE_MAP)
 
-    if EXTENSIVE_LOGGING: # pragma: no cover
+    if EXTENSIVE_LOGGING:  # pragma: no cover
         log_node_map_summary()
 
     print("\n\n=== Processing node map ===\n")
@@ -154,7 +154,6 @@ def build_node_map_from_child_references(root_url, global_node_map):
     if root_url in global_node_map:
         return global_node_map
 
-
     collect_nodes_from_root(root_url, global_node_map)
     link_parent_child_relationship(global_node_map)
 
@@ -172,7 +171,7 @@ def collect_nodes_from_root(root_url: str, global_node_map: dict[str, RecordNode
         xml_text = fetch_record_as_xml(url)
         node = parse_record_from_xml(xml_text, url)
         global_node_map[url] = node
-        print(f"Fetching records... {len(global_node_map)}", end="\r", flush=True)
+        print(f"Fetching records: {len(global_node_map)}", end="\r", flush=True)
 
         child_urls = collect_child_urls(node, root_url, url)
 
@@ -258,27 +257,28 @@ def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
 
 
 def process_and_possibly_save(node, global_id_mapping):
-    old_id = node.record_id
+    original_id = node.record_id
 
-    if skip_if_already_processed(node, global_id_mapping):
+    if is_already_processed(node.record_id, global_id_mapping):
+        node.new_record_id = global_id_mapping[original_id]
         return False
 
     updated = False
     if update_final_value_of_validation_type(node.xml_content):
-        CTX.log(f"> Updated finalValue for {node.record_id} (validationType)")
+        CTX.log(f"> Updated finalValue for {original_id} (validationType)")
         updated = True
 
     elif record_is_a_child_of_record_info(node):
-        CTX.log(f"> Skipping {node.record_id} (record info child)")
+        CTX.log(f"> Skipping {original_id} (record info child)")
         return False
 
     else:
         if normalize_regex_patterns(node.xml_content):
-            CTX.log(f"> Normalized regex pattern(s) to '.+' in {old_id}")
+            CTX.log(f"> Normalized regex pattern(s) to '.+' in {original_id}")
             updated = True
 
         if normalize_child_reference_repeat(node.xml_content):
-            CTX.log(f"> Normalized childReference(s) Min Max to '0-X' in {old_id}")
+            CTX.log(f"> Normalized childReference(s) Min Max to '0-X' in {original_id}")
             updated = True
 
     child_renamed = any(child.record_id in global_id_mapping for child in node.children)
@@ -287,45 +287,38 @@ def process_and_possibly_save(node, global_id_mapping):
         update_child_references(node.xml_content, global_id_mapping)
         return False
 
-    new_id = create_new_id_and_update_mapping(global_id_mapping, node, old_id)
+    new_id = create_new_id_and_update_mapping(global_id_mapping, node, original_id)
     update_record_id_in_xml(node.xml_content, new_id)
     update_child_references(node.xml_content, global_id_mapping)
     remove_action_links(node.xml_content)
     return prepare_and_try_to_save_record(node)
 
 
-def create_new_id_and_update_mapping(global_id_mapping, node, old_id) -> str:
-    new_id = f"{TYPE_PREFIX}{old_id}"
+def create_new_id_and_update_mapping(global_id_mapping, node, original_id) -> str:
+    new_id = f"{TYPE_PREFIX}{original_id}"
     node.new_record_id = new_id
-    global_id_mapping[old_id] = new_id
+    global_id_mapping[original_id] = new_id
     return new_id
 
 
-def skip_if_already_processed(node: RecordNode, global_id_mapping: dict) -> bool:
-    old_id = node.record_id
-    if old_id in global_id_mapping:
-        node.new_record_id = global_id_mapping[old_id]
-        CTX.log(f"Skipping already processed {old_id} -> {node.new_record_id}")
-        return True
-    return False
+def is_already_processed(node_id: str, global_id_mapping: dict) -> bool:
+    return node_id in global_id_mapping
 
 
 def prepare_and_try_to_save_record(node):
-    record_type = node.xml_content.findtext(".//recordInfo/type/linkedRecordId")
-
     content_root = unwrap_and_clean_xml_for_create(node.xml_content)
     xml_bytes = to_xml_bytes(content_root)
 
     base_url = f"{CTX.get_base_url()}"
-    record_type_url = f"{base_url}{record_type}"
+    record_type_url = f"{base_url}{node.record_type}"
 
-    log_creation_summary(node, record_type, record_type_url, xml_bytes)
+    log_creation_summary(node, record_type_url, xml_bytes)
 
     return try_to_store_record(node, record_type_url, xml_bytes)
 
 
-def log_creation_summary(node, record_type, record_type_url: str, xml_bytes: bytes | Any):
-    CTX.log(f">>> Creating {node.new_record_id} ({record_type})...")
+def log_creation_summary(node, record_type_url: str, xml_bytes: bytes | Any):
+    CTX.log(f">>> Creating {node.new_record_id} ({node.record_type})...")
     CTX.log(f"  Endpoint: {record_type_url}")
     CTX.log("  Payload: " + xml_bytes.decode("utf-8"))
 
@@ -381,9 +374,9 @@ def normalize_child_reference_repeat(xml_root):
 
 def update_child_references(xml_root, id_mapping):
     for element in xml_root.findall(".//linkedRecordId"):
-        old_id = (element.text or "").strip()
-        if old_id in id_mapping:
-            element.text = str(id_mapping[old_id])
+        original_id = (element.text or "").strip()
+        if original_id in id_mapping:
+            element.text = str(id_mapping[original_id])
 
 
 def update_record_id_in_xml(xml_root, new_id):
@@ -518,11 +511,11 @@ def get_search_data() -> bytes:
     return json.dumps(search_data).encode("utf-8")
 
 
-def log_node_map_summary(): # pragma: no cover
+def log_node_map_summary():  # pragma: no cover
     CTX.log("\n=== Node map Summary ===")
     for url, node in GLOBAL_NODE_MAP.items():
         CTX.log(f"{url} → {len(node.children)} children, {len(node.parents)} parents")
 
 
-if __name__ == "__main__": # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     main()
