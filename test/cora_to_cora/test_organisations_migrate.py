@@ -215,6 +215,44 @@ def test_aborts_migration_when_any_create_record_fails(
         assert update_organisation_relations_mock.call_count == 0
 
 
+@patch("cora_to_cora.organisations_migrate.update_organisation_relations")
+@patch("cora_to_cora.organisations_migrate.create_record")
+@patch("cora_to_cora.organisations_migrate.validate_record")
+@patch("cora_to_cora.organisations_migrate.transform_organisation")
+def test_ignores_root_organisation(
+    transform_organisation_mock,
+    validate_record_mock,
+    create_record_mock,
+    update_organisation_relations_mock,
+    requests_mock,
+):
+    mock_context = MockContext()
+    domain = "test_domain"
+
+    # Load test data from JSON file
+    test_data = _read_json_file(
+        "old_cora_search_result_two_organisations_and_root.json"
+    )
+
+    requests_mock.get(
+        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}}]}}',
+        status_code=200,
+        json=test_data,
+    )
+
+    transform_organisation_mock.return_value = ET.Element("organisation")
+
+    organisations_migrate(mock_context, domain, apply=True)
+    assert requests_mock.call_count == 1
+    mock_context.log.assert_any_call(
+        "Found 1 organisations to migrate from old Cora system."
+    )
+    assert transform_organisation_mock.call_count == 1
+    assert validate_record_mock.call_count == 0
+    assert create_record_mock.call_count == 1
+    assert update_organisation_relations_mock.call_count == 1
+
+
 def _read_json_file(filename):
     with open(os.path.join(os.path.dirname(__file__), filename), "r") as f:
         return json.load(f)

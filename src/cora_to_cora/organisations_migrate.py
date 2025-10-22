@@ -5,20 +5,23 @@ from cora.create import create_record, is_success_result
 from cora.update import update_record
 from cora_to_cora.transform_organisation import transform_organisation
 from cora_to_cora.update_organisation_relations import update_organisation_relations
+from cora.cora_json_utils import (
+    find_child_with_name_in_data,
+    get_linked_record_id_with_name_in_data,
+)
 import xml.etree.ElementTree as ET
 
 
 def organisations_migrate(context, domain, apply):
-    search_result = _get_old_cora_organisations(context, domain)
-    number_of_results = int(search_result["dataList"]["totalNo"])
-    if number_of_results == 0:
+    old_organisations = _get_old_cora_organisations(context, domain)
+
+    if len(old_organisations) == 0:
         context.log("No organisations found to migrate from old Cora system.")
         return
-    context.log(
-        f"Found {number_of_results} organisations to migrate from old Cora system."
-    )
-    old_organisations = search_result["dataList"]["data"]
 
+    context.log(
+        f"Found {len(old_organisations)} organisations to migrate from old Cora system."
+    )
     if apply:
         organisation_migration_pairs: list[Tuple[dict, ET.Element]] = []
         for old_org in old_organisations:
@@ -47,4 +50,16 @@ def _get_old_cora_organisations(context, domain):
         raise Exception(
             f"Failed to fetch organisations from old Cora: {response.status_code} {response.text}"
         )
-    return response.json()
+    search_result = response.json()
+    return list(filter(_is_not_root_organisation, search_result["dataList"]["data"]))
+
+
+def _is_not_root_organisation(old_org: dict) -> bool:
+    old_org_data = old_org["record"]["data"]
+
+    record_info = find_child_with_name_in_data(old_org_data["children"], "recordInfo")
+    assert record_info is not None
+    record_type_id = get_linked_record_id_with_name_in_data(
+        record_info["children"], "type"
+    )
+    return record_type_id != "rootOrganisation"
