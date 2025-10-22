@@ -1,3 +1,4 @@
+from common.xml_utils import pretty_print_xml
 from cora_to_cora.update_organisation_relations import (
     update_organisation_relations,
 )
@@ -55,148 +56,21 @@ def test_one_child_with_two_parents(mock_update_record):
 
 
 @patch("cora_to_cora.update_organisation_relations.update_record")
-def xtest_one_child_with_earlier(mock_update_record):
-    old_child = {
-        "record": {
-            "data": {
-                "children": [
-                    {
-                        "name": "organisation",
-                        "children": [
-                            {
-                                "name": "recordInfo",
-                                "children": [
-                                    {"name": "id", "value": "old-sub-id"},
-                                ],
-                            },
-                            {
-                                "name": "earlierOrganisation",
-                                "repeatId": "0",
-                                "children": [
-                                    {
-                                        "name": "organisationLink",
-                                        "children": [
-                                            {
-                                                "name": "linkedRecordType",
-                                                "value": "subOrganisation",
-                                            },
-                                            {
-                                                "name": "linkedRecordId",
-                                                "value": "first-earlier-old-id",
-                                            },
-                                        ],
-                                    }
-                                ],
-                            },
-                            {
-                                "name": "earlierOrganisation",
-                                "repeatId": "1",
-                                "children": [
-                                    {
-                                        "name": "organisationLink",
-                                        "children": [
-                                            {
-                                                "name": "linkedRecordType",
-                                                "value": "subOrganisation",
-                                            },
-                                            {
-                                                "name": "linkedRecordId",
-                                                "value": "second-earlier-old-id",
-                                            },
-                                        ],
-                                    }
-                                ],
-                            },
-                        ],
-                    }
-                ],
-            }
-        }
-    }
-    new_child = ET.fromstring(
-        """
-         <organisation>
-            <recordInfo>
-                <id>new-sub-id</id>
-                <oldId>old-sub-id</oldId>
-            </recordInfo>
-        </organisation>
-    """
-    )
-
-    old_first_earlier = {
-        "record": {
-            "data": {
-                "children": [
-                    {
-                        "name": "organisation",
-                        "children": [
-                            {
-                                "name": "recordInfo",
-                                "children": [
-                                    {"name": "id", "value": "first-earlier-old-id"},
-                                ],
-                            },
-                        ],
-                    }
-                ],
-            }
-        }
-    }
-    new_first_earlier = ET.fromstring(
-        """
-         <organisation>
-            <recordInfo>
-                <id>first-earlier-new-id</id>
-                <oldId>first-earlier-old-id</oldId>
-            </recordInfo>
-        </organisation>
-    """
-    )
-
-    old_second_earlier = {
-        "record": {
-            "data": {
-                "children": [
-                    {
-                        "name": "organisation",
-                        "children": [
-                            {
-                                "name": "recordInfo",
-                                "children": [
-                                    {"name": "id", "value": "second-earlier-old-id"},
-                                ],
-                            },
-                        ],
-                    }
-                ],
-            }
-        }
-    }
-    new_second_earlier = ET.fromstring(
-        """
-         <organisation>
-            <recordInfo>
-                <id>second-earlier-new-id</id>
-                <oldId>second-earlier-old-id</oldId>
-            </recordInfo>
-        </organisation>
-    """
-    )
-
+def test_one_child_with_earlier(mock_update_record):
     tuples: List[Tuple] = [
-        (
-            old_child,
-            new_child,
+        create_mock_org_tuple(
+            "old-sub-id", "new-sub-id", [], ["old-top-id", "other-old-top-id"]
         ),
-        (old_first_earlier, new_first_earlier),
-        (old_second_earlier, new_second_earlier),
+        create_mock_org_tuple("old-top-id", "new-top-id", [], []),
+        create_mock_org_tuple("other-old-top-id", "other-new-top-id", [], []),
     ]
 
     update_organisation_relations(tuples, MockContext())
 
-    mock_update_record.assert_called_once()
+    assert mock_update_record.call_count == 2
     updated_organisation_xml = mock_update_record.call_args[0][0]
+
+    print(pretty_print_xml(updated_organisation_xml))
     assert_equal_for_xml_and_xml_string(
         updated_organisation_xml,
         """
@@ -205,10 +79,16 @@ def xtest_one_child_with_earlier(mock_update_record):
                 <id>new-sub-id</id>
                 <oldId>old-sub-id</oldId>
             </recordInfo>
-            <related type="parent">
+            <related type="earlier" repeatId="0">
                 <organisation>
                     <linkedRecordType>diva-organisation</linkedRecordType>
                     <linkedRecordId>new-top-id</linkedRecordId>
+                </organisation>
+            </related>
+            <related type="earlier" repeatId="1">
+                <organisation>
+                    <linkedRecordType>diva-organisation</linkedRecordType>
+                    <linkedRecordId>other-new-top-id</linkedRecordId>
                 </organisation>
             </related>
         </organisation>
@@ -216,12 +96,50 @@ def xtest_one_child_with_earlier(mock_update_record):
     )
 
 
-def xtest_one_child_with_two_earlier(mock_update_record):
-    pass
+@patch("cora_to_cora.update_organisation_relations.update_record")
+def test_one_child_with_a_parent_and_earlier(mock_update_record):
+    tuples: List[Tuple] = [
+        create_mock_org_tuple(
+            "old-sub-id",
+            "new-sub-id",
+            ["old-parent-top-id"],
+            ["other-earlier-old-top-id"],
+        ),
+        create_mock_org_tuple("old-parent-top-id", "new-parent-top-id", [], []),
+        create_mock_org_tuple(
+            "other-earlier-old-top-id", "other-earlier-new-top-id", [], []
+        ),
+    ]
 
+    update_organisation_relations(tuples, MockContext())
 
-def xtest_one_child_with_a_parent_and_earlier():
-    pass
+    assert mock_update_record.call_count == 2
+    updated_organisation_xml = mock_update_record.call_args[0][0]
+
+    print(pretty_print_xml(updated_organisation_xml))
+    assert_equal_for_xml_and_xml_string(
+        updated_organisation_xml,
+        """
+        <organisation>
+            <recordInfo>
+                <id>new-sub-id</id>
+                <oldId>old-sub-id</oldId>
+            </recordInfo>
+            <related type="earlier" repeatId="0">
+                <organisation>
+                    <linkedRecordType>diva-organisation</linkedRecordType>
+                    <linkedRecordId>other-earlier-new-top-id</linkedRecordId>
+                </organisation>
+            </related>
+            <related type="parent">
+                <organisation>
+                    <linkedRecordType>diva-organisation</linkedRecordType>
+                    <linkedRecordId>new-parent-top-id</linkedRecordId>
+                </organisation>
+            </related>
+        </organisation>
+    """,
+    )
 
 
 def create_mock_org_tuple(
