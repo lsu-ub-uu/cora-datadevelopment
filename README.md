@@ -29,6 +29,10 @@ This repository contains scripts for creating and migrating data.
 - [Series export from Classic](docs/series_export.md)
 - [Series import to Cora](docs/series_import.md)
 
+### Organisations
+
+- [Organisations migrate from Classic Cora to New Cora](docs/organisations_migrate.md)
+
 ### Outputs
 
 - [Outputs export from Classic](docs/outputs_export.md)

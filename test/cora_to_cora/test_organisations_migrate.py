@@ -9,44 +9,36 @@ import xml.etree.ElementTree as ET
 from cora.create import CreateRecordSuccessResult, CreateRecordFailureResult
 
 
-@patch("cora_to_cora.organisations_migrate.validate_record")
-def test_organisations_migrate_dry_run_with_zero_results(
-    validate_record_mock, requests_mock
-):
-    mock_context = MockContext()
-    domain = "test_domain"
-
-    requests_mock.get(
-        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}}]}}',
-        status_code=200,
-        text='{"dataList": {"data":[], "fromNo": "0", "totalNo": "0", "containDataOfType": "mix", "toNo": "0"}}',
-    )
-
-    organisations_migrate(mock_context, domain, apply=False)
-    assert requests_mock.call_count == 1
-    mock_context.log.assert_called_with(
-        "No organisations found to migrate from old Cora system."
-    )
-    assert validate_record_mock.call_count == 0
+@pytest.fixture
+def mock_run_with_threads():
+    """Fixture to mock run_with_threads to simply iterate instead of using threads."""
+    with patch("cora_to_cora.organisations_migrate.run_with_threads") as mock:
+        mock.side_effect = lambda items, func, workers, desc: [
+            func(item) for item in items
+        ]
+        yield mock
 
 
 @patch("cora_to_cora.organisations_migrate.create_record")
 @patch("cora_to_cora.organisations_migrate.update_organisation_relations")
 def test_organisations_migrate_apply_with_zero_results(
-    create_record_mock, update_organisation_relations_mock, requests_mock
+    create_record_mock,
+    update_organisation_relations_mock,
+    mock_run_with_threads,
+    requests_mock,
 ):
     mock_context = MockContext()
     domain = "test_domain"
 
     requests_mock.get(
-        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}}]}}',
+        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}},{{"name":"rows","value":"1000"}}]}}',
         status_code=200,
         text='{"dataList": {"data":[], "fromNo": "0", "totalNo": "0", "containDataOfType": "mix", "toNo": "0"}}',
     )
 
-    organisations_migrate(mock_context, domain, apply=True)
+    organisations_migrate(mock_context, domain)
     assert requests_mock.call_count == 1
-    mock_context.log.assert_called_with(
+    mock_context.log.assert_called_with(  # type: ignore
         "No organisations found to migrate from old Cora system."
     )
     assert create_record_mock.call_count == 0
@@ -58,7 +50,7 @@ def test_get_old_organisations_failed(requests_mock):
     domain = "test_domain"
 
     requests_mock.get(
-        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}}]}}',
+        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}},{{"name":"rows","value":"1000"}}]}}',
         status_code=404,
         text="Some Cora Error",
     )
@@ -67,38 +59,7 @@ def test_get_old_organisations_failed(requests_mock):
         Exception,
         match="Failed to fetch organisations from old Cora: 404 Some Cora Error",
     ):
-        organisations_migrate(mock_context, domain, apply=False)
-
-
-@patch("cora_to_cora.organisations_migrate.create_record")
-@patch("cora_to_cora.organisations_migrate.validate_record")
-@patch("cora_to_cora.organisations_migrate.transform_organisation")
-def test_validates_transformed_record_when_dry_run_and_two_results(
-    transform_organisation_mock,
-    validate_record_mock,
-    create_record_mock,
-    requests_mock,
-):
-    mock_context = MockContext()
-    domain = "test_domain"
-
-    # Load test data from JSON file
-    test_data = _read_json_file("old_cora_search_result_two_organisations.json")
-
-    requests_mock.get(
-        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}}]}}',
-        status_code=200,
-        json=test_data,
-    )
-
-    organisations_migrate(mock_context, domain, apply=False)
-    assert requests_mock.call_count == 1
-    mock_context.log.assert_any_call(
-        "Found 2 organisations to migrate from old Cora system."
-    )
-    assert transform_organisation_mock.call_count == 2
-    assert validate_record_mock.call_count == 2
-    assert create_record_mock.call_count == 0
+        organisations_migrate(mock_context, domain)
 
 
 @patch("cora_to_cora.organisations_migrate.update_organisation_relations")
@@ -110,6 +71,7 @@ def test_creates_transformed_record_when_apply_and_two_results(
     validate_record_mock,
     create_record_mock,
     update_organisation_relations_mock,
+    mock_run_with_threads,
     requests_mock,
 ):
     mock_context = MockContext()
@@ -119,7 +81,7 @@ def test_creates_transformed_record_when_apply_and_two_results(
     test_data = _read_json_file("old_cora_search_result_two_organisations.json")
 
     requests_mock.get(
-        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}}]}}',
+        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}},{{"name":"rows","value":"1000"}}]}}',
         status_code=200,
         json=test_data,
     )
@@ -138,9 +100,9 @@ def test_creates_transformed_record_when_apply_and_two_results(
         ),
     ]
 
-    organisations_migrate(mock_context, domain, apply=True)
+    organisations_migrate(mock_context, domain)
     assert requests_mock.call_count == 1
-    mock_context.log.assert_any_call(
+    mock_context.log.assert_any_call(  # type: ignore
         "Found 2 organisations to migrate from old Cora system."
     )
     assert transform_organisation_mock.call_count == 2
@@ -172,6 +134,7 @@ def test_aborts_migration_when_any_create_record_fails(
     validate_record_mock,
     create_record_mock,
     update_organisation_relations_mock,
+    mock_run_with_threads,
     requests_mock,
 ):
     mock_context = MockContext()
@@ -189,7 +152,7 @@ def test_aborts_migration_when_any_create_record_fails(
     test_data = _read_json_file("old_cora_search_result_two_organisations.json")
 
     requests_mock.get(
-        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}}]}}',
+        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}},{{"name":"rows","value":"1000"}}]}}',
         status_code=200,
         json=test_data,
     )
@@ -199,16 +162,16 @@ def test_aborts_migration_when_any_create_record_fails(
     with pytest.raises(
         Exception, match="Aborting migration due to create record failure."
     ):
-        organisations_migrate(mock_context, domain, apply=True)
+        organisations_migrate(mock_context, domain)
         assert requests_mock.call_count == 1
-        mock_context.log.assert_any_call(
+        mock_context.log.assert_any_call(  # type: ignore
             "Found 2 organisations to migrate from old Cora system."
         )
         assert transform_organisation_mock.call_count == 2
         assert validate_record_mock.call_count == 0
         assert create_record_mock.call_count == 1
 
-        mock_context.log.assert_any_call(
+        mock_context.log.assert_any_call(  # type: ignore
             "Some records failed to be created. Aborting update of relations."
         )
 
@@ -224,6 +187,7 @@ def test_ignores_root_organisation(
     validate_record_mock,
     create_record_mock,
     update_organisation_relations_mock,
+    mock_run_with_threads,
     requests_mock,
 ):
     mock_context = MockContext()
@@ -235,16 +199,16 @@ def test_ignores_root_organisation(
     )
 
     requests_mock.get(
-        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}}]}}',
+        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}},{{"name":"rows","value":"1000"}}]}}',
         status_code=200,
         json=test_data,
     )
 
     transform_organisation_mock.return_value = ET.Element("organisation")
 
-    organisations_migrate(mock_context, domain, apply=True)
+    organisations_migrate(mock_context, domain)
     assert requests_mock.call_count == 1
-    mock_context.log.assert_any_call(
+    mock_context.log.assert_any_call(  # type: ignore
         "Found 1 organisations to migrate from old Cora system."
     )
     assert transform_organisation_mock.call_count == 1

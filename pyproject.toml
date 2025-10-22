@@ -28,6 +28,7 @@ subjects-import = "scripts.subjects_import:main"
 outputs-import = "scripts.outputs_import:main"
 outputs-export = "scripts.outputs_export:main"
 outputs-testdata-create = "scripts.outputs_testdata_create:main"
+organisations-migrate = "scripts.organisations_migrate:main"
 
 [build-system]
 requires = ["setuptools"]

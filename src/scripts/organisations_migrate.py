@@ -7,20 +7,21 @@ for each org:
         remember  old_Id=>new_id mapping.
         remember earlier org relations
         remember parent org relation
-        
+
         for each created org:
             add relations
             update
-    
+
 """
 
 from common.arg_parser import create_argument_parser, common_arguments
 from cora.context import CoraContext
 from cora_to_cora.organisations_migrate import organisations_migrate
 
+
 def main():
     parser = create_argument_parser(
-        description="Import subjects from XML",
+        description="Import organistations from Classic Cora",
         arguments={
             "--system": {
                 "help": "Cora system to connect to (e.g., 'preview', 'production')",
@@ -40,16 +41,12 @@ def main():
                 "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
                 "help": "Application token for authentication",
             },
-            "--apply": {
-                "help": "Apply changes to the Cora system (dry run if not present)",
-                "action": "store_true",
-            },
             "--workers": {
                 "help": "Number of worker threads for processing",
                 "type": int,
                 "default": 16,
             },
-        }
+        },
     )
 
     args = parser.parse_args()
@@ -60,8 +57,7 @@ def main():
         app_token=args.app_token,
         workers=args.workers,
     )
-    organisations_migrate(context, args.domain, args.apply)
-
+    organisations_migrate(context, args.domain)
 
 
 if __name__ == "__main__":

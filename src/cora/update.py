@@ -39,7 +39,6 @@ def update_record(
     old_id_text = old_id.text if old_id is not None else "N/A"
 
     request_body = f'<?xml version="1.0" encoding="UTF-8"?>{ET.tostring(data_group).decode("UTF-8")}'
-    print("Updating record", pretty_print_xml(record))
     try:
         response = requests.post(
             request_url,
@@ -51,7 +50,6 @@ def update_record(
             data=request_body,
         )
 
-        print("response", response.status_code, response.text)
         if response.status_code == 200:
             response_data = ET.fromstring(response.text)
             record_id = response_data.findtext(".//id")
