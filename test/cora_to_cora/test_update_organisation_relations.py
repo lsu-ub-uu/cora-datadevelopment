@@ -56,141 +56,15 @@ def test_one_child_with_two_parents(mock_update_record):
 
 @patch("cora_to_cora.update_organisation_relations.update_record")
 def xtest_one_child_with_earlier(mock_update_record):
-    old_child = {
-        "record": {
-            "data": {
-                "children": [
-                    {
-                        "name": "organisation",
-                        "children": [
-                            {
-                                "name": "recordInfo",
-                                "children": [
-                                    {"name": "id", "value": "old-sub-id"},
-                                ],
-                            },
-                            {
-                                "name": "earlierOrganisation",
-                                "repeatId": "0",
-                                "children": [
-                                    {
-                                        "name": "organisationLink",
-                                        "children": [
-                                            {
-                                                "name": "linkedRecordType",
-                                                "value": "subOrganisation",
-                                            },
-                                            {
-                                                "name": "linkedRecordId",
-                                                "value": "first-earlier-old-id",
-                                            },
-                                        ],
-                                    }
-                                ],
-                            },
-                            {
-                                "name": "earlierOrganisation",
-                                "repeatId": "1",
-                                "children": [
-                                    {
-                                        "name": "organisationLink",
-                                        "children": [
-                                            {
-                                                "name": "linkedRecordType",
-                                                "value": "subOrganisation",
-                                            },
-                                            {
-                                                "name": "linkedRecordId",
-                                                "value": "second-earlier-old-id",
-                                            },
-                                        ],
-                                    }
-                                ],
-                            },
-                        ],
-                    }
-                ],
-            }
-        }
-    }
-    new_child = ET.fromstring(
-        """
-         <organisation>
-            <recordInfo>
-                <id>new-sub-id</id>
-                <oldId>old-sub-id</oldId>
-            </recordInfo>
-        </organisation>
-    """
-    )
-
-    old_first_earlier = {
-        "record": {
-            "data": {
-                "children": [
-                    {
-                        "name": "organisation",
-                        "children": [
-                            {
-                                "name": "recordInfo",
-                                "children": [
-                                    {"name": "id", "value": "first-earlier-old-id"},
-                                ],
-                            },
-                        ],
-                    }
-                ],
-            }
-        }
-    }
-    new_first_earlier = ET.fromstring(
-        """
-         <organisation>
-            <recordInfo>
-                <id>first-earlier-new-id</id>
-                <oldId>first-earlier-old-id</oldId>
-            </recordInfo>
-        </organisation>
-    """
-    )
-
-    old_second_earlier = {
-        "record": {
-            "data": {
-                "children": [
-                    {
-                        "name": "organisation",
-                        "children": [
-                            {
-                                "name": "recordInfo",
-                                "children": [
-                                    {"name": "id", "value": "second-earlier-old-id"},
-                                ],
-                            },
-                        ],
-                    }
-                ],
-            }
-        }
-    }
-    new_second_earlier = ET.fromstring(
-        """
-         <organisation>
-            <recordInfo>
-                <id>second-earlier-new-id</id>
-                <oldId>second-earlier-old-id</oldId>
-            </recordInfo>
-        </organisation>
-    """
-    )
-
     tuples: List[Tuple] = [
-        (
-            old_child,
-            new_child,
+        create_mock_org_tuple(
+            "old-sub-id",
+            "new-sub-id",
+            ["old-top-id", "other-old-top-id"],
+            ["old-top-id", "other-old-top-id"],
         ),
-        (old_first_earlier, new_first_earlier),
-        (old_second_earlier, new_second_earlier),
+        create_mock_org_tuple("old-top-id", "new-top-id", [], []),
+        create_mock_org_tuple("other-old-top-id", "other-new-top-id", [], []),
     ]
 
     update_organisation_relations(tuples, MockContext())
@@ -214,10 +88,6 @@ def xtest_one_child_with_earlier(mock_update_record):
         </organisation>
     """,
     )
-
-
-def xtest_one_child_with_two_earlier(mock_update_record):
-    pass
 
 
 def xtest_one_child_with_a_parent_and_earlier():
