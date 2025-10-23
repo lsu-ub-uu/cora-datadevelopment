@@ -38,6 +38,37 @@ This repository contains scripts for creating and migrating data.
 - [Outputs export from Classic](docs/outputs_export.md)
 - [Outputs import to Cora](docs/outputs_import.md)
 
+### Common record type scripts
+
+- Publisher
+- Funder
+- Journal
+- Person
+- Project
+
+### Member specific scripts
+
+- Subject
+- Organisation
+- Course
+- Programme
+- Series
+- Output
+
+### Migration order
+
+1.  - Publishers (no references)
+    - Funders (no references)
+    - Journals (no references)
+2.  - Organisations (references organisations)
+    - Courses (references courses)
+    - Programmes (references programmes)
+    - Subjects (references subjects)
+3.  - Persons (references organisations)
+    - Series (references organisations)
+4.  - Projects (refefrences persons, organisatoions, funders, subjects)
+5.  - Outputs (references all the other types and outputs)
+
 ## Development
 
 ### Dev installation

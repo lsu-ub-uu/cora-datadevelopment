@@ -6,7 +6,7 @@ from common.xml_validate import ChildSpec, XMLSpec, validate_xml
 
 
 nameInData = "subject"
-permissionUnit = "varldskulturmuseerna"
+
 allowed_children: XMLSpec = {
     "domain": "text",
     "old_id": "text",
@@ -44,7 +44,7 @@ def _create_record_info(source_record: ET.Element) -> ET.Element:
     return record_info_create(
         validation_type_id="diva-subject",
         old_id=source_old_id.text,
-        permission_unit_id=permissionUnit,
+        permission_unit_id=source_record.findtext("./domain"),
     )
 
 
