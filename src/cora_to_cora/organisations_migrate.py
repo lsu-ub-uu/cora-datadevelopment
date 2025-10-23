@@ -47,6 +47,7 @@ def organisations_migrate(context: Context, domain: str):
     )
 
     update_organisation_relations(organisation_migration_pairs, context)
+    return len(organisation_migration_pairs)
 
 
 def _get_old_cora_organisations(context, domain):
