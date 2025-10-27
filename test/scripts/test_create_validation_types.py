@@ -385,6 +385,7 @@ def test_process_and_possibly_save_not_saved_due_to_not_updated(record_node, mon
     monkeypatch.setattr(Script, "is_already_processed", lambda node, mapping: False)
     monkeypatch.setattr(Script, "normalize_regex_patterns", lambda node: False)
     monkeypatch.setattr(Script, "normalize_child_reference_repeat", lambda node: False)
+    monkeypatch.setattr(Script, "update_data_divider", lambda node: False)
 
     result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
     assert result is False
@@ -813,6 +814,7 @@ def test_main(monkeypatch, mock_ctx):
         workers=1,
         prefix="__XYZ_",
         recordtype="diva-output",
+        datadivider="diva",
         apply=False
     )
 
