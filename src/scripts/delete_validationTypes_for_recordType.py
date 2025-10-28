@@ -225,9 +225,9 @@ def process_node_map_and_delete_records(global_node_map):
 
 
 def log_results():
-    CTX.log(f"  Total presentations deleted: {TOTAL_PRESENTATION_DELETIONS}")
-    CTX.log(f"  Total records fetched: {TOTAL_FETCHED}")
-    CTX.log(f"  Total records deleted: {TOTAL_RECORD_DELETIONS}")
+    log(f"  Total presentations deleted: {TOTAL_PRESENTATION_DELETIONS}")
+    log(f"  Total records fetched: {TOTAL_FETCHED}")
+    log(f"  Total records deleted: {TOTAL_RECORD_DELETIONS}")
 
     if TOTAL_ERRORS:
         print("\nWarning! There were errors reported during processing, please check the log file for details.")
