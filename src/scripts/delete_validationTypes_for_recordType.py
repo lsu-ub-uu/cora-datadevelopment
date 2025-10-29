@@ -27,7 +27,6 @@ TOTAL_PROCESSED_RECORDS = 0
 TOTAL_RECORD_DELETIONS = 0
 TOTAL_PRESENTATION_DELETIONS = 0
 TOTAL_ERRORS = []
-TOTAL_FETCHED = 0
 
 script_arguments: dict[str, ArgumentConfig] = {
     "--system": {
@@ -94,9 +93,7 @@ def main():
     )
 
     if DRY_RUN:
-        print(
-            "\n>>> [SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes\n")
-        CTX.log(">>> [DRY RUN MODE] - No changes will be applied to the system <<<")
+        log(">>> [SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
 
     delete_records_with_prefix()
 
@@ -105,25 +102,26 @@ def delete_records_with_prefix():
     log("Deleting all records and presentations that use prefix: " + TYPE_PREFIX)
 
     log("=== Deleting all presentations ===")
-
     try_to_delete_presentations()
+    print()
 
     log("=== Building node map ===")
-
     validation_types = get_validation_types_for_record_type()
     if not validation_types:
         log("No validationTypes found to delete...")
     else:
+        print("\n...artistic pause...")
         root_urls = get_root_urls_for_validation_types(validation_types)
         for root_url in root_urls:
             build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
 
-        log(f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
-
+    print()
     log("=== Deleting records ===")
+
     if not GLOBAL_NODE_MAP:
         log("There is nothing to delete...")
     else:
+        print("\n~ Heavy metal riff playing ~")
         process_node_map_and_delete_records(GLOBAL_NODE_MAP)
 
     log("=== Script finished ===")
@@ -140,6 +138,7 @@ def try_to_delete_presentations():
         log("No presentations found to delete...")
         return
 
+    print("\n~ Heavy metal riff playing ~")
     total = len(delete_urls)
     retries: dict[str, int] = {}
     while delete_urls:
@@ -147,17 +146,17 @@ def try_to_delete_presentations():
         if DRY_RUN:
             CTX.log(f"  Dry run mode - not deleting {url}")
         else:
-            ok = try_to_delete_record(url)
-            if ok:
+            deleted = try_to_delete_record(url)
+            if deleted:
                 TOTAL_PRESENTATION_DELETIONS += 1
-                print(f"Presentations deleted: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r", flush=True)
+                print(f"Presentations annihilated from existance: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r", flush=True)
             else:
-                delete_urls.append(url)
                 if retries.get(url, 0) >= 5:
-                    TOTAL_ERRORS.append("Failed to delete " + url + " after 5 retries!")
+                    TOTAL_ERRORS.append("Failed to delete " + url + " after 5 retries!\n")
                 else:
+                    CTX.log(f"   - Failed to delete record. Will retry... number of retries so far: {retries.get(url, 0)} / 5\n")
+                    delete_urls.append(url)
                     retries[url] = retries.get(url, 0) + 1
-    print()
 
 
 def get_validation_types_for_record_type():
@@ -170,7 +169,6 @@ def get_root_urls_for_validation_types(validation_types: list[str]) -> list[str]
 
 
 def build_node_map_from_child_references(root_url, global_node_map):
-    global TOTAL_FETCHED
     """
     - Top-level: newMetadataId + metadataId
     - Lower levels: only childReferences
@@ -181,14 +179,13 @@ def build_node_map_from_child_references(root_url, global_node_map):
     collect_nodes_from_root(root_url, global_node_map)
     link_parent_child_relationship(global_node_map)
 
-    TOTAL_FETCHED = len(global_node_map)
     return global_node_map
 
 
 def process_node_map_and_delete_records(global_node_map):
     global TOTAL_RECORD_DELETIONS
     """
-    - A node is deleted only when no other node references it (no parents remain).
+    A node is deleted only when no other node references it
     """
 
     remaining_parent_count = {
@@ -196,10 +193,7 @@ def process_node_map_and_delete_records(global_node_map):
         for url, node in global_node_map.items()
     }
 
-    deletion_queue = deque([
-        url for url, count in remaining_parent_count.items() if count == 0
-    ])
-
+    deletion_queue = deque([url for url, count in remaining_parent_count.items() if count == 0])
     processed: set[str] = set()
 
     while deletion_queue:
@@ -208,7 +202,7 @@ def process_node_map_and_delete_records(global_node_map):
 
         if prepare_url_and_possibly_delete(node):
             TOTAL_RECORD_DELETIONS += 1
-            print(f"Records deleted: {TOTAL_RECORD_DELETIONS} / {len(global_node_map)}", end="\r", flush=True)
+            print(f"Records purged from this world: {TOTAL_RECORD_DELETIONS} / {len(global_node_map)}", end="\r", flush=True)
 
         processed.add(url)
 
@@ -226,7 +220,6 @@ def process_node_map_and_delete_records(global_node_map):
 
 def log_results():
     log(f"  Total presentations deleted: {TOTAL_PRESENTATION_DELETIONS}")
-    log(f"  Total records fetched: {TOTAL_FETCHED}")
     log(f"  Total records deleted: {TOTAL_RECORD_DELETIONS}")
 
     if TOTAL_ERRORS:
@@ -235,27 +228,7 @@ def log_results():
         for (error) in TOTAL_ERRORS:
             CTX.log(f" > {error}")
     else:
-        log("No errors reported.")
-
-
-def collect_presentations_from_response(response_body: ET.Element) -> set[str]:
-    delete_urls = set()
-    for element in response_body.findall(".//presentation/recordInfo/id"):
-        if TYPE_PREFIX in element.text:
-            delete_urls.add((CTX.get_base_url() + "presentation/" + element.text or "").strip())
-    return delete_urls
-
-
-def collect_validation_types_from_response(response_body: ET.Element) -> list[str]:
-    validation_types = []
-    for element in response_body.findall(".//validationType/recordInfo/id"):
-        if element.text is None or element.text in BLACKLIST_TYPES:
-            continue
-
-        if TYPE_PREFIX in element.text:
-            validation_types.append((element.text or "").strip())
-
-    return validation_types
+        log("  No errors reported.")
 
 
 def collect_nodes_from_root(root_url: str, global_node_map: dict[str, RecordNode]) -> None:
@@ -267,9 +240,10 @@ def collect_nodes_from_root(root_url: str, global_node_map: dict[str, RecordNode
 
         xml_text = fetch_record_as_xml(url)
         node = parse_record_from_xml(xml_text, url)
-        global_node_map[url] = node
+        if node.record_id.startswith(TYPE_PREFIX):
+            global_node_map[url] = node
 
-        print(f"Fetching records and children: {len(global_node_map)}", end="\r", flush=True)
+        print(f"Fetching validation types and their children: {len(global_node_map)}", end="\r", flush=True)
 
         child_urls = collect_child_urls(node, root_url, url)
         for child_url in child_urls:
@@ -298,7 +272,7 @@ def link_parent_child_relationship(global_node_map: dict[Any, Any]):
 def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
     unprocessed = [url for url in global_node_map if url not in processed]
     if unprocessed:
-        CTX.log(f"\n>>> WARNING!! -  {len(unprocessed)} records were never processed:")
+        log("Some records were not processed (and probably not deleted), check log for more info...")
         for url in unprocessed:
             TOTAL_ERRORS.append("Warning: Record: " + url + " was never processed")
 
@@ -344,6 +318,26 @@ def find_top_level_children(xml_root):
     return urls
 
 
+def collect_presentations_from_response(response_body: ET.Element) -> set[str]:
+    delete_urls = set()
+    for element in response_body.findall(".//presentation/recordInfo/id"):
+        if TYPE_PREFIX in element.text:
+            delete_urls.add((CTX.get_base_url() + "presentation/" + element.text or "").strip())
+    return delete_urls
+
+
+def collect_validation_types_from_response(response_body: ET.Element) -> list[str]:
+    validation_types = []
+    for element in response_body.findall(".//validationType/recordInfo/id"):
+        if element.text is None or element.text in BLACKLIST_TYPES:
+            continue
+
+        if TYPE_PREFIX in element.text:
+            validation_types.append((element.text or "").strip())
+
+    return validation_types
+
+
 # API utilities ----------------------------------
 def fetch_record_as_xml(url):
     headers = {"Authtoken": CTX.get_auth_token(), "Accept": "application/vnd.cora.record+xml"}
@@ -365,7 +359,7 @@ def try_to_delete_record(record_type_url: str | Any) -> bool:
 
         response = requests.delete(record_type_url, headers=headers, timeout=10)
         CTX.log(f"  URL: {record_type_url}")
-        CTX.log(f"  Response: ({response.status_code}) - {response.text}\n")
+        CTX.log(f"  Response: ({response.status_code}) - {response.text}")
         if response.status_code not in (200, 201):
             return False
         return True
@@ -411,6 +405,7 @@ def get_search_data(type_name: str) -> bytes:
     }
 
     return json.dumps(search_data).encode("utf-8")
+
 
 def log(text: str):
     print(f"\n{text}")
