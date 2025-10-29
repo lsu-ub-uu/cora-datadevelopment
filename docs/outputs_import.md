@@ -38,61 +38,92 @@ outputs-import --help
 Below is specified how each field in the Cora diva-output metadata model is mapped from the DiVA Classic publication model.
 
 - recordInfo
-  - validationType <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId`
-  - permissionUnit <- `administrativeInfo/domain`
-  - oldId <- `pid`
-  - visibility <- [Logic](./get_visibility.py) based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction`
-- genre type="contentType" <- Mapping from `contentType/contentTypeCode`
-- titleInfo <- `originalPublicationTitle`
-- subject <- `keyWords` (language from `language/languageCode3`)
-- genre type="outputType" (valideringstyp) <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` (same as validation type)
-- language <- `originalPublicationTitle/language`
-- artisticWork type="outputType" <- `artisticWork`
-- titleInfo type="alternative" <- `alternativePublicationTitles`
-- name type="personal" <- merge ` authors/person` , ` editors/person` , ` examiners/person` , ` supervisors/person` , ` opponents/personal` ⚠️ Linked persons are not handled
-- 🆕 name type="corporate" <- skipped
-- note type="creatorCount" <- `noOfContributors`
-- abstract <- `abstracts/abstract`
-- originInfo
-  - dateIssued <- `publicationDate`
-  - 🆕 copyrightDate <- skipped
-  - 🆕 dateOther type="online" <- skipped
-  - agent <- `publisher/publisherName` and `publishingHouse/publishingHouseId`
-  - place <- `publisher/city`
+  - ⚠️ validationType <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` ⚠️ Behöver även ta hänsyn till subType
+  - ✅ permissionUnit <- `administrativeInfo/domain`
+  - ✅ oldId <- `pid`
+  - ⚠️ visibility <- [Logic](./get_visibility.py) based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ⚠️ Behöver uppdatera när Trash etc är färdigt
+- ✅ genre type="contentType" <- Mapping from `contentType/contentTypeCode`
+- ⚠️ titleInfo <- `originalPublicationTitle`
+  - title <- `title` ⚠️ Strippar inte rich text
+  - subtitle `subtitle`
+  - language <- `language/languageCode3`
+- subject <- `keyWords`
+  - ⚠️ topic <- > `keyWords/entry/list/string` (byter ut mellanslag mot kommatecken) Hanterar inte multiple strings. ❓ Ev. ändra Cora modell?
+  - language <- `keyWords/entry/language/languageCode3`
+- ⚠️ genre type="outputType" (valideringstyp) <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` (same as validation type) Behöver hantera subType
+- ✅ language <- `originalPublicationTitle/language` (Classic har inget språk för publikationen. Vi använder oss av huvudtitelns språk.)
+- ✅ artisticWork type="outputType" <- `artisticWork`
+- ⚠️ titleInfo type="alternative" <- `alternativePublicationTitles/title`
+  - title <- `title` ⚠️Strippar inte Rich text
+  - subtitle `subtitle`
+  - language <- `language/languageCode3`
+- ⚠️ name type="personal" <- ` authors/person` , ` editors/person` , `otherContributors/contributor`
+  - namePart type="family" <- `lastName`
+  - namePart type="given" <- `firstName`
+  - role/roleTerm <- aut | edt | `roles/role/marcCode`
+  - ✅ affiliations <- `organisations/organisation` ,
+    - organisation (länk) <- `organisation/organisationId`
+    - name type="corporate" <- `organisation/organisationNameUnconrolled`
+  - orcid ⚠️ ej klart ❓ ska vi ignorera viaf och libris?
+  - lokalt id ⚠️ ej klart
+- 🆕 name type="corporate" <- N/A
+- ✅ note type="creatorCount" <- `noOfContributors`
+- ⚠️ abstract <- `abstracts/abstract/text` Hanterar inte rich text och latex
+  - language <- `language/languageCode3`
+- ✅ originInfo
+  - dateIssued/year <- `dateIssued` (Endast år anges i Classic)
+  - 🆕 copyrightDate <- N/A
+  - 🆕 dateOther type="online" <- N/A
+  - ✅ agent
+    - publisher (link) <-`publishingHouse/publishingHouseId`
+    - namePart <- `publisherName`
+  - place/placeTerm <- `publisher/city`
   - edition <- `edition`
-- extent <- `pages`
-- classification authority="ssif" <- `nationalCategories/subject/subjectCode`
-- subject authority="diva" <- `researchSubjects`
-- subject authority="sdg" <- `sustainableDevelopments`
-- identifier type="isbn" <- `isbn`
-- identifier type="doi" <- `identifiers/entry/publicationIdentifierType>doi`
-- 🆕 identifier type="ismn"
-- identifier type="archiveNumber"> <- `archiveNumber`
+- ✅ extent <- `pages`
+- ✅ classification authority="ssif" <- `nationalCategories/subject/subjectCode`
+- ✅ subject authority="diva"<- `researchSubjects`
+  - topic (länk) <- `subject/subjectId`
+- ✅ subject authority="sdg" <- `sustainableDevelopments`
+  - topic <- mappning av `sustainableDevelopment/developmentId`
+- ✅ identifier type="isbn" <- `isbnNumbers/isbn/number`
+  - displayLabel <- mappning från `isbNumbers/isbn/type`
+- ⚠️ identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` där (`publicationIdentifierType == "doi"`) Ej klart
+- 🆕 identifier type="ismn" <- N/A
+- ✅ identifier type="archiveNumber"> <- `archiveNumber`
 - 🆕 identifier type="openAlex"
-- identifier type="se-libr" <- `identifiers/entry/publicationIdentifierType>libris`
-- identifier type="localId" <- `localId`
-- identifier type type="pmid" <- `pmid`
-- identifier type type="wos" <- `isi`
-- identifier type type="scopus" <- `scopusId`
-- location <- `urls/url` (⚠️ openAccess behöver hanteras. Ska det in på accessCondition authority="kb.se"?)
+- ✅ identifier type="se-libr" <- `identifiers/entry/publicationIdentifier/value` där (`publicationIdentifierType == "libris"`)
+- ✅ identifier type="localId" <- `localId`
+- ✅ identifier type type="pmid" <- `pmid`
+- ✅ identifier type type="wos" <- `isi`
+- ✅ identifier type type="scopus" <- `scopusId`
+- ✅ location <- `urls/url`
+  - url <-`url/url`
+  - displayLabel <- `url/label`
 - ⚠️ location displayLabel="orderLink" (Kolla upp orderProfileId i höst, är generiska texter i Classic för displayLabel, url från orderURL)
-- note type="external" <- `note`
-- relatedItem type="series" <- `seriesInfo` och `uncontrolledSeriesInfo`
-  - series <- `seriesInfo`
-  - titleInfo/mainTitle <- `uncontrolledSeriesInfo/series/seriesNameUncontrolled`
-  - identifier type="issn" displayLabel="pissn" <- `uncontrolledSeriesInfo/series/issn`
-  - identifier type="issn" displayLabel="eissn" <- `uncontrolledSeriesInfo/series/eissn`
-  - partNumber <- `uncontrolledSeriesInfo/numberInSeries` (?)
-  - ❌ No mapping: `uncontrolledSeriesInfos/seriesAlternativeTitles, subjects, relationships` (⚠️ behöver de tas hand om?)
-- 🆕 relatedItem type="researchData"
-- relatedItem type="project" <- `projects`
+- ⚠️ note type="external" <- `note` Hanterar ej Rich text
+- ⚠️ relatedItem type="series" otherType="link" <- `seriesInfos/seresInfo`
+  - series (länk) <- `series/seriesId`
+  - ⚠️ partNumber <- `numberInSeries` ej klar
+- ✅ relatedItem type="series" otherType="text" <- `uncontrolledSeriesInfo`
+  - titleInfo
+    - mainTitle <- `series/seriesNameUncontrolled`
+    - subTitle <- N/A
+  - identifier type="issn" displayLabel="pissn" <- `series/issn`
+  - identifier type="issn" displayLabel="eissn" <- `series/eissn`
+  - partNumber <- `numberInSeries`
+- 🆕 relatedItem type="researchData" <- N/A
+- ✅ relatedItem type="project" otherType="link" <- `projectRelations/projectRelation`
+  - project (länk) <- `pid`
+- ✅ relatedItem type="project" otherType="text" <- `projects`
+  - titleInfo/title <- `project/projectName`
+  - titleInfo/subTitle <- N/A
 - 🆕 relatedItem type="initiative"
 - 🆕 accessCondition authority="kb.se" (⚠️ Ligger på post nivå, inte per url)
 - 🆕 localGenericMarkup
-- adminInfo
+- ⚠️ adminInfo
   - failed <- `failed`
   - reviewed <- `reviewed`
-  - note type="internal" <- `internalNote`
+  - ⚠️ note type="internal" <- `internalNote` Stödjer ej rich text
 
 ### Fields not yet mapped:
 
@@ -106,7 +137,6 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - duration <- `mediaInformation/duration`
 - physicalDescription <- `mediaInformation/physicalDescriptions`
 - dateOther type="patent" <- `patentDate`
-- ⚠️ imprint (Only for Uppsala University)
 - identifier type="patentNumber" <- `patentNumber`
 - identifier type="isrn" <- `isrn`
 - academicSemester <- `academicTerm`
@@ -175,6 +205,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - `registratedDuplicate`
 - `importDuplicate`
 - `categories`
+- ⚠️ `imprint` (Only for Uppsala University)
 
 ## Binary
 

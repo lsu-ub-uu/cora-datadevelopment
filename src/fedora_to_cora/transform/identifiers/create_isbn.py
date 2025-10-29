@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 
 
 def create_identifier_type_isbn(source_record: ET.Element) -> list[ET.Element]:
-    isbn_elements = source_record.findall(".//isbn")
+    isbn_elements = source_record.findall("./isbnNumbers/isbn")
     identifiers = []
     for i, isbn in enumerate(isbn_elements):
         number = isbn.find("number")

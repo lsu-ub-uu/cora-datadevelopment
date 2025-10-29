@@ -31,14 +31,13 @@ def test_create_language():
 
 
 def test_create_language_missing_language():
-    ET.fromstring(
+    source_record = ET.fromstring(
         """
         <publication>
         </publication>
         """
     )
 
-    pytest.raises(
-        AssertionError,
-        match="originalPublicationTitle/language/languageCode3 must be present in source_record",
-    )
+    language = create_language(source_record)
+
+    assert language is None
