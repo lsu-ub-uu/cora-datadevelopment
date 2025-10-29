@@ -14,3 +14,7 @@ i ny modellen så så blir det en kommaseparead lista
 
 - `hidden` - Om true visas posten ej i sökgränssnittet. Och måste sökas fram med särskild flagga. kommer behöva hanteras vid migrering. Kanske blir visibility: unpublished?
 - `publicationChannel` - Används för konstnärlig output. Metadata ej klar i Cora.
+
+-
+- attachment
+  - `agreementAccepted` - Ska det verkligen vara bara frontend? hur gör api?

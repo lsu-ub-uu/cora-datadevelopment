@@ -210,6 +210,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 ## Binary
 
 - binary <- `attachments/attatchment`
+
   - recordInfo
     - visibility <-- från `deleted`, `onHold`, `availableFrom`, `availableUntil`
   - originalFileName <- `path` with only the content after the /
@@ -217,8 +218,6 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - expectedChecksum <- `checksums/checksum/digest`
   - visibility
   - type="generic"
-
-### Behövs för Samlingsverk Update
 
 - attachment
   - `agreementAccepted` - Check this
