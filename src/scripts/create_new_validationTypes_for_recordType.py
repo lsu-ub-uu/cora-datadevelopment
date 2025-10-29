@@ -5,7 +5,7 @@ from typing import Any
 
 import requests
 
-from common.arg_parser import create_argument_parser
+from common.arg_parser import create_argument_parser, ArgumentConfig
 from cora.context import CoraContext, Context
 
 CTX: Context
@@ -16,6 +16,9 @@ RECORD_TYPE = ""
 # Prefix for new validationTypes
 TYPE_PREFIX = ""
 
+# Data divider to set for new validationType
+DATA_DIVIDER = ""
+
 # Ignored validation types
 BLACKLIST_TYPES = ["diva-output", "tempContainerOutput"]
 
@@ -23,7 +26,7 @@ BLACKLIST_TYPES = ["diva-output", "tempContainerOutput"]
 DRY_RUN = True
 
 # Enable extensive logging of process
-EXTENSIVE_LOGGING = False
+EXTENSIVE_LOGGING = True
 
 # Global state
 GLOBAL_NODE_MAP = {}
@@ -34,7 +37,7 @@ TOTAL_UPDATES = 0
 TOTAL_ERRORS = []
 TOTAL_FETCHED = 0
 
-script_arguments = {
+script_arguments: dict[str, ArgumentConfig] = {
     "--system": {
         "help": "Cora system to connect to (e.g., 'preview', 'production')",
         "type": str,
@@ -57,8 +60,13 @@ script_arguments = {
         "type": int,
         "default": 16,
     },
+    "--datadivider": {
+        "help": "The data divider to set for the created records (e.g, 'diva', 'cora')",
+        "type": str,
+        "default": "diva",
+    },
     "--recordtype": {
-        "help": "Which recordType to create new validationTypes for",
+        "help": "Which recordType to create the new validationTypes for",
         "type": str,
         "required": True,
     },
@@ -84,7 +92,7 @@ class RecordNode:
 
 
 def main():
-    global CTX, DRY_RUN, TYPE_PREFIX, RECORD_TYPE
+    global CTX, DRY_RUN, TYPE_PREFIX, RECORD_TYPE, DATA_DIVIDER
 
     parser = create_argument_parser(
         description="Create new validationTypes with updated IDs and normalized values for a specific recordType.",
@@ -96,6 +104,7 @@ def main():
     DRY_RUN = not args.apply
     TYPE_PREFIX = args.prefix
     RECORD_TYPE = args.recordtype
+    DATA_DIVIDER = args.datadivider
 
     CTX = CoraContext(
         system=args.system,
@@ -105,7 +114,8 @@ def main():
     )
 
     if DRY_RUN:
-        print("\n>>> [SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes\n")
+        print(
+            "\n>>> [SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes\n")
         CTX.log(">>> [DRY RUN MODE] - No changes will be applied to the system <<<")
 
     create_new_validation_types_for_record_type()
@@ -195,7 +205,6 @@ def build_node_map_from_child_references(root_url, global_node_map):
     """
     - Top-level: newMetadataId + metadataId
     - Lower levels: only childReferences
-    - Reuses previously fetched nodes stored in `node_map`.
     """
     if root_url in global_node_map:
         return global_node_map
@@ -251,11 +260,14 @@ def process_node_map_bottom_up_and_store(global_node_map, global_id_mapping):
     Detects and reports unprocessed nodes (cycles or disconnected).
     """
 
-    # Build a map keeping track of unprocessed children
-    unprocessed_child_map: dict[str, int] = {url: len(node.children) for url, node in global_node_map.items()}
-
-    # Create a queue of leaf nodes
-    leaf_queue: deque[str] = deque([url for url, count in unprocessed_child_map.items() if count == 0])
+    # Build map and leaf queue of records to process
+    unprocessed_child_map = {}
+    leaf_queue = deque()
+    for url, node in global_node_map.items():
+        cnt = len(node.children)
+        unprocessed_child_map[url] = cnt
+        if cnt == 0:
+            leaf_queue.append(url)
 
     processed: set[str] = set()
 
@@ -337,6 +349,10 @@ def process_and_possibly_save(node, global_id_mapping):
     update_record_id_in_xml(node.xml_content, new_id)
     update_child_references(node.xml_content, global_id_mapping)
     remove_action_links(node.xml_content)
+
+    if update_data_divider(node.xml_content):
+        CTX.log(f"> Updated data divider of {original_id} to {DATA_DIVIDER}")
+
     return prepare_and_try_to_save_record(node)
 
 
@@ -418,6 +434,18 @@ def normalize_child_reference_repeat(xml_root):
             if repeat_max_element is not None and repeat_max_element.text != "X":
                 repeat_max_element.text = "X"
                 updated = True
+    return updated
+
+
+def update_data_divider(xml_root):
+    updated = False
+    data_divider = xml_root.find(".//recordInfo/dataDivider/linkedRecordId")
+    if data_divider is not None:
+        current_value = (data_divider.text or "").strip()
+        if current_value != DATA_DIVIDER:
+            data_divider.text = DATA_DIVIDER
+            updated = True
+
     return updated
 
 
