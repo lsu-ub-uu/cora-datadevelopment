@@ -68,74 +68,88 @@ def main():
 
     if args.include_common_data:
         print(f"=== Start migrating common data to {args.system} ===")
-        print("--- Start migrating publishers")
-        classic_publishers = get_publishers(
-            db_user=args.db_user, db_password=args.db_password
-        ).findall(".//DATA_RECORD")
 
-        cora_publishers = transform_record_list(
-            classic_publishers, transform_publisher, context
-        )
-        create_record_list(cora_publishers, "diva-publisher", context)
-        print(f"--- {len(cora_publishers)} Publishers imported to Cora ---")
-
-        print("--- Start migrating funders")
-        classic_funders = get_funders(
-            db_user=args.db_user, db_password=args.db_password
-        ).findall(".//DATA_RECORD")
-        cora_funders = transform_record_list(classic_funders, transform_funder, context)
-        create_record_list(cora_funders, "diva-funder", context)
-        print(f"--- {len(cora_funders)} Funders imported to Cora ---")
-
-        print("--- Start migrating journals ")
-        classic_journals = get_journals(
-            db_user=args.db_user, db_password=args.db_password
-        ).findall(".//DATA_RECORD")
-        cora_journals = transform_record_list(
-            classic_journals, transform_journal, context
-        )
-        create_record_list(cora_journals, "diva-journal", context)
-        print(f"--- {len(cora_journals)} Journals imported to Cora ---")
-
+        _migrate_publishers(args, context)
+        _migrate_funders(args, context)
+        _migrate_journals(args, context)
         # TODO Persons
-
         # TODO Projects
+
         print("=== Common data migration completed ===")
     else:
         print(
             "Skipping migrating common data, since --include-common-data arg is not set"
         )
 
-    domain = args.domain
-    print(f"=== Start migrating data for {domain} domain to {args.system} ===")
+    print(f"=== Start migrating data for {args.domain} domain to {args.system} ===")
 
-    print(f"--- Start migrating organisations for {domain} ---")
-    num_organisations = organisations_migrate(context, domain)
+    _migrate_organisations(args, context)
+    _migrate_subjects(args, context)
+    _migrate_series(args, context)
+    # TODO Courses
+    # TODO Programmes
+    # TODO Outputs
+
+    print(f"=== Data migration for {args.domain} domain completed ===")
+
+
+def _migrate_publishers(args, context: Context):
+    print("--- Start migrating publishers")
+    classic_publishers = get_publishers(
+        db_user=args.db_user, db_password=args.db_password
+    ).findall(".//DATA_RECORD")
+
+    cora_publishers = transform_record_list(
+        classic_publishers, transform_publisher, context
+    )
+    create_record_list(cora_publishers, "diva-publisher", context)
+    print(f"--- {len(cora_publishers)} Publishers imported to Cora ---")
+
+
+def _migrate_funders(args, context: Context):
+    print("--- Start migrating funders")
+    classic_funders = get_funders(
+        db_user=args.db_user, db_password=args.db_password
+    ).findall(".//DATA_RECORD")
+    cora_funders = transform_record_list(classic_funders, transform_funder, context)
+    create_record_list(cora_funders, "diva-funder", context)
+    print(f"--- {len(cora_funders)} Funders imported to Cora ---")
+
+
+def _migrate_journals(args, context: Context):
+    print("--- Start migrating journals ")
+    classic_journals = get_journals(
+        db_user=args.db_user, db_password=args.db_password
+    ).findall(".//DATA_RECORD")
+    cora_journals = transform_record_list(classic_journals, transform_journal, context)
+    create_record_list(cora_journals, "diva-journal", context)
+    print(f"--- {len(cora_journals)} Journals imported to Cora ---")
+
+
+def _migrate_organisations(args, context: Context):
+    print(f"--- Start migrating organisations for {args.domain} ---")
+    num_organisations = organisations_migrate(context, args.domain)
     print(f"--- {num_organisations} Organisations migrated ---")
 
-    print(f"--- Start migrating subjects for {domain} ---")
+
+def _migrate_subjects(args, context: Context):
+    print(f"--- Start migrating subjects for {args.domain} ---")
     classic_subjects = get_subjects(
-        db_user=args.db_user, db_password=args.db_password, domain=domain
+        db_user=args.db_user, db_password=args.db_password, domain=args.domain
     ).findall(".//DATA_RECORD")
     cora_subjects = transform_record_list(classic_subjects, transform_subject, context)
     create_record_list(cora_subjects, "diva-subject", context)
     print(f"--- {len(cora_subjects)} Subjects imported to Cora ---")
 
-    print(f"--- Start migrating series for {domain} ---")
+
+def _migrate_series(args, context: Context):
+    print(f"--- Start migrating series for {args.domain} ---")
     classic_series = get_series(
-        db_user=args.db_user, db_password=args.db_password, domain=domain
+        db_user=args.db_user, db_password=args.db_password, domain=args.domain
     ).findall(".//DATA_RECORD")
     cora_series = transform_record_list(classic_series, transform_series, context)
     create_record_list(cora_series, "diva-series", context)
     print(f"--- {len(cora_series)} Series imported to Cora ---")
-
-    # TODO Courses
-
-    # TODO Programmes
-
-    # TODO Outputs
-
-    print(f"=== Data migration for {domain} domain completed ===")
 
 
 if __name__ == "__main__":
