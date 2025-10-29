@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
+from common.xml_utils import append_if_value
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from cora.context import Context
 
@@ -119,6 +120,14 @@ def create_name_type_personal(
 
     role = ET.SubElement(name_type_personal, "role")
 
+    local_id = person.find("./localId")
+    if local_id is not None and local_id.text:
+        name_type_personal.append(_create_name_identifier_local_id(local_id))
+
+    orcid = person.find("./identifiers/entry/personIdentifier/value")
+    if orcid is not None and orcid.text:
+        name_type_personal.append(_create_name_identifier_orcid(orcid))
+
     for i, role_term in enumerate(role_terms):
         role_term_el = ET.SubElement(role, "roleTerm")
         role_term_el.text = role_term
@@ -193,3 +202,17 @@ def is_author_only_type(source_record: ET.Element) -> bool:
     author_only_types = {"53", "56", "65"}
     publication_type_id = source_record.findtext("./publicationType/publicationTypeId")
     return publication_type_id in author_only_types
+
+
+def _create_name_identifier_orcid(orcid: ET.Element) -> ET.Element:
+    identifier = ET.Element("nameIdentifier", type="orcid")
+    if orcid.text:
+        identifier.text = orcid.text
+    return identifier
+
+
+def _create_name_identifier_local_id(local_id: ET.Element) -> ET.Element:
+    identifier = ET.Element("nameIdentifier", type="localId")
+    if local_id.text:
+        identifier.text = local_id.text
+    return identifier

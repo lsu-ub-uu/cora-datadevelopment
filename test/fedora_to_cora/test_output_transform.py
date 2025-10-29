@@ -85,7 +85,14 @@ def test_output_transform(requests_mock):
             <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
         </language>
         <artisticWork type="outputType">false</artisticWork>
-        <name repeatId="0" type="personal">
+        <name type="personal" repeatId="0">
+            <namePart type="family">Andersson</namePart>
+            <namePart type="given">Michaela</namePart>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <nameIdentifier type="localId">mican434</nameIdentifier>
+            <nameIdentifier type="orcid">0000-0002-3134-8865</nameIdentifier>
+        </name>
+        <name type="personal" repeatId="1">
             <namePart type="family">Östasiatiska museet</namePart>
             <namePart type="given">Östasiatiska museet</namePart>
             <role>
@@ -118,6 +125,8 @@ def test_output_transform(requests_mock):
         <identifier type="pmid">pmid123</identifier>
         <identifier type="wos">ISI.01</identifier>
         <identifier type="scopus">Scopus.01</identifier>
+        <identifier type="se-libr">0004</identifier>
+        <identifier type="doi">10.1038/s41698-022-00278-4</identifier>
         <identifier type="patentNumber">Patentnummer01</identifier>
         <location repeatId="0">
             <url>http://example.com</url>
