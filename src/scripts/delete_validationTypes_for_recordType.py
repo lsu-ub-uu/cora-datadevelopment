@@ -144,7 +144,8 @@ def try_to_delete_presentations():
     while delete_urls:
         url = delete_urls.popleft()
         if DRY_RUN:
-            CTX.log(f"  Dry run mode - not deleting {url}")
+            TOTAL_PRESENTATION_DELETIONS += 1
+            print(f"Presentations annihilated from existance: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r", flush=True)
         else:
             deleted = try_to_delete_record(url)
             if deleted:
@@ -152,7 +153,7 @@ def try_to_delete_presentations():
                 print(f"Presentations annihilated from existance: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r", flush=True)
             else:
                 if retries.get(url, 0) >= 5:
-                    TOTAL_ERRORS.append("Failed to delete " + url + " after 5 retries!\n")
+                    TOTAL_ERRORS.append("Failed to delete " + url + " after 5 retries!")
                 else:
                     CTX.log(f"   - Failed to delete record. Will retry... number of retries so far: {retries.get(url, 0)} / 5\n")
                     delete_urls.append(url)
@@ -218,7 +219,10 @@ def process_node_map_and_delete_records(global_node_map):
     check_for_unprocessed_nodes(global_node_map, processed)
 
 
-def log_results():
+def log_results(): # pragma: no cover
+    if DRY_RUN:
+        log("[ Script ran in dry run mode ]")
+
     log(f"  Total presentations deleted: {TOTAL_PRESENTATION_DELETIONS}")
     log(f"  Total records deleted: {TOTAL_RECORD_DELETIONS}")
 
@@ -285,7 +289,6 @@ def prepare_url_and_possibly_delete(node):
     record_type_url = f"{base_url}{node.record_type}/{node.record_id}"
 
     if DRY_RUN:
-        CTX.log(f"  Dry run mode - not deleting {node.new_record_id}\n")
         return True
     return try_to_delete_record(record_type_url)
 
