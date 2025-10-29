@@ -380,3 +380,47 @@ def test_create_examiners():
         </examiner>
         """,
     )
+
+
+def test_creates_name_identifiers():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+            </publicationType>
+            <authors>
+                <person>
+                    <firstName>Michaela</firstName>
+                    <lastName>Andersson</lastName>
+                    <localId>mican434</localId>
+                    <identifiers>
+                        <entry>
+                        <personIdentifierType>orcid</personIdentifierType>
+                        <personIdentifier>
+                            <value>0000-0002-3134-8865</value>
+                            <type>orcid</type>
+                        </personIdentifier>
+                        </entry>
+                    </identifiers>
+                </person>
+            </authors>
+        </publication>
+        """
+    )
+    names = create_name_type_personals(
+        source_record,
+        mock_context,
+    )
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">Andersson</namePart>
+            <namePart type="given">Michaela</namePart>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <nameIdentifier type="localId">mican434</nameIdentifier>
+            <nameIdentifier type="orcid">0000-0002-3134-8865</nameIdentifier>
+        </name>
+        """,
+    )

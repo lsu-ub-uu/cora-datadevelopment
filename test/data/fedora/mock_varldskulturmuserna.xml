@@ -88,6 +88,22 @@
   </administrativeInfo>
   <publicationDate>
     2022-07-07T13:12:00.000+02:00</publicationDate>
+    <authors>
+                <person>
+                    <firstName>Michaela</firstName>
+                    <lastName>Andersson</lastName>
+                    <localId>mican434</localId>
+                    <identifiers>
+                        <entry>
+                        <personIdentifierType>orcid</personIdentifierType>
+                        <personIdentifier>
+                            <value>0000-0002-3134-8865</value>
+                            <type>orcid</type>
+                        </personIdentifier>
+                        </entry>
+                    </identifiers>
+                </person>
+            </authors>
   <editors>
     <person>
       <firstName>Östasiatiska museet</firstName>
@@ -209,7 +225,6 @@
     <showInDefence>false</showInDefence>
     <topLevel>false</topLevel>
   </distributor>
-
   <publisher>
     <city>Stockholm</city>
     <publisherName>Uppsala Läroverk</publisherName>
@@ -223,9 +238,33 @@
   </urls>
   <archiveNumber>Arkivnummer.01</archiveNumber>
   <localId>LocalId.01</localId>
-  <isi>ISI.01</isi>
   <pmid>pmid123</pmid>
+  <isi>ISI.01</isi>
+  <identifiers>
+    <entry>
+        <publicationIdentifierType>doi</publicationIdentifierType>
+        <publicationIdentifier>
+            <value>10.1038/s41698-022-00278-4</value>
+            <type>doi</type>
+            <openAccess>true</openAccess>
+        </publicationIdentifier>
+    </entry>
+    <entry>
+        <publicationIdentifierType>libris</publicationIdentifierType>
+        <publicationIdentifier>
+            <value>0004</value>
+            <alternativeValues>
+                <value>
+                    <content>0005</content>
+                </value>
+            </alternativeValues>
+            <type>libris</type>
+            <openAccess>false</openAccess>
+        </publicationIdentifier>
+    </entry>
+  </identifiers>
   <patentNumber>Patentnummer01</patentNumber>
+  
   <examiners>
     <person>
       <firstName>Erik</firstName>
@@ -747,29 +786,6 @@
     <electronicIssn>1558-1101</electronicIssn>
     <openAccess>false</openAccess>
   </uncontrolledJournal>
-  <identifiers>
-    <entry>
-        <publicationIdentifierType>doi</publicationIdentifierType>
-        <publicationIdentifier>
-            <value>10.1038/s41698-022-00278-4</value>
-            <type>doi</type>
-            <openAccess>true</openAccess>
-        </publicationIdentifier>
-    </entry>
-    <entry>
-        <publicationIdentifierType>libris</publicationIdentifierType>
-        <publicationIdentifier>
-            <value>0004</value>
-            <alternativeValues>
-                <value>
-                    <content>0005</content>
-                </value>
-            </alternativeValues>
-            <type>libris</type>
-            <openAccess>false</openAccess>
-        </publicationIdentifier>
-    </entry>
-  </identifiers>
   <projects>
     <project>
       <projectName>Ett annat projekt</projectName>

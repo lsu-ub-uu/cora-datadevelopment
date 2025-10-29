@@ -64,8 +64,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - ✅ affiliations <- `organisations/organisation` ,
     - organisation (länk) <- `organisation/organisationId`
     - name type="corporate" <- `organisation/organisationNameUnconrolled`
-  - orcid ⚠️ ej klart ❓ ska vi ignorera viaf och libris?
-  - lokalt id ⚠️ ej klart
+      ⚠️ orcid ❓ ska vi ignorera viaf och libris?
+      ✅ lokalt id
 - 🆕 name type="corporate" <- N/A
 - ✅ note type="creatorCount" <- `noOfContributors`
 - ⚠️ abstract <- `abstracts/abstract/text` Hanterar inte rich text och latex
@@ -87,7 +87,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - topic <- mappning av `sustainableDevelopment/developmentId`
 - ✅ identifier type="isbn" <- `isbnNumbers/isbn/number`
   - displayLabel <- mappning från `isbNumbers/isbn/type`
-- ⚠️ identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` där (`publicationIdentifierType == "doi"`) Ej klart
+- identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` där (`publicationIdentifierType == "doi"`)
 - 🆕 identifier type="ismn" <- N/A
 - ✅ identifier type="archiveNumber"> <- `archiveNumber`
 - 🆕 identifier type="openAlex"

@@ -33,6 +33,7 @@ from fedora_to_cora.transform.degree_project.create_academic_semester import (
     create_academic_semester,
 )
 from fedora_to_cora.transform.identifiers.create_doi_se_libr import (
+    create_identifier_doi,
     create_identifier_se_libr,
 )
 from fedora_to_cora.transform.identifiers.create_isbn import create_identifier_type_isbn
@@ -153,12 +154,13 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
         create_identifier(source_record, type="scopus", source_selector="./scopusId"),
     )
 
+    append_if_value(target_record, create_identifier_se_libr(source_record))
+    append_if_value(target_record, create_identifier_doi(source_record))
+
     append_if_value(
         target_record,
         create_identifier(source_record, type="patentNumber"),
     )
-
-    create_identifier_se_libr(source_record)
 
     append_if_value(
         target_record,
