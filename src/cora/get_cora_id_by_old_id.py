@@ -16,6 +16,7 @@ record_type_to_searchId = {
     "diva-subject": "diva-subjectSearch",
     "diva-course": "diva-courseSearch",
     "diva-project": "diva-projectSearch",
+    "diva-programme": "diva-programmeSearch",
 }
 
 
@@ -33,6 +34,7 @@ def get_cora_id_by_old_id(
         "diva-subject",
         "diva-course",
         "diva-project",
+        "diva-programme",
     ],
     context: Context,
 ) -> str:

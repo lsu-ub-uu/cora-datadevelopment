@@ -1,4 +1,4 @@
-from fedora_to_cora.transform.thesis.create_defence import create_defence
+from fedora_to_cora.transform.thesis.create_defence import create_defence_or_presentaion
 import xml.etree.ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
@@ -23,7 +23,7 @@ def test_create_defence():
         """
     )
 
-    admin = create_defence(source_record)
+    admin = create_defence_or_presentaion(source_record)
 
     assert_equal_for_xml_and_xml_string(
         admin,
@@ -65,7 +65,7 @@ def test_create_empty_defence():
         """
     )
 
-    admin = create_defence(source_record)
+    admin = create_defence_or_presentaion(source_record)
 
     assert_equal_for_xml_and_xml_string(
         admin,

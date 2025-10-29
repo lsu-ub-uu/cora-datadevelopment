@@ -54,7 +54,7 @@ def _create_student_degree(
         cora_id = get_cora_id_by_old_id(
             context=context,
             old_id=programme_old_id,
-            record_type="diva-course",
+            record_type="diva-programme",
         )
         student_degree.append(
             create_record_link_using_name_type_id(

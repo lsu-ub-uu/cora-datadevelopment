@@ -66,7 +66,7 @@ from fedora_to_cora.transform.create_degree_granting_institution import (
 from fedora_to_cora.transform.related_items.create_project import (
     create_related_item_type_project,
 )
-from fedora_to_cora.transform.thesis.create_defence import create_defence
+from fedora_to_cora.transform.thesis.create_defence import create_defence_or_presentaion
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:

@@ -3,8 +3,9 @@ import xml.etree.ElementTree as ET
 from common.xml_utils import append_if_value
 
 
-def create_defence(source_record: ET.Element) -> ET.Element:
-    defence = ET.Element("defence")
+def create_defence_or_presentaion(source_record: ET.Element) -> ET.Element:
+    tag_name = "defence"  # TODO should be "presentation" for degree project
+    defence = ET.Element(tag_name)
 
     append_if_value(defence, _create_language(source_record))
 

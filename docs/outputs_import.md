@@ -43,7 +43,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - ✅ oldId <- `pid`
   - ⚠️ visibility <- [Logic](./get_visibility.py) based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ⚠️ Behöver uppdatera när Trash etc är färdigt
 - ✅ genre type="contentType" <- Mapping from `contentType/contentTypeCode`
-- ⚠️ titleInfo <- `originalPublicationTitle`
+- ⚠️ titleInfo <- `originalPubli  ationTitle`
   - title <- `title` ⚠️ Strippar inte rich text
   - subtitle `subtitle`
   - language <- `language/languageCode3`
@@ -124,36 +124,35 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - failed <- `failed`
   - reviewed <- `reviewed`
   - ⚠️ note type="internal" <- `internalNote` Stödjer ej rich text
-
-### Fields not yet mapped:
-
-- genre type="subcategory" <- `subType` (⚠️ behöver mappas om till värden i Cora)
-- note type="publicationStatus" <- `publicationStatus` (⚠️ behöver mappas om till värden i Cora)
-- typeOfResource <- `mediaType`
-- type <- `mediaInformation/physicalDescriptions`
-- material <- `mediaInformation/materials`
-- technique <- `mediaInformation/techniques`
-- size <- `mediaInformation/size`
-- duration <- `mediaInformation/duration`
-- physicalDescription <- `mediaInformation/physicalDescriptions`
-- dateOther type="patent" <- `patentDate`
-- identifier type="patentNumber" <- `patentNumber`
-- identifier type="isrn" <- `isrn`
-- academicSemester <- `academicTerm`
-- studentDegree <- `studentDegrees`
+- ⚠️ genre type="subcategory" <- `subType` subTypeId 66=policyDocument 3=exhibitionCatalog Ej klar
+- ⚠️ note type="publicationStatus" <- `publicationStatus` ⚠️ Ej klart
+- ✅ typeOfResource <- `mediaType`
+- ⚠️ type <- `mediaInformation/physicalDescriptions` Ej klart. Behöver output-test. Behöver ta bort HTML
+- ⚠️ material <- `mediaInformation/materials` Ej klart. Behöver output-test.
+- ⚠️ technique <- `mediaInformation/techniques` Ej klart. Behöver output-test.
+- ⚠️ size <- `mediaInformation/size` Ej klart Behöver output-test.
+- ⚠️ duration <- `mediaInformation/duration` Ej klart. Behöver output-test.
+- ⚠️ physicalDescription <- `mediaInformation/physicalDescriptions` Ej klart. Behöver output-test.
+- ⚠️ dateOther type="patent" <- `patentDate` Ej klart. Behöver output-test.
+- ✅ identifier type="patentNumber" <- `patentNumber`
+- ✅ identifier type="isrn" <- `isrn`
+- ✅ academicSemester <- `academicTerm`
+  - year <- `year`
+  - academicSemester <- `term` (to lower case)
+- ✅ studentDegree <- `studentDegrees`
   - degreeLevel <- `studentDegree/thesisLevel/thesisLevelCode`
   - universityPoints <- `studentDegree/universityPoints/hp`
-  - course <- link to diva-course by oldId: `studentDegree/undergraduateSubject/subjectId`
-  - programme <- link to diva-programme by oldId: `studentDegree/educationalProgramme/subjectId`
-- externalCollaboration <- `externalCooperation`
-- degreeGrantingInstitution type="corporate" <- `defence/grantingInstitution`
-  - organisation
-  - namePart
-  - role
-  - 🆕 identifier type="ror" (ROR finns inte i Classic)
-- ⚠️ presentation <- `defence` (Kolla om både presentation och defence behöver hanteras)
-- defence <- `defence`
-
+  - course (länk) <- `studentDegree/undergraduateSubject/subjectId`
+  - programme (länk) <- `studentDegree/educationalProgramme/subjectId`
+- ⚠️ externalCollaboration <- `externalCooperation`
+  - namePart <- `partners/partner/name` Om `external` är true och `name` saknas, skall generisk text infogas här. T.ex. "Externt samarbete".
+- degreeGrantingInstitution type="corporate" otherType="link" <- `defence/grantingInstitution`
+  - organisation (länk) <- `organisationId`
+- degreeGrantingInstitution type="corporate" otherType="text" <- `defence/externalGrantingInstitution`
+  - namePart <- `externalGrantingInstitution`
+  - 🆕 identifier type="ror" <- N/A
+- ⚠️ defence <- `defence` Behöver uppdateras för att kunna sköta presentation
+- ⚠️ presentation <- `defence` För examensarbete (diva-degreeProject) ska taggen heta presentation istället för defence
   - `language` <- `languageTerm/language`
   - `dateOther` <- `date`
   - `location` <- `room> <name`
@@ -161,31 +160,66 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - `place/placeTerm` <- `room/city`
   - `degreeGrantingInstitution` <- `grantingInstitution`
   - `organisation` <- `organisationId`
-
-- relatedItem type="journal" <- `journal`
-  - journal
+- ⚠️ relatedItem type="journal" otherType="link" <- `journal`
+  - journal (länk) <- `journalId`
+  - ⚠️ part Nedanstående taggar finns direkt under `publication`. Ej klart
+    - detail type="volume" <- `volume`
+      - number
+    - detail type="issue" <- `issueNumber`
+      - number
+    - detail type="artNo" `articleId`
+    - extent
+      - start <- `startPage`
+      - end <- `endPage`
+- ⚠️ relatedItem type="journal" otherType="text" <- `uncontrolledJournal`
   - titleInfo
-    - title
-    - subTitle
-  - identifier type="issn" displayLabel="pissn"
-  - identifier type="issn" displayLabel="eissn"
-  - ⚠️ part
-    - ⚠️detail type="volume" <- `volume`
-      - ⚠️ number
-    - ⚠️ detail type="issue" <- `issueNumber`
-      - ⚠️ number
-    - ⚠️ detail type="artNo" `articleId`
-    - ⚠️ extent
-      - ⚠️ start <- `startPage`
-      - ⚠️ end <- `endPage`
-- ⚠️ relatedItem type="book" <- `bookTitle` och `bookEdition` <- `statmentOfResponsibility` som barnelement i Cora
-- ⚠️ relatedItem type="conferencePublication" <- `proceedingsTitle` och `proceedingsEditor` <- `statmentOfResponsibility` som barnelement i Cora
+    - title <- `journalNameUncontrolled`
+    - subTitle <- N/A
+  - identifier type="issn" displayLabel="pissn" <- `printedIssn`
+  - identifier type="issn" displayLabel="eissn" <- `electronicIssn`
+  - ⚠️ part Nedanstående taggar finns direkt under `publication`. Ej klart
+    - detail type="volume" <- `volume`
+      - number
+    - detail type="issue" <- `issueNumber`
+      - number
+    - detail type="artNo" `articleId`
+    - extent
+      - start <- `startPage`
+      - end <- `endPage`
+- ⚠️ relatedItem type="book" otherType="link" `hostPublications/pid` om validationType är kapitel i bok ❓
+  - book (länk) <- `hostPublications/pid`
+- ⚠️ relatedItem type="book" otherType="text"
+  - titleInfo `bookTitle`
+    - title <- `title`
+    - subtitle <- `subtitle`
+    - language ❓
+  - note type="statementOfResponsibility" <- `bookEditor`
+  - identifier type="isbn" ❓
+  - identifier type="doi" ❓
+  - part/extent
+    - start <- `startPage`
+    - end <- `endPage`
+- ⚠️ relatedItem type="conferencePublication" otherType="link" `hostPublications/pid` om validationType är conference paper
+  - proceeding (länk) <- `hostPublications/pid`
+- ⚠️ relatedItem type="conferencePublication" otherType="text"
+  - titleInfo <- `proceedingsTitle`
+    - title <- `title`
+    - subtitle <- `subtitle`
+    - language ❓
+  - note type="statementOfResponsibility" <- `proceedingsEditor`
+  - identifier type="isbn" ❓
+  - identifier type="doi" ❓
+  - part/extent
+    - start <- `startPage`
+    - end <- `endPage`
+
+### Fields not yet mapped:
+
 - ⚠️ relatedItem type="conference" <- `conference`
 - ⚠️ relatedItem type="funder" <- `funderInfos/funderId/projectNumber`
 - 🆕 related
 - 🆕 related type="retracted"
 - ⚠️ related type="constituent" (länkade avhandligar)
-- ⚠️ note type="statementOfResponsibility"
 
 ### Behöver mer information för att migrera
 
