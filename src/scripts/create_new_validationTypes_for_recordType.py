@@ -19,6 +19,9 @@ TYPE_PREFIX = ""
 # Data divider to set for new validationType
 DATA_DIVIDER = ""
 
+# Existing prefiex validation types
+EXISTING_VALIDATION_TYPES_WITH_PREFIX = []
+
 # Ignored validation types
 BLACKLIST_TYPES = ["diva-output", "tempContainerOutput"]
 
@@ -34,6 +37,7 @@ GLOBAL_ID_MAPPING = {}
 GLOBAL_RECORD_INFO_CHILDREN = {}
 TOTAL_PROCESSED_RECORDS = 0
 TOTAL_UPDATES = 0
+TOTAL_CREATED = 0
 TOTAL_ERRORS = []
 TOTAL_FETCHED = 0
 
@@ -122,10 +126,12 @@ def main():
 
 
 def create_new_validation_types_for_record_type():
+    global EXISTING_VALIDATION_TYPES_WITH_PREFIX
     print("Creating new validationTypes for recordType:", RECORD_TYPE, "using prefix:", TYPE_PREFIX)
     CTX.log("Creating new validationTypes for recordType: " + RECORD_TYPE + " using prefix: " + TYPE_PREFIX)
 
-    validation_types = get_validation_types_for_record_type()
+    EXISTING_VALIDATION_TYPES_WITH_PREFIX = get_validation_types_for_record_type(get_search_data_for_prefix(), True)
+    validation_types = get_validation_types_for_record_type(get_search_data_for_record_type(), False)
 
     print("\n=== Building node map ===\n")
     CTX.log("=== Building node map ===")
@@ -185,7 +191,8 @@ def find_record_info_roots(global_node_map) -> list[Any]:
 def log_results():
     CTX.log(f"  Total records fetched:   {TOTAL_FETCHED}")
     CTX.log(f"  Total records processed: {TOTAL_PROCESSED_RECORDS}")
-    CTX.log(f"  Total records created:   {TOTAL_UPDATES}")
+    CTX.log(f"  Total records created:   {TOTAL_CREATED}")
+    CTX.log(f"  Total records updated:   {TOTAL_UPDATES}")
 
     if TOTAL_FETCHED != TOTAL_PROCESSED_RECORDS:
         CTX.log(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
@@ -279,19 +286,53 @@ def process_node_map_bottom_up_and_store(global_node_map, global_id_mapping):
         processed.add(child_reference_url)
         update_parent_dependencies(leaf_queue, node, unprocessed_child_map)
 
-        print(f"Records processed: {TOTAL_PROCESSED_RECORDS} - Records created: {TOTAL_UPDATES}", end="\r", flush=True)
+        print(f"Records processed: {TOTAL_PROCESSED_RECORDS} - Records created: {TOTAL_CREATED} - Records updated: {TOTAL_UPDATES}", end="\r", flush=True)
 
     print()
     check_for_unprocessed_nodes(global_node_map, processed)
 
 
+def process_and_possibly_update(node, global_id_mapping):
+    if DRY_RUN:
+        CTX.log(f"  Dry run mode - not saving {node.new_record_id}\n")
+        return True
+
+    original_id = node.record_id
+    if is_already_processed(node.record_id, global_id_mapping):
+        node.new_record_id = global_id_mapping[original_id]
+        return False
+    link_dependency_to_top_groups(node.xml_content)
+    update_child_references(node.xml_content, global_id_mapping)
+    xml_bytes = to_xml_bytes(node.xml_content.find("data")[0])
+    record_type_url = f"{CTX.get_base_url()}{node.record_type}/{node.record_id}"
+
+    log_creation_summary(node, record_type_url, xml_bytes)
+    return try_to_store_record(node, record_type_url,xml_bytes)
+
+
+def prepare_and_try_to_update_record(node):
+    if DRY_RUN:
+        CTX.log(f"  Dry run mode - not saving {node.new_record_id}\n")
+        return True
+
+    record_type_url = f"{CTX.get_base_url()}{node.record_type}/{node.record_id}"
+    xml_bytes = to_xml_bytes(node.xml_content.find("data")[0])
+
+    return try_to_store_record(node, record_type_url, xml_bytes)
+
+
 def process_node(global_id_mapping, node):
-    global TOTAL_PROCESSED_RECORDS, TOTAL_UPDATES, TOTAL_ERRORS
+    global TOTAL_PROCESSED_RECORDS, TOTAL_UPDATES, TOTAL_ERRORS, EXISTING_VALIDATION_TYPES_WITH_PREFIX, TOTAL_CREATED
 
     try:
         TOTAL_PROCESSED_RECORDS += 1
-        if process_and_possibly_save(node, global_id_mapping):
-            TOTAL_UPDATES += 1
+        if (TYPE_PREFIX + node.record_id) in EXISTING_VALIDATION_TYPES_WITH_PREFIX:
+            if process_and_possibly_update(node, global_id_mapping):
+                TOTAL_UPDATES += 1
+
+        else:
+            if process_and_possibly_create(node, global_id_mapping):
+                TOTAL_CREATED += 1
 
     except Exception as e:
         TOTAL_ERRORS.append(f"Error processing {node.record_id}: {e}")
@@ -314,7 +355,23 @@ def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
             TOTAL_ERRORS.append("Warning: Record: " + url + " was never processed")
 
 
-def process_and_possibly_save(node, global_id_mapping):
+def link_dependency_to_top_groups(xml_content):
+    updated = False
+    updated |= update_prefix_of_value_of_xpath_using_find(xml_content, ".//newMetadataId/linkedRecordId")
+    updated |= update_prefix_of_value_of_xpath_using_find(xml_content, ".//metadataId/linkedRecordId")
+    return updated
+
+
+def update_prefix_of_value_of_xpath_using_find(xml_content, path: str) -> bool:
+    metadata_id = xml_content.find(path)
+    if metadata_id is not None:
+        current_id = metadata_id.text or ""
+        metadata_id.text = TYPE_PREFIX + current_id
+        return True
+    return False
+
+
+def process_and_possibly_create(node, global_id_mapping):
     original_id = node.record_id
 
     if is_already_processed(node.record_id, global_id_mapping):
@@ -368,17 +425,15 @@ def is_already_processed(node_id: str, global_id_mapping: dict) -> bool:
 
 
 def prepare_and_try_to_save_record(node):
-    content_root = unwrap_and_clean_xml_for_create(node.xml_content)
-    xml_bytes = to_xml_bytes(content_root)
-
-    base_url = f"{CTX.get_base_url()}"
-    record_type_url = f"{base_url}{node.record_type}"
-
-    log_creation_summary(node, record_type_url, xml_bytes)
-
     if DRY_RUN:
         CTX.log(f"  Dry run mode - not saving {node.new_record_id}\n")
         return True
+
+    content_root = unwrap_and_clean_xml_for_create(node.xml_content)
+    xml_bytes = to_xml_bytes(content_root)
+    record_type_url = f"{CTX.get_base_url()}{node.record_type}"
+
+    log_creation_summary(node, record_type_url, xml_bytes)
     return try_to_store_record(node, record_type_url, xml_bytes)
 
 
@@ -535,6 +590,7 @@ def try_to_store_record(node, record_type_url: str, xml_bytes: bytes | Any) -> b
         if response.status_code not in (200, 201):
             TOTAL_ERRORS.append(f"Failed to save {node.new_record_id} ({response.status_code} - {response.text})")
             return False
+
         return True
     except requests.RequestException as e:
         CTX.log(f">>> Error saving {node.new_record_id}: {e}")
@@ -542,29 +598,30 @@ def try_to_store_record(node, record_type_url: str, xml_bytes: bytes | Any) -> b
         return False
 
 
-def get_validation_types_for_record_type():
+def get_validation_types_for_record_type(search_data: bytes, get_existing: bool):
     search_url = CTX.get_base_url() + "searchResult/validationTypeSearch"
     headers = {"Authtoken": CTX.get_auth_token(), "Accept": "application/vnd.cora.recordList+xml",
                "Content-Type": "application/vnd.cora.recordList+xml"}
 
-    response = requests.get(search_url, params={"searchData": get_search_data()}, headers=headers)
+    response = requests.get(search_url, params={"searchData": search_data}, headers=headers)
     response.raise_for_status()
     response_body = ET.fromstring(response.text)
 
-    return collect_validation_types_from_response(response_body)
+    return collect_validation_types_from_response(response_body, get_existing)
 
 
-def collect_validation_types_from_response(response_body: ET.Element) -> list[Any]:
+def collect_validation_types_from_response(response_body: ET.Element, get_existing: bool) -> list[Any]:
     validation_types = []
     for element in response_body.findall(".//validationType/recordInfo/id"):
-        if element.text is None or element.text.startswith("__") or element.text in BLACKLIST_TYPES:
-            continue
+        if not get_existing:
+            if element.text is None or element.text.startswith(TYPE_PREFIX) or element.text in BLACKLIST_TYPES:
+                continue
         validation_types.append((element.text or "").strip())
 
     return validation_types
 
 
-def get_search_data() -> bytes:
+def get_search_data_for_record_type() -> bytes:
     search_data = {
         "name": "validationTypeSearch",
         "children": [
@@ -584,7 +641,29 @@ def get_search_data() -> bytes:
             }
         ]
     }
+    return json.dumps(search_data).encode("utf-8")
 
+
+def get_search_data_for_prefix() -> bytes:
+    search_data = {
+        "name": "validationTypeSearch",
+        "children": [
+            {
+                "name": "include",
+                "children": [
+                    {
+                        "name": "includePart",
+                        "children": [
+                            {
+                                "name": "recordIdSearchTerm",
+                                "value": f"{TYPE_PREFIX}*"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
     return json.dumps(search_data).encode("utf-8")
 
 

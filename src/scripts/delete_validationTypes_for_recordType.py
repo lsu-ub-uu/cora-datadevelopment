@@ -25,6 +25,7 @@ GLOBAL_ID_MAPPING = {}
 GLOBAL_RECORD_INFO_CHILDREN = {}
 TOTAL_PROCESSED_RECORDS = 0
 TOTAL_RECORD_DELETIONS = 0
+TOTAL_RECORD_UPDATES = 0
 TOTAL_PRESENTATION_DELETIONS = 0
 TOTAL_ERRORS = []
 
@@ -145,17 +146,20 @@ def try_to_delete_presentations():
         url = delete_urls.popleft()
         if DRY_RUN:
             TOTAL_PRESENTATION_DELETIONS += 1
-            print(f"Presentations annihilated from existance: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r", flush=True)
+            print(f"Presentations annihilated from existance: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r",
+                  flush=True)
         else:
             deleted = try_to_delete_record(url)
             if deleted:
                 TOTAL_PRESENTATION_DELETIONS += 1
-                print(f"Presentations annihilated from existance: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r", flush=True)
+                print(f"Presentations annihilated from existance: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r",
+                      flush=True)
             else:
                 if retries.get(url, 0) >= 5:
                     TOTAL_ERRORS.append("Failed to delete " + url + " after 5 retries!")
                 else:
-                    CTX.log(f"   - Failed to delete record. Will retry... number of retries so far: {retries.get(url, 0)} / 5\n")
+                    CTX.log(
+                        f"   - Failed to delete record. Will retry... number of retries so far: {retries.get(url, 0)} / 5\n")
                     delete_urls.append(url)
                     retries[url] = retries.get(url, 0) + 1
 
@@ -183,6 +187,9 @@ def build_node_map_from_child_references(root_url, global_node_map):
     return global_node_map
 
 
+
+
+
 def process_node_map_and_delete_records(global_node_map):
     global TOTAL_RECORD_DELETIONS
     """
@@ -201,9 +208,7 @@ def process_node_map_and_delete_records(global_node_map):
         url = deletion_queue.popleft()
         node = global_node_map[url]
 
-        if prepare_url_and_possibly_delete(node):
-            TOTAL_RECORD_DELETIONS += 1
-            print(f"Records purged from this world: {TOTAL_RECORD_DELETIONS} / {len(global_node_map)}", end="\r", flush=True)
+        process_record(global_node_map, node)
 
         processed.add(url)
 
@@ -219,12 +224,35 @@ def process_node_map_and_delete_records(global_node_map):
     check_for_unprocessed_nodes(global_node_map, processed)
 
 
-def log_results(): # pragma: no cover
+def process_record(global_node_map, node):
+    global TOTAL_RECORD_DELETIONS, TOTAL_RECORD_UPDATES
+    if node.record_type == "validationType":
+        CTX.log(f"ValidationType '{node.record_id}' was updated to original metadata new/update groups and not deleted")
+        break_dependency_to_top_groups(node.xml_content)
+        remove_action_links(node.xml_content)
+        if prepare_and_try_to_update_record(node):
+            TOTAL_RECORD_UPDATES += 1
+
+    else:
+        if prepare_url_and_possibly_delete(node):
+            TOTAL_RECORD_DELETIONS += 1
+            print(f"Records purged from this world: {TOTAL_RECORD_DELETIONS} / {len(global_node_map)}", end="\r",
+                  flush=True)
+
+
+def log_results():  # pragma: no cover
     if DRY_RUN:
         log("[ Script ran in dry run mode ]")
 
+    log(f"  Total updated validation types: {TOTAL_RECORD_UPDATES}")
     log(f"  Total presentations deleted: {TOTAL_PRESENTATION_DELETIONS}")
     log(f"  Total records deleted: {TOTAL_RECORD_DELETIONS}")
+
+    total_processed = TOTAL_RECORD_UPDATES + TOTAL_RECORD_DELETIONS
+    if total_processed == len(GLOBAL_NODE_MAP):
+        print("\n  Math checks out. all good.")
+    else:
+        print(f"\n   Warning: The number of successfully processed records ({total_processed}) are less than the expected total of {len(GLOBAL_NODE_MAP)}!")
 
     if TOTAL_ERRORS:
         print("\nWarning! There were errors reported during processing, please check the log file for details.")
@@ -341,6 +369,50 @@ def collect_validation_types_from_response(response_body: ET.Element) -> list[st
     return validation_types
 
 
+def break_dependency_to_top_groups(xml_content):
+    updated = False
+    updated |= remove_prefix_from_value_of_xpath_using_find(xml_content, ".//newMetadataId/linkedRecordId")
+    updated |= remove_prefix_from_value_of_xpath_using_find(xml_content, ".//metadataId/linkedRecordId")
+
+    return updated
+
+
+def remove_prefix_from_value_of_xpath_using_find(xml_content, path: str) -> bool:
+    metadata_id = xml_content.find(path)
+    if metadata_id is not None:
+        current_id = metadata_id.text or ""
+        metadata_id.text = current_id.removeprefix(TYPE_PREFIX)
+        return True
+    return False
+
+
+def remove_action_links(xml_root):
+    for parent in xml_root.iter():
+        for child in parent:
+            if child.tag == "actionLinks":
+                parent.remove(child)
+
+
+def unwrap_and_clean_xml_for_create(xml_root: ET.Element) -> ET.Element:
+    content = xml_root.find("data")[0]
+    return content
+
+
+def to_xml_bytes(element):
+    return b'<?xml version="1.0" encoding="UTF-8"?>' + ET.tostring(element, encoding="utf-8")
+
+
+def prepare_and_try_to_update_record(node):
+    if DRY_RUN:
+        CTX.log(f"  Dry run mode - not saving {node.new_record_id}\n")
+        return True
+
+    record_type_url = f"{CTX.get_base_url()}{node.record_type}/{node.record_id}"
+    xml_bytes = to_xml_bytes(node.xml_content.find("data")[0])
+
+    return try_to_update_record(node, record_type_url, xml_bytes)
+
+
 # API utilities ----------------------------------
 def fetch_record_as_xml(url):
     headers = {"Authtoken": CTX.get_auth_token(), "Accept": "application/vnd.cora.record+xml"}
@@ -368,6 +440,25 @@ def try_to_delete_record(record_type_url: str | Any) -> bool:
         return True
     except requests.RequestException as e:
         TOTAL_ERRORS.append(f"Error saving {record_type_url}: {e}")
+        return False
+
+
+def try_to_update_record(node, record_type_url: str, xml_bytes: bytes | Any) -> bool:
+    try:
+        headers = {
+            "Authtoken": CTX.get_auth_token(),
+            "Content-Type": "application/vnd.cora.recordgroup+xml",
+            "Accept": "application/vnd.cora.record+xml", }
+
+        response = requests.post(record_type_url, data=xml_bytes, headers=headers, timeout=10)
+        CTX.log(f"  Response: ({response.status_code}) - {response.text}\n")
+        if response.status_code not in (200, 201):
+            TOTAL_ERRORS.append(f"Failed to update {node.new_record_id} ({response.status_code} - {response.text})")
+            return False
+        return True
+    except requests.RequestException as e:
+        CTX.log(f">>> Error updating {node.new_record_id}: {e}")
+        TOTAL_ERRORS.append(f"Error updating {node.new_record_id}: {e}")
         return False
 
 

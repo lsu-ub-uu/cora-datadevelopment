@@ -39,7 +39,7 @@ def create_node_tree():
     #    '''
     # Create nodes
     node_A = Script.RecordNode("A", "typeA", "urlA", ET.Element("xmlrootA"))
-    node_B = Script.RecordNode("B", "typeB", "urlB", ET.Element("nodeB"))
+    node_B = Script.RecordNode("B", "typeB", "urlB", ET.Element("xmlrootB"))
     node_C = Script.RecordNode("C", "typeC", "urlC", ET.Element("nodeC"))
     node_D = Script.RecordNode("D", "typeD", "urlD", ET.Element("nodeD"))
     node_E = Script.RecordNode("E", "typeE", "urlE", ET.Element("nodeE"))
@@ -387,7 +387,7 @@ def test_process_and_possibly_save_not_saved_due_to_not_updated(record_node, mon
     monkeypatch.setattr(Script, "normalize_child_reference_repeat", lambda node: False)
     monkeypatch.setattr(Script, "update_data_divider", lambda node: False)
 
-    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    result = Script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
     assert result is False
 
 
@@ -398,7 +398,7 @@ def test_process_and_possibly_save_not_saved_due_to_already_processed(record_nod
     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.is_already_processed",
                         fake_is_already_processed)
 
-    result = Script.process_and_possibly_save(record_node, {"divaTextNewGroup": "XYZ_divaTextNewGroup"})
+    result = Script.process_and_possibly_create(record_node, {"divaTextNewGroup": "XYZ_divaTextNewGroup"})
     assert result is False
 
 
@@ -412,7 +412,7 @@ def test_process_and_possibly_save(record_node, monkeypatch):
     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.prepare_and_try_to_save_record",
                         fake_prepare_and_try_to_save_record)
 
-    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    result = Script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
     assert result is True
     assert "divaTextNewGroup" in saved_nodes
 
@@ -424,7 +424,7 @@ def test_process_and_possibly_save_not_saved(record_node, monkeypatch):
     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.prepare_and_try_to_save_record",
                         fake_prepare_and_try_to_save_record)
 
-    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    result = Script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
     assert result is False
 
 
@@ -447,7 +447,7 @@ def test_process_and_possibly_save_update_final_value(record_node, monkeypatch):
     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.record_is_a_child_of_record_info",
                         fake_record_is_a_child_of_record_info)
 
-    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    result = Script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
     assert result is True
     assert called
     assert not_called
@@ -472,7 +472,7 @@ def test_process_and_possibly_save_skip_record_info_child(record_node, monkeypat
     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.record_is_a_child_of_record_info",
                         fake_record_is_a_child_of_record_info)
 
-    result = Script.process_and_possibly_save(record_node, {"123": "XYZ_123"})
+    result = Script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
     assert result is False
     assert called
     assert not_called
@@ -704,7 +704,7 @@ def test_process_graph_with_relationships(monkeypatch, create_node_tree):
 
 
 def test_get_search_data():
-    data = Script.get_search_data()
+    data = Script.get_search_data_for_record_type()
     assert data is not None
 
 
