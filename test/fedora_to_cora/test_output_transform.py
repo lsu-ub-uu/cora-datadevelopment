@@ -71,7 +71,9 @@ def test_output_transform(requests_mock):
             </place>
             <edition>3</edition>
         </originInfo>
-        <extent>208</extent>
+        <physicalDescription>
+            <extent>208</extent>
+        </physicalDescription>
         <classification authority="ssif" repeatId="0">30224</classification>
         <classification authority="ssif" repeatId="1">60301</classification>
         <subject authority="diva">
@@ -121,7 +123,7 @@ def test_output_transform(requests_mock):
         <identifier displayLabel="undefined" repeatId="2" type="isbn">978-92-893-7380-7</identifier>
         <identifier type="isrn">ISRN.01</identifier>
         <identifier type="archiveNumber">Arkivnummer.01</identifier>
-        <identifier type="localId">LocalId.01</identifier>
+        <identifier type="localId" repeatId="0">LocalId.01</identifier>
         <identifier type="pmid">pmid123</identifier>
         <identifier type="wos">ISI.01</identifier>
         <identifier type="scopus">Scopus.01</identifier>

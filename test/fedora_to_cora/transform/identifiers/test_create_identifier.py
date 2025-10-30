@@ -17,7 +17,7 @@ def test_create_identifier():
     )
 
     assert_equal_for_xml_and_xml_string(
-        identifier,
+        identifier[0],
         """
         <identifier type="someNewIdentifier">Arkivnummer.01</identifier>
         """,
@@ -36,7 +36,7 @@ def test_create_identifier_with_default_selector():
     identifier = create_identifier(source_record, type="archiveNumber")
 
     assert_equal_for_xml_and_xml_string(
-        identifier,
+        identifier[0],
         """
         <identifier type="archiveNumber">Arkivnummer.01</identifier>
         """,
@@ -57,8 +57,36 @@ def test_create_identifier_with_empty_tag():
     )
 
     assert_equal_for_xml_and_xml_string(
-        identifier,
+        identifier[0],
         """
         <identifier type="archiveNumber" />
+        """,
+    )
+
+
+def test_create_identifier_for_local_id():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <localId>Local.12345</localId>
+            <localId>Local.67890</localId>
+        </publication>
+        """
+    )
+
+    identifier = create_identifier(
+        source_record, source_selector="./localId", type="localId"
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        identifier[0],
+        """
+        <identifier type="localId" repeatId="0">Local.12345</identifier>
+        """,
+    )
+    assert_equal_for_xml_and_xml_string(
+        identifier[1],
+        """
+        <identifier type="localId" repeatId="1">Local.67890</identifier>
         """,
     )

@@ -5,10 +5,10 @@ def create_extent(source_record: ET.Element) -> ET.Element | None:
     """
     Create an extent element from source record pages element.
     """
-    extent = ET.Element("extent")
+    physical_description = ET.Element("physicalDescription")
 
     pages = source_record.find("./pages")
     if pages is not None and pages.text:
-        extent.text = pages.text
+        ET.SubElement(physical_description, "extent").text = pages.text
 
-    return extent
+    return physical_description

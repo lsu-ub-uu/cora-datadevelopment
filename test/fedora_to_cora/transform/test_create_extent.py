@@ -17,7 +17,9 @@ def test_create_extent():
     assert_equal_for_xml_and_xml_string(
         origin_info,
         """
+        <physicalDescription>
             <extent>208</extent>
+        </physicalDescription>
         """,
     )
 
@@ -26,7 +28,6 @@ def test_create_extent_missing():
     source_record = ET.fromstring(
         """
         <publication>
-            <pages>208</pages>
         </publication>
         """
     )
@@ -36,6 +37,7 @@ def test_create_extent_missing():
     assert_equal_for_xml_and_xml_string(
         origin_info,
         """
-            <extent>208</extent>
+        <physicalDescription>
+        </physicalDescription>
         """,
     )

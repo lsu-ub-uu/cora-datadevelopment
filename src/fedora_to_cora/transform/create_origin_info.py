@@ -54,7 +54,7 @@ def _create_agent(source_record: ET.Element, context: Context) -> ET.Element | N
 
 
 def _create_agent_from_uncontrolled_publisher(publisher_name: str) -> ET.Element:
-    agent = ET.Element("agent", otherType="text", repeatId="0")
+    agent = ET.Element("agent", repeatId="0")
     ET.SubElement(agent, "namePart").text = publisher_name
 
     role = ET.SubElement(agent, "role")
@@ -66,7 +66,7 @@ def _create_agent_from_uncontrolled_publisher(publisher_name: str) -> ET.Element
 def _create_agent_from_controlled_publisher(
     publishing_house_id: str, context: Context
 ) -> ET.Element | None:
-    agent = ET.Element("agent", otherType="link", repeatId="0")
+    agent = ET.Element("agent", repeatId="0")
     cora_publisher_id = get_cora_id_by_old_id(
         publishing_house_id, record_type="diva-publisher", context=context
     )
@@ -79,24 +79,6 @@ def _create_agent_from_controlled_publisher(
     ET.SubElement(role, "roleTerm").text = "pbl"
 
     return agent
-
-
-def _create_publisher_link(
-    source_record: ET.Element, context: Context
-) -> ET.Element | None:
-    publishing_house_id = source_record.find("./publishingHouse/publishingHouseId")
-
-    if publishing_house_id is None or publishing_house_id.text is None:
-        return None
-
-    cora_publisher_id = get_cora_id_by_old_id(
-        publishing_house_id.text, record_type="diva-publisher", context=context
-    )
-    link = create_record_link_using_name_type_id(
-        "publisher", "diva-publisher", cora_publisher_id
-    )
-    link.set("repeatId", "0")
-    return link
 
 
 def _create_place(source_record: ET.Element) -> ET.Element | None:

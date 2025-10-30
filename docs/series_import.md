@@ -17,7 +17,7 @@ This script imports series from XML files exported from Diva Classic database, t
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <SELECT>
-<DATA_RECORD>
+	<DATA_RECORD>
 		<domain>smhi</domain>
 		<old_id>12556</old_id>
 		<title>RO, Rapport Oceanografi</title>

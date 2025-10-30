@@ -159,7 +159,7 @@ def create_affiliation_for_controlled_organisation(
     Create an affiliation element for a controlled organisation.
     """
 
-    affiliation = ET.Element("affiliation", otherType="link", repeatId=str(repeat_id))
+    affiliation = ET.Element("affiliation", repeatId=str(repeat_id))
     organisation_id = organisation.find("./organisationId")
 
     assert organisation_id is not None and organisation_id.text
@@ -184,7 +184,7 @@ def create_affiliation_for_uncontrolled_organisation(
     """
     Create an affiliation element for an uncontrolled organisation.
     """
-    affiliation = ET.Element("affiliation", otherType="text", repeatId=str(repeat_id))
+    affiliation = ET.Element("affiliation", repeatId=str(repeat_id))
 
     uncontrolled_name = organisation.find("./organisationNameUncontrolled")
     if uncontrolled_name is not None and uncontrolled_name.text:

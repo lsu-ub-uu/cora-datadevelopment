@@ -330,6 +330,7 @@ fedora_journal_spec: XMLSpec = {
     "journalTitle": fedora_title_spec,
     "printedIssn": "text",
     "electronicIssn": "text",
+    "url": "text",
     "fridaLevel": fedora_frida_level_spec,
     "controlled": "text",
     "openAccess": "text",
@@ -556,15 +557,17 @@ fedora_publication_xml_spec: XMLSpec = {
         "contributor": {
             **fedora_person_spec,
             "roles": {
-                "roleId": "text",
-                "marcCode": "text",
-                "roleNames": {
-                    "roleName": {
-                        "roleNameId": "text",
-                        "locale": "text",
-                        "roleName": "text",
-                    }
-                },
+                "role": {
+                    "roleId": "text",
+                    "marcCode": "text",
+                    "roleNames": {
+                        "roleName": {
+                            "roleNameId": "text",
+                            "locale": "text",
+                            "roleName": "text",
+                        }
+                    },
+                }
             },
         }
     },
@@ -597,14 +600,14 @@ fedora_publication_xml_spec: XMLSpec = {
         "year": "text",
         "term": "text",
     },
-    "subType": {
-        "publicationSubTypeId": "text",
-        "publicationSubTypeCode": "text",
-        "publicationSubTypeNames": {
-            "publicationSubTypeName": {
-                "publicationSubTypeNameId": "text",
+    "subtype": {
+        "publicationSubtypeId": "text",
+        "publicationSubtypeCode": "text",
+        "publicationSubtypeNames": {
+            "publicationSubtypeName": {
+                "publicationSubtypeNameId": "text",
                 "locale": "text",
-                "publicationSubTypeName": "text",
+                "publicationSubtypeName": "text",
             }
         },
     },
@@ -646,7 +649,7 @@ fedora_publication_xml_spec: XMLSpec = {
         },
     },
     "descriptions": {
-        "abstracts": {"abstract": fedora_abstract_spec},
+        "abstract": fedora_abstract_spec,
     },
     "mediaInformation": {
         "physicalDescriptions": {"abstract": fedora_abstract_spec},
