@@ -155,7 +155,7 @@ def test_creates_uncontrolled_affiliation():
             <namePart type="family">Andersson</namePart>
             <namePart type="given">Michaela</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
-            <affiliation otherType="text" repeatId="0">
+            <affiliation repeatId="0">
                 <name type="corporate">
                     <namePart>Extern organisation</namePart>
                 </name>
@@ -214,7 +214,7 @@ def test_creates_controlled_affiliation(monkeypatch):
             <namePart type="family">Andersson</namePart>
             <namePart type="given">Michaela</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
-            <affiliation otherType="link" repeatId="0">
+            <affiliation repeatId="0">
                 <organisation>
                     <linkedRecordType>diva-organisation</linkedRecordType>
                     <linkedRecordId>{expected_cora_id}</linkedRecordId>
@@ -295,7 +295,7 @@ def test_create_supervisors():
             <namePart type="family">Smith</namePart>
             <namePart type="given">Sarah</namePart>
             <role><roleTerm repeatId="0">ths</roleTerm></role>
-            <affiliation otherType="text" repeatId="0">
+            <affiliation repeatId="0">
                 <name type="corporate">
                     <namePart>Extern organisation</namePart>
                 </name>

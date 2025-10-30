@@ -60,7 +60,7 @@ def test_output_transform(requests_mock):
             <dateIssued>
                 <year>2023</year>
             </dateIssued>
-            <agent otherType="text" repeatId="0">
+            <agent repeatId="0">
                 <namePart>Uppsala Läroverk</namePart>
                 <role>
                     <roleTerm>pbl</roleTerm>
@@ -100,7 +100,7 @@ def test_output_transform(requests_mock):
             <role>
                 <roleTerm repeatId="0">edt</roleTerm>
             </role>
-            <affiliation otherType="link" repeatId="0">
+            <affiliation repeatId="0">
                 <organisation>
                     <linkedRecordType>diva-organisation</linkedRecordType>
                     <linkedRecordId>{affiliation_organisation_id}</linkedRecordId>
