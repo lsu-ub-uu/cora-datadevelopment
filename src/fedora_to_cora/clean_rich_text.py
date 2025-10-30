@@ -4,16 +4,39 @@ import html
 
 def clean_rich_text(input: str) -> str:
     output = html.unescape(input)
-    output = _format_paragraphs(output)
+
+    output = _remove_empty_paragraphs(output)
+    output = _format_blocks(output)
     output = _format_ul(output)
     output = _format_ol(output)
     output = _strip_html_tags(output)
-    return html.unescape(output)
+
+    # Unescape double encoded tags such as &amp;amp
+    return html.unescape(output).strip()
 
 
-def _format_paragraphs(input: str) -> str:
-    without_empty_paragraphs = re.sub(r"<p>\s*</p>", "", input)
-    return without_empty_paragraphs.replace("</p>", "\n\n").rstrip()
+def _remove_empty_paragraphs(input: str) -> str:
+    return re.sub(r"<p>\s*</p>", "", input)
+
+
+def _format_blocks(input: str) -> str:
+    block_tags = [
+        "p",
+        "ol",
+        "ul",
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "pre",
+    ]
+
+    output = input
+    for tag in block_tags:
+        output = output.replace(f"</{tag}>", f"</{tag}>\n\n")
+    return output
 
 
 def _format_ul(input: str) -> str:

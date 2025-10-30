@@ -24,15 +24,21 @@ def test_removes_text_formatting_tags(tag):
     assert clean_rich_text(input) == expected
 
 
-def test_preservs_ul():
+def test_preserves_ul():
     input = "&lt;ul&gt;&lt;li&gt;Item one&lt;/li&gt;&lt;li&gt;Item two&lt;/li&gt;&lt;li&gt;Item three&lt;/li&gt;&lt;/ul&gt;"
     expected = "• Item one\n• Item two\n• Item three"
     assert clean_rich_text(input) == expected
 
 
-def test_preservs_ol():
+def test_preserves_ol():
     input = "&lt;ol&gt;&lt;li&gt;Item one&lt;/li&gt;&lt;li&gt;Item two&lt;/li&gt;&lt;li&gt;Item three&lt;/li&gt;&lt;/ol&gt;"
     expected = "1. Item one\n2. Item two\n3. Item three"
+    assert clean_rich_text(input) == expected
+
+
+def test_adds_spaces_after_lists_ol():
+    input = "&lt;ol&gt;&lt;li&gt;Item one&lt;/li&gt;&lt;/ol&gt;&lt;ul&gt;&lt;li&gt;Item one&lt;/li&gt;&lt;/ul&gt;"
+    expected = "1. Item one\n\n• Item one"
     assert clean_rich_text(input) == expected
 
 
