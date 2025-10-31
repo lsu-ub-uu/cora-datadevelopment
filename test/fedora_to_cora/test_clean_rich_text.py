@@ -2,6 +2,10 @@ from fedora_to_cora.clean_rich_text import clean_rich_text
 import pytest
 
 
+def test_empty_input_returns_empty_string():
+    assert clean_rich_text("") == ""
+
+
 @pytest.mark.parametrize(
     "tag",
     [
@@ -111,4 +115,110 @@ def test_unescapes_multiple_html_entities():
 def test_unescapes_html_entities_in_lists():
     input = "&lt;ul&gt;&lt;li&gt;R&amp;amp;D department&lt;/li&gt;&lt;li&gt;Sales &amp;amp; Marketing&lt;/li&gt;&lt;/ul&gt;"
     expected = "• R&D department\n• Sales & Marketing"
+    assert clean_rich_text(input) == expected
+
+
+# Test cases for empty list items
+def test_empty_list_items_ul():
+    input = "&lt;ul&gt;&lt;li&gt;&lt;/li&gt;&lt;li&gt;Non-empty item&lt;/li&gt;&lt;li&gt;&lt;/li&gt;&lt;/ul&gt;"
+    expected = "• Non-empty item"
+    assert clean_rich_text(input) == expected
+
+
+def test_empty_list_items_ol():
+    input = "&lt;ol&gt;&lt;li&gt;&lt;/li&gt;&lt;li&gt;Content&lt;/li&gt;&lt;li&gt;&lt;/li&gt;&lt;/ol&gt;"
+    expected = "1. Content"
+    assert clean_rich_text(input) == expected
+
+
+def test_mixed_empty_and_whitespace_list_items():
+    input = "&lt;ul&gt;&lt;li&gt;&lt;/li&gt;&lt;li&gt;   &lt;/li&gt;&lt;li&gt;Real content&lt;/li&gt;&lt;/ul&gt;"
+    expected = "• Real content"
+    assert clean_rich_text(input) == expected
+
+
+# Test cases for whitespace-only content
+def test_whitespace_only_paragraph():
+    input = "&lt;p&gt;   &lt;/p&gt;&lt;p&gt;Real content&lt;/p&gt;"
+    expected = "Real content"
+    assert clean_rich_text(input) == expected
+
+
+def test_mixed_whitespace_characters():
+    input = "&lt;p&gt;\t\n  \r&lt;/p&gt;&lt;p&gt;Content&lt;/p&gt;"
+    expected = "Content"
+    assert clean_rich_text(input) == expected
+
+
+def test_paragraph_with_only_spaces():
+    input = "&lt;p&gt;          &lt;/p&gt;&lt;p&gt;Next paragraph&lt;/p&gt;"
+    expected = "Next paragraph"
+    assert clean_rich_text(input) == expected
+
+
+# Test cases for Unicode characters
+def test_unicode_emoji():
+    input = "&lt;p&gt;Hello world! 🌍 Welcome 👋&lt;/p&gt;"
+    expected = "Hello world! 🌍 Welcome 👋"
+    assert clean_rich_text(input) == expected
+
+
+def test_unicode_special_characters():
+    input = "&lt;p&gt;Café, naïve, résumé, piñata&lt;/p&gt;"
+    expected = "Café, naïve, résumé, piñata"
+    assert clean_rich_text(input) == expected
+
+
+def test_unicode_mathematical_symbols():
+    input = "&lt;p&gt;α + β = γ, ∑, ∞, ≠, ≤, ≥&lt;/p&gt;"
+    expected = "α + β = γ, ∑, ∞, ≠, ≤, ≥"
+    assert clean_rich_text(input) == expected
+
+
+def test_unicode_chinese_characters():
+    input = "&lt;p&gt;你好世界&lt;/p&gt;"
+    expected = "你好世界"
+    assert clean_rich_text(input) == expected
+
+
+def test_unicode_arabic_characters():
+    input = "&lt;p&gt;مرحبا بالعالم&lt;/p&gt;"
+    expected = "مرحبا بالعالم"
+    assert clean_rich_text(input) == expected
+
+
+def test_unicode_in_lists():
+    input = "&lt;ul&gt;&lt;li&gt;Item with emoji 🚀&lt;/li&gt;&lt;li&gt;Mathematical: α² + β²&lt;/li&gt;&lt;/ul&gt;"
+    expected = "• Item with emoji 🚀\n• Mathematical: α² + β²"
+    assert clean_rich_text(input) == expected
+
+
+# Test cases for control characters
+def test_control_characters_tab():
+    input = "&lt;p&gt;Text\twith\ttabs&lt;/p&gt;"
+    expected = "Text\twith\ttabs"
+    assert clean_rich_text(input) == expected
+
+
+def test_control_characters_newline():
+    input = "&lt;p&gt;Line one\nLine two&lt;/p&gt;"
+    expected = "Line one\nLine two"
+    assert clean_rich_text(input) == expected
+
+
+def test_control_characters_carriage_return():
+    input = "&lt;p&gt;Text\rwith\rcarriage\rreturns&lt;/p&gt;"
+    expected = "Text\rwith\rcarriage\rreturns"
+    assert clean_rich_text(input) == expected
+
+
+def test_mixed_control_characters():
+    input = "&lt;p&gt;Mixed\t\n\r control chars&lt;/p&gt;"
+    expected = "Mixed\t\n\r control chars"
+    assert clean_rich_text(input) == expected
+
+
+def test_control_characters_in_lists():
+    input = "&lt;ul&gt;&lt;li&gt;Item\twith\ttab&lt;/li&gt;&lt;li&gt;Item\nwith\nnewline&lt;/li&gt;&lt;/ul&gt;"
+    expected = "• Item\twith\ttab\n• Item\nwith\nnewline"
     assert clean_rich_text(input) == expected

@@ -5,7 +5,7 @@ import html
 def clean_rich_text(input: str) -> str:
     output = html.unescape(input)
 
-    output = _remove_empty_paragraphs(output)
+    output = _remove_empty_elements(output)
     output = _format_blocks(output)
     output = _format_ul(output)
     output = _format_ol(output)
@@ -15,8 +15,8 @@ def clean_rich_text(input: str) -> str:
     return html.unescape(output).strip()
 
 
-def _remove_empty_paragraphs(input: str) -> str:
-    return re.sub(r"<p>\s*</p>", "", input)
+def _remove_empty_elements(input: str) -> str:
+    return re.sub(r"<(p|ul|ol|li)>\s*</\1>", "", input)
 
 
 def _format_blocks(input: str) -> str:
@@ -42,7 +42,7 @@ def _format_blocks(input: str) -> str:
 def _format_ul(input: str) -> str:
     def replace_ul_block(match):
         ul_content = match.group(1)
-        li_items = re.findall(r"<li>(.+?)</li>", ul_content)
+        li_items = re.findall(r"<li>(.+?)</li>", ul_content, flags=re.DOTALL)
         return "\n".join(f"• {item}" for item in li_items)
 
     return re.sub(r"<ul>(.+?)</ul>", replace_ul_block, input, flags=re.DOTALL)
