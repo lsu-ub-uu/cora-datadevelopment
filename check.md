@@ -20,3 +20,7 @@ i ny modellen så så blir det en kommaseparead lista
   - `agreementAccepted` - Ska det verkligen vara bara frontend? hur gör api?
 
 - url displayLabel bara ett språk?
+
+Marcus:
+
+- hur hanterar vi andra värden i collectionVars?

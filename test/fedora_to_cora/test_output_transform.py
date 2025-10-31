@@ -87,6 +87,7 @@ def test_output_transform(requests_mock):
         <language repeatId="0">
             <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
         </language>
+        <note type="publicationStatus">published</note>
         <artisticWork type="outputType">false</artisticWork>
         <name type="personal" repeatId="0">
             <namePart type="family">Andersson</namePart>

@@ -108,6 +108,27 @@
     <createdDate>2022-07-07T13:12:10.149+02:00</createdDate>
     <updatedDate>2022-10-14T08:21:57.583+02:00</updatedDate>
   </administrativeInfo>
+  <publicationStatus>
+    <publicationStatusId>53</publicationStatusId>
+    <publicationStatusNames>
+      <publicationStatusName>
+        <publicationStatusNameId>161</publicationStatusNameId>
+        <locale>no</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+      <publicationStatusName>
+        <publicationStatusNameId>160</publicationStatusNameId>
+        <locale>en</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+      <publicationStatusName>
+        <publicationStatusNameId>159</publicationStatusNameId>
+        <locale>sv</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+    </publicationStatusNames>
+    <code>published</code>
+  </publicationStatus>
   <publicationDate>
     2022-07-07T13:12:00.000+02:00</publicationDate>
     <authors>

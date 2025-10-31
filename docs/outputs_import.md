@@ -128,7 +128,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - reviewed <- `reviewed`
   - note type="internal" <- `internalNote`
 - ✅ genre type="subcategory" <- `subType` subTypeId 66=policyDocument 3=exhibitionCatalog Not done
-- ⚠️ note type="publicationStatus" <- `publicationStatus` ⚠️ Not done
+- ✅ note type="publicationStatus" <- `publicationStatus`
 - ✅ typeOfResource <- `mediaType`
 - ⚠️ type <- `mediaInformation/physicalDescriptions` Not done. Needs output-test. Needs ta bort HTML
 - ⚠️ material <- `mediaInformation/materials` Not done. Needs output-test.
