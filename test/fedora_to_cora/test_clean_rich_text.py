@@ -46,10 +46,6 @@ def test_adds_spaces_after_lists_ol():
     assert clean_rich_text(input) == expected
 
 
-def xcreates_math_from_img_with_latex():
-    pass
-
-
 def test_clean_string_with_nested_tags():
     input = "&lt;p&gt;För ytterligare &lt;em&gt;information&lt;/em&gt; kontakta FMV:s bibliotek&lt;/p&gt;"
     expected = "För ytterligare information kontakta FMV:s bibliotek"
@@ -222,3 +218,8 @@ def test_control_characters_in_lists():
     input = "&lt;ul&gt;&lt;li&gt;Item\twith\ttab&lt;/li&gt;&lt;li&gt;Item\nwith\nnewline&lt;/li&gt;&lt;/ul&gt;"
     expected = "• Item\twith\ttab\n• Item\nwith\nnewline"
     assert clean_rich_text(input) == expected
+
+
+def xcreates_math_from_img_with_latex():
+    pass
+    # $${\gamma^{\prime}}$$

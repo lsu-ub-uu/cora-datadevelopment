@@ -63,3 +63,24 @@ def test_no_of_contributors_missing():
         <note type="someType"></note>
         """,
     )
+
+
+def test_creat_note_with_html():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <someSourceTag>&lt;p&gt;This is &lt;strong&gt;important&lt;/strong&gt; text.&lt;/p&gt;</someSourceTag>
+        </publication>
+        """
+    )
+
+    note = create_note(
+        source_record, type="someType", source_selector="./someSourceTag"
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        note,
+        """
+        <note type="someType">This is important text.</note>
+        """,
+    )

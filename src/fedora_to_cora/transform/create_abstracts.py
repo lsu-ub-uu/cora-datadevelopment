@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 
+from fedora_to_cora.clean_rich_text import clean_rich_text
+
 
 def create_abstracts(source_record: ET.Element) -> list[ET.Element]:
     """
@@ -40,10 +42,10 @@ def create_abstract(source_abstract: ET.Element, repeat_id: int) -> ET.Element |
         "abstract", lang=source_language.text, repeatId=str(repeat_id)
     )
 
-    source_text = source_abstract.find("./text")
+    source_text = source_abstract.findtext("./text")
     if source_text is None:
         return None
 
-    abstract_element.text = source_text.text
+    abstract_element.text = clean_rich_text(source_text)
 
     return abstract_element

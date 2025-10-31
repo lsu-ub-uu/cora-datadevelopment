@@ -210,8 +210,8 @@ def main():
     # Test with both directories
     test_dirs = [
         # "/home/leo/Repos/cora-datadevelopment/data/fedora_xml/nordiskamuseet/2025-10-20T10:19:00.783965",
-        # "/home/leo/Repos/cora-datadevelopment/data/fedora_xml/kth/2025-10-31T09:00:44.155153",
-        "/home/leo/Repos/cora-datadevelopment/data/fedora_xml/uu/2025-10-31T09:06:10.939513",
+        "/home/leo/Repos/cora-datadevelopment/data/fedora_xml/kth/2025-10-31T09:00:44.155153",
+        # "/home/leo/Repos/cora-datadevelopment/data/fedora_xml/uu/2025-10-31T09:06:10.939513",
     ]
 
     for xml_dir in test_dirs:

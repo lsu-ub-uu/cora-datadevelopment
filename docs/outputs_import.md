@@ -43,20 +43,20 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - ✅ oldId <- `pid`
   - ⚠️ visibility <- [Logic](./get_visibility.py) based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ⚠️ Behöver uppdatera när Trash etc är färdigt
 - ✅ genre type="contentType" <- Mapping from `contentType/contentTypeCode`
-- ⚠️ titleInfo <- `originalPubli  ationTitle`
-  - title <- `title` ⚠️ Strippar inte rich text
+- ✅ titleInfo <- `originalPubli  ationTitle`
+  - title <- `title`
   - subtitle `subtitle`
-  - language <- `language/languageCode3`
+  - ❓ language <- `language/languageCode3` (Vad händer vid saknat sp)
 - subject <- `keyWords`
   - ⚠️ topic <- > `keyWords/entry/list/string` (byter ut mellanslag mot kommatecken) Hanterar inte multiple strings. ❓ Ev. ändra Cora modell?
   - language <- `keyWords/entry/language/languageCode3`
 - ⚠️ genre type="outputType" (valideringstyp) <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` (same as validation type) Behöver hantera subType
 - ✅ language <- `originalPublicationTitle/language` (Classic har inget språk för publikationen. Vi använder oss av huvudtitelns språk.)
 - ✅ artisticWork type="outputType" <- `artisticWork`
-- ⚠️ titleInfo type="alternative" <- `alternativePublicationTitles/title`
+- ✅ titleInfo type="alternative" <- `alternativePublicationTitles/title`
   - title <- `title` ⚠️Strippar inte Rich text
   - subtitle `subtitle`
-  - language <- `language/languageCode3`
+  - ❓ language <- `language/languageCode3`
 - ⚠️ name type="personal" <- ` authors/person` , ` editors/person` , `otherContributors/contributor`
   - namePart type="family" <- `lastName`
   - namePart type="given" <- `firstName`
@@ -68,7 +68,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
       ✅ lokalt id
 - 🆕 name type="corporate" <- N/A
 - ✅ note type="creatorCount" <- `noOfContributors`
-- ⚠️ abstract <- `abstracts/abstract/text` Hanterar inte rich text och latex
+- ⚠️ abstract <- `abstracts/abstract/text` Hanterar inte latex och strippar inte bilder
   - language <- `language/languageCode3`
 - ✅ originInfo
   - dateIssued/year <- `dateIssued` (Endast år anges i Classic)
@@ -100,7 +100,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - url <-`url/url`
   - displayLabel <- `url/label`
 - ⚠️ location displayLabel="orderLink" (Kolla upp orderProfileId i höst, är generiska texter i Classic för displayLabel, url från orderURL)
-- ⚠️ note type="external" <- `note` Hanterar ej Rich text
+- ✅ note type="external" <- `note`
 - ⚠️ relatedItem type="series" otherType="link" <- `seriesInfos/seresInfo`
   - series (länk) <- `series/seriesId`
   - ⚠️ partNumber <- `numberInSeries` ej klar
@@ -120,10 +120,10 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - 🆕 relatedItem type="initiative"
 - 🆕 accessCondition authority="kb.se" (⚠️ Ligger på post nivå, inte per url)
 - 🆕 localGenericMarkup
-- ⚠️ adminInfo
+- ✅ adminInfo
   - failed <- `failed`
   - reviewed <- `reviewed`
-  - ⚠️ note type="internal" <- `internalNote` Stödjer ej rich text
+  - note type="internal" <- `internalNote`
 - ⚠️ genre type="subcategory" <- `subType` subTypeId 66=policyDocument 3=exhibitionCatalog Ej klar
 - ⚠️ note type="publicationStatus" <- `publicationStatus` ⚠️ Ej klart
 - ✅ typeOfResource <- `mediaType`

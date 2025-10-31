@@ -19,11 +19,7 @@ def test_create_abstracts():
                         <languageCode3>eng</languageCode3>
                     </language>
                     <text>
-                        &lt;p&gt;Another summary, &lt;strong&gt;bold text&lt;/strong&gt;, &lt;em&gt;cursive text,&lt;/em&gt; &lt;sup&gt;to the power of text&lt;/sup&gt;, 
-            &lt;sub&gt;subscript text&lt;/sub&gt;&lt;/p&gt;
-            &lt;p&gt;A formula: 
-            &lt;img src=&quot;http://www.diva-portal.org/cgi-bin/mimetex.cgi?
-            %5Cbigcup_%7B2%7D%5E%7B3%5E%7Bb%7Dx%7D%5Cpm&quot; data-classname=&quot;equation&quot; data-title=&quot;&quot; /&gt;&lt;/p&gt;
+                        &lt;p&gt;Another summary, &lt;strong&gt;bold text&lt;/strong&gt;, &lt;em&gt;cursive text,&lt;/em&gt; &lt;sup&gt;to the power of text&lt;/sup&gt;,&lt;sub&gt;subscript text&lt;/sub&gt;&lt;/p&gt;&lt;p&gt;&lt;p&gt;Another paragraph.&lt;/p&gt;
                     </text>
                     </abstract>
                 </abstracts>
@@ -46,11 +42,7 @@ def test_create_abstracts():
         abstracts[1],
         """
         <abstract lang="eng" repeatId="1">
-            &lt;p&gt;Another summary, &lt;strong&gt;bold text&lt;/strong&gt;, &lt;em&gt;cursive text,&lt;/em&gt; &lt;sup&gt;to the power of text&lt;/sup&gt;, 
-            &lt;sub&gt;subscript text&lt;/sub&gt;&lt;/p&gt;
-            &lt;p&gt;A formula: 
-            &lt;img src=&quot;http://www.diva-portal.org/cgi-bin/mimetex.cgi?
-            %5Cbigcup_%7B2%7D%5E%7B3%5E%7Bb%7Dx%7D%5Cpm&quot; data-classname=&quot;equation&quot; data-title=&quot;&quot; /&gt;&lt;/p&gt;
+            Another summary, bold text, cursive text, to the power of text,subscript text\n\nAnother paragraph.
         </abstract>
         """,
     )
