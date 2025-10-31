@@ -271,7 +271,7 @@ def process_and_possibly_create(node, global_id_mapping):
     helpers.update_child_references(node.xml_content, global_id_mapping)
     helpers.remove_action_links(node.xml_content)
 
-    if helpers.update_data_divider(node.xml_content):
+    if helpers.update_data_divider(node.xml_content, DATA_DIVIDER):
         CTX.log(f"> Updated data divider of {original_id}")
 
     return prepare_and_try_to_save_record(node)

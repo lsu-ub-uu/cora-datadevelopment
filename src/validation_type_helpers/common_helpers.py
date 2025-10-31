@@ -13,6 +13,7 @@ _type_prefix: str
 _record_type: str
 _black_list: list
 
+
 def init(ctx: CoraContext, type_prefix: str, record_type: str, black_list: list):
     global _ctx, _type_prefix, _record_type, _black_list
     _ctx = ctx
@@ -200,13 +201,13 @@ def normalize_child_reference_repeat(xml_root):
     return updated
 
 
-def update_data_divider(xml_root):
+def update_data_divider(xml_root, divider):
     updated = False
     data_divider = xml_root.find(".//recordInfo/dataDivider/linkedRecordId")
     if data_divider is not None:
         current_value = (data_divider.text or "").strip()
-        if current_value != data_divider:
-            data_divider.text = data_divider
+        if current_value != divider:
+            data_divider.text = divider
             updated = True
 
     return updated
@@ -348,8 +349,6 @@ def get_search_data_for_prefix(prefix: str) -> bytes:
     return json.dumps(search_data).encode("utf-8")
 
 
-
-
 def get_validation_types_for_record_type():
     search_data = get_search_data_for_record_type(_record_type)
     response_body = get_validation_types_using_search_data(search_data)
@@ -401,7 +400,8 @@ def update_prefix_of_value_of_xpath_using_find(xml_content, path: str) -> bool:
         return True
     return False
 
-#---- API
+
+# ---- API
 
 def try_to_update_record(node, errors: list) -> bool:
     xml_bytes = to_xml_bytes(node.xml_content.find("data")[0])
@@ -412,9 +412,9 @@ def try_to_update_record(node, errors: list) -> bool:
 
 def try_to_create_record(node, content_root, errors: list) -> bool:
     xml_bytes = to_xml_bytes(content_root)
-    create_urö = f"{_ctx.get_base_url()}{node.record_type}"
+    create_url = f"{_ctx.get_base_url()}{node.record_type}"
 
-    return try_to_post_record(node, xml_bytes, create_urö, errors)
+    return try_to_post_record(node, xml_bytes, create_url, errors)
 
 
 def try_to_post_record(node: RecordNode, xml_bytes: bytes, url: str, errors: list) -> bool:
@@ -436,6 +436,7 @@ def try_to_post_record(node: RecordNode, xml_bytes: bytes, url: str, errors: lis
         _ctx.log(f">>> Error saving {node.new_record_id}: {e}")
         errors.append(f"Error saving {node.new_record_id}: {e}")
         return False
+
 
 def log_creation_summary(node, record_type_url: str, xml_bytes: bytes | Any):
     _ctx.log(f">>> POST {node.new_record_id} ({node.record_type})...")
