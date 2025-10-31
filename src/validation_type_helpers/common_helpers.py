@@ -1,0 +1,443 @@
+import json
+import xml.etree.ElementTree as ET
+from collections import deque
+from typing import Any
+
+import requests
+
+from common.arg_parser import ArgumentConfig
+from cora.context import CoraContext
+
+_ctx: CoraContext
+_type_prefix: str
+_record_type: str
+_black_list: list
+
+def init(ctx: CoraContext, type_prefix: str, record_type: str, black_list: list):
+    global _ctx, _type_prefix, _record_type, _black_list
+    _ctx = ctx
+    _type_prefix = type_prefix
+    _record_type = record_type
+    _black_list = black_list
+
+
+create_validation_type_args: dict[str, ArgumentConfig] = {
+    "--system": {
+        "help": "Cora system to connect to (e.g., 'preview', 'production')",
+        "type": str,
+        "default": "minikube",
+    },
+    "--login-id": {
+        "default": "divaAdmin@cora.epc.ub.uu.se",
+        "help": "Login ID for authentication",
+    },
+    "--app-token": {
+        "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
+        "help": "Application token for authentication",
+    },
+    "--apply": {
+        "help": "Apply changes to the Cora system (dry run if not present)",
+        "action": "store_true",
+    },
+    "--workers": {
+        "help": "Number of worker threads for processing",
+        "type": int,
+        "default": 16,
+    },
+    "--datadivider": {
+        "help": "The data divider to set for the created records (e.g, 'diva', 'cora')",
+        "type": str,
+        "default": "diva",
+    },
+    "--recordtype": {
+        "help": "Which recordType to create the new validationTypes for",
+        "type": str,
+        "required": True,
+    },
+    "--prefix": {
+        "help": "Which prefix to add to the new validationType IDs",
+        "type": str,
+        "required": True,
+    },
+}
+
+delete_validation_type_args: dict[str, ArgumentConfig] = {
+    "--system": {
+        "help": "Cora system to connect to (e.g., 'preview', 'production')",
+        "type": str,
+        "default": "minikube",
+    },
+    "--login-id": {
+        "default": "divaAdmin@cora.epc.ub.uu.se",
+        "help": "Login ID for authentication",
+    },
+    "--app-token": {
+        "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
+        "help": "Application token for authentication",
+    },
+    "--apply": {
+        "help": "Apply changes to the Cora system (dry run if not present)",
+        "action": "store_true",
+    },
+    "--workers": {
+        "help": "Number of worker threads for processing",
+        "type": int,
+        "default": 16,
+    },
+    "--prefix": {
+        "help": "Which prefix to use for deletions (only records and presentations using this ID-prefix will be deleted",
+        "type": str,
+        "required": True,
+    },
+}
+
+
+# -----
+
+# Representation of a record and its relationships ----------------------------------
+class RecordNode:
+    def __init__(self, record_id, record_type, url, xml_content):
+        self.record_id = record_id
+        self.record_type = record_type
+        self.url = url
+        self.xml_content = xml_content
+        self.child_urls = []
+        self.children = []
+        self.parents = []
+        self.new_record_id = None
+
+
+def get_root_urls_for_validation_types(validation_types: list[str]) -> list[str]:
+    return [_ctx.get_base_url() + "validationType/" + string for string in validation_types]
+
+
+def build_node_map_from_child_references(root_url, global_node_map):
+    """
+    - Top-level: newMetadataId + metadataId
+    - Lower levels: only childReferences
+    """
+    if root_url in global_node_map:
+        return global_node_map
+
+    collect_nodes_from_root(root_url, global_node_map)
+    link_parent_child_relationship(global_node_map)
+
+    return global_node_map
+
+
+def collect_nodes_from_root(root_url: str, global_node_map: dict[str, RecordNode]) -> None:
+    queue = deque([root_url])
+    while queue:
+        url = queue.popleft()
+        if url in global_node_map:
+            continue
+
+        xml_text = fetch_record_as_xml(url)
+        node = parse_record_from_xml(xml_text, url)
+        global_node_map[url] = node
+        print(f"Fetching records: {len(global_node_map)}", end="\r", flush=True)
+
+        child_urls = collect_child_urls(node, root_url, url)
+
+        for child_url in child_urls:
+            if child_url not in global_node_map:
+                queue.append(child_url)
+
+
+def link_parent_child_relationship(global_node_map: dict[Any, Any]):
+    for node in global_node_map.values():
+        for child_url in node.child_urls:
+            if child_url in global_node_map:
+                node.children.append(global_node_map[child_url])
+                global_node_map[child_url].parents.append(node)
+
+
+def record_info_group(xml_content):
+    name_in_data = xml_content.findtext(".//metadata[@type='group']/nameInData")
+    return name_in_data is not None and name_in_data == "recordInfo"
+
+
+def record_is_a_child_of_record_info(node, global_record_info_children: dict[str, Any]) -> bool:
+    return node.url in global_record_info_children
+
+
+def update_final_value_of_validation_type(xml_content):
+    name_in_data = xml_content.findtext(".//metadata[@type='recordLink']/nameInData")
+    if name_in_data == "validationType":
+        final_value = xml_content.find(".//metadata[@type='recordLink']/finalValue")
+        if final_value is not None:
+            current_value = final_value.text or ""
+            final_value.text = _type_prefix + current_value
+            return True
+    return False
+
+
+def normalize_regex_patterns(xml_root):
+    updated = False
+    if not record_info_group(xml_root):
+        for tag in ("regex", "regEx", "pattern"):
+            for element in xml_root.findall(f".//{tag}"):
+                if element.text and element.text.strip() not in (None, ".+"):
+                    element.text = ".+"
+                    updated = True
+
+    return updated
+
+
+def normalize_child_reference_repeat(xml_root):
+    updated = False
+    if not record_info_group(xml_root):
+        for child_reference in xml_root.findall(".//childReferences/childReference"):
+            repeat_min_element = child_reference.find("repeatMin")
+            repeat_max_element = child_reference.find("repeatMax")
+
+            if repeat_min_element is not None and repeat_min_element.text != "0":
+                repeat_min_element.text = "0"
+                updated = True
+            if repeat_max_element is not None and repeat_max_element.text != "X":
+                repeat_max_element.text = "X"
+                updated = True
+    return updated
+
+
+def update_data_divider(xml_root):
+    updated = False
+    data_divider = xml_root.find(".//recordInfo/dataDivider/linkedRecordId")
+    if data_divider is not None:
+        current_value = (data_divider.text or "").strip()
+        if current_value != data_divider:
+            data_divider.text = data_divider
+            updated = True
+
+    return updated
+
+
+def update_child_references(xml_root, id_mapping):
+    for element in xml_root.findall(".//linkedRecordId"):
+        original_id = (element.text or "").strip()
+        if original_id in id_mapping:
+            element.text = str(id_mapping[original_id])
+
+
+def create_new_id_and_update_mapping(global_id_mapping, node, original_id) -> str:
+    new_id = f"{_type_prefix}{original_id}"
+    node.new_record_id = new_id
+    global_id_mapping[original_id] = new_id
+    return new_id
+
+
+def update_record_id_in_xml(xml_root, new_id):
+    id_element = xml_root.find(".//recordInfo/id")
+    if id_element is not None:
+        id_element.text = new_id
+
+
+def remove_action_links(xml_root):
+    for parent in xml_root.iter():
+        for child in parent:
+            if child.tag == "actionLinks":
+                parent.remove(child)
+
+
+def parse_record_from_xml(xml_text, url):
+    root = ET.fromstring(xml_text)
+    record_info = root.find(".//recordInfo")
+    record_id = record_info.findtext("id")
+    record_type = record_info.findtext("type/linkedRecordId")
+    return RecordNode(record_id, record_type, url, root)
+
+
+def find_child_urls(xml_root):
+    urls = []
+    for element in xml_root.findall(".//childReferences/childReference/ref/actionLinks/read/url"):
+        urls.append((element.text or "").strip())
+
+    return urls
+
+
+def fetch_record_as_xml(url: str):
+    headers = {"Authtoken": _ctx.get_auth_token(), "Accept": "application/vnd.cora.record+xml"}
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.text
+
+
+def unwrap_and_clean_xml_for_create(xml_root: ET.Element) -> ET.Element:
+    content = xml_root.find("data")[0]
+    remove_unwanted_elements_for_creation(content)
+    return content
+
+
+def remove_unwanted_elements_for_creation(element: ET.Element):
+    tags_to_remove = {"type", "createdBy", "tsCreated", "updated"}
+    for child in list(element):
+        if child.tag in tags_to_remove:
+            element.remove(child)
+        else:
+            remove_unwanted_elements_for_creation(child)
+
+
+def to_xml_bytes(element):
+    return b'<?xml version="1.0" encoding="UTF-8"?>' + ET.tostring(element, encoding="utf-8")
+
+
+def find_top_level_children(xml_root):
+    urls = []
+    for tag in ["newMetadataId", "metadataId"]:
+        element = xml_root.find(f".//{tag}/actionLinks/read/url")
+        if element is not None:
+            url = (element.text or "").strip()
+            urls.append(url)
+
+    return urls
+
+
+def collect_child_urls(node: RecordNode, root_url, url) -> list[Any]:
+    if url == root_url:
+        child_urls = find_top_level_children(node.xml_content)
+    else:
+        child_urls = find_child_urls(node.xml_content)
+
+    node.child_urls = child_urls
+    return child_urls
+
+
+def get_search_data_for_record_type(record_type: str) -> bytes:
+    search_data = {
+        "name": "validationTypeSearch",
+        "children": [
+            {
+                "name": "include",
+                "children": [
+                    {
+                        "name": "includePart",
+                        "children": [
+                            {
+                                "name": "validatesRecordTypeSearchTerm",
+                                "value": f"recordType_{record_type}"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+    return json.dumps(search_data).encode("utf-8")
+
+
+def get_search_data_for_prefix(prefix: str) -> bytes:
+    search_data = {
+        "name": "validationTypeSearch",
+        "children": [
+            {
+                "name": "include",
+                "children": [
+                    {
+                        "name": "includePart",
+                        "children": [
+                            {
+                                "name": "recordIdSearchTerm",
+                                "value": f"{prefix}*"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+    return json.dumps(search_data).encode("utf-8")
+
+
+
+
+def get_validation_types_for_record_type():
+    search_data = get_search_data_for_record_type(_record_type)
+    response_body = get_validation_types_using_search_data(search_data)
+    return collect_validation_types_from_response(response_body, False)
+
+
+def get_validation_types_for_record_type_matching_prefix():
+    search_data = get_search_data_for_prefix(_type_prefix)
+    response_body = get_validation_types_using_search_data(search_data)
+
+    return collect_validation_types_from_response(response_body, True)
+
+
+def get_validation_types_using_search_data(search_data: bytes):
+    search_url = _ctx.get_base_url() + "searchResult/validationTypeSearch"
+    headers = {"Authtoken": _ctx.get_auth_token(), "Accept": "application/vnd.cora.recordList+xml",
+               "Content-Type": "application/vnd.cora.recordList+xml"}
+
+    response = requests.get(search_url, params={"searchData": search_data}, headers=headers)
+    response.raise_for_status()
+    response_body = ET.fromstring(response.text)
+
+    return response_body
+
+
+def collect_validation_types_from_response(response_body: ET.Element, get_existing_matching_prefix: bool) -> list[Any]:
+    validation_types = []
+    for element in response_body.findall(".//validationType/recordInfo/id"):
+        if not get_existing_matching_prefix:
+            if element.text is None or element.text.startswith(_type_prefix) or element.text in _black_list:
+                continue
+        validation_types.append((element.text or "").strip())
+
+    return validation_types
+
+
+def link_dependency_to_top_groups(xml_content):
+    updated = False
+    updated |= update_prefix_of_value_of_xpath_using_find(xml_content, ".//newMetadataId/linkedRecordId")
+    updated |= update_prefix_of_value_of_xpath_using_find(xml_content, ".//metadataId/linkedRecordId")
+    return updated
+
+
+def update_prefix_of_value_of_xpath_using_find(xml_content, path: str) -> bool:
+    metadata_id = xml_content.find(path)
+    if metadata_id is not None:
+        current_id = metadata_id.text or ""
+        metadata_id.text = _type_prefix + current_id
+        return True
+    return False
+
+#---- API
+
+def try_to_update_record(node, errors: list) -> bool:
+    xml_bytes = to_xml_bytes(node.xml_content.find("data")[0])
+    update_url = f"{_ctx.get_base_url()}{node.record_type}/{node.record_id}"
+
+    return try_to_post_record(node, xml_bytes, update_url, errors)
+
+
+def try_to_create_record(node, content_root, errors: list) -> bool:
+    xml_bytes = to_xml_bytes(content_root)
+    create_urö = f"{_ctx.get_base_url()}{node.record_type}"
+
+    return try_to_post_record(node, xml_bytes, create_urö, errors)
+
+
+def try_to_post_record(node: RecordNode, xml_bytes: bytes, url: str, errors: list) -> bool:
+    log_creation_summary(node, url, xml_bytes)
+    headers = {
+        "Authtoken": _ctx.get_auth_token(),
+        "Content-Type": "application/vnd.cora.recordgroup+xml",
+        "Accept": "application/vnd.cora.record+xml", }
+
+    try:
+        response = requests.post(url, data=xml_bytes, headers=headers, timeout=10)
+        _ctx.log(f"  Response: ({response.status_code}) - {response.text}\n")
+        if response.status_code not in (200, 201):
+            errors.append(f"Failed to save {node.new_record_id} ({response.status_code} - {response.text})")
+            return False
+
+        return True
+    except requests.RequestException as e:
+        _ctx.log(f">>> Error saving {node.new_record_id}: {e}")
+        errors.append(f"Error saving {node.new_record_id}: {e}")
+        return False
+
+def log_creation_summary(node, record_type_url: str, xml_bytes: bytes | Any):
+    _ctx.log(f">>> POST {node.new_record_id} ({node.record_type})...")
+    _ctx.log(f"  Endpoint: {record_type_url}")
+    _ctx.log("  Payload: " + xml_bytes.decode("utf-8"))
