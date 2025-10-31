@@ -46,6 +46,27 @@
     <comprehensiveSummary>false</comprehensiveSummary>
     <domainAdminOnly>false</domainAdminOnly>
   </publicationType>
+  <subtype>
+    <publicationSubtypeId>2</publicationSubtypeId>
+    <publicationSubtypeCode>publishedPaper</publicationSubtypeCode>
+    <publicationSubtypeNames>
+      <publicationSubtypeName>
+        <publicationSubtypeNameId>28</publicationSubtypeNameId>
+        <locale>sv</locale>
+        <publicationSubtypeName>Publicerat paper</publicationSubtypeName>
+      </publicationSubtypeName>
+      <publicationSubtypeName>
+        <publicationSubtypeNameId>27</publicationSubtypeNameId>
+        <locale>en</locale>
+        <publicationSubtypeName>Published paper</publicationSubtypeName>
+      </publicationSubtypeName>
+      <publicationSubtypeName>
+        <publicationSubtypeNameId>29</publicationSubtypeNameId>
+        <locale>no</locale>
+        <publicationSubtypeName>Publicerat paper</publicationSubtypeName>
+      </publicationSubtypeName>
+    </publicationSubtypeNames>
+  </subtype>
   <pid>diva2:1681782</pid>
   <administrativeInfo>
     <domain>varldskulturmuseerna</domain>

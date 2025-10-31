@@ -233,10 +233,10 @@ def test_does_not_raise_error_for_ignored_child():
     validate_xml(source, spec)
 
 
-def test_does_not_raise_error23():
+def test_does_not_raise_error_for_complete_publication_xml():
     spec: XMLSpec = fedora_publication_xml_spec
 
-    source = read_source_xml("test/data/fedora/mock_varldskulturmuserna.xml")
+    source = read_source_xml("test/data/fedora/mock_publication_ultimate.xml")
     validate_xml(source, spec)
 
 

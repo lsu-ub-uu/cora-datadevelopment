@@ -2,6 +2,9 @@ import xml.etree.ElementTree as ET
 from cora.context import Context
 from common.xml_utils import append_if_value
 
+from fedora_to_cora.transform.create_genre_type_subcategory import (
+    create_genre_type_subcategory,
+)
 from fedora_to_cora.transform.create_admin_info import create_admin_info
 from fedora_to_cora.transform.create_language import create_language
 from fedora_to_cora.transform.create_record_info import create_record_info
@@ -96,6 +99,8 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     )
 
     append_if_value(target_record, create_genre_type_output_type(source_record))
+
+    append_if_value(target_record, create_genre_type_subcategory(source_record))
 
     append_if_value(target_record, create_language(source_record))
 

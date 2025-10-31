@@ -14,14 +14,16 @@ def create_title_info(source_record: ET.Element) -> ET.Element | None:
 
 def create_title_info_type_alternative(
     source_record: ET.Element,
-) -> list[ET.Element | None]:
+) -> list[ET.Element]:
     source_titles = source_record.findall(".//alternativePublicationTitles/title")
 
-    return [
+    title_infos = [
         _create_alternative_title(source_title, repeat_id)
         for repeat_id, source_title in enumerate(source_titles)
         if source_title is not None
     ]
+
+    return [title_info for title_info in title_infos if title_info is not None]
 
 
 def _create_alternative_title(

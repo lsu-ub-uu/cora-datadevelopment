@@ -23,7 +23,7 @@ def test_output_transform(requests_mock):
         text=_create_search_mock_response("series", series_id),
     )
 
-    fedora_xml = read_source_xml("test/data/fedora/mock_varldskulturmuserna.xml")
+    fedora_xml = read_source_xml("test/data/fedora/mock_publication_ultimate.xml")
 
     result = transform_to_cora_output(
         fedora_xml,
@@ -83,6 +83,7 @@ def test_output_transform(requests_mock):
             </topic>
         </subject>
         <genre type="outputType">publication_edited-book</genre>
+        <genre type="subcategory">policyDocument</genre>
         <language repeatId="0">
             <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
         </language>
