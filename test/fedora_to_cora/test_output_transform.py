@@ -143,6 +143,9 @@ def test_output_transform(requests_mock):
             </series>
             <partNumber>1-75</partNumber>
         </relatedItem>
+        <relatedItem type="conference">
+            <conference>Some conference</conference>
+        </relatedItem>
         <studentDegree repeatId="0">
             <degreeLevel>H2</degreeLevel>
             <universityPoints>20</universityPoints>

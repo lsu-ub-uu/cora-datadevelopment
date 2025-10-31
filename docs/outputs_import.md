@@ -215,7 +215,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - part/extent
     - start <- `startPage`
     - end <- `endPage`
-- ⚠️ relatedItem type="conference" <- `conference`
+- ✅ relatedItem type="conference" <- `conference`
 - ⚠️ relatedItem type="funder"
 - ⚠️ funder (link to migrated record) <- `funderInfos/funder/funderId`
 - ⚠️ identifier type="project" <- `funderInfos/funderId/projectNumber`

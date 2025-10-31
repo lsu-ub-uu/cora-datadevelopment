@@ -39,6 +39,9 @@ from fedora_to_cora.transform.identifiers.create_doi_se_libr import (
     create_identifier_doi,
     create_identifier_se_libr,
 )
+from fedora_to_cora.transform.related_items.create_conference import (
+    create_related_item_type_conference,
+)
 from fedora_to_cora.transform.identifiers.create_isbn import create_identifier_type_isbn
 from fedora_to_cora.transform.create_origin_info import create_origin_info
 from fedora_to_cora.transform.create_extent import create_extent
@@ -57,6 +60,7 @@ from fedora_to_cora.transform.related_items.create_journal import (
 from fedora_to_cora.transform.related_items.create_series import (
     create_related_item_type_series,
 )
+
 from fedora_to_cora.transform.degree_project.create_student_degree import (
     create_student_degrees,
 )
@@ -181,7 +185,7 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
         target_record,
         create_related_item_type_series(source_record, context),
     )
-
+    append_if_value(target_record, create_related_item_type_conference(source_record))
     append_if_value(target_record, create_student_degrees(source_record, context))
 
     append_if_value(
