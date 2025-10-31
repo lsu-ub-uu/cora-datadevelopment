@@ -140,9 +140,10 @@ def test_output_transform(requests_mock):
                 <linkedRecordType>diva-series</linkedRecordType>
                 <linkedRecordId>{series_id}</linkedRecordId>
             </series>
+            <partNumber>1-75</partNumber>
         </relatedItem>
         <studentDegree repeatId="0">
-            <degreeLevel>H2</degreeLevel>Z>
+            <degreeLevel>H2</degreeLevel>
             <universityPoints>20</universityPoints>
         </studentDegree>...
         <externalCollaboration>

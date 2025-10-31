@@ -38,6 +38,7 @@ def test_create_controlled_series_link(monkeypatch):
                     <series>
                         <seriesId>{series_old_id_2}</seriesId>
                     </series>
+                    <numberInSeries>66</numberInSeries>
                 </seriesInfo>
             </seriesInfos>
         </publication>
@@ -66,6 +67,7 @@ def test_create_controlled_series_link(monkeypatch):
                 <linkedRecordType>diva-series</linkedRecordType>
                 <linkedRecordId>{series_cora_id_2}</linkedRecordId>
             </series>
+            <partNumber>66</partNumber>
         </relatedItem>
         """,
     )

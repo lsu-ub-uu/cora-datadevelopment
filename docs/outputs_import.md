@@ -38,40 +38,41 @@ outputs-import --help
 Below is specified how each field in the Cora diva-output metadata model is mapped from the DiVA Classic publication model.
 
 - recordInfo
-  - ⚠️ validationType <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` ⚠️ Behöver även ta hänsyn till subType
+  - ⚠️ validationType <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` ⚠️ Need to consider subtype ❓
   - ✅ permissionUnit <- `administrativeInfo/domain`
   - ✅ oldId <- `pid`
-  - ⚠️ visibility <- [Logic](./get_visibility.py) based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ⚠️ Behöver uppdatera när Trash etc är färdigt
+  - ⚠️ visibility <- [Logic](./get_visibility.py) based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ⚠️ Needs updating when changes to visibility is done in Cora
 - ✅ genre type="contentType" <- Mapping from `contentType/contentTypeCode`
 - ✅ titleInfo <- `originalPubli  ationTitle`
   - title <- `title`
   - subtitle `subtitle`
-  - ❓ language <- `language/languageCode3` (Vad händer vid saknat sp)
+  - ❓ language <- `language/languageCode3` (What should we do on missing language?)
 - subject <- `keyWords`
-  - ⚠️ topic <- > `keyWords/entry/list/string` (byter ut mellanslag mot kommatecken) Hanterar inte multiple strings. ❓ Ev. ändra Cora modell?
+  - ⚠️ topic <- > `keyWords/entry/list/string` (replaces spaces with commas) Does not handle multiple strings. ❓ Change Cora moodel?
   - language <- `keyWords/entry/language/languageCode3`
-- ⚠️ genre type="outputType" (valideringstyp) <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` (same as validation type) Behöver hantera subType
-- ✅ language <- `originalPublicationTitle/language` (Classic har inget språk för publikationen. Vi använder oss av huvudtitelns språk.)
+- genre type="outputType" (valideringstyp) <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` (same as validation type) Need to consider subtype ❓
+- ✅ language <- `originalPublicationTitle/language` (Classic does not have a language for the publication, we'll use the langue from the main title.)
 - ✅ artisticWork type="outputType" <- `artisticWork`
 - ✅ titleInfo type="alternative" <- `alternativePublicationTitles/title`
-  - title <- `title` ⚠️Strippar inte Rich text
+  - title <- `title`
   - subtitle `subtitle`
-  - ❓ language <- `language/languageCode3`
+  - ❓ language <- `language/languageCode3` (What should we do on missing language?)
 - ⚠️ name type="personal" <- ` authors/person` , ` editors/person` , `otherContributors/contributor`
+  - person (link to migrated record) <- `authorityPid`
   - namePart type="family" <- `lastName`
   - namePart type="given" <- `firstName`
   - role/roleTerm <- aut | edt | `roles/role/marcCode`
-  - ✅ affiliations <- `organisations/organisation` ,
-    - organisation (länk) <- `organisation/organisationId`
+  - affiliations <- `organisations/organisation` ,
+    - organisation (link to migrated record) <- `organisation/organisationId`
     - name type="corporate" <- `organisation/organisationNameUnconrolled`
-      ⚠️ orcid ❓ ska vi ignorera viaf och libris?
-      ✅ lokalt id
+      - ❓ orcid Should we ignore viaf and libris?
+      - lokalt id
 - 🆕 name type="corporate" <- N/A
 - ✅ note type="creatorCount" <- `noOfContributors`
-- ⚠️ abstract <- `abstracts/abstract/text` Hanterar inte latex och strippar inte bilder
+- ⚠️ abstract <- `abstracts/abstract/text` Does not handle latex or image tags
   - language <- `language/languageCode3`
 - ✅ originInfo
-  - dateIssued/year <- `dateIssued` (Endast år anges i Classic)
+  - dateIssued/year <- `dateIssued` (Only year is used in)
   - 🆕 copyrightDate <- N/A
   - 🆕 dateOther type="online" <- N/A
   - ✅ agent
@@ -82,16 +83,16 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - ✅ extent <- `pages`
 - ✅ classification authority="ssif" <- `nationalCategories/subject/subjectCode`
 - ✅ subject authority="diva"<- `researchSubjects`
-  - topic (länk) <- `subject/subjectId`
+  - topic (link to migrated record) <- `subject/subjectId`
 - ✅ subject authority="sdg" <- `sustainableDevelopments`
   - topic <- mappning av `sustainableDevelopment/developmentId`
 - ✅ identifier type="isbn" <- `isbnNumbers/isbn/number`
   - displayLabel <- mappning från `isbNumbers/isbn/type`
-- identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` där (`publicationIdentifierType == "doi"`)
+- identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`)
 - 🆕 identifier type="ismn" <- N/A
 - ✅ identifier type="archiveNumber"> <- `archiveNumber`
 - 🆕 identifier type="openAlex"
-- ✅ identifier type="se-libr" <- `identifiers/entry/publicationIdentifier/value` där (`publicationIdentifierType == "libris"`)
+- ✅ identifier type="se-libr" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "libris"`)
 - ✅ identifier type="localId" <- `localId`
 - ✅ identifier type type="pmid" <- `pmid`
 - ✅ identifier type type="wos" <- `isi`
@@ -99,11 +100,13 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - ✅ location <- `urls/url`
   - url <-`url/url`
   - displayLabel <- `url/label`
-- ⚠️ location displayLabel="orderLink" (Kolla upp orderProfileId i höst, är generiska texter i Classic för displayLabel, url från orderURL)
+- ⚠️ location displayLabel="orderLink" Need to check what to set as displayLabel
+  - url <- `publicationOrder/orderURL`
+  - displayLabel <- Leave blank or determine based on orderProfileId ❓
 - ✅ note type="external" <- `note`
-- ⚠️ relatedItem type="series" otherType="link" <- `seriesInfos/seresInfo`
-  - series (länk) <- `series/seriesId`
-  - ⚠️ partNumber <- `numberInSeries` ej klar
+- ✅ relatedItem type="series" otherType="link" <- `seriesInfos/seresInfo`
+  - series (link to migrated record) <- `series/seriesId`
+  - partNumber <- `numberInSeries`
 - ✅ relatedItem type="series" otherType="text" <- `uncontrolledSeriesInfo`
   - titleInfo
     - mainTitle <- `series/seriesNameUncontrolled`
@@ -113,27 +116,27 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - partNumber <- `numberInSeries`
 - 🆕 relatedItem type="researchData" <- N/A
 - ✅ relatedItem type="project" otherType="link" <- `projectRelations/projectRelation`
-  - project (länk) <- `pid`
+  - project (link to migrated record) <- `pid`
 - ✅ relatedItem type="project" otherType="text" <- `projects`
   - titleInfo/title <- `project/projectName`
   - titleInfo/subTitle <- N/A
 - 🆕 relatedItem type="initiative"
-- 🆕 accessCondition authority="kb.se" (⚠️ Ligger på post nivå, inte per url)
+- 🆕 accessCondition authority="kb.se" (⚠️ Is on publication level, not url)
 - 🆕 localGenericMarkup
 - ✅ adminInfo
   - failed <- `failed`
   - reviewed <- `reviewed`
   - note type="internal" <- `internalNote`
-- ⚠️ genre type="subcategory" <- `subType` subTypeId 66=policyDocument 3=exhibitionCatalog Ej klar
-- ⚠️ note type="publicationStatus" <- `publicationStatus` ⚠️ Ej klart
+- ⚠️ genre type="subcategory" <- `subType` subTypeId 66=policyDocument 3=exhibitionCatalog Not done
+- ⚠️ note type="publicationStatus" <- `publicationStatus` ⚠️ Not done
 - ✅ typeOfResource <- `mediaType`
-- ⚠️ type <- `mediaInformation/physicalDescriptions` Ej klart. Behöver output-test. Behöver ta bort HTML
-- ⚠️ material <- `mediaInformation/materials` Ej klart. Behöver output-test.
-- ⚠️ technique <- `mediaInformation/techniques` Ej klart. Behöver output-test.
-- ⚠️ size <- `mediaInformation/size` Ej klart Behöver output-test.
-- ⚠️ duration <- `mediaInformation/duration` Ej klart. Behöver output-test.
-- ⚠️ physicalDescription <- `mediaInformation/physicalDescriptions` Ej klart. Behöver output-test.
-- ⚠️ dateOther type="patent" <- `patentDate` Ej klart. Behöver output-test.
+- ⚠️ type <- `mediaInformation/physicalDescriptions` Not done. Needs output-test. Needs ta bort HTML
+- ⚠️ material <- `mediaInformation/materials` Not done. Needs output-test.
+- ⚠️ technique <- `mediaInformation/techniques` Not done. Needs output-test.
+- ⚠️ size <- `mediaInformation/size` Not done Needs output-test.
+- ⚠️ duration <- `mediaInformation/duration` Not done. Needs output-test.
+- ⚠️ physicalDescription <- `mediaInformation/physicalDescriptions` Not done. Needs output-test.
+- ⚠️ dateOther type="patent" <- `patentDate` Not done. Needs output-test.
 - ✅ identifier type="patentNumber" <- `patentNumber`
 - ✅ identifier type="isrn" <- `isrn`
 - ✅ academicSemester <- `academicTerm`
@@ -142,16 +145,16 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - ✅ studentDegree <- `studentDegrees`
   - degreeLevel <- `studentDegree/thesisLevel/thesisLevelCode`
   - universityPoints <- `studentDegree/universityPoints/hp`
-  - course (länk) <- `studentDegree/undergraduateSubject/subjectId`
-  - programme (länk) <- `studentDegree/educationalProgramme/subjectId`
+  - course (link to migrated record) <- `studentDegree/undergraduateSubject/subjectId`
+  - programme (link to migrated record) <- `studentDegree/educationalProgramme/subjectId`
 - ⚠️ externalCollaboration <- `externalCooperation`
   - namePart <- `partners/partner/name` Om `external` är true och `name` saknas, skall generisk text infogas här. T.ex. "Externt samarbete".
 - degreeGrantingInstitution type="corporate" otherType="link" <- `defence/grantingInstitution`
-  - organisation (länk) <- `organisationId`
+  - organisation (link to migrated record) <- `organisationId`
 - degreeGrantingInstitution type="corporate" otherType="text" <- `defence/externalGrantingInstitution`
   - namePart <- `externalGrantingInstitution`
   - 🆕 identifier type="ror" <- N/A
-- ⚠️ defence <- `defence` Behöver uppdateras för att kunna sköta presentation
+- ⚠️ defence <- `defence` Needs uppdateras för att kunna sköta presentation
 - ⚠️ presentation <- `defence` För examensarbete (diva-degreeProject) ska taggen heta presentation istället för defence
   - `language` <- `languageTerm/language`
   - `dateOther` <- `date`
@@ -161,8 +164,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - `degreeGrantingInstitution` <- `grantingInstitution`
   - `organisation` <- `organisationId`
 - ⚠️ relatedItem type="journal" otherType="link" <- `journal`
-  - journal (länk) <- `journalId`
-  - ⚠️ part Nedanstående taggar finns direkt under `publication`. Ej klart
+  - journal (link to migrated record) <- `journalId`
+  - ⚠️ part Nedanstående taggar finns direkt under `publication`. Not done
     - detail type="volume" <- `volume`
       - number
     - detail type="issue" <- `issueNumber`
@@ -177,7 +180,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
     - subTitle <- N/A
   - identifier type="issn" displayLabel="pissn" <- `printedIssn`
   - identifier type="issn" displayLabel="eissn" <- `electronicIssn`
-  - ⚠️ part Nedanstående taggar finns direkt under `publication`. Ej klart
+  - ⚠️ part Nedanstående taggar finns direkt under `publication`. Not done
     - detail type="volume" <- `volume`
       - number
     - detail type="issue" <- `issueNumber`
@@ -186,8 +189,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
     - extent
       - start <- `startPage`
       - end <- `endPage`
-- ⚠️ relatedItem type="book" otherType="link" `hostPublications/pid` om validationType är kapitel i bok ❓
-  - book (länk) <- `hostPublications/pid`
+- ⚠️ relatedItem type="book" otherType="link" `hostPublications/pid` if validationType is book chapter ❓
+  - book (link to migrated record) <- `hostPublications/pid`
 - ⚠️ relatedItem type="book" otherType="text"
   - titleInfo `bookTitle`
     - title <- `title`
@@ -199,8 +202,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - part/extent
     - start <- `startPage`
     - end <- `endPage`
-- ⚠️ relatedItem type="conferencePublication" otherType="link" `hostPublications/pid` om validationType är conference paper
-  - proceeding (länk) <- `hostPublications/pid`
+- ⚠️ relatedItem type="conferencePublication" otherType="link" `hostPublications/pid` if validationType is conference paper
+  - proceeding (link to migrated record) <- `hostPublications/pid`
 - ⚠️ relatedItem type="conferencePublication" otherType="text"
   - titleInfo <- `proceedingsTitle`
     - title <- `title`
@@ -212,19 +215,20 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - part/extent
     - start <- `startPage`
     - end <- `endPage`
-
-### Fields not yet mapped:
-
 - ⚠️ relatedItem type="conference" <- `conference`
-- ⚠️ relatedItem type="funder" <- `funderInfos/funderId/projectNumber`
-- 🆕 related
-- 🆕 related type="retracted"
-- ⚠️ related type="constituent" (länkade avhandligar)
+- ⚠️ relatedItem type="funder"
+- ⚠️ funder (link to migrated record) <- `funderInfos/funder/funderId`
+- ⚠️ identifier type="project" <- `funderInfos/funderId/projectNumber`
+- 🆕 related <- N/A
+- 🆕 related type="retracted" <- N/A
+- ⚠️ related type="constituent" (link to migrated recordade avhandligar)
+  - output (link to migrated record) <- `partsOfPublication/publication/pid`
+- ⚠️ relatedItem type="publicationChannel"
+  - publicationChannel <- `publicationChannel`
 
-### Behöver mer information för att migrera
+### Needs more information
 
 - `hidden` - Om true visas posten ej i sökgränssnittet. Och måste sökas fram med särskild flagga. kommer behöva hanteras vid migrering. Kanske blir visibility: unpublished?
-- `publicationChannel` - Används för konstnärlig output. Metadata ej klar i Cora.
 
 ### Taggar ej i Cora
 

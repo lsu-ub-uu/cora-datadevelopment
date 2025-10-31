@@ -25,22 +25,23 @@ def create_related_item_type_series(
 def _create_related_items_from_controlled_series(
     source_record: ET.Element, context: Context
 ) -> list[ET.Element]:
-    controlled_series_ids = source_record.findall(
-        "./seriesInfos/seriesInfo/series/seriesId"
-    )
+    controlled_series_infos = source_record.findall("./seriesInfos/seriesInfo")
     return [
-        _create_controlled_series_link(series_id.text, f"controlled{i}", context)
-        for i, series_id in enumerate(controlled_series_ids)
-        if series_id.text
+        _create_controlled_series(series_info, f"controlled{i}", context)
+        for i, series_info in enumerate(controlled_series_infos)
+        if series_info.findtext("series/seriesId") is not None
     ]
 
 
-def _create_controlled_series_link(
-    series_id: str, repeat_id: str, context: Context
+def _create_controlled_series(
+    series_info: ET.Element, repeat_id: str, context: Context
 ) -> ET.Element:
     """
     Create a relatedItem element of type series with a controlled series link.
     """
+    series_id = series_info.findtext("series/seriesId")
+    assert series_id is not None
+
     series_cora_id = get_cora_id_by_old_id(
         series_id, record_type="diva-series", context=context
     )
@@ -48,6 +49,7 @@ def _create_controlled_series_link(
     related_item = ET.Element(
         "relatedItem", type="series", otherType="link", repeatId=repeat_id
     )
+
     related_item.append(
         create_record_link_using_name_type_id(
             name_in_data="series",
@@ -55,6 +57,11 @@ def _create_controlled_series_link(
             record_id=series_cora_id,
         )
     )
+
+    number_in_series = series_info.findtext("numberInSeries")
+    if number_in_series is not None:
+        ET.SubElement(related_item, "partNumber").text = number_in_series
+
     return related_item
 
 
