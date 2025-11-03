@@ -2,7 +2,8 @@ import xml.etree.ElementTree as ET
 from cora.context import Context
 from common.xml_utils import append_if_value
 
-from fedora_to_cora.transform.create_date_other_type_patent import (
+from fedora_to_cora.transform.patent.create_patent_country import create_patent_country
+from fedora_to_cora.transform.patent.create_date_other_type_patent import (
     create_date_other_type_patent,
 )
 from fedora_to_cora.transform.create_note_type_publication_status import (
@@ -45,6 +46,7 @@ from fedora_to_cora.transform.identifiers.create_doi_se_libr import (
     create_identifier_doi,
     create_identifier_se_libr,
 )
+from fedora_to_cora.transform.patent.create_patent_holder import create_patent_holder
 from fedora_to_cora.transform.related_items.create_conference import (
     create_related_item_type_conference,
 )
@@ -92,6 +94,10 @@ from fedora_to_cora.transform.artistic_output.create_artistic_output import (
     create_types,
 )
 
+from fedora_to_cora.transform.related_items.create_publication_channel import (
+    create_publication_channel,
+)
+
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
     target_record = ET.Element("output")
@@ -109,6 +115,10 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     append_if_value(target_record, create_subjects(source_record))
 
     append_if_value(target_record, create_date_other_type_patent(source_record))
+
+    append_if_value(target_record, create_patent_holder(source_record))
+
+    append_if_value(target_record, create_patent_country(source_record))
 
     append_if_value(target_record, create_origin_info(source_record, context))
 
@@ -212,6 +222,8 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
         target_record,
         create_note(source_record, type="external", source_selector="./note"),
     )
+
+    append_if_value(target_record, create_publication_channel(source_record))
 
     append_if_value(
         target_record,

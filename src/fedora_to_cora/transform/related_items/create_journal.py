@@ -10,18 +10,24 @@ DIVA_JOURNAL_RECORD_TYPE = "diva-journal"
 
 def create_related_item_type_journal(
     source_record: ET.Element, context: Context
-) -> list[ET.Element]:
-    journals = []
+) -> ET.Element | None:
 
-    uncontrolled_journal = source_record.find("./uncontrolledJournal")
-    if uncontrolled_journal is not None:
-        journals.append(_create_uncontrolled_journal(uncontrolled_journal))
+    journal = None
 
     journal_old_id = source_record.findtext("./journal/journalId")
     if journal_old_id is not None:
-        journals.append(_create_controlled_journal(journal_old_id, context))
+        journal = _create_controlled_journal(journal_old_id, context)
 
-    return journals
+    uncontrolled_journal = source_record.find("./uncontrolledJournal")
+    if uncontrolled_journal is not None:
+        journal = _create_uncontrolled_journal(uncontrolled_journal)
+
+    if journal is not None and len(journal) > 0:
+        part = _create_part(source_record)
+        append_if_value(journal, part)
+        return journal
+
+    return None
 
 
 def _create_uncontrolled_journal(uncontrolled_journal: ET.Element) -> ET.Element:
@@ -65,3 +71,35 @@ def _create_controlled_journal(journal_old_id: str, context: Context) -> ET.Elem
     related_item.append(journal)
 
     return related_item
+
+
+def _create_part(source_record: ET.Element) -> ET.Element:
+    part = ET.Element("part")
+
+    source_volume = source_record.findtext("./volume")
+    if source_volume is not None:
+        volume = ET.SubElement(part, "detail", type="volume")
+        ET.SubElement(volume, "number").text = source_volume
+
+    source_issue = source_record.findtext("./issueNumber")
+    if source_issue is not None:
+        issue = ET.SubElement(part, "detail", type="issue")
+        ET.SubElement(issue, "number").text = source_issue
+
+    source_article_id = source_record.findtext("./articleId")
+    if source_article_id is not None:
+        art_no = ET.SubElement(part, "detail", type="artNo")
+        ET.SubElement(art_no, "number").text = source_article_id
+
+    extent = ET.Element("extent")
+
+    start_page = source_record.findtext("./startPage")
+    if start_page is not None:
+        ET.SubElement(extent, "start").text = start_page
+
+    end_page = source_record.findtext("./endPage")
+    if end_page is not None:
+        ET.SubElement(extent, "end").text = end_page
+    append_if_value(part, extent)
+
+    return part

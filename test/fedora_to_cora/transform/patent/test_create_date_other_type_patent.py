@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from fedora_to_cora.transform.create_date_other_type_patent import (
+from fedora_to_cora.transform.patent.create_date_other_type_patent import (
     create_date_other_type_patent,
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string

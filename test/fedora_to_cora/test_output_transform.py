@@ -61,6 +61,13 @@ def test_output_transform(requests_mock):
             <month>08</month>
             <day>15</day>
         </dateOther>
+        <patentHolder type="corporate">
+            <namePart>Patentorganisation</namePart>
+            <role>
+                <roleTerm>pth</roleTerm>
+            </role>
+        </patentHolder>
+        <patentCountry>au</patentCountry>
         <originInfo>
             <dateIssued>
                 <year>2023</year>
@@ -169,6 +176,9 @@ def test_output_transform(requests_mock):
             <displayLabel>BMFEA vol 1-75</displayLabel>
         </location>
         <note type="external">This is an external note.</note>
+        <relatedItem type="publicationChannel">
+            <publicationChannel>Discovery Channel</publicationChannel>
+        </relatedItem>
         <relatedItem type="series" otherType="link" repeatId="controlled0">
             <series>
                 <linkedRecordType>diva-series</linkedRecordType>
@@ -261,6 +271,15 @@ def test_output_transform(requests_mock):
             <identifier type="issn" displayLabel="eissn">
                 1558-1101
             </identifier>
+            <part>
+                <detail type="volume"><number>15</number></detail>
+                <detail type="issue"><number>4</number></detail>
+                <detail type="artNo"><number>ART-2022-04</number></detail>
+                <extent>
+                    <start>10</start>
+                    <end>30</end>
+                </extent>
+            </part>
         </relatedItem>
         <relatedItem type="project" otherType="text" repeatId="uncontrolled0">
             <titleInfo>

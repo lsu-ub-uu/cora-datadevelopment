@@ -308,6 +308,28 @@
   </identifiers>
   <patentNumber>Patentnummer01</patentNumber>
   <patentDate>2022-08-15T00:00:00.000+01:00</patentDate>
+  <patentOrganisation>Patentorganisation</patentOrganisation>
+  <patentCountry>
+    <countryCode>au</countryCode>
+    <countryNames>
+      <countryName>
+        <countryNameId>10363</countryNameId>
+        <locale>no</locale>
+        <countryName>Australia</countryName>
+      </countryName>
+      <countryName>
+        <countryNameId>426</countryNameId>
+        <locale>en</locale>
+        <countryName>Australia</countryName>
+      </countryName>
+      <countryName>
+        <countryNameId>427</countryNameId>
+        <locale>sv</locale>
+        <countryName>Australien</countryName>
+      </countryName>
+    </countryNames>
+    <showsOnList>true</showsOnList>
+  </patentCountry>
   <examiners>
     <person>
       <firstName>Erik</firstName>
@@ -746,7 +768,7 @@
     <parameters></parameters>
   </publicationOrder>
   <canOrderOnline>false</canOrderOnline>
-  <publicationChannel></publicationChannel>
+  <publicationChannel>Discovery Channel</publicationChannel>
   <isbnNumbers>
     <isbn>
       <number>978-91-506-2649-0</number>
@@ -829,6 +851,11 @@
     <electronicIssn>1558-1101</electronicIssn>
     <openAccess>false</openAccess>
   </uncontrolledJournal>
+  <startPage>10</startPage>
+  <endPage>30</endPage>
+  <volume>15</volume>
+  <issueNumber>4</issueNumber>
+  <articleId>ART-2022-04</articleId>
   <projects>
     <project>
       <projectName>Ett annat projekt</projectName>

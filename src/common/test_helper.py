@@ -4,6 +4,9 @@ from common.xml_utils import pretty_print_xml_string
 
 
 def assert_equal_for_xml_and_xml_string(actual_xml, expected_xml):
+    assert actual_xml is not None, "Actual XML is None"
+    assert expected_xml is not None, "Expected XML is None"
+
     expected_as_xml = ET.fromstring(expected_xml)
     expected_normalized = pretty_print_xml_string(
         _normalize_xml_string(expected_as_xml)
