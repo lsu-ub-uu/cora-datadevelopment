@@ -83,6 +83,14 @@ from fedora_to_cora.transform.related_items.create_project import (
 from fedora_to_cora.transform.thesis.create_defence_or_presentation import (
     create_defence_or_presentation,
 )
+from fedora_to_cora.transform.artistic_output.create_artistic_output import (
+    create_physical_desctiption,
+    create_duration,
+    create_size,
+    create_techniques,
+    create_materials,
+    create_types,
+)
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
@@ -133,6 +141,18 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
             source_record, type="creatorCount", source_selector="./noOfContributors"
         ),
     )
+
+    append_if_value(target_record, create_type_of_resource(source_record))
+
+    append_if_value(target_record, create_types(source_record))
+
+    append_if_value(target_record, create_materials(source_record))
+
+    append_if_value(target_record, create_techniques(source_record))
+
+    append_if_value(target_record, create_size(source_record))
+
+    append_if_value(target_record, create_duration(source_record))
 
     append_if_value(target_record, create_abstracts(source_record))
 
@@ -231,8 +251,6 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     append_if_value(
         target_record, create_related_item_type_project(source_record, context)
     )
-
-    append_if_value(target_record, create_type_of_resource(source_record))
 
     return target_record
 

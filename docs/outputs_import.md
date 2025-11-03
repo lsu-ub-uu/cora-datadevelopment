@@ -120,7 +120,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - titleInfo/title <- `project/projectName`
   - titleInfo/subTitle <- N/A
 - 🆕 relatedItem type="initiative"
-- 🆕 accessCondition authority="kb.se" (⚠️ Is on publication level, not url)
+- 🆕 accessCondition authority="kb.se"
 - 🆕 localGenericMarkup
 - ✅ adminInfo
   - failed <- `failed`
@@ -129,11 +129,11 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - ✅ genre type="subcategory" <- `subType` subTypeId 66=policyDocument 3=exhibitionCatalog Not done
 - ✅ note type="publicationStatus" <- `publicationStatus`
 - ✅ typeOfResource <- `mediaType`
-- ⚠️ type <- `mediaInformation/types` Not done. Needs output-test. Needs ta bort HTML
-- ⚠️ material <- `mediaInformation/materials` Not done. Needs output-test.
-- ⚠️ technique <- `mediaInformation/techniques` Not done. Needs output-test.
-- ⚠️ size <- `mediaInformation/size` Not done Needs output-test.
-- ⚠️ duration <- `mediaInformation/duration` Not done. Needs output-test.
+- ✅ type <- `mediaInformation/types` Not done. Needs output-test. Needs ta bort HTML
+- ✅ material <- `mediaInformation/materials` Not done. Needs output-test.
+- ✅ technique <- `mediaInformation/techniques` Not done. Needs output-test.
+- ✅ size <- `mediaInformation/size` Not done Needs output-test.
+- ✅ duration <- `mediaInformation/duration` Not done. Needs output-test.
 - ⚠️ physicalDescription <- `mediaInformation/physicalDescriptions` Not done. Needs output-test.
 - ✅ dateOther type="patent" <- `patentDate` Not done. Needs output-test.
 - ✅ identifier type="patentNumber" <- `patentNumber`
@@ -156,8 +156,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - ⚠️ supervisor <- `supervisors`
 - ⚠️ examiner <- `examiners`
 - ⚠️ opponent <- `opponents`
-- ⚠️ defence <- `defence` For degree project (diva-degreeProject) the tag should be presentation instead of defence.
-- ⚠️ presentation <- `defence` See above
+- ✅ defence <- `defence` For degree project (diva-degreeProject) the tag should be presentation instead of defence.
+- ✅ presentation <- `defence` See above
   - `language` <- `languageTerm/language`
   - `dateOther` <- `date`
   - `location` <- `room> <name`

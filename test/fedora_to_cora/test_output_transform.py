@@ -115,6 +115,33 @@ def test_output_transform(requests_mock):
             </affiliation>
         </name>
         <note type="creatorCount">1</note>
+        <typeOfResource>stillImage</typeOfResource>
+        <type lang="swe" repeatId="0">
+            Typ01
+        </type>
+        <type lang="swe" repeatId="1">
+            Typ02
+        </type>
+        <material lang="swe" repeatId="0">
+            Material01
+        </material>
+        <material lang="swe" repeatId="1">
+            Material02
+        </material>
+        <technique lang="swe" repeatId="0">
+            Teknik01
+        </technique>
+        <technique lang="swe" repeatId="1">
+            Teknik02
+        </technique>
+        <size>
+            22*32 km2
+        </size>
+        <duration>
+            <hh>01</hh>
+            <mm>10</mm>
+            <ss>00</ss>
+        </duration>
         <abstract lang="swe" repeatId="0">
             Lorem ipsum dolor sit amet
         </abstract>
@@ -245,7 +272,7 @@ def test_output_transform(requests_mock):
                 <title>Ytterligare ett annat projekt</title>
             </titleInfo>
         </relatedItem>
-        <typeOfResource>stillImage</typeOfResource>
+
     </output>
     """
 

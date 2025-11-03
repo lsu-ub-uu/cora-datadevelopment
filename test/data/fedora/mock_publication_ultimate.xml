@@ -840,4 +840,43 @@
   <mediaType>
       <autoId>1</autoId>
   </mediaType>
+  <mediaInformation>
+                <types class="hashtable">
+                    <entry>
+                        <language>
+                            <languageCode3>swe</languageCode3>
+                        </language>
+                        <list>
+                            <string>Typ01</string>
+                            <string>Typ02</string>
+                        </list>
+                    </entry>
+                </types>
+                <materials class="hashtable">
+                    <entry>
+                        <language>
+                            <languageCode3>swe</languageCode3>
+                        </language>
+                        <list>
+                            <string>Material01</string>
+                            <string>Material02</string>
+                        </list>
+                    </entry>
+                </materials>
+                <techniques class="hashtable">
+                    <entry>
+                        <language>
+                            <languageCode3>swe</languageCode3>
+                        </language>
+                        <list>
+                            <string>Teknik01</string>
+                            <string>Teknik02</string>
+                        </list>
+                    </entry>
+                </techniques>
+                <size>
+                    22*32 km2
+                </size>
+                <duration>01:10:00</duration>
+            </mediaInformation>
 </publication>
