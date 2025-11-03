@@ -200,7 +200,8 @@ def log_results():  # pragma: no cover
     utils.log(f"  Total presentations deleted: {TOTAL_PRESENTATION_DELETIONS}")
     utils.log(f"  Total records updated: {TOTAL_RECORD_UPDATES}")
     utils.log(f"  Total records deleted: {TOTAL_RECORD_DELETIONS}")
-    utils.log(f"  Total updated or deleted records: {total_changed_or_updated} / {TOTAL_PREFIX_MATCHES}" )
+    utils.log(
+        f"  Total updated or deleted records out of matching prefixes: {total_changed_or_updated} / {TOTAL_PREFIX_MATCHES}")
 
     if TOTAL_PROCESSED_RECORDS == len(GLOBAL_NODE_MAP):
         utils.log("  > All records in node map were processed...")

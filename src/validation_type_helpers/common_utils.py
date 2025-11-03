@@ -97,7 +97,7 @@ delete_validation_type_args: dict[str, ArgumentConfig] = {
 
 # Representation of a record and its relationships ----------------------------------
 class RecordNode:
-    def __init__(self, record_id, record_type, url, xml_content):
+    def __init__(self, record_id: str, record_type: str, url: str, xml_content: str):
         self.record_id = record_id
         self.record_type = record_type
         self.url = url
@@ -221,7 +221,7 @@ def update_child_references(xml_root, id_mapping):
 
 
 def create_new_id_and_update_mapping(global_id_mapping, node, original_id) -> str:
-    new_id = f"{_type_prefix}{original_id}"
+    new_id = node.record_id if node.record_id.startswith(_type_prefix) else f"{_type_prefix}{original_id}"
     node.new_record_id = new_id
     global_id_mapping[original_id] = new_id
     return new_id
@@ -420,6 +420,8 @@ def update_prefix_of_value_of_xpath_using_find(xml_content, path: str) -> bool:
     metadata_id = xml_content.find(path)
     if metadata_id is not None:
         current_id = metadata_id.text or ""
+        if current_id.startswith(_type_prefix):
+            return False
         metadata_id.text = _type_prefix + current_id
         return True
     return False
@@ -444,11 +446,13 @@ def try_to_create_record(node, content_root, errors: list) -> bool:
 
     return try_to_post_record(node, xml_bytes, create_url, errors)
 
+
 def try_to_update_record(node, errors: list) -> bool:
     xml_bytes = to_xml_bytes(node.xml_content.find("data")[0])
     update_url = f"{_ctx.get_base_url()}{node.record_type}/{node.record_id}"
 
     return try_to_post_record(node, xml_bytes, update_url, errors)
+
 
 def prepare_and_delete_record(node: RecordNode, errors: list):
     delete_url = f"{_ctx.get_base_url()}{node.record_type}/{node.record_id}"

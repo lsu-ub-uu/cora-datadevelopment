@@ -70,11 +70,10 @@ def main():
 
 
 def create_new_validation_types_for_record_type():
-    global EXISTING_VALIDATION_TYPES_WITH_PREFIX, TOTAL_FETCHED
+    global TOTAL_FETCHED
     utils.log("Creating new validationTypes for recordType:" + RECORD_TYPE + " using prefix:" + TYPE_PREFIX)
 
-    EXISTING_VALIDATION_TYPES_WITH_PREFIX = utils.get_ids_for_record_type_matching_prefix("validationType")
-    validation_types = utils.get_validation_types_for_record_type()
+    validation_types = get_validation_types_to_process()
 
     utils.log("=== Building node map ===")
 
@@ -95,6 +94,20 @@ def create_new_validation_types_for_record_type():
     log_results()
 
     print(f"\n=== Output logged to {CTX.get_log_file_path()} ===")
+
+
+def get_validation_types_to_process() -> list[Any]:
+    global EXISTING_VALIDATION_TYPES_WITH_PREFIX, TOTAL_FETCHED
+
+    EXISTING_VALIDATION_TYPES_WITH_PREFIX = utils.get_ids_for_record_type_matching_prefix("validationType")
+
+    if not EXISTING_VALIDATION_TYPES_WITH_PREFIX:
+        utils.log(f"Could not find any existing validation types with prefix '{TYPE_PREFIX}', will create new ones.")
+        return utils.get_validation_types_for_record_type()
+    else:
+        utils.log(
+            f"Found existing validation types that use prefix '{TYPE_PREFIX}', will possibly update these and create needed new ones.")
+        return EXISTING_VALIDATION_TYPES_WITH_PREFIX
 
 
 def collect_record_info_children(global_node_map):
@@ -184,7 +197,7 @@ def process_node(global_id_mapping, node):
 
     try:
         TOTAL_PROCESSED_RECORDS += 1
-        if (TYPE_PREFIX + node.record_id) in EXISTING_VALIDATION_TYPES_WITH_PREFIX:
+        if node.record_id in EXISTING_VALIDATION_TYPES_WITH_PREFIX:
             if process_and_possibly_update(node, global_id_mapping):
                 TOTAL_UPDATES += 1
 
@@ -207,7 +220,10 @@ def process_and_possibly_update(node, global_id_mapping):
         node.new_record_id = global_id_mapping[original_id]
         return False
 
-    utils.link_dependency_to_top_groups(node.xml_content)
+    if not utils.link_dependency_to_top_groups(node.xml_content):
+        CTX.log(f"Top group dependencies was already set to use prefixes, skipping update of '{node.record_id}'...")
+        return False
+    utils.remove_action_links(node.xml_content)
     utils.update_child_references(node.xml_content, global_id_mapping)
 
     return utils.try_to_update_record(node, TOTAL_ERRORS)
