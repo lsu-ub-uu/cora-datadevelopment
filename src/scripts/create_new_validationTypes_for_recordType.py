@@ -246,6 +246,10 @@ def process_and_possibly_create(node, global_id_mapping):
         return False
 
     else:
+        if utils.set_data_quality_to_classic(node.xml_content):
+            CTX.log(f"> Set data quality to classic in {original_id}")
+            updated = True
+
         if utils.normalize_regex_patterns(node.xml_content):
             CTX.log(f"> Normalized regex pattern(s) to '.+' in {original_id}")
             updated = True

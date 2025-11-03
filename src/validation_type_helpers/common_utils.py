@@ -173,6 +173,16 @@ def update_final_value_of_validation_type(xml_content):
     return False
 
 
+def set_data_quality_to_classic(xml_content):
+    name_in_data = xml_content.findtext(".//metadata/nameInData")
+    if name_in_data == "dataQuality":
+        final_value = xml_content.find(".//metadata/finalValue")
+        if final_value is not None:
+            final_value.text = "classic"
+            return True
+    return False
+
+
 def normalize_regex_patterns(xml_root):
     updated = False
     if not record_info_group(xml_root):
