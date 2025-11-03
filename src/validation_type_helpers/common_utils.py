@@ -173,6 +173,21 @@ def update_final_value_of_validation_type(xml_content):
     return False
 
 
+def possibly_update_data_of_non_record_info_child(node, original_id, updated: bool) -> bool:
+    if set_data_quality_to_classic(node.xml_content):
+        _ctx.log(f"> Set data quality to classic in {original_id}")
+        updated = True
+
+    if normalize_regex_patterns(node.xml_content):
+        _ctx.log(f"> Normalized regex pattern(s) to '.+' in {original_id}")
+        updated = True
+
+    if normalize_child_reference_repeat(node.xml_content):
+        _ctx.log(f"> Normalized childReference(s) Min Max to '0-X' in {original_id}")
+        updated = True
+    return updated
+
+
 def set_data_quality_to_classic(xml_content):
     name_in_data = xml_content.findtext(".//metadata/nameInData")
     if name_in_data == "dataQuality":

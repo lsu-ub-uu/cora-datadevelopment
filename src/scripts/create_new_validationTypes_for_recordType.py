@@ -246,17 +246,7 @@ def process_and_possibly_create(node, global_id_mapping):
         return False
 
     else:
-        if utils.set_data_quality_to_classic(node.xml_content):
-            CTX.log(f"> Set data quality to classic in {original_id}")
-            updated = True
-
-        if utils.normalize_regex_patterns(node.xml_content):
-            CTX.log(f"> Normalized regex pattern(s) to '.+' in {original_id}")
-            updated = True
-
-        if utils.normalize_child_reference_repeat(node.xml_content):
-            CTX.log(f"> Normalized childReference(s) Min Max to '0-X' in {original_id}")
-            updated = True
+        updated = utils.possibly_update_data_of_non_record_info_child(node, original_id, updated)
 
     child_renamed = any(child.record_id in global_id_mapping for child in node.children)
 
@@ -273,6 +263,9 @@ def process_and_possibly_create(node, global_id_mapping):
         CTX.log(f"> Updated data divider of {original_id}")
 
     return prepare_and_try_to_save_record(node)
+
+
+
 
 
 def update_parent_dependencies(leaf_queue: deque[str], node, unprocessed_child_map: dict[str, int]):
