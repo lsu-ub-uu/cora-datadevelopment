@@ -1,7 +1,7 @@
 from collections import deque, defaultdict
 from typing import Any
 
-import validation_type_helpers.common_helpers as helpers
+import validation_type_helpers.common_utils as utils
 from common.arg_parser import create_argument_parser
 from cora.context import CoraContext, Context
 
@@ -44,7 +44,7 @@ def main():
 
     parser = create_argument_parser(
         description="Create new validationTypes with updated IDs and normalized values for a specific recordType.",
-        arguments=helpers.create_validation_type_args
+        arguments=utils.create_validation_type_args
     )
 
     args = parser.parse_args()
@@ -61,45 +61,40 @@ def main():
         workers=args.workers,
     )
 
-    helpers.init(CTX, TYPE_PREFIX, RECORD_TYPE, BLACKLIST_TYPES)
+    utils.init(CTX, TYPE_PREFIX, RECORD_TYPE, BLACKLIST_TYPES)
 
     if DRY_RUN:
-        print(
-            "\n>>> [SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes\n")
-        CTX.log(">>> [DRY RUN MODE] - No changes will be applied to the system <<<")
+        utils.log("[SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
 
     create_new_validation_types_for_record_type()
 
 
 def create_new_validation_types_for_record_type():
     global EXISTING_VALIDATION_TYPES_WITH_PREFIX, TOTAL_FETCHED
-    print("Creating new validationTypes for recordType:", RECORD_TYPE, "using prefix:", TYPE_PREFIX)
-    CTX.log("Creating new validationTypes for recordType: " + RECORD_TYPE + " using prefix: " + TYPE_PREFIX)
+    utils.log("Creating new validationTypes for recordType:" + RECORD_TYPE + " using prefix:" + TYPE_PREFIX)
 
-    EXISTING_VALIDATION_TYPES_WITH_PREFIX = helpers.get_validation_types_for_record_type_matching_prefix()
-    validation_types = helpers.get_validation_types_for_record_type()
+    EXISTING_VALIDATION_TYPES_WITH_PREFIX = utils.get_ids_for_record_type_matching_prefix("validationType")
+    validation_types = utils.get_validation_types_for_record_type()
 
-    print("\n=== Building node map ===\n")
-    CTX.log("=== Building node map ===")
+    utils.log("=== Building node map ===")
 
-    root_urls = helpers.get_root_urls_for_validation_types(validation_types)
+    root_urls = utils.get_root_urls_for_validation_types(validation_types)
     for root_url in root_urls:
-        helpers.build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
+        utils.build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
         TOTAL_FETCHED = len(GLOBAL_NODE_MAP)
 
     CTX.log(f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
 
     collect_record_info_children(GLOBAL_NODE_MAP)
 
-    print("\n\n=== Processing node map ===\n")
-    CTX.log("=== Processing node map ===")
+    utils.log("=== Processing node map ===")
 
     process_node_map_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
 
-    CTX.log("=== Script finished ===")
+    utils.log("=== Script finished ===")
     log_results()
 
-    print(f"\n=== Processing completed. Output logged to {CTX.get_log_file_path()} ===")
+    print(f"\n=== Output logged to {CTX.get_log_file_path()} ===")
 
 
 def collect_record_info_children(global_node_map):
@@ -127,19 +122,19 @@ def collect_record_info_children(global_node_map):
 def find_record_info_roots(global_node_map) -> list[Any]:
     record_info_roots = [
         node for node in global_node_map.values()
-        if helpers.record_info_group(node.xml_content)
+        if utils.record_info_group(node.xml_content)
     ]
     return record_info_roots
 
 
 def log_results():
-    CTX.log(f"  Total records fetched:   {TOTAL_FETCHED}")
-    CTX.log(f"  Total records processed: {TOTAL_PROCESSED_RECORDS}")
-    CTX.log(f"  Total records created:   {TOTAL_CREATED}")
-    CTX.log(f"  Total records updated:   {TOTAL_UPDATES}")
+    utils.log(f"  Total records fetched:   {TOTAL_FETCHED}")
+    utils.log(f"  Total records processed: {TOTAL_PROCESSED_RECORDS}")
+    utils.log(f"  Total records created:   {TOTAL_CREATED}")
+    utils.log(f"  Total records updated:   {TOTAL_UPDATES}")
 
     if TOTAL_FETCHED != TOTAL_PROCESSED_RECORDS:
-        CTX.log(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
+        utils.log(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
 
     if TOTAL_ERRORS:
         print("\nWarning! There were errors reported during processing, please check the log file for details.")
@@ -147,8 +142,7 @@ def log_results():
         for (error) in TOTAL_ERRORS:
             CTX.log(f" > {error}")
     else:
-        print("\nNo errors reported.")
-        CTX.log("No errors reported.")
+        utils.log("No errors reported.")
 
 
 def process_node_map_bottom_up_and_store(global_node_map, global_id_mapping):
@@ -178,27 +172,11 @@ def process_node_map_bottom_up_and_store(global_node_map, global_id_mapping):
         update_parent_dependencies(leaf_queue, node, unprocessed_child_map)
 
         print(
-            f"Records processed: {TOTAL_PROCESSED_RECORDS} - Records created: {TOTAL_CREATED} - Records updated: {TOTAL_UPDATES}",
+            f"Records processed: {len(processed)} - Records created: {TOTAL_CREATED} - Records updated: {TOTAL_UPDATES}",
             end="\r", flush=True)
 
     print()
     check_for_unprocessed_nodes(global_node_map, processed)
-
-
-def process_and_possibly_update(node, global_id_mapping):
-    if DRY_RUN:
-        CTX.log(f"  Dry run mode - not updating {node.new_record_id}\n")
-        return True
-
-    original_id = node.record_id
-    if is_already_processed(node.record_id, global_id_mapping):
-        node.new_record_id = global_id_mapping[original_id]
-        return False
-
-    helpers.link_dependency_to_top_groups(node.xml_content)
-    helpers.update_child_references(node.xml_content, global_id_mapping)
-
-    return helpers.try_to_update_record(node, TOTAL_ERRORS)
 
 
 def process_node(global_id_mapping, node):
@@ -219,6 +197,64 @@ def process_node(global_id_mapping, node):
         CTX.log(f"Error processing {node.record_id}: {e}")
 
 
+def process_and_possibly_update(node, global_id_mapping):
+    if DRY_RUN:
+        CTX.log(f"  Dry run mode - not updating {node.new_record_id}\n")
+        return True
+
+    original_id = node.record_id
+    if is_already_processed(node.record_id, global_id_mapping):
+        node.new_record_id = global_id_mapping[original_id]
+        return False
+
+    utils.link_dependency_to_top_groups(node.xml_content)
+    utils.update_child_references(node.xml_content, global_id_mapping)
+
+    return utils.try_to_update_record(node, TOTAL_ERRORS)
+
+
+def process_and_possibly_create(node, global_id_mapping):
+    original_id = node.record_id
+
+    if is_already_processed(node.record_id, global_id_mapping):
+        node.new_record_id = global_id_mapping[original_id]
+        return False
+
+    updated = False
+    if utils.update_final_value_of_validation_type(node.xml_content):
+        CTX.log(f"> Updated finalValue for {original_id} (validationType)")
+        updated = True
+
+    elif utils.record_is_a_child_of_record_info(node, GLOBAL_RECORD_INFO_CHILDREN):
+        CTX.log(f"> Skipping {original_id} (record info child)")
+        return False
+
+    else:
+        if utils.normalize_regex_patterns(node.xml_content):
+            CTX.log(f"> Normalized regex pattern(s) to '.+' in {original_id}")
+            updated = True
+
+        if utils.normalize_child_reference_repeat(node.xml_content):
+            CTX.log(f"> Normalized childReference(s) Min Max to '0-X' in {original_id}")
+            updated = True
+
+    child_renamed = any(child.record_id in global_id_mapping for child in node.children)
+
+    if not (updated or child_renamed):
+        utils.update_child_references(node.xml_content, global_id_mapping)
+        return False
+
+    new_id = utils.create_new_id_and_update_mapping(global_id_mapping, node, original_id)
+    utils.update_record_id_in_xml(node.xml_content, new_id)
+    utils.update_child_references(node.xml_content, global_id_mapping)
+    utils.remove_action_links(node.xml_content)
+
+    if utils.update_data_divider(node.xml_content, DATA_DIVIDER):
+        CTX.log(f"> Updated data divider of {original_id}")
+
+    return prepare_and_try_to_save_record(node)
+
+
 def update_parent_dependencies(leaf_queue: deque[str], node, unprocessed_child_map: dict[str, int]):
     for parent in node.parents:
         if parent.url in unprocessed_child_map:
@@ -235,48 +271,6 @@ def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
             TOTAL_ERRORS.append("Warning: Record: " + url + " was never processed")
 
 
-def process_and_possibly_create(node, global_id_mapping):
-    original_id = node.record_id
-
-    if is_already_processed(node.record_id, global_id_mapping):
-        node.new_record_id = global_id_mapping[original_id]
-        return False
-
-    updated = False
-    if helpers.update_final_value_of_validation_type(node.xml_content):
-        CTX.log(f"> Updated finalValue for {original_id} (validationType)")
-        updated = True
-
-    elif helpers.record_is_a_child_of_record_info(node, GLOBAL_RECORD_INFO_CHILDREN):
-        CTX.log(f"> Skipping {original_id} (record info child)")
-        return False
-
-    else:
-        if helpers.normalize_regex_patterns(node.xml_content):
-            CTX.log(f"> Normalized regex pattern(s) to '.+' in {original_id}")
-            updated = True
-
-        if helpers.normalize_child_reference_repeat(node.xml_content):
-            CTX.log(f"> Normalized childReference(s) Min Max to '0-X' in {original_id}")
-            updated = True
-
-    child_renamed = any(child.record_id in global_id_mapping for child in node.children)
-
-    if not (updated or child_renamed):
-        helpers.update_child_references(node.xml_content, global_id_mapping)
-        return False
-
-    new_id = helpers.create_new_id_and_update_mapping(global_id_mapping, node, original_id)
-    helpers.update_record_id_in_xml(node.xml_content, new_id)
-    helpers.update_child_references(node.xml_content, global_id_mapping)
-    helpers.remove_action_links(node.xml_content)
-
-    if helpers.update_data_divider(node.xml_content, DATA_DIVIDER):
-        CTX.log(f"> Updated data divider of {original_id}")
-
-    return prepare_and_try_to_save_record(node)
-
-
 def is_already_processed(node_id: str, global_id_mapping: dict) -> bool:
     return node_id in global_id_mapping
 
@@ -286,9 +280,9 @@ def prepare_and_try_to_save_record(node):
         CTX.log(f"  Dry run mode - not saving {node.new_record_id}\n")
         return True
 
-    content_root = helpers.unwrap_and_clean_xml_for_create(node.xml_content)
+    content_root = utils.unwrap_and_clean_xml_for_create(node.xml_content)
 
-    return helpers.try_to_create_record(node, content_root, TOTAL_ERRORS)
+    return utils.try_to_create_record(node, content_root, TOTAL_ERRORS)
 
 
 if __name__ == "__main__":  # pragma: no cover

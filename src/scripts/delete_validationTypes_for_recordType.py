@@ -1,11 +1,7 @@
-import json
-import xml.etree.ElementTree as ET
 from collections import deque
-from typing import Any
 
-import requests
-
-from common.arg_parser import create_argument_parser, ArgumentConfig
+import validation_type_helpers.common_utils as utils
+from common.arg_parser import create_argument_parser
 from cora.context import CoraContext, Context
 
 CTX: Context
@@ -23,41 +19,12 @@ DRY_RUN = True
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
 GLOBAL_RECORD_INFO_CHILDREN = {}
+TOTAL_PREFIX_MATCHES = 0
 TOTAL_PROCESSED_RECORDS = 0
 TOTAL_RECORD_DELETIONS = 0
 TOTAL_RECORD_UPDATES = 0
 TOTAL_PRESENTATION_DELETIONS = 0
 TOTAL_ERRORS = []
-
-script_arguments: dict[str, ArgumentConfig] = {
-    "--system": {
-        "help": "Cora system to connect to (e.g., 'preview', 'production')",
-        "type": str,
-        "default": "minikube",
-    },
-    "--login-id": {
-        "default": "divaAdmin@cora.epc.ub.uu.se",
-        "help": "Login ID for authentication",
-    },
-    "--app-token": {
-        "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
-        "help": "Application token for authentication",
-    },
-    "--apply": {
-        "help": "Apply changes to the Cora system (dry run if not present)",
-        "action": "store_true",
-    },
-    "--workers": {
-        "help": "Number of worker threads for processing",
-        "type": int,
-        "default": 16,
-    },
-    "--prefix": {
-        "help": "Which prefix to use for deletions (only records and presentations using this ID-prefix will be deleted",
-        "type": str,
-        "required": True,
-    },
-}
 
 
 # Representation of a record and its relationships ----------------------------------
@@ -78,7 +45,7 @@ def main():
 
     parser = create_argument_parser(
         description="Delete presentations and metadata for all records matching the supplied prefix.",
-        arguments=script_arguments
+        arguments=utils.delete_validation_type_args
     )
 
     args = parser.parse_args()
@@ -93,53 +60,61 @@ def main():
         workers=args.workers,
     )
 
+    utils.init(CTX, TYPE_PREFIX, "diva-output", BLACKLIST_TYPES)
+
     if DRY_RUN:
-        log(">>> [SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
+        utils.log(
+            ">>> [SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
 
     delete_records_with_prefix()
 
 
 def delete_records_with_prefix():
-    log("Deleting all records and presentations that use prefix: " + TYPE_PREFIX)
+    utils.log("Deleting all records and presentations that use prefix: " + TYPE_PREFIX)
 
-    log("=== Deleting all presentations ===")
-    try_to_delete_presentations()
+    utils.log("=== Deleting all presentations ===")
+    delete_presentations()
     print()
 
-    log("=== Building node map ===")
-    validation_types = get_validation_types_for_record_type()
+    utils.log("=== Building node map ===")
+    validation_types = utils.get_ids_for_record_type_matching_prefix("validationType")
     if not validation_types:
-        log("No validationTypes found to delete...")
+        utils.log("No validationTypes found to delete...")
     else:
         print("\n...artistic pause...")
-        root_urls = get_root_urls_for_validation_types(validation_types)
+        root_urls = utils.get_root_urls_for_validation_types(validation_types)
         for root_url in root_urls:
-            build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
+            utils.build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
 
     print()
-    log("=== Deleting records ===")
+    utils.log("=== Deleting records ===")
 
     if not GLOBAL_NODE_MAP:
-        log("There is nothing to delete...")
+        utils.log("There is nothing to delete...")
     else:
         print("\n~ Heavy metal riff playing ~")
         process_node_map_and_delete_records(GLOBAL_NODE_MAP)
 
-    log("=== Script finished ===")
+    utils.log("=== Script finished ===")
     log_results()
 
     print(f"\n=== Processing completed. Output logged to {CTX.get_log_file_path()} ===")
 
 
-def try_to_delete_presentations():
-    global TOTAL_PRESENTATION_DELETIONS
-    response = get_search_result_for_type("presentation")
-    delete_urls = deque(collect_presentations_from_response(response))
+def delete_presentations():
+    presentation_ids = utils.get_ids_for_record_type_matching_prefix("presentation")
+    delete_urls = deque(construct_delete_urls_from_ids(presentation_ids))
+
     if not delete_urls:
-        log("No presentations found to delete...")
+        utils.log("No presentations found to delete...")
         return
 
     print("\n~ Heavy metal riff playing ~")
+    try_to_delete_presentations(delete_urls)
+
+
+def try_to_delete_presentations(delete_urls: deque[str]):
+    global TOTAL_PRESENTATION_DELETIONS
     total = len(delete_urls)
     retries: dict[str, int] = {}
     while delete_urls:
@@ -149,7 +124,7 @@ def try_to_delete_presentations():
             print(f"Presentations annihilated from existance: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r",
                   flush=True)
         else:
-            deleted = try_to_delete_record(url)
+            deleted = utils.try_to_delete_record(url, TOTAL_ERRORS)
             if deleted:
                 TOTAL_PRESENTATION_DELETIONS += 1
                 print(f"Presentations annihilated from existance: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r",
@@ -164,34 +139,8 @@ def try_to_delete_presentations():
                     retries[url] = retries.get(url, 0) + 1
 
 
-def get_validation_types_for_record_type():
-    response_body = get_search_result_for_type("validationType")
-    return collect_validation_types_from_response(response_body)
-
-
-def get_root_urls_for_validation_types(validation_types: list[str]) -> list[str]:
-    return [CTX.get_base_url() + "validationType/" + string for string in validation_types]
-
-
-def build_node_map_from_child_references(root_url, global_node_map):
-    """
-    - Top-level: newMetadataId + metadataId
-    - Lower levels: only childReferences
-    """
-    if root_url in global_node_map:
-        return global_node_map
-
-    collect_nodes_from_root(root_url, global_node_map)
-    link_parent_child_relationship(global_node_map)
-
-    return global_node_map
-
-
-
-
-
 def process_node_map_and_delete_records(global_node_map):
-    global TOTAL_RECORD_DELETIONS
+    global TOTAL_RECORD_DELETIONS, TOTAL_PROCESSED_RECORDS, TOTAL_PREFIX_MATCHES
     """
     A node is deleted only when no other node references it
     """
@@ -208,6 +157,9 @@ def process_node_map_and_delete_records(global_node_map):
         url = deletion_queue.popleft()
         node = global_node_map[url]
 
+        TOTAL_PROCESSED_RECORDS += 1
+        if TYPE_PREFIX in node.record_id:
+            TOTAL_PREFIX_MATCHES += 1
         process_record(global_node_map, node)
 
         processed.add(url)
@@ -228,9 +180,9 @@ def process_record(global_node_map, node):
     global TOTAL_RECORD_DELETIONS, TOTAL_RECORD_UPDATES
     if node.record_type == "validationType":
         CTX.log(f"ValidationType '{node.record_id}' was updated to original metadata new/update groups and not deleted")
-        break_dependency_to_top_groups(node.xml_content)
-        remove_action_links(node.xml_content)
-        if prepare_and_try_to_update_record(node):
+        utils.break_dependency_to_top_groups(node.xml_content)
+        utils.remove_action_links(node.xml_content)
+        if update_record(node):
             TOTAL_RECORD_UPDATES += 1
 
     else:
@@ -242,17 +194,19 @@ def process_record(global_node_map, node):
 
 def log_results():  # pragma: no cover
     if DRY_RUN:
-        log("[ Script ran in dry run mode ]")
+        utils.log("[ Script ran in dry run mode ]")
+    total_changed_or_updated = TOTAL_RECORD_UPDATES + TOTAL_RECORD_DELETIONS
 
-    log(f"  Total updated validation types: {TOTAL_RECORD_UPDATES}")
-    log(f"  Total presentations deleted: {TOTAL_PRESENTATION_DELETIONS}")
-    log(f"  Total records deleted: {TOTAL_RECORD_DELETIONS}")
+    utils.log(f"  Total presentations deleted: {TOTAL_PRESENTATION_DELETIONS}")
+    utils.log(f"  Total records updated: {TOTAL_RECORD_UPDATES}")
+    utils.log(f"  Total records deleted: {TOTAL_RECORD_DELETIONS}")
+    utils.log(f"  Total updated or deleted records: {total_changed_or_updated} / {TOTAL_PREFIX_MATCHES}" )
 
-    total_processed = TOTAL_RECORD_UPDATES + TOTAL_RECORD_DELETIONS
-    if total_processed == len(GLOBAL_NODE_MAP):
-        print("\n  Math checks out. all good.")
+    if TOTAL_PROCESSED_RECORDS == len(GLOBAL_NODE_MAP):
+        utils.log("  > All records in node map were processed...")
     else:
-        print(f"\n   Warning: The number of successfully processed records ({total_processed}) are less than the expected total of {len(GLOBAL_NODE_MAP)}!")
+        utils.log(
+            f"\n   Warning: The number of successfully processed records ({TOTAL_PROCESSED_RECORDS}) are less than the expected total of {len(GLOBAL_NODE_MAP)}!")
 
     if TOTAL_ERRORS:
         print("\nWarning! There were errors reported during processing, please check the log file for details.")
@@ -260,51 +214,13 @@ def log_results():  # pragma: no cover
         for (error) in TOTAL_ERRORS:
             CTX.log(f" > {error}")
     else:
-        log("  No errors reported.")
-
-
-def collect_nodes_from_root(root_url: str, global_node_map: dict[str, RecordNode]) -> None:
-    queue = deque([root_url])
-    while queue:
-        url = queue.popleft()
-        if url in global_node_map:
-            continue
-
-        xml_text = fetch_record_as_xml(url)
-        node = parse_record_from_xml(xml_text, url)
-        if node.record_id.startswith(TYPE_PREFIX):
-            global_node_map[url] = node
-
-        print(f"Fetching validation types and their children: {len(global_node_map)}", end="\r", flush=True)
-
-        child_urls = collect_child_urls(node, root_url, url)
-        for child_url in child_urls:
-            if child_url not in global_node_map:
-                queue.append(child_url)
-
-
-def collect_child_urls(node: RecordNode, root_url, url) -> list[str]:
-    if url == root_url:
-        child_urls = find_top_level_children(node.xml_content)
-    else:
-        child_urls = find_child_urls(node.xml_content)
-
-    node.child_urls = child_urls
-    return child_urls
-
-
-def link_parent_child_relationship(global_node_map: dict[Any, Any]):
-    for node in global_node_map.values():
-        for child_url in node.child_urls:
-            if child_url in global_node_map:
-                node.children.append(global_node_map[child_url])
-                global_node_map[child_url].parents.append(node)
+        utils.log("  No errors reported.")
 
 
 def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
     unprocessed = [url for url in global_node_map if url not in processed]
     if unprocessed:
-        log("Some records were not processed (and probably not deleted), check log for more info...")
+        utils.log("Some records were not processed (and probably not deleted), check log for more info...")
         for url in unprocessed:
             TOTAL_ERRORS.append("Warning: Record: " + url + " was never processed")
 
@@ -312,198 +228,27 @@ def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
 def prepare_url_and_possibly_delete(node):
     if not f"{node.record_id}".startswith(TYPE_PREFIX):
         return False
-
-    base_url = f"{CTX.get_base_url()}"
-    record_type_url = f"{base_url}{node.record_type}/{node.record_id}"
-
     if DRY_RUN:
         return True
-    return try_to_delete_record(record_type_url)
+
+    return utils.prepare_and_delete_record(node, TOTAL_ERRORS)
 
 
 # XML utilities ----------------------------------
-def parse_record_from_xml(xml_text, url):
-    root = ET.fromstring(xml_text)
-    record_info = root.find(".//recordInfo")
-    record_id = record_info.findtext("id")
-    record_type = record_info.findtext("type/linkedRecordId")
-    return RecordNode(record_id, record_type, url, root)
-
-
-def find_child_urls(xml_root):
-    urls = []
-    for element in xml_root.findall(".//childReferences/childReference/ref/actionLinks/read/url"):
-        urls.append((element.text or "").strip())
-
-    return urls
-
-
-def find_top_level_children(xml_root):
-    urls = []
-    for tag in ["newMetadataId", "metadataId"]:
-        element = xml_root.find(f".//{tag}/actionLinks/read/url")
-        if element is not None:
-            url = (element.text or "").strip()
-            urls.append(url)
-
-    return urls
-
-
-def collect_presentations_from_response(response_body: ET.Element) -> set[str]:
+def construct_delete_urls_from_ids(ids: list) -> set[str]:
     delete_urls = set()
-    for element in response_body.findall(".//presentation/recordInfo/id"):
-        if TYPE_PREFIX in element.text:
-            delete_urls.add((CTX.get_base_url() + "presentation/" + element.text or "").strip())
+    for record_id in ids:
+        if TYPE_PREFIX in record_id:
+            delete_urls.add(CTX.get_base_url() + "presentation/" + record_id)
     return delete_urls
 
 
-def collect_validation_types_from_response(response_body: ET.Element) -> list[str]:
-    validation_types = []
-    for element in response_body.findall(".//validationType/recordInfo/id"):
-        if element.text is None or element.text in BLACKLIST_TYPES:
-            continue
-
-        if TYPE_PREFIX in element.text:
-            validation_types.append((element.text or "").strip())
-
-    return validation_types
-
-
-def break_dependency_to_top_groups(xml_content):
-    updated = False
-    updated |= remove_prefix_from_value_of_xpath_using_find(xml_content, ".//newMetadataId/linkedRecordId")
-    updated |= remove_prefix_from_value_of_xpath_using_find(xml_content, ".//metadataId/linkedRecordId")
-
-    return updated
-
-
-def remove_prefix_from_value_of_xpath_using_find(xml_content, path: str) -> bool:
-    metadata_id = xml_content.find(path)
-    if metadata_id is not None:
-        current_id = metadata_id.text or ""
-        metadata_id.text = current_id.removeprefix(TYPE_PREFIX)
-        return True
-    return False
-
-
-def remove_action_links(xml_root):
-    for parent in xml_root.iter():
-        for child in parent:
-            if child.tag == "actionLinks":
-                parent.remove(child)
-
-
-def unwrap_and_clean_xml_for_create(xml_root: ET.Element) -> ET.Element:
-    content = xml_root.find("data")[0]
-    return content
-
-
-def to_xml_bytes(element):
-    return b'<?xml version="1.0" encoding="UTF-8"?>' + ET.tostring(element, encoding="utf-8")
-
-
-def prepare_and_try_to_update_record(node):
+def update_record(node):
     if DRY_RUN:
         CTX.log(f"  Dry run mode - not saving {node.new_record_id}\n")
         return True
 
-    record_type_url = f"{CTX.get_base_url()}{node.record_type}/{node.record_id}"
-    xml_bytes = to_xml_bytes(node.xml_content.find("data")[0])
-
-    return try_to_update_record(node, record_type_url, xml_bytes)
-
-
-# API utilities ----------------------------------
-def fetch_record_as_xml(url):
-    headers = {"Authtoken": CTX.get_auth_token(), "Accept": "application/vnd.cora.record+xml"}
-    response = requests.get(url, headers=headers)
-    response.raise_for_status()
-    return response.text
-
-
-def try_to_delete_record(record_type_url: str | Any) -> bool:
-    try:
-        headers = {
-            "Authtoken": CTX.get_auth_token(),
-            "Accept": "*/*", }
-
-        if TYPE_PREFIX not in record_type_url:
-            TOTAL_ERRORS.append(
-                f"Tried to delete a record that probably wasn't supposed to be deleted... {record_type_url}")
-            return False
-
-        response = requests.delete(record_type_url, headers=headers, timeout=10)
-        CTX.log(f"  URL: {record_type_url}")
-        CTX.log(f"  Response: ({response.status_code}) - {response.text}")
-        if response.status_code not in (200, 201):
-            return False
-        return True
-    except requests.RequestException as e:
-        TOTAL_ERRORS.append(f"Error saving {record_type_url}: {e}")
-        return False
-
-
-def try_to_update_record(node, record_type_url: str, xml_bytes: bytes | Any) -> bool:
-    try:
-        headers = {
-            "Authtoken": CTX.get_auth_token(),
-            "Content-Type": "application/vnd.cora.recordgroup+xml",
-            "Accept": "application/vnd.cora.record+xml", }
-
-        response = requests.post(record_type_url, data=xml_bytes, headers=headers, timeout=10)
-        CTX.log(f"  Response: ({response.status_code}) - {response.text}\n")
-        if response.status_code not in (200, 201):
-            TOTAL_ERRORS.append(f"Failed to update {node.new_record_id} ({response.status_code} - {response.text})")
-            return False
-        return True
-    except requests.RequestException as e:
-        CTX.log(f">>> Error updating {node.new_record_id}: {e}")
-        TOTAL_ERRORS.append(f"Error updating {node.new_record_id}: {e}")
-        return False
-
-
-def get_search_result_for_type(type_name: str) -> ET.Element:
-    search_url = CTX.get_base_url() + f"searchResult/{type_name}Search"
-    headers = {"Authtoken": CTX.get_auth_token(), "Accept": "application/vnd.cora.recordList+xml",
-               "Content-Type": "application/vnd.cora.recordList+xml"}
-
-    response = requests.get(search_url, params={"searchData": get_search_data(type_name)}, headers=headers)
-    response.raise_for_status()
-    response_body = ET.fromstring(response.text)
-    return response_body
-
-
-def get_search_data(type_name: str) -> bytes:
-    search_data = {
-        "name": f"{type_name}Search",
-        "children": [
-            {
-                "name": "include",
-                "children": [
-                    {
-                        "name": "includePart",
-                        "children": [
-                            {
-                                "name": "recordIdSearchTerm",
-                                "value": f"{TYPE_PREFIX}*"
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "name": "rows",
-                "value": "1000"
-            }
-        ]
-    }
-
-    return json.dumps(search_data).encode("utf-8")
-
-
-def log(text: str):
-    print(f"\n{text}")
-    CTX.log(text)
+    return utils.try_to_update_record(node, TOTAL_ERRORS)
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -248,14 +248,6 @@ def parse_record_from_xml(xml_text, url):
     return RecordNode(record_id, record_type, url, root)
 
 
-def find_child_urls(xml_root):
-    urls = []
-    for element in xml_root.findall(".//childReferences/childReference/ref/actionLinks/read/url"):
-        urls.append((element.text or "").strip())
-
-    return urls
-
-
 def fetch_record_as_xml(url: str):
     headers = {"Authtoken": _ctx.get_auth_token(), "Accept": "application/vnd.cora.record+xml"}
     response = requests.get(url, headers=headers)
@@ -282,6 +274,16 @@ def to_xml_bytes(element):
     return b'<?xml version="1.0" encoding="UTF-8"?>' + ET.tostring(element, encoding="utf-8")
 
 
+def collect_child_urls(node: RecordNode, root_url, url) -> list[Any]:
+    if url == root_url:
+        child_urls = find_top_level_children(node.xml_content)
+    else:
+        child_urls = find_child_urls(node.xml_content)
+
+    node.child_urls = child_urls
+    return child_urls
+
+
 def find_top_level_children(xml_root):
     urls = []
     for tag in ["newMetadataId", "metadataId"]:
@@ -293,17 +295,15 @@ def find_top_level_children(xml_root):
     return urls
 
 
-def collect_child_urls(node: RecordNode, root_url, url) -> list[Any]:
-    if url == root_url:
-        child_urls = find_top_level_children(node.xml_content)
-    else:
-        child_urls = find_child_urls(node.xml_content)
+def find_child_urls(xml_root):
+    urls = []
+    for element in xml_root.findall(".//childReferences/childReference/ref/actionLinks/read/url"):
+        urls.append((element.text or "").strip())
 
-    node.child_urls = child_urls
-    return child_urls
+    return urls
 
 
-def get_search_data_for_record_type(record_type: str) -> bytes:
+def get_validation_type_search_data_for_record_type(record_type: str) -> bytes:
     search_data = {
         "name": "validationTypeSearch",
         "children": [
@@ -326,9 +326,9 @@ def get_search_data_for_record_type(record_type: str) -> bytes:
     return json.dumps(search_data).encode("utf-8")
 
 
-def get_search_data_for_prefix(prefix: str) -> bytes:
+def get_record_id_search_data_for_prefix_using_record_type(type_name: str) -> bytes:
     search_data = {
-        "name": "validationTypeSearch",
+        "name": f"{type_name}Search",
         "children": [
             {
                 "name": "include",
@@ -338,11 +338,15 @@ def get_search_data_for_prefix(prefix: str) -> bytes:
                         "children": [
                             {
                                 "name": "recordIdSearchTerm",
-                                "value": f"{prefix}*"
+                                "value": f"{_type_prefix}*"
                             }
                         ]
                     }
                 ]
+            },
+            {
+                "name": "rows",
+                "value": "1000"
             }
         ]
     }
@@ -350,21 +354,23 @@ def get_search_data_for_prefix(prefix: str) -> bytes:
 
 
 def get_validation_types_for_record_type():
-    search_data = get_search_data_for_record_type(_record_type)
-    response_body = get_validation_types_using_search_data(search_data)
-    return collect_validation_types_from_response(response_body, False)
+    search_data = get_validation_type_search_data_for_record_type(_record_type)
+    response_body = get_validation_types_using_search_data("validationType", search_data)
+
+    return collect_ids_from_response("validationType", response_body, False)
 
 
-def get_validation_types_for_record_type_matching_prefix():
-    search_data = get_search_data_for_prefix(_type_prefix)
-    response_body = get_validation_types_using_search_data(search_data)
+def get_ids_for_record_type_matching_prefix(record_type: str):
+    search_data = get_record_id_search_data_for_prefix_using_record_type(record_type)
+    response_body = get_validation_types_using_search_data(record_type, search_data)
 
-    return collect_validation_types_from_response(response_body, True)
+    return collect_ids_from_response(record_type, response_body, True)
 
 
-def get_validation_types_using_search_data(search_data: bytes):
-    search_url = _ctx.get_base_url() + "searchResult/validationTypeSearch"
-    headers = {"Authtoken": _ctx.get_auth_token(), "Accept": "application/vnd.cora.recordList+xml",
+def get_validation_types_using_search_data(record_type: str, search_data: bytes):
+    search_url = _ctx.get_base_url() + f"searchResult/{record_type}Search"
+    headers = {"Authtoken": _ctx.get_auth_token(),
+               "Accept": "application/vnd.cora.recordList+xml",
                "Content-Type": "application/vnd.cora.recordList+xml"}
 
     response = requests.get(search_url, params={"searchData": search_data}, headers=headers)
@@ -374,15 +380,33 @@ def get_validation_types_using_search_data(search_data: bytes):
     return response_body
 
 
-def collect_validation_types_from_response(response_body: ET.Element, get_existing_matching_prefix: bool) -> list[Any]:
-    validation_types = []
-    for element in response_body.findall(".//validationType/recordInfo/id"):
+def collect_ids_from_response(record_type: str, response_body: ET.Element, get_existing_matching_prefix: bool) -> list[
+    Any]:
+    ids = []
+    for element in response_body.findall(f".//{record_type}/recordInfo/id"):
         if not get_existing_matching_prefix:
             if element.text is None or element.text.startswith(_type_prefix) or element.text in _black_list:
                 continue
-        validation_types.append((element.text or "").strip())
+        ids.append((element.text or "").strip())
 
-    return validation_types
+    return ids
+
+
+def break_dependency_to_top_groups(xml_content):
+    updated = False
+    updated |= remove_prefix_from_value_of_xpath_using_find(xml_content, ".//newMetadataId/linkedRecordId")
+    updated |= remove_prefix_from_value_of_xpath_using_find(xml_content, ".//metadataId/linkedRecordId")
+
+    return updated
+
+
+def remove_prefix_from_value_of_xpath_using_find(xml_content, path: str) -> bool:
+    metadata_id = xml_content.find(path)
+    if metadata_id is not None:
+        current_id = metadata_id.text or ""
+        metadata_id.text = current_id.removeprefix(_type_prefix)
+        return True
+    return False
 
 
 def link_dependency_to_top_groups(xml_content):
@@ -401,7 +425,24 @@ def update_prefix_of_value_of_xpath_using_find(xml_content, path: str) -> bool:
     return False
 
 
+def log(text: str):
+    print(f"\n{text}")
+    _ctx.log(text)
+
+
+def log_creation_summary(node, record_type_url: str, xml_bytes: bytes | Any):
+    _ctx.log(f">>> POST {node.new_record_id} ({node.record_type})...")
+    _ctx.log(f"  Endpoint: {record_type_url}")
+    _ctx.log("  Payload: " + xml_bytes.decode("utf-8"))
+
+
 # ---- API
+
+def try_to_create_record(node, content_root, errors: list) -> bool:
+    xml_bytes = to_xml_bytes(content_root)
+    create_url = f"{_ctx.get_base_url()}{node.record_type}"
+
+    return try_to_post_record(node, xml_bytes, create_url, errors)
 
 def try_to_update_record(node, errors: list) -> bool:
     xml_bytes = to_xml_bytes(node.xml_content.find("data")[0])
@@ -409,12 +450,9 @@ def try_to_update_record(node, errors: list) -> bool:
 
     return try_to_post_record(node, xml_bytes, update_url, errors)
 
-
-def try_to_create_record(node, content_root, errors: list) -> bool:
-    xml_bytes = to_xml_bytes(content_root)
-    create_url = f"{_ctx.get_base_url()}{node.record_type}"
-
-    return try_to_post_record(node, xml_bytes, create_url, errors)
+def prepare_and_delete_record(node: RecordNode, errors: list):
+    delete_url = f"{_ctx.get_base_url()}{node.record_type}/{node.record_id}"
+    return try_to_delete_record(delete_url, errors)
 
 
 def try_to_post_record(node: RecordNode, xml_bytes: bytes, url: str, errors: list) -> bool:
@@ -438,7 +476,23 @@ def try_to_post_record(node: RecordNode, xml_bytes: bytes, url: str, errors: lis
         return False
 
 
-def log_creation_summary(node, record_type_url: str, xml_bytes: bytes | Any):
-    _ctx.log(f">>> POST {node.new_record_id} ({node.record_type})...")
-    _ctx.log(f"  Endpoint: {record_type_url}")
-    _ctx.log("  Payload: " + xml_bytes.decode("utf-8"))
+def try_to_delete_record(record_type_url: str, errors: list) -> bool:
+    _ctx.log(f"DELETE: {record_type_url}")
+    try:
+        headers = {
+            "Authtoken": _ctx.get_auth_token(),
+            "Accept": "*/*", }
+
+        if _type_prefix not in record_type_url:
+            errors.append(
+                f"Tried to delete a record that probably wasn't supposed to be deleted... {record_type_url}")
+            return False
+
+        response = requests.delete(record_type_url, headers=headers, timeout=10)
+        _ctx.log(f"  Response: ({response.status_code}) - {response.text}")
+        if response.status_code not in (200, 201):
+            return False
+        return True
+    except requests.RequestException as e:
+        errors.append(f"Error saving {record_type_url}: {e}")
+        return False
