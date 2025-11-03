@@ -56,6 +56,11 @@ def test_output_transform(requests_mock):
         <subject lang="eng" repeatId="0">
             <topic>Sinologi, Arkeologi</topic>
         </subject>
+        <dateOther type="patent">
+            <year>2022</year>
+            <month>08</month>
+            <day>15</day>
+        </dateOther>
         <originInfo>
             <dateIssued>
                 <year>2023</year>
@@ -198,6 +203,27 @@ def test_output_transform(requests_mock):
             <degreeLevel>H2</degreeLevel>
             <universityPoints>20</universityPoints>
         </studentDegree>
+        <defence>
+            <language>
+                <languageTerm type="code" authority="iso639-2b">swe</languageTerm>
+            </language>
+            <dateOther type="presentation">
+                <year>2022</year>
+                <month>07</month>
+                <day>31</day>
+                <hh>16</hh>
+                <mm>19</mm>
+            </dateOther>
+            <location>
+                Balsalen
+            </location>
+            <address>Slottet</address>
+            <place>
+                <placeTerm>
+                    Uppsala
+                </placeTerm>
+            </place>
+        </defence>
         <relatedItem type="journal" otherType="text">
             <titleInfo>
                 <title>Design, Automation and Test in Europe</title>

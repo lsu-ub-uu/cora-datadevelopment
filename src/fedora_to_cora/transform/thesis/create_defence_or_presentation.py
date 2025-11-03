@@ -1,10 +1,13 @@
 import xml.etree.ElementTree as ET
 
 from common.xml_utils import append_if_value
+from fedora_to_cora.transform.get_validation_type_by_publication_type_id import (
+    get_validation_type_from_fedora_record,
+)
 
 
-def create_defence_or_presentaion(source_record: ET.Element) -> ET.Element:
-    tag_name = "defence"  # TODO should be "presentation" for degree project
+def create_defence_or_presentation(source_record: ET.Element) -> ET.Element:
+    tag_name = "presentation" if _is_degree_project(source_record) else "defence"
     defence = ET.Element(tag_name)
 
     append_if_value(defence, _create_language(source_record))
@@ -18,6 +21,12 @@ def create_defence_or_presentaion(source_record: ET.Element) -> ET.Element:
     append_if_value(defence, _create_place(source_record))
 
     return defence
+
+
+def _is_degree_project(source_record: ET.Element) -> bool:
+    return (
+        get_validation_type_from_fedora_record(source_record) == "diva_degree-project"
+    )
 
 
 def _create_place(source_record: ET.Element) -> ET.Element:

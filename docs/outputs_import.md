@@ -43,7 +43,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - ✅ oldId <- `pid`
   - ⚠️ visibility <- [Logic](./get_visibility.py) based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ⚠️ Needs updating when changes to visibility is done in Cora
 - ✅ genre type="contentType" <- Mapping from `contentType/contentTypeCode`
-- ✅ titleInfo <- `originalPubli  ationTitle`
+- ✅ titleInfo <- `originalPublicationTitle`
   - title <- `title`
   - subtitle `subtitle`
   - ❓ language <- `language/languageCode3` (What should we do on missing language?)
@@ -64,9 +64,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - role/roleTerm <- aut | edt | `roles/role/marcCode`
   - affiliations <- `organisations/organisation` ,
     - organisation (link to migrated record) <- `organisation/organisationId`
-    - name type="corporate" <- `organisation/organisationNameUnconrolled`
-      - ❓ orcid Should we ignore viaf and libris?
-      - lokalt id
+    - name type="corporate" <- `organisation/organisationNameUnconrolled` - orcid - lokalt id
+      ❓Can we ignore birthYear and deathYear in the migration?
 - 🆕 name type="corporate" <- N/A
 - ✅ note type="creatorCount" <- `noOfContributors`
 - ⚠️ abstract <- `abstracts/abstract/text` Does not handle latex or image tags
@@ -130,13 +129,13 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - ✅ genre type="subcategory" <- `subType` subTypeId 66=policyDocument 3=exhibitionCatalog Not done
 - ✅ note type="publicationStatus" <- `publicationStatus`
 - ✅ typeOfResource <- `mediaType`
-- ⚠️ type <- `mediaInformation/physicalDescriptions` Not done. Needs output-test. Needs ta bort HTML
+- ⚠️ type <- `mediaInformation/types` Not done. Needs output-test. Needs ta bort HTML
 - ⚠️ material <- `mediaInformation/materials` Not done. Needs output-test.
 - ⚠️ technique <- `mediaInformation/techniques` Not done. Needs output-test.
 - ⚠️ size <- `mediaInformation/size` Not done Needs output-test.
 - ⚠️ duration <- `mediaInformation/duration` Not done. Needs output-test.
 - ⚠️ physicalDescription <- `mediaInformation/physicalDescriptions` Not done. Needs output-test.
-- ⚠️ dateOther type="patent" <- `patentDate` Not done. Needs output-test.
+- ✅ dateOther type="patent" <- `patentDate` Not done. Needs output-test.
 - ✅ identifier type="patentNumber" <- `patentNumber`
 - ✅ identifier type="isrn" <- `isrn`
 - ✅ academicSemester <- `academicTerm`
@@ -147,15 +146,18 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - universityPoints <- `studentDegree/universityPoints/hp`
   - course (link to migrated record) <- `studentDegree/undergraduateSubject/subjectId`
   - programme (link to migrated record) <- `studentDegree/educationalProgramme/subjectId`
-- ⚠️ externalCollaboration <- `externalCooperation`
-  - namePart <- `partners/partner/name` Om `external` är true och `name` saknas, skall generisk text infogas här. T.ex. "Externt samarbete".
+- ✅ externalCollaboration <- `externalCooperation`
+  - namePart <- `partners/partner/name` If `external` is true and no partner name exists, a default text "Externt samarbete" is set.
 - degreeGrantingInstitution type="corporate" otherType="link" <- `defence/grantingInstitution`
   - organisation (link to migrated record) <- `organisationId`
 - degreeGrantingInstitution type="corporate" otherType="text" <- `defence/externalGrantingInstitution`
   - namePart <- `externalGrantingInstitution`
   - 🆕 identifier type="ror" <- N/A
-- ⚠️ defence <- `defence` Needs uppdateras för att kunna sköta presentation
-- ⚠️ presentation <- `defence` För examensarbete (diva-degreeProject) ska taggen heta presentation istället för defence
+- ⚠️ supervisor <- `supervisors`
+- ⚠️ examiner <- `examiners`
+- ⚠️ opponent <- `opponents`
+- ⚠️ defence <- `defence` For degree project (diva-degreeProject) the tag should be presentation instead of defence.
+- ⚠️ presentation <- `defence` See above
   - `language` <- `languageTerm/language`
   - `dateOther` <- `date`
   - `location` <- `room> <name`
@@ -190,15 +192,15 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
       - start <- `startPage`
       - end <- `endPage`
 - ⚠️ relatedItem type="book" otherType="link" `hostPublications/pid` if validationType is book chapter ❓
-  - book (link to migrated record) <- `hostPublications/pid`
+  - book (link to migrated record) <- `hostPublications/pid` N/A
 - ⚠️ relatedItem type="book" otherType="text"
   - titleInfo `bookTitle`
     - title <- `title`
     - subtitle <- `subtitle`
     - language ❓
   - note type="statementOfResponsibility" <- `bookEditor`
-  - identifier type="isbn" ❓
-  - identifier type="doi" ❓
+  - identifier type="isbn"
+  - identifier type="doi"
   - part/extent
     - start <- `startPage`
     - end <- `endPage`
@@ -210,8 +212,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
     - subtitle <- `subtitle`
     - language ❓
   - note type="statementOfResponsibility" <- `proceedingsEditor`
-  - identifier type="isbn" ❓
-  - identifier type="doi" ❓
+  - identifier type="isbn"
+  - identifier type="doi"
   - part/extent
     - start <- `startPage`
     - end <- `endPage`

@@ -2,6 +2,9 @@ import xml.etree.ElementTree as ET
 from cora.context import Context
 from common.xml_utils import append_if_value
 
+from fedora_to_cora.transform.create_date_other_type_patent import (
+    create_date_other_type_patent,
+)
 from fedora_to_cora.transform.create_note_type_publication_status import (
     create_note_type_publication_status,
 )
@@ -77,7 +80,9 @@ from fedora_to_cora.transform.create_degree_granting_institution import (
 from fedora_to_cora.transform.related_items.create_project import (
     create_related_item_type_project,
 )
-from fedora_to_cora.transform.thesis.create_defence import create_defence_or_presentaion
+from fedora_to_cora.transform.thesis.create_defence_or_presentation import (
+    create_defence_or_presentation,
+)
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
@@ -94,6 +99,8 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     append_if_value(target_record, create_title_info(source_record))
 
     append_if_value(target_record, create_subjects(source_record))
+
+    append_if_value(target_record, create_date_other_type_patent(source_record))
 
     append_if_value(target_record, create_origin_info(source_record, context))
 
@@ -214,6 +221,8 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     append_if_value(target_record, create_external_collaboration(source_record))
 
     append_if_value(target_record, create_student_degrees(source_record, context))
+
+    append_if_value(target_record, create_defence_or_presentation(source_record))
 
     append_if_value(
         target_record, create_related_item_type_journal(source_record, context)
