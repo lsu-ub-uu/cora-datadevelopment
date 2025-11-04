@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 
+from fedora_to_cora.clean_rich_text import clean_rich_text
+
 
 def create_types(
     source_record: ET.Element,
@@ -37,8 +39,11 @@ def _create_tags(
     source_strings = source_record.findall(f"./{source_tag}/entry/list/string")
     source_language = source_record.find(f"./{source_tag}/entry/language/languageCode3")
 
+    if len(source_strings) == 0:
+        return []
+
     if source_language is None or not source_language.text:
-        raise ValueError(f"Language code must be present the {new_tag_name }")
+        raise ValueError(f"Language code must be present for element: {new_tag_name}")
 
     tags = []
     for i, source_string in enumerate(source_strings):
@@ -75,13 +80,18 @@ def create_duration(source_record: ET.Element) -> ET.Element:
     return duration
 
 
-def create_physical_desctiption(source_record: ET.Element) -> ET.Element:
-    physical_description_source = source_record.find(
-        "./mediaInformation/physicalDescriptions/abstract/text/p"
+def create_physical_description(source_record: ET.Element) -> ET.Element | None:
+    physical_description_source = source_record.findtext(
+        "./mediaInformation/physicalDescriptions/abstract/text"
     )
+
+    if physical_description_source is None or len(physical_description_source) == 0:
+        return None
+
     physical_description = ET.Element("physicalDescription")
 
-    extent = ET.SubElement(physical_description, "extent")
-    if physical_description_source is not None:
-        extent.append(physical_description_source)
+    ET.SubElement(physical_description, "extent").text = clean_rich_text(
+        physical_description_source
+    )
+
     return physical_description

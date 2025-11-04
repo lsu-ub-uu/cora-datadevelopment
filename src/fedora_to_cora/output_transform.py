@@ -86,7 +86,7 @@ from fedora_to_cora.transform.thesis.create_defence_or_presentation import (
     create_defence_or_presentation,
 )
 from fedora_to_cora.transform.artistic_output.create_artistic_output import (
-    create_physical_desctiption,
+    create_physical_description,
     create_duration,
     create_size,
     create_techniques,
