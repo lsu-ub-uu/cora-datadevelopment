@@ -1,7 +1,7 @@
 from collections import deque, defaultdict
 from typing import Any
 
-import validation_type_helpers.common_utils as utils
+import validation_type_utils.common_utils as utils
 from common.arg_parser import create_argument_parser
 from cora.context import CoraContext, Context
 

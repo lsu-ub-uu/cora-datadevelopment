@@ -2,6 +2,7 @@ import json
 import xml.etree.ElementTree as ET
 from collections import deque
 from typing import Any
+from xml.etree.ElementTree import Element
 
 import requests
 
@@ -97,7 +98,7 @@ delete_validation_type_args: dict[str, ArgumentConfig] = {
 
 # Representation of a record and its relationships ----------------------------------
 class RecordNode:
-    def __init__(self, record_id: str, record_type: str, url: str, xml_content: str):
+    def __init__(self, record_id: str, record_type: str, url: str, xml_content: Element):
         self.record_id = record_id
         self.record_type = record_type
         self.url = url
