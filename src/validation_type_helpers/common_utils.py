@@ -452,6 +452,18 @@ def update_prefix_of_value_of_xpath_using_find(xml_content, path: str) -> bool:
     return False
 
 
+def possibly_set_to_not_create_presentations(node):
+    metadata = node.xml_content.find(".//metadata[@type='group']")
+    if metadata is None:
+        return
+
+    element = metadata.find('excludePGroupCreation')
+    if element is None:
+        element = ET.Element('excludePGroupCreation')
+        element.text = 'true'
+        metadata.append(element)
+
+
 def log(text: str):
     print(f"\n{text}")
     _ctx.log(text)

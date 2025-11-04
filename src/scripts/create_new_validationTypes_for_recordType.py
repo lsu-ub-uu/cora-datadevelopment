@@ -236,6 +236,8 @@ def process_and_possibly_create(node, global_id_mapping):
         return False
 
     updated = False
+    utils.possibly_set_to_not_create_presentations(node)
+
     if utils.update_final_value_of_validation_type(node.xml_content):
         CTX.log(f"> Updated finalValue for {original_id} (validationType)")
         updated = True
