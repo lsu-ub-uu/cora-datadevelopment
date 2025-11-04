@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 import pytest
 
 from fedora_to_cora.transform.artistic_output.create_artistic_output import (
-    create_physical_desctiption,
+    create_physical_description,
     create_duration,
     create_size,
     create_techniques,
@@ -12,7 +12,7 @@ from fedora_to_cora.transform.artistic_output.create_artistic_output import (
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
-def test_create_artistic_output_with_type():
+def test_create_types():
     source_record = ET.fromstring(
         """
         <publication>
@@ -53,7 +53,57 @@ def test_create_artistic_output_with_type():
     )
 
 
-def test_create_artistic_output_with_material():
+def test_create_types_without_language():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <mediaInformation>
+                <types class="hashtable">
+                    <entry>
+                        <list>
+                            <string>Typ01</string>
+                            <string>Typ02</string>
+                        </list>
+                    </entry>
+                </types>
+            </mediaInformation>
+        </publication>
+        """
+    )
+
+    with pytest.raises(ValueError):
+        create_types(source_record)
+
+
+def test_create_types_empty_media_information():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <mediaInformation>
+            </mediaInformation>
+        </publication>
+        """
+    )
+
+    types = create_types(source_record)
+
+    assert len(types) == 0
+
+
+def test_create_types_missing_media_information():
+    source_record = ET.fromstring(
+        """
+        <publication>
+        </publication>
+        """
+    )
+
+    types = create_types(source_record)
+
+    assert len(types) == 0
+
+
+def test_create_materials():
     source_record = ET.fromstring(
         """
         <publication>
@@ -94,7 +144,35 @@ def test_create_artistic_output_with_material():
     )
 
 
-def test_create_artistic_output_with_technique():
+def test_create_materials_empty_media_information():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <mediaInformation>
+            </mediaInformation>
+        </publication>
+        """
+    )
+
+    materials = create_materials(source_record)
+
+    assert len(materials) == 0
+
+
+def test_create_materials_missing_media_information():
+    source_record = ET.fromstring(
+        """
+        <publication>
+        </publication>
+        """
+    )
+
+    materials = create_materials(source_record)
+
+    assert len(materials) == 0
+
+
+def test_create_techniques():
     source_record = ET.fromstring(
         """
         <publication>
@@ -135,7 +213,35 @@ def test_create_artistic_output_with_technique():
     )
 
 
-def test_create_artistic_output_with_size():
+def test_create_techniques_empty_media_information():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <mediaInformation>
+            </mediaInformation>
+        </publication>
+        """
+    )
+
+    techniques = create_techniques(source_record)
+
+    assert len(techniques) == 0
+
+
+def test_create_techniques_missing_media_information():
+    source_record = ET.fromstring(
+        """
+        <publication>
+        </publication>
+        """
+    )
+
+    techniques = create_techniques(source_record)
+
+    assert len(techniques) == 0
+
+
+def test_create_size():
     source_record = ET.fromstring(
         """
         <publication>
@@ -158,7 +264,7 @@ def test_create_artistic_output_with_size():
     )
 
 
-def test_create_artistic_output_with_no_size():
+def test_create_size_empty_media_information():
     source_record = ET.fromstring(
         """
         <publication>
@@ -178,7 +284,25 @@ def test_create_artistic_output_with_no_size():
     )
 
 
-def test_create_artistic_output_with_duration():
+def test_create_size_missing_media_information():
+    source_record = ET.fromstring(
+        """
+        <publication>
+        </publication>
+        """
+    )
+
+    size = create_size(source_record)
+
+    assert_equal_for_xml_and_xml_string(
+        size,
+        """
+        <size></size>
+        """,
+    )
+
+
+def test_create_duration():
     source_record = ET.fromstring(
         """
         <publication>
@@ -203,16 +327,52 @@ def test_create_artistic_output_with_duration():
     )
 
 
-def test_create_artistic_output_with_physical_description():
+def test_create_duration_empty_media_information():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <mediaInformation>
+            </mediaInformation>
+        </publication>
+        """
+    )
+
+    duration = create_duration(source_record)
+
+    assert_equal_for_xml_and_xml_string(
+        duration,
+        """
+        <duration></duration>
+        """,
+    )
+
+
+def test_create_duration_missing_media_information():
+    source_record = ET.fromstring(
+        """
+        <publication>
+        </publication>
+        """
+    )
+
+    duration = create_duration(source_record)
+
+    assert_equal_for_xml_and_xml_string(
+        duration,
+        """
+        <duration></duration>
+        """,
+    )
+
+
+def test_create_physical_description():
     source_record = ET.fromstring(
         """
         <publication>
             <mediaInformation>
                 <physicalDescriptions>
                     <abstract>
-                        <text>
-                            <p>Fysisk beskrivning Fysisk beskrivning <em>Fysisk beskrivning</em></p>
-                        </text>
+                        <text>&lt;p&gt;Fysisk beskrivning Fysisk beskrivning &lt;em&gt;Fysisk beskrivning&lt;/em&gt;&lt;/p&gt;</text>
                     </abstract>
                 </physicalDescriptions>
             </mediaInformation>
@@ -220,37 +380,43 @@ def test_create_artistic_output_with_physical_description():
         """
     )
 
-    description = create_physical_desctiption(source_record)
+    description = create_physical_description(source_record)
 
     assert_equal_for_xml_and_xml_string(
         description,
         """
         <physicalDescription>
             <extent>
-                <p>Fysisk beskrivning Fysisk beskrivning <em>Fysisk beskrivning</em></p>
+                Fysisk beskrivning Fysisk beskrivning Fysisk beskrivning
             </extent>
         </physicalDescription>
         """,
     )
 
 
-def test_create_artistic_output_without_language():
+def test_create_physical_description_empty_media_information():
     source_record = ET.fromstring(
         """
         <publication>
             <mediaInformation>
-                <types class="hashtable">
-                    <entry>
-                        <list>
-                            <string>Typ01</string>
-                            <string>Typ02</string>
-                        </list>
-                    </entry>
-                </types>
             </mediaInformation>
         </publication>
         """
     )
 
-    with pytest.raises(ValueError):
-        create_types(source_record)
+    description = create_physical_description(source_record)
+
+    assert description is None
+
+
+def test_create_physical_description_missing_media_information():
+    source_record = ET.fromstring(
+        """
+        <publication>
+        </publication>
+        """
+    )
+
+    description = create_physical_description(source_record)
+
+    assert description is None
