@@ -71,7 +71,7 @@ def main():
 
 def create_new_validation_types_for_record_type():
     global TOTAL_FETCHED
-    utils.log("Creating new validationTypes for recordType:" + RECORD_TYPE + " using prefix:" + TYPE_PREFIX)
+    utils.log("Creating new validationTypes for recordType: " + RECORD_TYPE + " using prefix: " + TYPE_PREFIX)
 
     validation_types = get_validation_types_to_process()
 
@@ -100,14 +100,13 @@ def get_validation_types_to_process() -> list[Any]:
     global EXISTING_VALIDATION_TYPES_WITH_PREFIX, TOTAL_FETCHED
 
     EXISTING_VALIDATION_TYPES_WITH_PREFIX = utils.get_ids_for_record_type_matching_prefix("validationType")
-
-    if not EXISTING_VALIDATION_TYPES_WITH_PREFIX:
-        utils.log(f"Could not find any existing validation types with prefix '{TYPE_PREFIX}', will create new ones.")
-        return utils.get_validation_types_for_record_type()
-    else:
+    if EXISTING_VALIDATION_TYPES_WITH_PREFIX:
         utils.log(
             f"Found existing validation types that use prefix '{TYPE_PREFIX}', will possibly update these and create needed new ones.")
         return EXISTING_VALIDATION_TYPES_WITH_PREFIX
+
+    utils.log(f"Could not find any existing validation types with prefix '{TYPE_PREFIX}', will create new ones.")
+    return utils.get_validation_types_for_record_type()
 
 
 def collect_record_info_children(global_node_map):
@@ -263,9 +262,6 @@ def process_and_possibly_create(node, global_id_mapping):
         CTX.log(f"> Updated data divider of {original_id}")
 
     return prepare_and_try_to_save_record(node)
-
-
-
 
 
 def update_parent_dependencies(leaf_queue: deque[str], node, unprocessed_child_map: dict[str, int]):

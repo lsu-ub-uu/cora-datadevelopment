@@ -150,7 +150,11 @@ def process_node_map_and_delete_records(global_node_map):
         for url, node in global_node_map.items()
     }
 
-    deletion_queue = deque([url for url, count in remaining_parent_count.items() if count == 0])
+    deletion_queue = deque()
+    for url, count in remaining_parent_count.items():
+        if count == 0:
+            deletion_queue.append(url)
+
     processed: set[str] = set()
 
     while deletion_queue:
