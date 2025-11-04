@@ -38,26 +38,26 @@ outputs-import --help
 Below is specified how each field in the Cora diva-output metadata model is mapped from the DiVA Classic publication model.
 
 - recordInfo
-  - ⚠️ validationType <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` ⚠️ Need to consider subtype ❓
+  - ⚠️ validationType <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` ⚠️ Need to consider subtype according to mapping document
   - permissionUnit <- `administrativeInfo/domain`
   - oldId <- `pid`
   - ⚠️ visibility <- [Logic](./get_visibility.py) based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ⚠️ Needs updating when changes to visibility is done in Cora
 - ⚠️ dataQuality <- `2026` if validation passes, otherwise `classic`
-- genre type="contentType" <- Mapping from `contentType/contentTypeCode`
+- genre type="contentType" <- Mapping from `contentType/contentTypeCode`,
 - titleInfo <- `originalPublicationTitle`
   - title <- `title`
   - subtitle `subtitle`
-  - ❓ language <- `language/languageCode3` (What should we do on missing language?)
+  - language <- `language/languageCode3` (behöver val "undefined" i classic valideringstyp)
 - subject <- `keyWords`
-  - ⚠️ topic <- > `keyWords/entry/list/string` (replaces spaces with commas) Does not handle multiple strings. ❓ Change Cora moodel?
+  - ⚠️ topic <- > `keyWords/entry/list/string` (replaces spaces with commas) Needs update to create one subject per string
   - language <- `keyWords/entry/language/languageCode3`
 - genre type="outputType" (valideringstyp) <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` (same as validation type) Need to consider subtype ❓
 - language <- `originalPublicationTitle/language` (Classic does not have a language for the publication, we'll use the langue from the main title.)
-- artisticWork type="outputType" <- `artisticWork`
+- artisticWork type="outputType" <- `artisticWork` if the tag is missing, it will be missing in cora
 - titleInfo type="alternative" <- `alternativePublicationTitles/title`
   - title <- `title`
   - subtitle `subtitle`
-  - ❓ language <- `language/languageCode3` (What should we do on missing language?)
+  - language <- `language/languageCode3`
 - name type="personal" <- ` authors/person` , ` editors/person` , `otherContributors/contributor`
 - ⚠️ person (link to migrated record) <- `authorityPid`
 
@@ -66,7 +66,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - role/roleTerm <- aut | edt | `roles/role/marcCode`
   - orcid
   - lokalt id
-    ❓Can we ignore birthYear and deathYear in the migration?
+    ❓Can we ignore birthYear and deathYear in the migration? Possibly needs to be added to publication model in Cora. No decision yet.
   - affiliations <- `organisations/organisation` ,
 
     - organisation (link to migrated record) <- `organisation/organisationId`

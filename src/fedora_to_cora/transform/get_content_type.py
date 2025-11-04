@@ -2,13 +2,15 @@ content_type_map = {
     "refereed": "ref",
     "science": "vet",
     "other": "pop",
+    "refereedArtisticOutput": "ref",
+    "unrefereedArtisticOutput": "vet",
 }
 
 
 def get_content_type(content_type_code):
     """
     Returns the DiVA content type based on the DiVA Classic content type code.
-    
+
     :param content_type_code: The Code of the publication type.
     :return: The validation type as a string.
     :raises KeyError: If the content_type_code is not found.
