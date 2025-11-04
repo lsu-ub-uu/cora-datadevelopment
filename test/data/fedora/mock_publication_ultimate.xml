@@ -709,7 +709,36 @@
         <showsOnList>true</showsOnList>
       </language>
       <list>
-        <string>Sinologi Arkeologi</string>
+        <string>Sinology</string>
+        <string>Archeology</string>
+      </list>
+    </entry>
+    <entry>
+      <language>
+        <languageCode3>swe</languageCode3>
+        <languageCode2>sv</languageCode2>
+        <languageNames>
+          <languageName>
+            <languageNameId>1145</languageNameId>
+            <locale>en</locale>
+            <languageName>Swedish</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>10120</languageNameId>
+            <locale>no</locale>
+            <languageName>svensk</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1144</languageNameId>
+            <locale>sv</locale>
+            <languageName>Svenska</languageName>
+          </languageName>
+        </languageNames>
+        <showsOnList>true</showsOnList>
+      </language>
+      <list>
+        <string>Sinologi</string>
+        <string>Arkeologi</string>
       </list>
     </entry>
   </keyWords>

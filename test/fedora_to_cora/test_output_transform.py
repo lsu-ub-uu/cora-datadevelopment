@@ -54,7 +54,16 @@ def test_output_transform(requests_mock):
             <title>Bulletin of the Museum of Far Eastern Antiquities (BMFEA)</title>
         </titleInfo>
         <subject lang="eng" repeatId="0">
-            <topic>Sinologi, Arkeologi</topic>
+            <topic>Sinology</topic>
+        </subject>
+        <subject lang="eng" repeatId="1">
+            <topic>Archeology</topic>
+        </subject>
+        <subject lang="swe" repeatId="2">
+            <topic>Sinologi</topic>
+        </subject>
+        <subject lang="swe" repeatId="3">
+            <topic>Arkeologi</topic>
         </subject>
         <dateOther type="patent">
             <year>2022</year>
