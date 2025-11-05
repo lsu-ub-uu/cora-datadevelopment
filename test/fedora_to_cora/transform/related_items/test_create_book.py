@@ -113,7 +113,7 @@ def test_create_maximal_book(monkeypatch):
         <relatedItem type="book" otherType="text">
             <titleInfo lang="swe">
                 <title>En boktitel</title>
-                <subTitle>En bokundertitel</subTitle>
+                <subtitle>En bokundertitel</subtitle>
             </titleInfo>
             <note type="statementOfResponsibility">En redaktör</note>
             <part>

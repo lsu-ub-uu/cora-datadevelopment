@@ -25,7 +25,7 @@ def create_book(source_record: ET.Element, context: Context) -> ET.Element | Non
     ET.SubElement(title_info, "title").text = title_text
 
     if subtitle_text is not None and len(subtitle_text) > 0:
-        ET.SubElement(title_info, "subTitle").text = subtitle_text
+        ET.SubElement(title_info, "subtitle").text = subtitle_text
 
     append_if_value(related_item, _create_statement_of_responsibility(source_record))
 
