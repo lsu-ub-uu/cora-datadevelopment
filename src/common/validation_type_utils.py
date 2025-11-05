@@ -94,8 +94,6 @@ delete_validation_type_args: dict[str, ArgumentConfig] = {
 }
 
 
-# -----
-
 # Representation of a record and its relationships ----------------------------------
 class RecordNode:
     def __init__(self, record_id: str, record_type: str, url: str, xml_content: Element):
@@ -227,7 +225,7 @@ def normalize_child_reference_repeat(xml_root):
     return updated
 
 
-def update_data_divider(xml_root, divider):
+def update_data_divider(xml_root: Element, divider: str):
     updated = False
     data_divider = xml_root.find(".//recordInfo/dataDivider/linkedRecordId")
     if data_divider is not None:
@@ -246,10 +244,10 @@ def update_child_references(xml_root, id_mapping):
             element.text = str(id_mapping[original_id])
 
 
-def create_new_id_and_update_mapping(global_id_mapping, node, original_id) -> str:
-    new_id = node.record_id if node.record_id.startswith(_type_prefix) else f"{_type_prefix}{original_id}"
+def create_new_id_and_update_mapping(global_id_mapping, node) -> str:
+    new_id = node.record_id if node.record_id.startswith(_type_prefix) else f"{_type_prefix}{node.record_id}"
     node.new_record_id = new_id
-    global_id_mapping[original_id] = new_id
+    global_id_mapping[node.record_id] = new_id
     return new_id
 
 
@@ -446,10 +444,9 @@ def update_prefix_of_value_of_xpath_using_find(xml_content, path: str) -> bool:
     metadata_id = xml_content.find(path)
     if metadata_id is not None:
         current_id = metadata_id.text or ""
-        if current_id.startswith(_type_prefix):
-            return False
-        metadata_id.text = _type_prefix + current_id
-        return True
+        if not current_id.startswith(_type_prefix):
+            metadata_id.text = _type_prefix + current_id
+            return True
     return False
 
 
@@ -465,12 +462,12 @@ def possibly_set_to_not_create_presentations(node):
         metadata.append(element)
 
 
-def log(text: str):
+def log(text: str):  # pragma: no cover
     print(f"\n{text}")
     _ctx.log(text)
 
 
-def log_creation_summary(node, record_type_url: str, xml_bytes: bytes | Any):
+def log_creation_summary(node, record_type_url: str, xml_bytes: bytes | Any):  # pragma: no cover
     _ctx.log(f">>> POST {node.new_record_id} ({node.record_type})...")
     _ctx.log(f"  Endpoint: {record_type_url}")
     _ctx.log("  Payload: " + xml_bytes.decode("utf-8"))

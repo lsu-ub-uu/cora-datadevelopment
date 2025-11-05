@@ -1,7 +1,7 @@
 from collections import deque, defaultdict
 from typing import Any
 
-import validation_type_utils.common_utils as utils
+from common import validation_type_utils as utils
 from common.arg_parser import create_argument_parser
 from cora.context import CoraContext, Context
 
@@ -255,7 +255,7 @@ def process_and_possibly_create(node, global_id_mapping):
         utils.update_child_references(node.xml_content, global_id_mapping)
         return False
 
-    new_id = utils.create_new_id_and_update_mapping(global_id_mapping, node, original_id)
+    new_id = utils.create_new_id_and_update_mapping(global_id_mapping, node)
     utils.update_record_id_in_xml(node.xml_content, new_id)
     utils.update_child_references(node.xml_content, global_id_mapping)
     utils.remove_action_links(node.xml_content)
