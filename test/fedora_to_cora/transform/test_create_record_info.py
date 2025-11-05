@@ -9,6 +9,7 @@ def test_create_record_info():
     <publication>
         <publicationType>
             <publicationTypeId>50</publicationTypeId>
+            <publicationTypeCode>article</publicationTypeCode>
         </publicationType>
         <administrativeInfo>
             <domain>kth</domain>

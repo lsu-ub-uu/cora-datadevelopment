@@ -38,10 +38,10 @@ outputs-import --help
 Below is specified how each field in the Cora diva-output metadata model is mapped from the DiVA Classic publication model.
 
 - recordInfo
-  - ⚠️ validationType <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` ⚠️ Need to consider subtype according to mapping document
+  - validationType <- Mapping from `publicationType/publicationTypeCode` and `subtype/publicationSubtypeCode`
   - permissionUnit <- `administrativeInfo/domain`
   - oldId <- `pid`
-  - ⚠️ visibility <- [Logic](./get_visibility.py) based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ⚠️ Needs updating when changes to visibility is done in Cora
+  - ⚠️ visibility <- Logic based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ⚠️ Needs updating when changes to visibility is done in Cora
 - ⚠️ dataQuality <- `2026` if validation passes, otherwise `classic`
 - genre type="contentType" <- Mapping from `contentType/contentTypeCode`,
 - titleInfo <- `originalPublicationTitle`
@@ -51,7 +51,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - subject <- `keyWords`
   - ⚠️ topic <- > `keyWords/entry/list/string` (replaces spaces with commas) Needs update to create one subject per string
   - language <- `keyWords/entry/language/languageCode3`
-- genre type="outputType" (valideringstyp) <- [Mapping](./get_validation_type_by_publication_type_id.py) from `publicationType/publicationTypeId` (same as validation type) Need to consider subtype ❓
+- genre type="outputType" (valideringstyp) <- Same as validationType (see above)
 - language <- `originalPublicationTitle/language` (Classic does not have a language for the publication, we'll use the langue from the main title.)
 - artisticWork type="outputType" <- `artisticWork` if the tag is missing, it will be missing in cora
 - titleInfo type="alternative" <- `alternativePublicationTitles/title`

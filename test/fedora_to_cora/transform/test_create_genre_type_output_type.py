@@ -34,8 +34,7 @@ def test_create_genre_type_output_type_missing():
         </publication>
         """
     )
-    pytest.raises(
-        AssertionError,
-        create_genre_type_output_type,
-        source_record,
-    )
+
+    genre = create_genre_type_output_type(source_record)
+
+    assert genre is None

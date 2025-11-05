@@ -11,6 +11,7 @@ def test_create_defence():
          <publication>
             <publicationType>
                 <publicationTypeId>54</publicationTypeId>
+                <publicationTypeCode>monographDoctoralThesis</publicationTypeCode>
             </publicationType>
             <defence>
                 <date>2022-07-31T16:19:00.000+02:00</date>
@@ -66,6 +67,7 @@ def test_create_empty_defence():
         <publication>
             <publicationType>
                 <publicationTypeId>54</publicationTypeId>
+                <publicationTypeCode>monographDoctoralThesis</publicationTypeCode>
             </publicationType>
             <defence>
                 <room>
@@ -92,6 +94,7 @@ def test_create_empty_presentation():
         <publication>
             <publicationType>
                 <publicationTypeId>65</publicationTypeId>
+                <publicationTypeCode>studentThesis</publicationTypeCode>
             </publicationType>
             <defence>
                 <room>
@@ -118,6 +121,7 @@ def test_create_presentation_if_degree_project():
         <publication>
             <publicationType>
                 <publicationTypeId>65</publicationTypeId>
+                <publicationTypeCode>studentThesis</publicationTypeCode>
             </publicationType>
             <defence>
                 <date>2022-07-31T16:19:00.000+02:00</date>
@@ -151,7 +155,6 @@ def test_create_presentation_if_degree_project():
                     <mm>19</mm>
                 </dateOther>
                 <location>
-
                     Balsalen
                 </location>
                 <address>Slottet</address>

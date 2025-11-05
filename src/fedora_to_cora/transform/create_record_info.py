@@ -18,7 +18,7 @@ This file is part of DiVA Client.
 
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
-from fedora_to_cora.transform.get_validation_type_by_publication_type_id import (
+from fedora_to_cora.transform.get_validation_type import (
     get_validation_type_from_fedora_record,
 )
 from fedora_to_cora.transform.get_visibility import get_visibility

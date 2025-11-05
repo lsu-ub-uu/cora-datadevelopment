@@ -17,6 +17,7 @@ def test_creates_name_type_personal():
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
             </publicationType>
             <authors>
                 <person>
@@ -49,6 +50,7 @@ def test_creates_persons_for_roles():
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
             </publicationType>
             <authors>
                 <person>
@@ -128,6 +130,7 @@ def test_creates_uncontrolled_affiliation():
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
             </publicationType>
             <authors>
                 <person>
@@ -185,6 +188,7 @@ def test_creates_controlled_affiliation(monkeypatch):
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
             </publicationType>
             <authors>
                 <person>
@@ -231,6 +235,7 @@ def test_creates_for_author_only_validation_type():
         <publication>
             <publicationType>
                 <publicationTypeId>65</publicationTypeId>
+                <publicationTypeCode>diva_degree-project</publicationTypeCode>
             </publicationType>
             <authors>
                 <person>
@@ -263,6 +268,7 @@ def test_create_supervisors():
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
             </publicationType>
             <supervisors>
                 <person>
@@ -322,6 +328,7 @@ def test_create_opponents():
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
             </publicationType>
             <opponents>
                 <person>
@@ -355,6 +362,7 @@ def test_create_examiners():
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
             </publicationType>
             <examiners>
                 <person>
@@ -388,6 +396,7 @@ def test_creates_name_identifiers():
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
             </publicationType>
             <authors>
                 <person>

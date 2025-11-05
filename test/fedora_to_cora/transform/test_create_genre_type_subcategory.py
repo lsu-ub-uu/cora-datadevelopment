@@ -24,6 +24,7 @@ def test_policy_document():
         <publication>
             <subtype>
                 <publicationSubtypeId>2</publicationSubtypeId>
+                <publicationSubtypeCode>policyDocument</publicationSubtypeCode>
             </subtype>
         </publication>
         """
@@ -44,6 +45,7 @@ def test_exhibition_catalog():
         <publication>
             <subtype>
                 <publicationSubtypeId>3</publicationSubtypeId>
+                <publicationSubtypeCode>exhibitionCatalogue</publicationSubtypeCode>
             </subtype>
         </publication>
         """
@@ -63,7 +65,8 @@ def test_other_subtype():
         """
         <publication>
             <subtype>
-                <publicationSubtypeId>8</publicationSubtypeId>
+                <publicationSubtypeId>53</publicationSubtypeId>
+                <publicationSubtypeCode>newsItem</publicationSubtypeCode>
             </subtype>
         </publication>
         """

@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 
 from common.xml_utils import append_if_value
-from fedora_to_cora.transform.get_validation_type_by_publication_type_id import (
+from fedora_to_cora.transform.get_validation_type import (
     get_validation_type_from_fedora_record,
 )
 

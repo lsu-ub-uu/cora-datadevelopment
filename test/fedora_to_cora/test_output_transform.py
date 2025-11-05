@@ -35,7 +35,7 @@ def test_output_transform(requests_mock):
         <recordInfo>
             <validationType>
                 <linkedRecordType>validationType</linkedRecordType>
-                <linkedRecordId>publication_edited-book</linkedRecordId>
+                <linkedRecordId>publication_other</linkedRecordId>
             </validationType>
             <dataDivider>
                 <linkedRecordType>system</linkedRecordType>
@@ -103,7 +103,7 @@ def test_output_transform(requests_mock):
                 <linkedRecordId>{subject_id}</linkedRecordId>
             </topic>
         </subject>
-        <genre type="outputType">publication_edited-book</genre>
+        <genre type="outputType">publication_other</genre>
         <genre type="subcategory">policyDocument</genre>
         <language repeatId="0">
             <languageTerm type="code" authority="iso639-2b">eng</languageTerm>

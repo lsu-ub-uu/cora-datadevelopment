@@ -22,8 +22,8 @@
     <sortOrder>1</sortOrder>
   </contentType>
   <publicationType>
-    <publicationTypeId>63</publicationTypeId>
-    <publicationTypeCode>collection</publicationTypeCode>
+    <publicationTypeId>66</publicationTypeId>
+    <publicationTypeCode>other</publicationTypeCode>
     <openUrlType>book</openUrlType>
     <publicationTypeNames>
       <publicationTypeName>
@@ -48,7 +48,7 @@
   </publicationType>
   <subtype>
     <publicationSubtypeId>2</publicationSubtypeId>
-    <publicationSubtypeCode>publishedPaper</publicationSubtypeCode>
+    <publicationSubtypeCode>policyDocument</publicationSubtypeCode>
     <publicationSubtypeNames>
       <publicationSubtypeName>
         <publicationSubtypeNameId>28</publicationSubtypeNameId>
