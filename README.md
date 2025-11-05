@@ -97,4 +97,6 @@ pytest --cov=src
 ptw --now .
 ```
 
+To get full diffs for large XML comparisons, run tests with flag `-vvv`
+
 `outputs-testdata-create` to create a dummy post in the Cora format, it uses the same arguments but does not include the `--apply` and always creates a post.

@@ -1,27 +1,7 @@
 import xml.etree.ElementTree as ET
 
-# publication_map = {
-#     "50": "publication_journal-article",
-#     "51": "publication_review-article",
-#     "52": "publication_book-review",
-#     "53": "publication_doctoral-thesis-compilation",
-#     "54": "publication_doctoral-thesis-monograph",
-#     "55": "publication_licentiate-thesis-compilation",
-#     "56": "publication_licentiate-thesis-monograph",
-#     "57": "publication_book",
-#     "58": "publication_book-chapter",
-#     "59": "conference_paper",
-#     "60": "conference_proceeding",
-#     "61": "intellectual-property_patent",
-#     "62": "publication_report",
-#     "63": "publication_edited-book",
-#     "64": "publicationPreprintItem",
-#     "65": "diva_degree-project",
-#     "66": "publication_other",
-#     "67": "diva_dissertation",
-#     "71": "artistic-work_original-creative-work",
-# }
 
+# Mapping from publicationTypeCode and publicationSubtypeCode to Cora validationType.
 validation_type_mapping = {
     "article": {
         None: "publication_journal-article",

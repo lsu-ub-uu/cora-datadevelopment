@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<publication>
+  <publicationType>
+    <publicationTypeId>50</publicationTypeId>
+    <publicationTypeCode>article</publicationTypeCode>
+  </publicationType>
+  <pid>diva2:1111</pid>
+  <administrativeInfo>
+    <domain>kth</domain>
+    <creatorInfo>
+      <userId>migration</userId>
+      <name>Migration</name>
+    </creatorInfo>
+    <createdDate>2004-01-23T00:00:00.000+01:00</createdDate>
+  </administrativeInfo>
+</publication>

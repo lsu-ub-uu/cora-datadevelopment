@@ -1,14 +1,28 @@
 from common.test_helper import assert_equal_for_xml_and_xml_string
+from common.xml_utils import pretty_print_xml
 from fedora_to_cora.output_transform import transform_to_cora_output
 from xml.etree import ElementTree as ET
 from common.common_data import read_source_xml
 from cora.context import MockContext
+import pytest
 
 
-def test_output_transform(requests_mock):
+@pytest.fixture
+def mock_diva_search_requests(requests_mock):
+    """
+    Fixture to mock DIVA search requests and return IDs for testing.
+
+    Returns:
+        dict: A dictionary containing the IDs used in the mocked responses:
+            - affiliation_organisation_id: str
+            - subject_id: str
+            - series_id: str
+            - publisher_id: str
+    """
     affiliation_organisation_id = "diva-organisation:15111790767789817"
     subject_id = "diva-subject:30224"
     series_id = "diva-series:17450"
+    publisher_id = "diva-publisher:12345"
 
     requests_mock.get(
         "https://pre.diva-portal.org/rest/record/searchResult/diva-organisationSearch",
@@ -22,6 +36,24 @@ def test_output_transform(requests_mock):
         "https://pre.diva-portal.org/rest/record/searchResult/diva-seriesSearch",
         text=_create_search_mock_response("series", series_id),
     )
+    requests_mock.get(
+        "https://pre.diva-portal.org/rest/record/searchResult/diva-publisherSearch",
+        text=_create_search_mock_response("publisher", publisher_id),
+    )
+
+    return {
+        "affiliation_organisation_id": affiliation_organisation_id,
+        "subject_id": subject_id,
+        "series_id": series_id,
+        "publisher_id": publisher_id,
+    }
+
+
+def test_output_transform_ultimate(mock_diva_search_requests):
+    ids = mock_diva_search_requests
+    affiliation_organisation_id = ids["affiliation_organisation_id"]
+    subject_id = ids["subject_id"]
+    series_id = ids["series_id"]
 
     fedora_xml = read_source_xml("test/data/fedora/mock_publication_ultimate.xml")
 
@@ -305,6 +337,261 @@ def test_output_transform(requests_mock):
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
+def test_output_transform_book(mock_diva_search_requests):
+    ids = mock_diva_search_requests
+    publisher_id = ids["publisher_id"]
+    subject_id = ids["subject_id"]
+
+    source_xml = read_source_xml("test/data/fedora/mock_publication_book.xml")
+    result = transform_to_cora_output(source_xml, MockContext())
+
+    assert_equal_for_xml_and_xml_string(
+        result,
+        f"""
+        <output>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>publication_book</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <permissionUnit>
+                    <linkedRecordType>permissionUnit</linkedRecordType>
+                    <linkedRecordId>nordiskamuseet</linkedRecordId>
+                </permissionUnit>
+                <visibility>published</visibility>
+                <oldId>diva2:1179703</oldId>
+            </recordInfo>
+            <dataQuality>2026</dataQuality>
+            <genre type="contentType">vet</genre>
+            <titleInfo lang="swe">
+                <title>Känn dig själv</title>
+                <subtitle>Nordiska museets och Skansens årsbok Fataburen 1998</subtitle>
+            </titleInfo>
+            <subject lang="swe" repeatId="0">
+                <topic>Kulturarv</topic>
+            </subject>
+            <subject lang="swe" repeatId="1">
+                <topic>Skansen</topic>
+            </subject>
+            <originInfo>
+                <dateIssued>
+                    <year>1997</year>
+                </dateIssued>
+                <agent repeatId="0">
+                    <publisher>
+                        <linkedRecordType>diva-publisher</linkedRecordType>
+                        <linkedRecordId>{publisher_id}</linkedRecordId>
+                    </publisher>
+                    <role>
+                        <roleTerm>pbl</roleTerm>
+                    </role>
+                </agent>
+                <place repeatId="0">
+                    <placeTerm>Stockholm</placeTerm>
+                </place>
+            </originInfo>
+            <physicalDescription>
+                <extent>335</extent>
+            </physicalDescription>
+            <classification authority="ssif" repeatId="0">60503</classification>
+            <subject authority="diva">
+                <topic repeatId="0">
+                    <linkedRecordType>diva-subject</linkedRecordType>
+                    <linkedRecordId>{subject_id}</linkedRecordId>
+                </topic>
+            </subject>
+            <genre type="outputType">publication_book</genre>
+            <language repeatId="0">
+                <languageTerm type="code" authority="iso639-2b">swe</languageTerm>
+            </language>
+            <artisticWork type="outputType">false</artisticWork>
+            <name type="personal" repeatId="0">
+                <namePart type="family">Bergman</namePart>
+                <namePart type="given">Ingrid</namePart>
+                <role>
+                    <roleTerm repeatId="0">edt</roleTerm>
+                </role>
+                <affiliation repeatId="0">
+                    <organisation>
+                        <linkedRecordType>diva-organisation</linkedRecordType>
+                        <linkedRecordId>diva-organisation:15111790767789817</linkedRecordId>
+                    </organisation>
+                </affiliation>
+            </name>
+            <adminInfo>
+                <reviewed>true</reviewed>
+            </adminInfo>
+            <identifier type="isbn" displayLabel="print" repeatId="0">9171084282</identifier>
+            <identifier type="localId" repeatId="0">xxxxx</identifier>
+            <relatedItem type="series" otherType="link" repeatId="controlled0">
+                <series>
+                    <linkedRecordType>diva-series</linkedRecordType>
+                    <linkedRecordId>diva-series:17450</linkedRecordId>
+                </series>
+                <partNumber>1998</partNumber>
+            </relatedItem>
+        </output>                   
+    """,
+    )
+
+
+def test_output_transform_book_chapter(mock_diva_search_requests):
+    ids = mock_diva_search_requests
+    publisher_id = ids["publisher_id"]
+    subject_id = ids["subject_id"]
+
+    source_xml = read_source_xml("test/data/fedora/mock_publication_book-chapter.xml")
+    result = transform_to_cora_output(source_xml, MockContext())
+
+    assert_equal_for_xml_and_xml_string(
+        result,
+        f"""
+        <output>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>publication_book-chapter</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <permissionUnit>
+                    <linkedRecordType>permissionUnit</linkedRecordType>
+                    <linkedRecordId>nordiskamuseet</linkedRecordId>
+                </permissionUnit>
+                <visibility>published</visibility>
+                <oldId>diva2:1365846</oldId>
+            </recordInfo>
+            <dataQuality>2026</dataQuality>
+            <genre type="contentType">vet</genre>
+            <titleInfo lang="swe">
+                <title>När två var ett</title>
+                <subtitle>Skansen och Nordiska museet</subtitle>
+            </titleInfo>
+            <subject lang="swe" repeatId="0">
+                <topic>Nordiska museet</topic>
+            </subject>
+            <originInfo>
+                <dateIssued>
+                    <year>2016</year>
+                </dateIssued>
+                <agent repeatId="0">
+                    <publisher>
+                        <linkedRecordType>diva-publisher</linkedRecordType>
+                        <linkedRecordId>{publisher_id}</linkedRecordId>
+                    </publisher>
+                    <role>
+                        <roleTerm>pbl</roleTerm>
+                    </role>
+                </agent>
+                <place repeatId="0">
+                    <placeTerm>Stockholm</placeTerm>
+                </place>
+            </originInfo>
+            <classification authority="ssif" repeatId="0">605</classification>
+            <subject authority="diva">
+                <topic repeatId="0">
+                    <linkedRecordType>diva-subject</linkedRecordType>
+                    <linkedRecordId>{subject_id}</linkedRecordId>
+                </topic>
+                <topic repeatId="1">
+                    <linkedRecordType>diva-subject</linkedRecordType>
+                    <linkedRecordId>{subject_id}</linkedRecordId>
+                </topic>
+            </subject>
+            <genre type="outputType">publication_book-chapter</genre>
+            <language repeatId="0">
+                <languageTerm type="code" authority="iso639-2b">swe</languageTerm>
+            </language>
+            <artisticWork type="outputType">false</artisticWork>
+            <name type="personal" repeatId="0">
+                <namePart type="family">Mockson</namePart>
+                <namePart type="given">Mock</namePart>
+                <role>
+                    <roleTerm repeatId="0">aut</roleTerm>
+                </role>
+                <affiliation repeatId="0">
+                    <organisation>
+                        <linkedRecordType>diva-organisation</linkedRecordType>
+                        <linkedRecordId>diva-organisation:15111790767789817</linkedRecordId>
+                    </organisation>
+                </affiliation>
+            </name>
+            <adminInfo>
+                <reviewed>false</reviewed>
+            </adminInfo>
+            <identifier type="localId" repeatId="0">xxxxx</identifier>
+            <relatedItem type="book" otherType="text">
+                <titleInfo lang="swe">
+                    <title>Skansen 125</title>
+                </titleInfo>
+                <note type="statementOfResponsibility">Fejkelina Jönsson</note>
+                <relatedItem type="series" otherType="link" repeatId="controlled0">
+                    <series>
+                        <linkedRecordType>diva-series</linkedRecordType>
+                        <linkedRecordId>diva-series:17450</linkedRecordId>
+                    </series>
+                    <partNumber>2016</partNumber>
+                </relatedItem>
+            </relatedItem>
+        </output>                   
+    """,
+    )
+
+
+def test_output_transform_minimal():
+    fedora_xml = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>50</publicationTypeId>
+                <publicationTypeCode>article</publicationTypeCode>
+            </publicationType>
+            <pid>diva2:1111</pid>
+            <administrativeInfo>
+                <domain>kth</domain>
+            </administrativeInfo>
+        </publication>
+        """
+    )
+
+    result = transform_to_cora_output(
+        fedora_xml,
+        MockContext(),
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        result,
+        """
+        <output>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>publication_journal-article</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <permissionUnit>
+                    <linkedRecordType>permissionUnit</linkedRecordType>
+                    <linkedRecordId>kth</linkedRecordId>
+                </permissionUnit>
+                <visibility>unpublished</visibility>
+                <oldId>diva2:1111</oldId>
+            </recordInfo>
+            <dataQuality>2026</dataQuality>
+            <genre type="outputType">publication_journal-article</genre>
+        </output>                      
+    """,
+    )
 
 
 def _create_search_mock_response(tag_name, record_id):
