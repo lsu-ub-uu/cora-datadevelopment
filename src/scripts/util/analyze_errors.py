@@ -186,8 +186,8 @@ def main():
     parser.add_argument(
         "log_file",
         nargs="?",
-        default="/home/leo/Repos/cora-datadevelopment/logs/errors_nordiska.txt",
-        help="Path to the error log file (default: errors_nordiska.txt in logs/)",
+        default="/home/leo/Repos/cora-datadevelopment/logs/outputs-import.log",
+        help="Path to the error log file (default: outputs-import.log in logs/)",
     )
 
     args = parser.parse_args()
