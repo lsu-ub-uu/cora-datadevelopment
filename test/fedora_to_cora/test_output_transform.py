@@ -475,7 +475,10 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                 <title>När två var ett</title>
                 <subtitle>Skansen och Nordiska museet</subtitle>
             </titleInfo>
-            <subject lang="swe" repeatId="0">
+             <subject lang="swe" repeatId="0">
+                <topic>Skansen</topic>
+            </subject>
+            <subject lang="swe" repeatId="1">
                 <topic>Nordiska museet</topic>
             </subject>
             <originInfo>
@@ -533,6 +536,12 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                     <title>Skansen 125</title>
                 </titleInfo>
                 <note type="statementOfResponsibility">Fejkelina Jönsson</note>
+                <part>
+                    <extent>
+                        <start>122</start>
+                        <end>143</end>
+                    </extent>
+                </part>
                 <relatedItem type="series" otherType="link" repeatId="controlled0">
                     <series>
                         <linkedRecordType>diva-series</linkedRecordType>

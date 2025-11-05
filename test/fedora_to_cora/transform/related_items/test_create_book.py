@@ -1,6 +1,8 @@
 import xml.etree.ElementTree as ET
+from unittest.mock import MagicMock
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from fedora_to_cora.transform.related_items.create_book import create_book
+from cora.context import MockContext
 
 
 def test_create_minimal_book():
@@ -21,7 +23,7 @@ def test_create_minimal_book():
         </publication>
         """
     )
-    result = create_book(source_record)
+    result = create_book(source_record, MockContext())
     assert_equal_for_xml_and_xml_string(
         result,
         """
@@ -32,7 +34,14 @@ def test_create_minimal_book():
     )
 
 
-def test_create_maximal_book():
+def test_create_maximal_book(monkeypatch):
+
+    get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")
+    monkeypatch.setattr(
+        "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
+        get_cora_id_by_old_id_mock,
+    )
+
     source_record = ET.fromstring(
         """
         <publication>
@@ -86,10 +95,18 @@ def test_create_maximal_book():
                     </publicationIdentifier>
                 </entry>
             </identifiers>
+            <seriesInfos>
+                <seriesInfo>
+                    <series>
+                       <seriesId>12345</seriesId>
+                    </series>
+                    <numberInSeries>66</numberInSeries>
+                </seriesInfo>
+            </seriesInfos>
         </publication>
         """
     )
-    result = create_book(source_record)
+    result = create_book(source_record, MockContext())
     assert_equal_for_xml_and_xml_string(
         result,
         """
@@ -105,6 +122,13 @@ def test_create_maximal_book():
                     <end>30</end>
                 </extent>
             </part>
+            <relatedItem type="series" otherType="link" repeatId="controlled0">
+                <series>
+                    <linkedRecordType>diva-series</linkedRecordType>
+                    <linkedRecordId>diva-series:12345</linkedRecordId>
+                </series>
+                <partNumber>66</partNumber>
+            </relatedItem>
         </relatedItem>
     """,
     )
@@ -126,5 +150,5 @@ def test_returns_none_if_no_book_title():
         </publication>
         """
     )
-    result = create_book(source_record)
+    result = create_book(source_record, MockContext())
     assert result is None

@@ -49,7 +49,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - subtitle `subtitle`
   - language <- `language/languageCode3` (behöver val "undefined" i classic valideringstyp)
 - subject <- `keyWords`
-  - ⚠️ topic <- > `keyWords/entry/list/string` (replaces spaces with commas) Needs update to create one subject per string
+  - topic <- > `keyWords/entry/list/string`
   - language <- `keyWords/entry/language/languageCode3`
 - genre type="outputType" (valideringstyp) <- Same as validationType (see above)
 - language <- `originalPublicationTitle/language` (Classic does not have a language for the publication, we'll use the langue from the main title.)
@@ -222,8 +222,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - part/extent
     - start <- `startPage`
     - end <- `endPage`
-  - ⚠️ relatedItem type="series" otherType="link"
-  - ⚠️ relatedItem type="series" otherType="text"
+  - relatedItem type="series" otherType="link"
+  - relatedItem type="series" otherType="text"
 
 - ⚠️ relatedItem type="conferencePublication" otherType="link"
   - proceeding (link to migrated record)

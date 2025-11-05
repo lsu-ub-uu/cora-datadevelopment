@@ -47,6 +47,7 @@ from fedora_to_cora.transform.identifiers.create_doi_se_libr import (
     create_identifier_se_libr,
 )
 from fedora_to_cora.transform.patent.create_patent_holder import create_patent_holder
+from fedora_to_cora.transform.related_items.create_book import create_book
 from fedora_to_cora.transform.related_items.create_conference import (
     create_related_item_type_conference,
 )
@@ -97,6 +98,7 @@ from fedora_to_cora.transform.artistic_output.create_artistic_output import (
 from fedora_to_cora.transform.related_items.create_publication_channel import (
     create_publication_channel,
 )
+from fedora_to_cora.utils import is_part_of_book, is_part_of_conference
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
@@ -225,10 +227,18 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
 
     append_if_value(target_record, create_publication_channel(source_record))
 
-    append_if_value(
-        target_record,
-        create_related_item_type_series(source_record, context),
-    )
+    if not is_part_of_book(source_record) and not is_part_of_conference(source_record):
+        append_if_value(
+            target_record,
+            create_related_item_type_series(source_record, context),
+        )
+
+    if is_part_of_book(source_record):
+        append_if_value(
+            target_record,
+            create_book(source_record, context),
+        )
+
     append_if_value(target_record, create_related_item_type_conference(source_record))
     append_if_value(target_record, create_student_degrees(source_record, context))
 
