@@ -4,6 +4,7 @@ from cora.context import CoraContext
 from fedora_to_cora.process_fedora_publication_files import (
     process_fedora_publication_files,
 )
+from scripts.util.analyze_errors import analyze_and_print_report
 
 
 def main():
@@ -39,8 +40,8 @@ def main():
             "--limit": {
                 "type": int,
                 "help": "Limit the number of processed files (for testing purposes)",
-                "default": None
-            }
+                "default": None,
+            },
         },
     )
 
@@ -59,6 +60,8 @@ def main():
         apply=args.apply,
         limit=args.limit,
     )
+
+    analyze_and_print_report("logs/outputs-import.log")
 
 
 if __name__ == "__main__":

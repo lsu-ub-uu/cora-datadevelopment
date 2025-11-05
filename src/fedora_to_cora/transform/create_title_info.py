@@ -53,16 +53,3 @@ def _create_title_info(source_title: ET.Element) -> ET.Element | None:
         ET.SubElement(titleInfo, "subtitle").text = clean_rich_text(sub_title.text)
 
     return titleInfo
-
-
-def _validate(source_title: ET.Element):
-    languageCode = source_title.find(".//language/languageCode3")
-    title = source_title.find(".//title")
-    assert (
-        languageCode is not None and languageCode.text is not None
-    ), "/language/languageCode3 must be present in title"
-    assert (
-        title is not None and title.text is not None
-    ), "title must be present in title"
-
-    return (languageCode.text, clean_rich_text(title.text))
