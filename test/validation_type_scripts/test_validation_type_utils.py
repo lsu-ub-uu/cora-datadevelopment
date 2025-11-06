@@ -341,36 +341,13 @@ def test_collect_child_urls(record_node):
                     'http://HOSTURL/textPartEnGroup']
 
 
-def test_collect_child_urls_with_root_url(record_node):
-    record_info = record_node.xml_content.find(".//recordInfo")
-
-    metadata_id = ET.SubElement(record_info, "newMetadataId")
-    action_links = ET.SubElement(metadata_id, "actionLinks")
-    read = ET.SubElement(action_links, "read")
-    url = ET.SubElement(read, "url")
-    url.text = "http://HOSTURL/newGroupChild"
-
+def test_collect_child_urls_with_root_url(record_node, mock_top_level):
     urls = common_utils.collect_child_urls(record_node, "http://root_url", "http://root_url")
-    assert urls == ['http://HOSTURL/newGroupChild']
+    assert urls == ["http://HOSTURL/newGroupChild", "http://HOSTURL/updateGroupChild"]
 
 
-def test_find_top_level_children(record_node):
-    record_info = record_node.xml_content.find(".//recordInfo")
-
-    metadata_id = ET.SubElement(record_info, "newMetadataId")
-    action_links = ET.SubElement(metadata_id, "actionLinks")
-    read = ET.SubElement(action_links, "read")
-    url = ET.SubElement(read, "url")
-    url.text = "http://HOSTURL/newGroupChild"
-
-    metadata_id = ET.SubElement(record_info, "metadataId")
-    action_links = ET.SubElement(metadata_id, "actionLinks")
-    read = ET.SubElement(action_links, "read")
-    url = ET.SubElement(read, "url")
-    url.text = "http://HOSTURL/updateGroupChild"
-
+def test_find_top_level_children(record_node, mock_top_level):
     urls = common_utils.find_top_level_children(record_node.xml_content)
-
     assert urls == ["http://HOSTURL/newGroupChild", "http://HOSTURL/updateGroupChild"]
 
 
@@ -452,5 +429,54 @@ def test_possibly_set_to_not_create_presentations_not_group(record_node):
     assert not record_node.xml_content.findall(".//excludePGroupCreation")
 
 
-def test_post_request(init_utils, record_node):
-    assert common_utils.try_to_post_record(record_node, b'data', "url", [])
+def test_try_to_create_record(init_utils, record_node):
+    errors = []
+    assert common_utils.try_to_create_record(record_node, record_node.xml_content, errors)
+
+
+def test_try_to_create_record_not_201(init_utils, record_node):
+    errors = []
+    record_node.new_record_id = "some_new_id"
+    record_node.record_type = "return400"
+    assert not common_utils.try_to_create_record(record_node, record_node.xml_content, errors)
+    assert "Failed to save some_new_id (400 - failed to post)" in errors
+
+
+def test_try_to_create_record_throws_exception(init_utils, record_node):
+    errors = []
+    record_node.new_record_id = "some_new_id"
+    record_node.record_type = "throw_exception"
+    assert not common_utils.try_to_create_record(record_node, record_node.xml_content, errors)
+    assert "Error saving some_new_id: threw exception" in errors
+
+
+def test_try_to_update_record(init_utils, record_node):
+    errors = []
+    assert common_utils.try_to_update_record(record_node, errors)
+
+
+def test_prepare_and_delete_record(init_utils, record_node):
+    errors = []
+    record_node.record_id = f"{common_utils._type_prefix}_record_id"
+    assert common_utils.prepare_and_delete_record(record_node, errors)
+
+
+def test_prepare_and_delete_record_not_200(init_utils, record_node):
+    errors = []
+    record_node.record_id = f"{common_utils._type_prefix}_not200"
+    assert not common_utils.prepare_and_delete_record(record_node, errors)
+    assert "Failed to delete record: http://baseUrl/validationType/__test_prefix__not200" in errors
+
+
+def test_prepare_and_delete_record_not_matching_prefix(init_utils, record_node):
+    errors = []
+    assert not common_utils.prepare_and_delete_record(record_node, errors)
+    assert ("Tried to delete a record that probably wasn't supposed to be deleted... "
+            "http://baseUrl/validationType/divaTextNewGroup") in errors
+
+
+def test_prepare_and_delete_record_throws_exception(init_utils, record_node):
+    errors = []
+    record_node.record_id = f"{common_utils._type_prefix}_throw_exception"
+    assert not common_utils.prepare_and_delete_record(record_node, errors)
+    assert "Error saving http://baseUrl/validationType/__test_prefix__throw_exception: some exception" in errors

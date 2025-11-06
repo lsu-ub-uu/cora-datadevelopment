@@ -530,6 +530,7 @@ def try_to_delete_record(record_type_url: str, errors: list) -> bool:
         response = requests.delete(record_type_url, headers=headers, timeout=10)
         _ctx.log(f"  Response: ({response.status_code}) - {response.text}")
         if response.status_code not in (200, 201):
+            errors.append(f"Failed to delete record: {record_type_url}")
             return False
         return True
     except requests.RequestException as e:

@@ -4,8 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 import requests
 
-from build.lib.cora.context import CoraContext
 from common import validation_type_utils as common_utils
+from cora.context import CoraContext
 
 
 @pytest.fixture
@@ -75,15 +75,28 @@ def mock_requests(monkeypatch, sample_xml, validation_type_search_result_xml, pr
             return MockResponse(validation_type_search_result_xml, 200)
         elif "presentationSearch" in url:
             return MockResponse(presentation_search_result_xml, 200)
-
         else:
             return MockResponse(sample_xml, 200)
 
     def fake_post(url, data=None, *args, **kwargs):
-        return MockResponse(f"<created url='{url}'>{data}</created>", 201)
+        if "return400" in url:
+            return MockResponse("failed to post", 400)
+        elif "throw_exception" in url:
+            raise requests.HTTPError("threw exception")
+        else:
+            return MockResponse(f"<created url='{url}'>{data}</created>", 201)
+
+    def fake_delete(url: str, data=None, *args, **kwargs):
+        if url.endswith("throw_exception"):
+            raise requests.HTTPError("some exception")
+        elif url.endswith("not200"):
+            return MockResponse("failed to delete", 400)
+        else:
+            return MockResponse("deleted post", 200)
 
     monkeypatch.setattr(requests, "get", fake_get)
     monkeypatch.setattr(requests, "post", fake_post)
+    monkeypatch.setattr(requests, "delete", fake_delete)
 
 
 @pytest.fixture
@@ -321,13 +334,20 @@ def another_record_node(sample_xml):
     return common_utils.RecordNode("someOtherGroup", "metadata", "http://HOSTURL/record/metadata/someOtherGroup", root)
 
 
-def create_mock_top_level_child(record_node):
+@pytest.fixture()
+def mock_top_level(record_node):
     record_info = record_node.xml_content.find(".//recordInfo")
     name_in_data = record_node.xml_content.find(".//nameInData")
     name_in_data.text = "recordInfo"
+
+    metadata_id = ET.SubElement(record_info, "newMetadataId")
+    action_links = ET.SubElement(metadata_id, "actionLinks")
+    read = ET.SubElement(action_links, "read")
+    url = ET.SubElement(read, "url")
+    url.text = "http://HOSTURL/newGroupChild"
 
     metadata_id = ET.SubElement(record_info, "metadataId")
     action_links = ET.SubElement(metadata_id, "actionLinks")
     read = ET.SubElement(action_links, "read")
     url = ET.SubElement(read, "url")
-    url.text = "http://HOSTURL/someTopLevelChild"
+    url.text = "http://HOSTURL/updateGroupChild"
