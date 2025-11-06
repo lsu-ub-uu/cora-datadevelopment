@@ -9,13 +9,6 @@ def test_create_minimal_book():
     source_record = ET.fromstring(
         """
         <publication>
-            <originalPublicationTitle>
-                <title>En titel</title>
-                <subTitle>En undertitel</subTitle>
-                <language>
-                    <languageCode3>swe</languageCode3>
-                </language>
-            </originalPublicationTitle>
             <bookTitle>
                 <title>En boktitel</title>
             </bookTitle>
@@ -28,7 +21,7 @@ def test_create_minimal_book():
         result,
         """
         <relatedItem type="book" otherType="text">
-            <titleInfo lang="swe"><title>En boktitel</title></titleInfo>
+            <titleInfo><title>En boktitel</title></titleInfo>
         </relatedItem>
     """,
     )
@@ -45,13 +38,6 @@ def test_create_maximal_book(monkeypatch):
     source_record = ET.fromstring(
         """
         <publication>
-            <originalPublicationTitle>
-                <title>En titel</title>
-                <subTitle>En undertitel</subTitle>
-                <language>
-                    <languageCode3>swe</languageCode3>
-                </language>
-            </originalPublicationTitle>
             <bookTitle>
                 <title>En boktitel</title>
                 <subTitle>En bokundertitel</subTitle>
@@ -111,7 +97,7 @@ def test_create_maximal_book(monkeypatch):
         result,
         """
         <relatedItem type="book" otherType="text">
-            <titleInfo lang="swe">
+            <titleInfo>
                 <title>En boktitel</title>
                 <subtitle>En bokundertitel</subtitle>
             </titleInfo>
@@ -138,13 +124,6 @@ def test_returns_none_if_no_book_title():
     source_record = ET.fromstring(
         """
         <publication>
-            <originalPublicationTitle>
-                <title>En titel</title>
-                <subTitle>En undertitel</subTitle>
-                <language>
-                    <languageCode3>swe</languageCode3>
-                </language>
-            </originalPublicationTitle>
             <startPage>10</startPage>
             <endPage>30</endPage>
         </publication>

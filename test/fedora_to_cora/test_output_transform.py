@@ -532,7 +532,7 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
             </adminInfo>
             <identifier type="localId" repeatId="0">xxxxx</identifier>
             <relatedItem type="book" otherType="text">
-                <titleInfo lang="swe">
+                <titleInfo>
                     <title>Skansen 125</title>
                 </titleInfo>
                 <note type="statementOfResponsibility">Fejkelina Jönsson</note>
