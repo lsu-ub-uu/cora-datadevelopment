@@ -433,3 +433,46 @@ def test_creates_name_identifiers():
         </name>
         """,
     )
+
+
+def test_other_contributor_without_role():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
+            </publicationType>
+            <otherContributors>
+                <contributor>
+                    <firstName>Fiona</firstName>
+                    <lastName>The Roleless</lastName>
+                    <birthYear>1910</birthYear>
+                    <identifiers>
+                        <entry>
+                        <personIdentifierType>orcid</personIdentifierType>
+                        <personIdentifier>
+                            <value />
+                            <type>orcid</type>
+                        </personIdentifier>
+                        </entry>
+                    </identifiers>
+                </contributor>
+            </otherContributors>
+        </publication>
+        """
+    )
+    names = create_name_type_personals(
+        source_record,
+        mock_context,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">The Roleless</namePart>
+            <namePart type="given">Fiona</namePart>
+        </name>
+        """,
+    )

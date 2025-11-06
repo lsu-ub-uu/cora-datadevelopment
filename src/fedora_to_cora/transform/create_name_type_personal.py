@@ -118,7 +118,7 @@ def create_name_type_personal(
             first_name.text
         )
 
-    role = ET.SubElement(name_type_personal, "role")
+    append_if_value(name_type_personal, _create_role(role_terms, author_only))
 
     local_id = person.find("./localId")
     if local_id is not None and local_id.text:
@@ -128,16 +128,20 @@ def create_name_type_personal(
     if orcid is not None and orcid.text:
         name_type_personal.append(_create_name_identifier_orcid(orcid))
 
+    for i, organisation in enumerate(person.findall("./organisations/organisation")):
+        name_type_personal.append(create_affiliation(organisation, i, context))
+
+    return name_type_personal
+
+
+def _create_role(role_terms: list[str], author_only: bool) -> ET.Element:
+    role = ET.Element("role")
     for i, role_term in enumerate(role_terms):
         role_term_el = ET.SubElement(role, "roleTerm")
         role_term_el.text = role_term
         if not author_only:
             role_term_el.set("repeatId", str(i))
-
-    for i, organisation in enumerate(person.findall("./organisations/organisation")):
-        name_type_personal.append(create_affiliation(organisation, i, context))
-
-    return name_type_personal
+    return role
 
 
 def create_affiliation(
