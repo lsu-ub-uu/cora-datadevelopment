@@ -33,6 +33,14 @@ def test_append_if_value_with_empty_child():
     assert len(parent) == 0
 
 
+def test_append_if_value_with_empty_child2():
+    parent = ET.Element("parent")
+    child = ET.fromstring("<child />")
+
+    append_if_value(parent, child)
+    assert len(parent) == 0
+
+
 def test_append_if_value_with_none_child():
     parent = ET.Element("parent")
 

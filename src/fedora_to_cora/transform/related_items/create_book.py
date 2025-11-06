@@ -13,7 +13,7 @@ from fedora_to_cora.transform.related_items.create_series import (
 def create_book(source_record: ET.Element, context: Context) -> ET.Element | None:
     source_book_title = source_record.find("./bookTitle")
 
-    if source_book_title is None:
+    if source_book_title is None or source_book_title.text is None:
         return None
 
     related_item = ET.Element("relatedItem", type="book", otherType="text")

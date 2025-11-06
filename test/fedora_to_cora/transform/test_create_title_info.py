@@ -83,6 +83,18 @@ def test_create_title_info_missing_language():
     assert _create_title_info(source_record_with_subtitle) is None
 
 
+def test_create_title_info_empty_tag():
+    source_record_with_subtitle = ET.fromstring(
+        """
+        <publication>
+            <originalPublicationTitle />
+        </publication>
+    """
+    )
+
+    assert _create_title_info(source_record_with_subtitle) is None
+
+
 def test_create_title_with_html():
     source_record_with_html = ET.fromstring(
         """

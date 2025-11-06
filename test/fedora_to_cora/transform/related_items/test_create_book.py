@@ -27,6 +27,17 @@ def test_create_minimal_book():
     )
 
 
+def test_create_no_book():
+    source_record = ET.fromstring(
+        """
+        <publication>
+        </publication>
+        """
+    )
+    result = create_book(source_record, MockContext())
+    assert result is None
+
+
 def test_create_maximal_book(monkeypatch):
 
     get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")
@@ -126,6 +137,25 @@ def test_returns_none_if_no_book_title():
         <publication>
             <startPage>10</startPage>
             <endPage>30</endPage>
+        </publication>
+        """
+    )
+    result = create_book(source_record, MockContext())
+    assert result is None
+
+
+def test_create_weird_book(monkeypatch):
+
+    get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")
+    monkeypatch.setattr(
+        "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
+        get_cora_id_by_old_id_mock,
+    )
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <bookTitle />
         </publication>
         """
     )
