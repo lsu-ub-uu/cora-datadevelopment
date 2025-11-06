@@ -3,6 +3,9 @@ from common.common_data import create_record_link_using_name_type_id
 from common.xml_utils import append_if_value
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from cora.context import Context
+from fedora_to_cora.transform.get_validation_type import (
+    get_validation_type_from_fedora_record,
+)
 
 
 def create_name_type_personals(
@@ -30,7 +33,7 @@ def create_name_type_personals(
                         [role_term],
                         repeat_id,
                         context,
-                        author_only=is_author_only_type(source_record),
+                        author_only=_is_author_only_type(source_record),
                     )
                 )
                 repeat_id += 1
@@ -198,14 +201,25 @@ def create_affiliation_for_uncontrolled_organisation(
     return affiliation
 
 
-def is_author_only_type(source_record: ET.Element) -> bool:
+def _is_author_only_type(source_record: ET.Element) -> bool:
     """
-    Check if the publication type only allows a single role (author)
+    Check if the validation type only allows a single role (author)
     """
 
-    author_only_types = {"53", "56", "65"}
-    publication_type_id = source_record.findtext("./publicationType/publicationTypeId")
-    return publication_type_id in author_only_types
+    author_only_validation_types = {
+        "publication_doctoral-thesis-compilation",
+        "publication_licentiate-thesis-monograph",
+        "diva_degree-project",
+        "conference_other",
+        "conference_poster",
+        "conference_paper",
+        "publication_preprint",
+        "publication_licentiate-thesis-compilation",
+        "publication_licentiate-thesis-monograph",
+    }
+    validation_type = get_validation_type_from_fedora_record(source_record)
+
+    return validation_type in author_only_validation_types
 
 
 def _create_name_identifier_orcid(orcid: ET.Element) -> ET.Element:
