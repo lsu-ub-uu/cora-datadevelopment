@@ -52,6 +52,10 @@ def _migrate_attachment(
     created_binary_records: list[ET.Element],
     source_record: ET.Element,
 ) -> Tuple[ET.Element | None, str | None]:
+    pid = source_record.findtext("./pid")
+    file_name = attachment.findtext("./fileName")
+    assert pid is not None and file_name is not None
+
     binary_record = binary_record_transform(attachment)
     create_binary_result = create_record(
         binary_record,
@@ -63,7 +67,7 @@ def _migrate_attachment(
         created_binary_records.append(create_binary_result.response_data)
         file_path = _get_file_path(attachment, xml_dir)
         try:
-            upload_binary(create_binary_result.response_data, file_path, context)
+            upload_binary(create_binary_result.response_data, pid, file_name, context)
         except UploadError as e:
             context.log(f"Error uploading binary: {e}", level="error")
             return None, str(e)

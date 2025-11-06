@@ -6,10 +6,11 @@ from common.xml_utils import pretty_print_xml
 from cora.context import Context
 
 
-def upload_binary(binary_record: ET.Element, file_path: str, context: Context):
-    if not os.path.exists(file_path):
-        context.log(f"Error: File '{file_path}' does not exist", level="error")
-        raise UploadError(f"File '{file_path}' does not exist")
+def upload_binary(
+    binary_record: ET.Element, pid: str, file_name: str, context: Context
+):
+
+    download_url = f"http://localhost:8080/fedora/get/{pid}/{file_name}"
 
     upload_action_link = binary_record.find("./actionLinks/upload")
     assert (
@@ -20,35 +21,37 @@ def upload_binary(binary_record: ET.Element, file_path: str, context: Context):
     assert request_url is not None, "Upload URL not found in action link"
 
     try:
-        with open(file_path, "rb") as file:
-            multipart_data = MultipartEncoder(
-                fields={
-                    "file": (
-                        os.path.basename(file_path),
-                        file,
-                        "application/octet-stream",
-                    )
-                }
-            )
+        download_response = requests.get(download_url)
+        download_response.raise_for_status()
 
-            response = requests.post(
-                request_url,
-                data=multipart_data,
-                headers={
-                    "Authtoken": context.get_auth_token(),
-                    "Content-Type": multipart_data.content_type,
-                },
-            )
-    except (OSError, IOError) as e:
-        context.log(f"Error reading file '{file_path}': {e}", level="error")
-        raise UploadError(f"Failed to read file '{file_path}': {e}")
+        multipart_data = MultipartEncoder(
+            fields={
+                "file": (
+                    file_name,
+                    download_response.content,
+                    "application/octet-stream",
+                )
+            }
+        )
+
+        response = requests.post(
+            request_url,
+            data=multipart_data,
+            headers={
+                "Authtoken": context.get_auth_token(),
+                "Content-Type": multipart_data.content_type,
+            },
+        )
+    except requests.RequestException as e:
+        context.log(f"Error downloading file from '{download_url}': {e}", level="error")
+        raise UploadError(f"Failed to download file from '{download_url}': {e}")
 
     if response.status_code == 200:
-        context.log(f"Upload successful: {file_path}")
+        context.log(f"Upload successful: {file_name} (downloaded from {download_url})")
     else:
         context.log(f"Upload failed: {response.text}", level="error")
         raise UploadError(
-            f"Failed to upload binary file '{file_path}': {response.status_code} - {response.text}"
+            f"Failed to upload binary file '{file_name}': {response.status_code} - {response.text}"
         )
 
 
