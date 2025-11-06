@@ -1,7 +1,7 @@
 from collections import deque, defaultdict
 from typing import Any
 
-from common import validation_type_utils as utils
+from common import validation_type_utils as common_utils
 from common.arg_parser import create_argument_parser
 from cora.context import CoraContext, Context
 
@@ -44,7 +44,7 @@ def main():
 
     parser = create_argument_parser(
         description="Create new validationTypes with updated IDs and normalized values for a specific recordType.",
-        arguments=utils.create_validation_type_args
+        arguments=common_utils.create_validation_type_args
     )
 
     args = parser.parse_args()
@@ -61,52 +61,53 @@ def main():
         workers=args.workers,
     )
 
-    utils.init(CTX, TYPE_PREFIX, RECORD_TYPE, BLACKLIST_TYPES)
+    common_utils.init(CTX, TYPE_PREFIX, RECORD_TYPE, BLACKLIST_TYPES)
 
     if DRY_RUN:
-        utils.log("[SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
+        common_utils.log(
+            "[SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
 
     create_new_validation_types_for_record_type()
 
 
 def create_new_validation_types_for_record_type():
     global TOTAL_FETCHED
-    utils.log("Creating new validationTypes for recordType: " + RECORD_TYPE + " using prefix: " + TYPE_PREFIX)
+    common_utils.log("Creating new validationTypes for recordType: " + RECORD_TYPE + " using prefix: " + TYPE_PREFIX)
 
     validation_types = get_validation_types_to_process()
 
-    utils.log("=== Building node map ===")
+    common_utils.log("=== Building node map ===")
 
-    root_urls = utils.get_root_urls_for_validation_types(validation_types)
+    root_urls = common_utils.get_root_urls_for_validation_types(validation_types)
     for root_url in root_urls:
-        utils.build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
+        common_utils.build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
         TOTAL_FETCHED = len(GLOBAL_NODE_MAP)
 
     CTX.log(f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
 
     collect_record_info_children(GLOBAL_NODE_MAP)
 
-    utils.log("=== Processing node map ===")
+    common_utils.log("=== Processing node map ===")
 
     process_node_map_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
 
-    utils.log("=== Script finished ===")
+    common_utils.log("=== Script finished ===")
     log_results()
 
     print(f"\n=== Output logged to {CTX.get_log_file_path()} ===")
 
 
 def get_validation_types_to_process() -> list[Any]:
-    global EXISTING_VALIDATION_TYPES_WITH_PREFIX, TOTAL_FETCHED
+    global EXISTING_VALIDATION_TYPES_WITH_PREFIX
 
-    EXISTING_VALIDATION_TYPES_WITH_PREFIX = utils.get_ids_for_record_type_matching_prefix("validationType")
+    EXISTING_VALIDATION_TYPES_WITH_PREFIX = common_utils.get_ids_for_record_type_matching_prefix("validationType")
     if EXISTING_VALIDATION_TYPES_WITH_PREFIX:
-        utils.log(
+        common_utils.log(
             f"Found existing validation types that use prefix '{TYPE_PREFIX}', will possibly update these and create needed new ones.")
         return EXISTING_VALIDATION_TYPES_WITH_PREFIX
 
-    utils.log(f"Could not find any existing validation types with prefix '{TYPE_PREFIX}', will create new ones.")
-    return utils.get_validation_types_for_record_type()
+    common_utils.log(f"Could not find any existing validation types with prefix '{TYPE_PREFIX}', will create new ones.")
+    return common_utils.get_validation_types_for_record_type()
 
 
 def collect_record_info_children(global_node_map):
@@ -134,19 +135,20 @@ def collect_record_info_children(global_node_map):
 def find_record_info_roots(global_node_map) -> list[Any]:
     record_info_roots = [
         node for node in global_node_map.values()
-        if utils.record_info_group(node.xml_content)
+        if common_utils.record_info_group(node.xml_content)
     ]
     return record_info_roots
 
 
-def log_results():
-    utils.log(f"  Total records fetched:   {TOTAL_FETCHED}")
-    utils.log(f"  Total records processed: {TOTAL_PROCESSED_RECORDS}")
-    utils.log(f"  Total records created:   {TOTAL_CREATED}")
-    utils.log(f"  Total records updated:   {TOTAL_UPDATES}")
+def log_results():  # pragma: no cover
+    common_utils.log(f"  Total records fetched:   {TOTAL_FETCHED}")
+    common_utils.log(f"  Total records processed: {TOTAL_PROCESSED_RECORDS}")
+    common_utils.log(f"  Total records created:   {TOTAL_CREATED}")
+    common_utils.log(f"  Total records updated:   {TOTAL_UPDATES}")
 
     if TOTAL_FETCHED != TOTAL_PROCESSED_RECORDS:
-        utils.log(f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
+        common_utils.log(
+            f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
 
     if TOTAL_ERRORS:
         print("\nWarning! There were errors reported during processing, please check the log file for details.")
@@ -154,14 +156,13 @@ def log_results():
         for (error) in TOTAL_ERRORS:
             CTX.log(f" > {error}")
     else:
-        utils.log("No errors reported.")
+        common_utils.log("No errors reported.")
 
 
 def process_node_map_bottom_up_and_store(global_node_map, global_id_mapping):
     """
     Kahn's algorithm for topological sorting.
     Processes nodes only after all their children have been processed.
-    Detects and reports unprocessed nodes (cycles or disconnected).
     """
 
     # Build map and leaf queue of records to process
@@ -181,7 +182,11 @@ def process_node_map_bottom_up_and_store(global_node_map, global_id_mapping):
 
         process_node(global_id_mapping, node)
         processed.add(child_reference_url)
-        update_parent_dependencies(leaf_queue, node, unprocessed_child_map)
+        for parent in node.parents:
+            if parent.url in unprocessed_child_map:
+                unprocessed_child_map[parent.url] -= 1
+                if unprocessed_child_map[parent.url] == 0:
+                    leaf_queue.append(parent.url)
 
         print(
             f"Records processed: {len(processed)} - Records created: {TOTAL_CREATED} - Records updated: {TOTAL_UPDATES}",
@@ -219,13 +224,13 @@ def process_and_possibly_update(node, global_id_mapping):
         node.new_record_id = global_id_mapping[original_id]
         return False
 
-    if not utils.link_dependency_to_top_groups(node.xml_content):
+    if not common_utils.link_dependency_to_top_groups(node.xml_content):
         CTX.log(f"Top group dependencies was already set to use prefixes, skipping update of '{node.record_id}'...")
         return False
-    utils.remove_action_links(node.xml_content)
-    utils.update_child_references(node.xml_content, global_id_mapping)
+    common_utils.remove_action_links(node.xml_content)
+    common_utils.update_child_references(node.xml_content, global_id_mapping)
 
-    return utils.try_to_update_record(node, TOTAL_ERRORS)
+    return common_utils.try_to_update_record(node, TOTAL_ERRORS)
 
 
 def process_and_possibly_create(node, global_id_mapping):
@@ -236,42 +241,42 @@ def process_and_possibly_create(node, global_id_mapping):
         return False
 
     updated = False
-    utils.possibly_set_to_not_create_presentations(node)
+    common_utils.possibly_set_to_not_create_presentations(node)
 
-    if utils.update_final_value_of_validation_type(node.xml_content):
+    if common_utils.update_final_value_of_validation_type(node.xml_content):
         CTX.log(f"> Updated finalValue for {original_id} (validationType)")
         updated = True
 
-    elif utils.record_is_a_child_of_record_info(node, GLOBAL_RECORD_INFO_CHILDREN):
+    elif common_utils.record_is_a_child_of_record_info(node, GLOBAL_RECORD_INFO_CHILDREN):
         CTX.log(f"> Skipping {original_id} (record info child)")
         return False
 
     else:
-        updated = utils.possibly_update_data_of_non_record_info_child(node, original_id, updated)
+        updated = common_utils.possibly_update_data_of_non_record_info_child(node, original_id, updated)
 
     child_renamed = any(child.record_id in global_id_mapping for child in node.children)
 
     if not (updated or child_renamed):
-        utils.update_child_references(node.xml_content, global_id_mapping)
+        common_utils.update_child_references(node.xml_content, global_id_mapping)
         return False
 
-    new_id = utils.create_new_id_and_update_mapping(global_id_mapping, node)
-    utils.update_record_id_in_xml(node.xml_content, new_id)
-    utils.update_child_references(node.xml_content, global_id_mapping)
-    utils.remove_action_links(node.xml_content)
+    new_id = common_utils.create_new_id_and_update_mapping(global_id_mapping, node)
+    common_utils.update_record_id_in_xml(node.xml_content, new_id)
+    common_utils.update_child_references(node.xml_content, global_id_mapping)
+    common_utils.remove_action_links(node.xml_content)
 
-    if utils.update_data_divider(node.xml_content, DATA_DIVIDER):
+    if common_utils.update_data_divider(node.xml_content, DATA_DIVIDER):
         CTX.log(f"> Updated data divider of {original_id}")
 
     return prepare_and_try_to_save_record(node)
 
 
-def update_parent_dependencies(leaf_queue: deque[str], node, unprocessed_child_map: dict[str, int]):
-    for parent in node.parents:
-        if parent.url in unprocessed_child_map:
-            unprocessed_child_map[parent.url] -= 1
-            if unprocessed_child_map[parent.url] == 0:
-                leaf_queue.append(parent.url)
+# def update_parent_dependencies(leaf_queue: deque[str], node, unprocessed_child_map: dict[str, int]):
+#    for parent in node.parents:
+#        if parent.url in unprocessed_child_map:
+#            unprocessed_child_map[parent.url] -= 1
+#            if unprocessed_child_map[parent.url] == 0:
+#                leaf_queue.append(parent.url)
 
 
 def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
@@ -291,9 +296,9 @@ def prepare_and_try_to_save_record(node):
         CTX.log(f"  Dry run mode - not saving {node.new_record_id}\n")
         return True
 
-    content_root = utils.unwrap_and_clean_xml_for_create(node.xml_content)
+    content_root = common_utils.unwrap_and_clean_xml_for_create(node.xml_content)
 
-    return utils.try_to_create_record(node, content_root, TOTAL_ERRORS)
+    return common_utils.try_to_create_record(node, content_root, TOTAL_ERRORS)
 
 
 if __name__ == "__main__":  # pragma: no cover

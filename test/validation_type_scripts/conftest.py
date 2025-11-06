@@ -9,10 +9,15 @@ from cora.context import CoraContext
 
 
 @pytest.fixture
-def init_utils():
+def ctx():
     ctx: CoraContext = MagicMock()
     ctx.get_base_url.return_value = "http://baseUrl/"
     ctx.get_auth_token.return_value = "authToken"
+    return ctx
+
+
+@pytest.fixture
+def init_utils(ctx):
     common_utils.init(ctx, "__test_prefix_", "test_type", ["black_listed"])
     yield
 
@@ -23,39 +28,6 @@ def reset_global_data():
     common_utils._type_prefix = ""
     common_utils._record_type = ""
     common_utils._black_list = []
-
-
-@pytest.fixture()
-def create_node_tree():
-    #    '''
-    #
-    #    A     B
-    #   / \    |
-    #  C   D   |
-    #   \ /   /
-    #    E___/
-    #
-    #    '''
-    # Create nodes
-    node_A = common_utils.RecordNode("A", "typeA", "urlA", ET.Element("xmlrootA"))
-    node_B = common_utils.RecordNode("B", "typeB", "urlB", ET.Element("xmlrootB"))
-    node_C = common_utils.RecordNode("C", "typeC", "urlC", ET.Element("nodeC"))
-    node_D = common_utils.RecordNode("D", "typeD", "urlD", ET.Element("nodeD"))
-    node_E = common_utils.RecordNode("E", "typeE", "urlE", ET.Element("nodeE"))
-
-    # Define children relationships
-    node_A.children = [node_C, node_D]
-    node_B.children = [node_E]
-    node_C.children = [node_E]
-    node_D.children = [node_E]
-    node_E.children = []  # leaf
-
-    # Define parents relationships
-    node_C.parents = [node_A]
-    node_D.parents = [node_A]
-    node_E.parents = [node_C, node_D, node_B]
-
-    return {"A": node_A, "B": node_B, "C": node_C, "D": node_D, "E": node_E}
 
 
 class MockResponse:
@@ -106,16 +78,22 @@ def presentation_search_result_xml():
     <record>
     <presentation>
         <recordInfo>
-            <id>__XYZ_pres1</id>
+            <id>__test_prefix_pres1</id>
             <title>aok</title>
         </recordInfo>
     </presentation>
     <presentation>
         <recordInfo>
-            <id>__XYZ_pres2</id>
+            <id>__test_prefix_pres2</id>
             <title>aok2 Type 2</title>
         </recordInfo>
     </presentation>
+    <presentation>
+        <recordInfo>
+            <id>black_listed</id>
+            <title>aok2 Type 2</title>
+        </recordInfo>
+    </presentation> 
     </record>
 </recordList>
 """
@@ -351,3 +329,37 @@ def mock_top_level(record_node):
     read = ET.SubElement(action_links, "read")
     url = ET.SubElement(read, "url")
     url.text = "http://HOSTURL/updateGroupChild"
+    return record_node
+
+
+@pytest.fixture()
+def create_node_tree(mock_top_level):
+    #    '''
+    #
+    #    A     B
+    #   / \    |
+    #  C   D   |
+    #   \ /   /
+    #    E___/
+    #
+    #    '''
+    # Create nodes
+    node_A = common_utils.RecordNode("A", "typeA", "urlA", mock_top_level.xml_content)
+    node_B = common_utils.RecordNode("B", "typeB", "urlB", ET.Element("xmlrootB"))
+    node_C = common_utils.RecordNode("C", "typeC", "urlC", ET.Element("nodeC"))
+    node_D = common_utils.RecordNode("D", "typeD", "urlD", ET.Element("nodeD"))
+    node_E = common_utils.RecordNode("E", "typeE", "urlE", ET.Element("nodeE"))
+
+    # Define children relationships
+    node_A.children = [node_C, node_D]
+    node_B.children = [node_E]
+    node_C.children = [node_E]
+    node_D.children = [node_E]
+    node_E.children = []  # leaf
+
+    # Define parents relationships
+    node_C.parents = [node_A]
+    node_D.parents = [node_A]
+    node_E.parents = [node_C, node_D, node_B]
+
+    return {"A": node_A, "B": node_B, "C": node_C, "D": node_D, "E": node_E}

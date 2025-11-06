@@ -364,7 +364,7 @@ def test_get_validation_types_for_record_type(init_utils):
 
 def test_get_ids_for_record_type_matching_prefix(init_utils):
     results = common_utils.get_ids_for_record_type_matching_prefix("presentation")
-    assert results == ["__XYZ_pres1", "__XYZ_pres2"]
+    assert results == ["__test_prefix_pres1", "__test_prefix_pres2"]
 
 
 def test_break_dependency_to_top_groups(init_utils, record_node):

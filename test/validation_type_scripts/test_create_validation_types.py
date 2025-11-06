@@ -1,533 +1,207 @@
-# import xml.etree.ElementTree as ET
-# from types import SimpleNamespace
-#
-# import requests
-#
-# import scripts.create_new_validationTypes_for_recordType as Script
-#
-#
-# def create_mock_top_level_child(record_node):
-#     record_info = record_node.xml_content.find(".//recordInfo")
-#     name_in_data = record_node.xml_content.find(".//nameInData")
-#     name_in_data.text = "recordInfo"
-#
-#     metadata_id = ET.SubElement(record_info, "metadataId")
-#     action_links = ET.SubElement(metadata_id, "actionLinks")
-#     read = ET.SubElement(action_links, "read")
-#     url = ET.SubElement(read, "url")
-#     url.text = "http://HOSTURL/someTopLevelChild"
-#
-#
-# def test_collect_record_info_children(record_node):
-#     create_mock_top_level_child(record_node)
-#     record_node.children = [Script.RecordNode("child1", "type1", "http://child1", ET.Element("xml1")),
-#                             Script.RecordNode("child1", "type1", "http://child1",
-#                                               ET.Element("duplicate_for_branch_test")),
-#                             Script.RecordNode("child2", "type2", "http://child2", ET.Element("xml2"))]
-#     node_map = {"root_url": record_node}
-#     Script.collect_record_info_children(node_map)
-#
-#     assert "http://HOSTURL/someTopLevelChild" not in Script.GLOBAL_RECORD_INFO_CHILDREN
-#     assert "http://child1" in Script.GLOBAL_RECORD_INFO_CHILDREN
-#     assert "http://child2" in Script.GLOBAL_RECORD_INFO_CHILDREN
-#     assert len(Script.GLOBAL_RECORD_INFO_CHILDREN) == 2
-#
-#
-# def test_update_final_value_of_validation_type(sample_xml):
-#     root = ET.fromstring(sample_xml)
-#     metadata = root.find(".//metadata")
-#     metadata.set("type", "recordLink")
-#     name_in_data = root.find(".//nameInData")
-#     name_in_data.text = "validationType"
-#     metadata.append(ET.Element("finalValue"))
-#
-#     updated = Script.update_final_value_of_validation_type(root)
-#     final_value = root.find(".//finalValue").text
-#     final_value.startswith(Script.TYPE_PREFIX)
-#     assert updated
-#
-#
-# def test_build_node_map_from_child_references_root_url_already_in_map(record_node):
-#     global_node_map = {"root_url": record_node}
-#
-#     Script.build_node_map_from_child_references("root_url", global_node_map)
-#     assert len(global_node_map) == 1
-#
-#
-# def test_build_node_map_from_child_references_new_url_added(record_node, monkeypatch):
-#     global_node_map = {}
-#
-#     def fake_collect_nodes_from_root(root_url, node_map):
-#         node_map[root_url] = record_node
-#
-#     monkeypatch.setattr(Script, "collect_nodes_from_root", fake_collect_nodes_from_root)
-#
-#     Script.build_node_map_from_child_references("http://root_url", global_node_map)
-#     assert len(global_node_map) == 1
-#     assert "http://root_url" in global_node_map
-#
-#
-# def test_process_queue_already_in_node_map(record_node, monkeypatch):
-#     global_node_map = {"http://root_url": record_node}
-#     called = False
-#
-#     def fake_fetch(url):
-#         nonlocal called
-#         called = True
-#         return "<xml></xml>"
-#
-#     monkeypatch.setattr(Script, "fetch_record_as_xml", fake_fetch)
-#     Script.collect_nodes_from_root("http://root_url", global_node_map)
-#     assert called == False
-#
-#
-# def test_process_queue_and_add_note_to_map(sample_xml, monkeypatch):
-#     global_node_map = {}
-#     called = False
-#
-#     def fake_fetch(url):
-#         nonlocal called
-#         called = True
-#         return sample_xml
-#
-#     def fake_collect_child_urls(node, root_url, url):
-#         return ["http://child_url", "http://another_child_url"]
-#
-#     monkeypatch.setattr(Script, "fetch_record_as_xml", fake_fetch)
-#     monkeypatch.setattr(Script, "collect_child_urls", fake_collect_child_urls)
-#
-#     Script.collect_nodes_from_root("http://root_url", global_node_map)
-#     assert called == True
-#     assert global_node_map["http://root_url"].record_id == "divaTextNewGroup"
-#
-#
-# def test_process_and_possibly_save_not_saved_due_to_not_updated(record_node, monkeypatch):
-#     monkeypatch.setattr(Script, "is_already_processed", lambda node, mapping: False)
-#     monkeypatch.setattr(Script, "normalize_regex_patterns", lambda node: False)
-#     monkeypatch.setattr(Script, "normalize_child_reference_repeat", lambda node: False)
-#     monkeypatch.setattr(Script, "update_data_divider", lambda node: False)
-#
-#     result = Script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
-#     assert result is False
-#
-#
-# def test_process_and_possibly_save_not_saved_due_to_already_processed(record_node, monkeypatch):
-#     def fake_is_already_processed(node, mapping):
-#         return True
-#
-#     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.is_already_processed",
-#                         fake_is_already_processed)
-#
-#     result = Script.process_and_possibly_create(record_node, {"divaTextNewGroup": "XYZ_divaTextNewGroup"})
-#     assert result is False
-#
-#
-# def test_process_and_possibly_save(record_node, monkeypatch):
-#     saved_nodes = []
-#
-#     def fake_prepare_and_try_to_save_record(node):
-#         saved_nodes.append(node.record_id)
-#         return True
-#
-#     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.prepare_and_try_to_save_record",
-#                         fake_prepare_and_try_to_save_record)
-#
-#     result = Script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
-#     assert result is True
-#     assert "divaTextNewGroup" in saved_nodes
-#
-#
-# def test_process_and_possibly_save_not_saved(record_node, monkeypatch):
-#     def fake_prepare_and_try_to_save_record(node):
-#         return False
-#
-#     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.prepare_and_try_to_save_record",
-#                         fake_prepare_and_try_to_save_record)
-#
-#     result = Script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
-#     assert result is False
-#
-#
-# def test_process_and_possibly_save_update_final_value(record_node, monkeypatch):
-#     called = False
-#     not_called = True
-#
-#     def fake_update_final_value_of_validation_type(node):
-#         nonlocal called
-#         called = True
-#         return True
-#
-#     def fake_record_is_a_child_of_record_info(node):
-#         nonlocal not_called
-#         not_called = False
-#         return False
-#
-#     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.update_final_value_of_validation_type",
-#                         fake_update_final_value_of_validation_type)
-#     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.record_is_a_child_of_record_info",
-#                         fake_record_is_a_child_of_record_info)
-#
-#     result = Script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
-#     assert result is True
-#     assert called
-#     assert not_called
-#
-#
-# def test_process_and_possibly_save_skip_record_info_child(record_node, monkeypatch):
-#     called = False
-#     not_called = True
-#
-#     def fake_update_final_value_of_validation_type(node):
-#         nonlocal not_called
-#         not_called = True
-#         return False
-#
-#     def fake_record_is_a_child_of_record_info(node):
-#         nonlocal called
-#         called = True
-#         return True
-#
-#     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.update_final_value_of_validation_type",
-#                         fake_update_final_value_of_validation_type)
-#     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.record_is_a_child_of_record_info",
-#                         fake_record_is_a_child_of_record_info)
-#
-#     result = Script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
-#     assert result is False
-#     assert called
-#     assert not_called
-#
-#
-# def test_prepare_and_try_to_save_record(record_node, monkeypatch):
-#     Script.prepare_and_try_to_save_record(record_node)
-#
-#     assert record_node.record_id == "divaTextNewGroup"
-#     assert record_node.record_type == "validationType"
-#     assert record_node.url == "http://HOSTURL/record/divaTextNewGroup"
-#     assert isinstance(record_node.xml_content, ET.Element)
-#
-#
-# def test_prepare_and_try_to_save_record_not_dry_run(record_node, monkeypatch):
-#     Script.DRY_RUN = False
-#     Script.prepare_and_try_to_save_record(record_node)
-#
-#     assert record_node.record_id == "divaTextNewGroup"
-#     assert record_node.record_type == "validationType"
-#     assert record_node.url == "http://HOSTURL/record/divaTextNewGroup"
-#     assert isinstance(record_node.xml_content, ET.Element)
-#
-#
-# def test_find_top_level_children(record_node):
-#     record_info = record_node.xml_content.find(".//recordInfo")
-#
-#     metadata_id = ET.SubElement(record_info, "metadataId")
-#     action_links = ET.SubElement(metadata_id, "actionLinks")
-#     read = ET.SubElement(action_links, "read")
-#     url = ET.SubElement(read, "url")
-#     url.text = "http://HOSTURL/someTopLevelChild"
-#
-#     urls = Script.find_top_level_children(record_node.xml_content)
-#
-#     assert isinstance(urls, list)
-#     assert urls == ["http://HOSTURL/someTopLevelChild"]
-#
-#
-# def test_normalize_regex_patterns(record_node):
-#     updated = Script.normalize_regex_patterns(record_node.xml_content)
-#     regex_text = record_node.xml_content.find(".//regEx").text
-#     assert updated
-#     assert regex_text == ".+"
-#
-#
-# def test_normalize_child_reference_repeat(record_node):
-#     updated = Script.normalize_child_reference_repeat(record_node.xml_content)
-#     child = record_node.xml_content.find(".//childReference")
-#     assert updated
-#     assert child.find("repeatMin").text == "0"
-#     assert child.find("repeatMax").text == "X"
-#
-#
-# def test_update_child_references_multiple(record_node):
-#     id_mapping = {
-#         "metadataGroup": "XYZ_metadataGroup",
-#         "coraTextGroup": "XYZ_coraTextGroup",
-#         "textPartEnGroup": "XYZ_textPartEnGroup",
-#     }
-#
-#     Script.update_child_references(record_node.xml_content, id_mapping)
-#     after = [el.text.strip() for el in record_node.xml_content.findall(".//linkedRecordId")]
-#
-#     for old, new in id_mapping.items():
-#         assert new in after
-#         assert old not in after
-#
-#
-# def test_update_record_id_in_xml(record_node):
-#     Script.update_record_id_in_xml(record_node.xml_content, "XYZ_999")
-#     assert record_node.xml_content.find(".//recordInfo/id").text == "XYZ_999"
-#
-#
-# def test_remove_action_links(record_node):
-#     Script.remove_action_links(record_node.xml_content)
-#     urls = record_node.xml_content.findall(".//actionLinks")
-#     assert not urls
-#
-#
-# def test_clean_and_unwrap_xml(record_node):
-#     content = Script.unwrap_and_clean_xml_for_create(record_node.xml_content)
-#     assert content.tag == "metadata"
-#     Script.remove_unwanted_elements_for_creation(content)
-#     for tag in ["type", "createdBy", "tsCreated", "updated"]:
-#         assert content.find(tag) is None
-#
-#
-# def test_to_xml_bytes(record_node):
-#     xml_bytes = Script.to_xml_bytes(record_node.xml_content)
-#     assert isinstance(xml_bytes, bytes)
-#     assert xml_bytes.startswith(b"<?xml")
-#
-#
-# def test_collect_child_urls(record_node):
-#     urls = Script.collect_child_urls(record_node, "http://root_url", "http://some_url")
-#     assert urls == ['http://HOSTURL/recordInfoNewDivaTextGroup', 'http://HOSTURL/textPartSvGroup',
-#                     'http://HOSTURL/textPartEnGroup']
-#
-#
-# def test_collect_top_level_children(record_node):
-#     create_mock_top_level_child(record_node)
-#
-#     urls = Script.collect_child_urls(record_node, "http://root_url", "http://root_url")
-#
-#     assert isinstance(urls, list)
-#     assert urls == ["http://HOSTURL/someTopLevelChild"]
-#
-#
-# def test_check_for_unprocessed_nodes_updates_total_errors(monkeypatch):
-#     global_node_map = {"url1": object(), "url2": object()}
-#     processed = {"url1"}
-#
-#     Script.check_for_unprocessed_nodes(global_node_map, processed)
-#     assert any("url2" in err for err in Script.TOTAL_ERRORS)
-#     assert not any("url1" in err for err in Script.TOTAL_ERRORS)
-#
-#
-# def test_check_for_unprocessed_nodes_no_unprocessed(monkeypatch):
-#     global_node_map = {"url1": object()}
-#     processed = {"url1"}
-#
-#     Script.check_for_unprocessed_nodes(global_node_map, processed)
-#     assert Script.TOTAL_ERRORS == []
-#
-#
-# def test_create_new_id_and_update_mapping(record_node):
-#     id_mapping = {}
-#     Script.TYPE_PREFIX = "__XYZ_"
-#     new_id = Script.create_new_id_and_update_mapping(id_mapping, record_node, "123")
-#     assert new_id == "__XYZ_123"
-#     assert id_mapping["123"] == "__XYZ_123"
-#     assert record_node.new_record_id == "__XYZ_123"
-#
-#
-# def test_is_already_processed(record_node):
-#     id_mapping = {"divaTextNewGroup": "apa"}
-#     skipped = Script.is_already_processed(record_node.record_id, id_mapping)
-#     assert skipped
-#
-#
-# def test_is_already_processed_is_false(record_node):
-#     id_mapping = {"NotProcessedGroup": "apa"}
-#     skipped = Script.is_already_processed(record_node.record_id, id_mapping)
-#     assert not skipped
-#
-#
-# def test_link_parent_child_relationship(record_node):
-#     child_node = Script.RecordNode("child_node", "someType", "http://child_node", record_node.xml_content)
-#     record_node.child_urls = ["http://child_node"]
-#     visited = {
-#         "http://parent_node": record_node,
-#         "http://child_node": child_node
-#     }
-#     Script.link_parent_child_relationship(visited)
-#     assert child_node.parents == [record_node]
-#     assert record_node.children == [child_node]
-#
-#
-# def test_process_node_success(monkeypatch, record_node):
-#     monkeypatch.setattr(Script, "process_and_possibly_save", lambda node, mapping: True)
-#     Script.process_node({}, record_node)
-#     assert Script.TOTAL_PROCESSED_RECORDS == 1
-#     assert Script.TOTAL_UPDATES == 1
-#     assert Script.TOTAL_ERRORS == []
-#
-#
-# def test_process_node_failure(monkeypatch, record_node):
-#     Script.TOTAL_PROCESSED_RECORDS = 0
-#     Script.TOTAL_UPDATES = 0
-#     Script.TOTAL_ERRORS.clear()
-#
-#     def throw_exception(node, mapping):
-#         raise ValueError("fail to save")
-#
-#     monkeypatch.setattr(Script, "process_and_possibly_save", throw_exception)
-#     Script.process_node({}, record_node)
-#     assert Script.TOTAL_PROCESSED_RECORDS == 1
-#     assert Script.TOTAL_UPDATES == 0
-#     assert len(Script.TOTAL_ERRORS) == 1
-#     assert "Error processing divaTextNewGroup: fail to save" in Script.TOTAL_ERRORS[0]
-#
-#
-# # Node map bottom-up processing with mocks
-# def test_process_graph_with_relationships(monkeypatch, create_node_tree):
-#     node_tree = create_node_tree
-#
-#     node_map = {
-#         "urlA": node_tree["A"],
-#         "urlB": node_tree["B"],
-#         "urlC": node_tree["C"],
-#         "urlD": node_tree["D"],
-#         "urlE": node_tree["E"]
-#     }
-#
-#     id_mapping = {}
-#
-#     processed_order = []
-#
-#     def fake_process_node(id_mapping, node):
-#         processed_order.append(node.record_id)
-#         return True
-#
-#     monkeypatch.setattr("scripts.create_new_validationTypes_for_recordType.process_node", fake_process_node)
-#
-#     Script.process_node_map_bottom_up_and_store(node_map, id_mapping)
-#
-#     # Check order of processing
-#     assert processed_order[0] == "E"
-#     assert processed_order.index("D") > processed_order.index("E")
-#     assert processed_order.index("C") > processed_order.index("E")
-#     assert processed_order[-1] in {"A", "B"}
-#     assert processed_order[-2] in {"A", "B"}
-#     assert set(processed_order) == {"A", "B", "C", "D", "E"}
-#
-#
-# def test_get_search_data():
-#     data = Script.get_search_data_for_record_type()
-#     assert data is not None
-#
-#
-# def test_get_validation_types_for_record_type():
-#     results = Script.get_validation_types_for_record_type()
-#     assert results == ["valType1", "valType2"]
-#
-#
-# def test_collect_validation_types_from_response(monkeypatch, validation_type_search_result_xml):
-#     validation_type_search_result = ET.fromstring(validation_type_search_result_xml)
-#     list_of_types = Script.collect_validation_types_from_response(validation_type_search_result)
-#     assert list_of_types == ["valType1", "valType2"]
-#
-#
-# def test_collect_validation_types_from_response_with_blacklisted_types(monkeypatch, validation_type_search_result_xml):
-#     search_result = ET.fromstring(validation_type_search_result_xml)
-#     for elem in search_result.iter("id"):
-#         if elem.text == "valType2":
-#             elem.text = "diva-output"
-#             break
-#
-#     list_of_types = Script.collect_validation_types_from_response(search_result)
-#     assert len(list_of_types) == 1
-#     assert list_of_types == ["valType1"]
-#
-#
-# def test_fetch_record_as_xml(monkeypatch, sample_xml):
-#     xml = Script.fetch_record_as_xml("http://someurl/record")
-#     assert sample_xml in xml
-#
-#
-# def test_try_to_store_record_sucessful(monkeypatch, record_node):
-#     def fake_post(url, data=None, *args, **kwargs):
-#         return MockResponse("Record stored", 201)
-#
-#     monkeypatch.setattr(requests, "post", fake_post)
-#     success = Script.try_to_store_record(record_node, "someUrl", b"<xml></xml>")
-#     assert success
-#
-#
-# def test_try_to_store_record_with_failed_response(monkeypatch, record_node):
-#     def fake_post(url, data=None, *args, **kwargs):
-#         return MockResponse("Error occurred", 400)
-#
-#     monkeypatch.setattr(requests, "post", fake_post)
-#     success = Script.try_to_store_record(record_node, "someUrl", b"<xml></xml>")
-#     assert not success
-#
-#
-# def test_try_to_store_record_with_exception(monkeypatch, record_node):
-#     def fake_post(url, data=None, *args, **kwargs):
-#         raise requests.RequestException("Network error")
-#
-#     monkeypatch.setattr(requests, "post", fake_post)
-#     success = Script.try_to_store_record(record_node, "someUrl", b"<xml></xml>")
-#     assert not success
-#
-#
-# def test_log_results(monkeypatch, mock_ctx):
-#     Script.TOTAL_FETCHED = 10
-#     Script.TOTAL_PROCESSED_RECORDS = 8
-#     Script.TOTAL_UPDATES = 5
-#     Script.TOTAL_ERRORS = ["Error 1", "Error 2"]
-#     Script.log_results()
-#
-#     calls = [call.args[0] for call in mock_ctx.log.mock_calls]
-#
-#     assert "Total records fetched:   10" in calls[0]
-#     assert "Total records processed: 8" in calls[1]
-#     assert "Total records created:   5" in calls[2]
-#
-#     assert any("WARNING" in msg for msg in calls)
-#
-#     assert any("=== Errors reported ===" in msg for msg in calls)
-#     assert any(" > Error 1" in msg for msg in calls)
-#     assert any(" > Error 2" in msg for msg in calls)
-#
-#
-# def test_log_results_no_errors(monkeypatch, mock_ctx):
-#     Script.TOTAL_ERRORS = []
-#     Script.log_results()
-#
-#     calls = [call.args[0] for call in mock_ctx.log.mock_calls]
-#
-#     assert any("No errors reported." in msg for msg in calls)
-#
-#
-# def test_create_new_validation_types_for_record_type(monkeypatch, mock_ctx):
-#     monkeypatch.setattr(Script, "get_validation_types_for_record_type", lambda: ["valType1", "valType2"])
-#     monkeypatch.setattr(Script, "build_node_map_from_child_references", lambda url, mapping: mapping.update(
-#         {url: Script.RecordNode("id", "type", url, ET.Element("xml"))}))
-#     monkeypatch.setattr(Script, "process_node_map_bottom_up_and_store", lambda mapping, id_map: {})
-#     monkeypatch.setattr(Script, "check_for_unprocessed_nodes", lambda mapping, processed: None)
-#
-#     Script.create_new_validation_types_for_record_type()
-#
-#     calls = [call.args[0] for call in mock_ctx.log.mock_calls]
-#     assert any("All records fetched: total unique records collected in node map: 2" in msg for msg in calls)
-#     assert any("=== Script finished ===" in msg for msg in calls)
-#
-#
-# def test_main(monkeypatch, mock_ctx):
-#     fake_args = SimpleNamespace(
-#         system="testSystem",
-#         login_id="user",
-#         app_token="token",
-#         workers=1,
-#         prefix="__XYZ_",
-#         recordtype="diva-output",
-#         datadivider="diva",
-#         apply=False
-#     )
-#
-#     monkeypatch.setattr(Script, "create_argument_parser",
-#                         lambda **kwargs: SimpleNamespace(parse_args=lambda: fake_args))
-#     monkeypatch.setattr(Script, "CoraContext", lambda **kwargs: mock_ctx)
-#
-#     Script.main()
-#
-#     assert Script.CTX is mock_ctx
+from types import SimpleNamespace
+
+import pytest
+import requests
+
+import scripts.create_new_validation_types as script
+from common import validation_type_utils as common_utils
+from validation_type_scripts.conftest import mock_top_level
+
+
+@pytest.fixture(autouse=True)
+def reset_global_data():
+    script.CTX = None
+    script.TOTAL_ERRORS = []
+    script.TOTAL_UPDATES = 0
+    script.TOTAL_UPDATES = 0
+    script.TOTAL_CREATED = 0
+    script.TOTAL_FETCHED = 0
+    script.TOTAL_PROCESSED_RECORDS = 0
+
+
+def test_get_validation_types_to_process(init_utils):
+    assert script.get_validation_types_to_process()
+
+
+def test_process_queue_and_add_note_to_map(sample_xml, monkeypatch):
+    global_node_map = {}
+    called = False
+
+    def fake_fetch(url):
+        nonlocal called
+        called = True
+        return sample_xml
+
+    def fake_collect_child_urls(node, root_url, url):
+        return ["http://child_url", "http://another_child_url"]
+
+    monkeypatch.setattr(common_utils, "fetch_record_as_xml", fake_fetch)
+    monkeypatch.setattr(common_utils, "collect_child_urls", fake_collect_child_urls)
+
+    common_utils.collect_nodes_from_root("http://root_url", global_node_map)
+    assert called == True
+    assert global_node_map["http://root_url"].record_id == "divaTextNewGroup"
+
+
+def test_process_and_possibly_save_not_saved_due_to_not_updated(record_node, monkeypatch):
+    monkeypatch.setattr(script, "is_already_processed", lambda node, mapping: False)
+    monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda node: False)
+    monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda node: False)
+    monkeypatch.setattr(common_utils, "update_data_divider", lambda node: False)
+
+    result = script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
+    assert result is False
+
+
+def test_create_new_validation_types_for_record_type(monkeypatch, init_utils, ctx):
+    script.CTX = ctx
+    script.create_new_validation_types_for_record_type()
+
+    calls = [call.args[0] for call in ctx.log.mock_calls]
+    assert any("All records fetched: total unique records collected in node map: 2" in msg for msg in calls)
+    assert any("=== Script finished ===" in msg for msg in calls)
+
+
+def test_get_validation_types_to_process2(init_utils, monkeypatch):
+    def fake_reply(type):
+        return ["__test_prefix_some1"]
+
+    monkeypatch.setattr(common_utils, "get_ids_for_record_type_matching_prefix", fake_reply)
+
+    id_list = script.get_validation_types_to_process()
+    assert "__test_prefix_some1" in id_list
+
+
+def test_collect_record_info_children(init_utils, create_node_tree):
+    script.collect_record_info_children(create_node_tree)
+
+    expected_children = {"urlC", "urlD", "urlE"}
+    assert expected_children <= script.GLOBAL_RECORD_INFO_CHILDREN.keys()
+
+
+def test_process_node_create(init_utils, record_node, ctx):
+    script.CTX = ctx
+    script.process_node({"a": "b"}, record_node)
+    assert script.TOTAL_CREATED == 1
+    assert script.TOTAL_UPDATES == 0
+
+
+def test_process_node_update(init_utils, record_node, ctx):
+    script.CTX = ctx
+    record_node.record_id = "a"
+    script.EXISTING_VALIDATION_TYPES_WITH_PREFIX = ["a"]
+    script.process_node({"a": "b"}, record_node)
+    assert script.TOTAL_CREATED == 0
+    assert script.TOTAL_UPDATES == 1
+
+
+def test_process_node_exception(init_utils, record_node, ctx, monkeypatch):
+    script.CTX = ctx
+
+    monkeypatch.setattr(
+        script, "process_and_possibly_create", lambda *args, **kwargs: (_ for _ in ())
+        .throw(requests.HTTPError("some exception")))
+
+    script.process_node({"a": "b"}, record_node)
+
+    assert script.TOTAL_CREATED == 0
+    assert script.TOTAL_UPDATES == 0
+    assert "Error processing divaTextNewGroup: some exception" in script.TOTAL_ERRORS
+
+
+def test_process_and_possibly_update_dry_run(init_utils, record_node, ctx):
+    script.CTX = ctx
+    script.DRY_RUN = True
+
+
+def test_process_and_possibly_update(init_utils, mock_top_level, ctx, monkeypatch):
+    script.CTX = ctx
+    script.DRY_RUN = False
+
+    monkeypatch.setattr(common_utils, "link_dependency_to_top_groups", lambda node, mapping=None: True)
+
+    assert script.process_and_possibly_update(mock_top_level, {"a": "b"})
+
+
+def test_process_and_possibly_update_already_processed(init_utils, mock_top_level, ctx, monkeypatch):
+    script.CTX = ctx
+    script.DRY_RUN = False
+    monkeypatch.setattr(script, "is_already_processed", lambda *args, **kwargs: True)
+
+    global_id_mapping = {"divaTextNewGroup": "some_new_id"}
+    assert not script.process_and_possibly_update(mock_top_level, global_id_mapping)
+
+
+def test_process_and_possibly_update_children_already_prefixed(init_utils, mock_top_level, ctx, monkeypatch):
+    script.CTX = ctx
+    script.DRY_RUN = False
+
+    monkeypatch.setattr(common_utils, "link_dependency_to_top_groups", lambda node, mapping=None: False)
+
+    assert not script.process_and_possibly_update(mock_top_level, {"a": "b"})
+
+
+def test_process_and_possibly_create_with_updated_final_value(init_utils, ctx, record_node, monkeypatch):
+    script.CTX = ctx
+    script.DRY_RUN = False
+
+    monkeypatch.setattr(common_utils, "update_final_value_of_validation_type", lambda node, mapping=None: True)
+
+    assert script.process_and_possibly_create(record_node, {"a": "b"})
+
+
+def test_process_and_possibly_create_fail_because_record_info_child(init_utils, ctx, record_node, monkeypatch):
+    script.CTX = ctx
+    script.DRY_RUN = False
+
+    monkeypatch.setattr(common_utils, "record_is_a_child_of_record_info", lambda node, mapping=None: True)
+
+    assert not script.process_and_possibly_create(record_node, {"a": "b"})
+
+
+def test_unprocessed_nodes(init_utils, ctx, monkeypatch):
+    script.CTX = ctx
+
+    global_node_map = {"urlA": "nodeA"}
+    processed = {}
+
+    script.check_for_unprocessed_nodes(global_node_map, processed)
+
+    assert "Warning: Record: urlA was never processed" in script.TOTAL_ERRORS
+
+
+def test_process_node_map_bottom_up_and_store(init_utils, create_node_tree, ctx, monkeypatch):
+    script.CTX = ctx
+    node_tree = create_node_tree
+    global_node_map = {
+        "urlA": node_tree["A"],
+        "urlB": node_tree["B"],
+        "urlC": node_tree["C"],
+        "urlD": node_tree["D"],
+        "urlE": node_tree["E"]
+    }
+    global_id_mapping = {"divaTextNewGroup": "some_new_id"}
+
+    script.process_node_map_bottom_up_and_store(global_node_map, global_id_mapping)
+    assert script.TOTAL_PROCESSED_RECORDS == 5
+
+
+def test_main(monkeypatch, ctx):
+    fake_args = SimpleNamespace(
+        system="testSystem",
+        login_id="user",
+        app_token="token",
+        workers=1,
+        prefix="__XYZ_",
+        recordtype="diva-output",
+        datadivider="diva",
+        apply=False
+    )
+
+    monkeypatch.setattr(script, "create_argument_parser",
+                        lambda **kwargs: SimpleNamespace(parse_args=lambda: fake_args))
+    monkeypatch.setattr(script, "CoraContext", lambda **kwargs: ctx)
+
+    script.main()
+
+    assert script.CTX is ctx

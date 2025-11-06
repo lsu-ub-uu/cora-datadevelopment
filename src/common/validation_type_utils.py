@@ -381,14 +381,14 @@ def get_validation_types_for_record_type():
     search_data = get_validation_type_search_data_for_record_type(_record_type)
     response_body = get_validation_types_using_search_data("validationType", search_data)
 
-    return collect_ids_from_response("validationType", response_body, False)
+    return collect_ids_from_response("validationType", response_body)
 
 
 def get_ids_for_record_type_matching_prefix(record_type: str):
     search_data = get_record_id_search_data_for_prefix_using_record_type(record_type)
     response_body = get_validation_types_using_search_data(record_type, search_data)
 
-    return collect_ids_from_response(record_type, response_body, True)
+    return collect_ids_from_response_matching_prefix(record_type, response_body)
 
 
 def get_validation_types_using_search_data(record_type: str, search_data: bytes):
@@ -404,13 +404,26 @@ def get_validation_types_using_search_data(record_type: str, search_data: bytes)
     return response_body
 
 
-def collect_ids_from_response(record_type: str, response_body: ET.Element, get_existing_matching_prefix: bool) -> list[
-    Any]:
+def collect_ids_from_response_matching_prefix(record_type: str, response_body: ET.Element) -> list[Any]:
     ids = []
     for element in response_body.findall(f".//{record_type}/recordInfo/id"):
-        if not get_existing_matching_prefix:
-            if element.text is None or element.text.startswith(_type_prefix) or element.text in _black_list:
-                continue
+        record_id = element.text
+        if record_id is None or record_id in _black_list:
+            continue
+
+        if element.text.startswith(_type_prefix):
+            ids.append((element.text or "").strip())
+
+    return ids
+
+
+def collect_ids_from_response(record_type: str, response_body: ET.Element) -> list[Any]:
+    ids = []
+    for element in response_body.findall(f".//{record_type}/recordInfo/id"):
+        record_id = element.text
+        if record_id is None or record_id in _black_list:
+            continue
+
         ids.append((element.text or "").strip())
 
     return ids
