@@ -36,20 +36,20 @@ def output_migrate(
             context=context,
         )
 
-        if is_success_result(create_record_result):
-            success, errors = attachments_migrate(
-                source_record,
-                create_record_result.response_data,
-                context,
-                xml_dir,
-            )
-            if not success:
-                context.log(
-                    f"❌ Failed to migrate attachments for record with old id {source_record.findtext('.//pid')} Rolling back.",
-                    level="error",
-                )
-                delete_record(create_record_result.response_data, context)
-                return False, errors
+        # if is_success_result(create_record_result):
+        #     success, errors = attachments_migrate(
+        #         source_record,
+        #         create_record_result.response_data,
+        #         context,
+        #         xml_dir,
+        #     )
+        #     if not success:
+        #         context.log(
+        #             f"❌ Failed to migrate attachments for record with old id {source_record.findtext('.//pid')} Rolling back.",
+        #             level="error",
+        #         )
+        #         delete_record(create_record_result.response_data, context)
+        #         return False, errors
 
         return create_record_result.success, (
             [create_record_result.error] if create_record_result.error else None
