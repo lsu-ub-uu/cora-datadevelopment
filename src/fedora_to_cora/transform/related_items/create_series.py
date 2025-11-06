@@ -91,14 +91,16 @@ def _create_uncontrolled_series(series_xml: ET.Element, repeat_id: str) -> ET.El
     pissn = create_identifier(
         source_record=series_xml, type="issn", source_selector="./series/issn"
     )
-    pissn[0].set("displayLabel", "pissn")
-    append_if_value(related_item, pissn)
+    if len(pissn) > 0:
+        pissn[0].set("displayLabel", "pissn")
+        append_if_value(related_item, pissn)
 
     eissn = create_identifier(
         source_record=series_xml, type="issn", source_selector="./series/eissn"
     )
-    eissn[0].set("displayLabel", "eissn")
-    append_if_value(related_item, eissn)
+    if len(eissn) > 0:
+        eissn[0].set("displayLabel", "eissn")
+        append_if_value(related_item, eissn)
 
     number_in_series = series_xml.findtext("numberInSeries")
     if number_in_series is not None:
