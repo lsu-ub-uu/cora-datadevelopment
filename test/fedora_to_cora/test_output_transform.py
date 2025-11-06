@@ -269,14 +269,6 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             <year>2022</year>
             <academicSemester>ht</academicSemester>
         </academicSemester>
-        <externalCollaboration>
-            <namePart repeatId="0">
-                En extern partner
-            </namePart>
-            <namePart repeatId="1">
-                Ytterligare extern partner
-            </namePart>
-        </externalCollaboration>
         <studentDegree repeatId="0">
             <degreeLevel>H2</degreeLevel>
             <universityPoints>20</universityPoints>
@@ -532,7 +524,7 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
             </adminInfo>
             <identifier type="localId" repeatId="0">xxxxx</identifier>
             <relatedItem type="book" otherType="text">
-                <titleInfo lang="swe">
+                <titleInfo>
                     <title>Skansen 125</title>
                 </titleInfo>
                 <note type="statementOfResponsibility">Fejkelina Jönsson</note>
@@ -598,6 +590,151 @@ def test_output_transform_minimal():
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">publication_journal-article</genre>
+        </output>                      
+    """,
+    )
+
+
+def test_output_transform_wierd():
+    fedora_xml = ET.fromstring(
+        """
+        <publication>
+            <contentType>
+                <contentTypeId>50</contentTypeId>
+                <contentTypeCode>refereed</contentTypeCode>
+                <contentTypeNames>
+                    <contentTypeName>
+                        <contentTypeNameId>106</contentTypeNameId>
+                        <locale>no</locale>
+                        <contentTypeName>Fagfellevurdert</contentTypeName>
+                    </contentTypeName>
+                    <contentTypeName>
+                        <contentTypeNameId>101</contentTypeNameId>
+                        <locale>sv</locale>
+                        <contentTypeName>Refereegranskat</contentTypeName>
+                    </contentTypeName>
+                    <contentTypeName>
+                        <contentTypeNameId>100</contentTypeNameId>
+                        <locale>en</locale>
+                        <contentTypeName>Refereed</contentTypeName>
+                    </contentTypeName>
+                </contentTypeNames>
+            </contentType>
+            <publicationType>
+                <publicationTypeId>58</publicationTypeId>
+                <publicationTypeCode>chapter</publicationTypeCode>
+                <openUrlType>bookitem</openUrlType>
+                <publicationTypeNames>
+                    <publicationTypeName>
+                        <publicationTypeNameId>217</publicationTypeNameId>
+                        <locale>en</locale>
+                        <publicationTypeName>Chapter in book</publicationTypeName>
+                    </publicationTypeName>
+                    <publicationTypeName>
+                        <publicationTypeNameId>216</publicationTypeNameId>
+                        <locale>sv</locale>
+                        <publicationTypeName>Kapitel i bok, del av antologi</publicationTypeName>
+                    </publicationTypeName>
+                    <publicationTypeName>
+                        <publicationTypeNameId>242</publicationTypeNameId>
+                        <locale>no</locale>
+                        <publicationTypeName>Kapittel i bok, del av antologi</publicationTypeName>
+                    </publicationTypeName>
+                </publicationTypeNames>
+                <roles />
+                <comprehensiveSummary>false</comprehensiveSummary>
+                <domainAdminOnly>false</domainAdminOnly>
+            </publicationType>
+            <pid>diva2:1270748</pid>
+            <administrativeInfo>
+                <domain>nordiskamuseet</domain>
+                <creatorInfo>
+                    <userId>mathilda.angkvist@nordiskamuseet.se</userId>
+                    <ip>193.10.45.2</ip>
+                    <name>Mathilda Ängkvist</name>
+                    <date>2018-12-14T11:22:57.779+01:00</date>
+                    <userType>ADMIN</userType>
+                    <userAction>CREATED</userAction>
+                </creatorInfo>
+                <createdDate>2018-12-14T11:22:57.779+01:00</createdDate>
+                <updatedDate>2025-06-12T18:41:53.887+02:00</updatedDate>
+            </administrativeInfo>
+            <publicationDate>2018-12-14T11:22:57.698+01:00</publicationDate>
+            <originalPublicationTitle />
+            <bookTitle />
+            <publisher />
+            <nbn>urn:nbn:se:nordiskamuseet:diva-1029</nbn>
+            <oai>oai:DiVA.org:nordiskamuseet-1029</oai>
+            <identifiers />
+            <categories />
+            <nationalCategories />
+            <researchSubjects />
+            <keyWords class="hashtable" />
+            <abstracts>
+                <abstract>
+                    <language>
+                        <languageCode3>-1</languageCode3>
+                        <languageNames />
+                        <showsOnList>false</showsOnList>
+                    </language>
+                </abstract>
+            </abstracts>
+            <artisticWork>false</artisticWork>
+            <failed>false</failed>
+            <hidden>false</hidden>
+            <publicationOrder>
+                <orderLink>false</orderLink>
+                <validFrom>2018-12-14T11:22:54.341+01:00</validFrom>
+                <parameters />
+            </publicationOrder>
+            <canOrderOnline>false</canOrderOnline>
+            <mediaInformation>
+                <types />
+                <materials />
+                <techniques />
+            </mediaInformation>
+            <descriptions>
+                <abstract>
+                    <language>
+                        <languageCode3>-1</languageCode3>
+                        <languageNames />
+                        <showsOnList>false</showsOnList>
+                    </language>
+                </abstract>
+            </descriptions>
+        </publication>
+        """
+    )
+
+    result = transform_to_cora_output(
+        fedora_xml,
+        MockContext(),
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        result,
+        """
+        <output>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>publication_book-chapter</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <permissionUnit>
+                    <linkedRecordType>permissionUnit</linkedRecordType>
+                    <linkedRecordId>nordiskamuseet</linkedRecordId>
+                </permissionUnit>
+                <visibility>published</visibility>
+                <oldId>diva2:1270748</oldId>
+            </recordInfo>
+            <dataQuality>2026</dataQuality>
+            <genre type="contentType">ref</genre>
+            <genre type="outputType">publication_book-chapter</genre>
+            <artisticWork type="outputType">false</artisticWork>
         </output>                      
     """,
     )

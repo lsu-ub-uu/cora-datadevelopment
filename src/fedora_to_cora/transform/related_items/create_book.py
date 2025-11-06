@@ -12,14 +12,12 @@ from fedora_to_cora.transform.related_items.create_series import (
 
 def create_book(source_record: ET.Element, context: Context) -> ET.Element | None:
     source_book_title = source_record.find("./bookTitle")
-    language = source_record.findtext(
-        "./originalPublicationTitle/language/languageCode3"
-    )
-    if source_book_title is None or language is None:
+
+    if source_book_title is None or source_book_title.text is None:
         return None
 
     related_item = ET.Element("relatedItem", type="book", otherType="text")
-    title_info = ET.SubElement(related_item, "titleInfo", lang=language)
+    title_info = ET.SubElement(related_item, "titleInfo")
     title_text = source_book_title.findtext("./title")
     subtitle_text = source_book_title.findtext("./subTitle")
     ET.SubElement(title_info, "title").text = title_text

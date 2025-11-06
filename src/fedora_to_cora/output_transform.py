@@ -260,8 +260,6 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
 
     append_if_value(target_record, create_academic_semester(source_record))
 
-    append_if_value(target_record, create_external_collaboration(source_record))
-
     append_if_value(target_record, create_student_degrees(source_record, context))
 
     append_if_value(target_record, create_defence_or_presentation(source_record))
