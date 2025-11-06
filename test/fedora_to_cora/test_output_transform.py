@@ -269,14 +269,6 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             <year>2022</year>
             <academicSemester>ht</academicSemester>
         </academicSemester>
-        <externalCollaboration>
-            <namePart repeatId="0">
-                En extern partner
-            </namePart>
-            <namePart repeatId="1">
-                Ytterligare extern partner
-            </namePart>
-        </externalCollaboration>
         <studentDegree repeatId="0">
             <degreeLevel>H2</degreeLevel>
             <universityPoints>20</universityPoints>
