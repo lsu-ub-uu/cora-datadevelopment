@@ -34,6 +34,45 @@ def test_create_student_degree_thesis_level():
     )
 
 
+def test_create_student_multiple_degree_thesis_level():
+    source_record = ET.fromstring(
+        """
+      <publication>
+            <studentDegrees>
+                <studentDegree>
+                    <thesisLevel>
+                        <thesisLevelCode>H2</thesisLevelCode>
+                    </thesisLevel>
+                </studentDegree>
+                <studentDegree>
+                    <thesisLevel>
+                        <thesisLevelCode>H4</thesisLevelCode>
+                    </thesisLevel>
+                </studentDegree>
+            </studentDegrees>
+        </publication>
+    """
+    )
+
+    student_degrees = create_student_degrees(source_record, MockContext())
+
+    assert len(student_degrees) == 2
+    assert_equal_for_xml_and_xml_string(
+        student_degrees[0],
+        """
+        <studentDegree repeatId="0">
+            <degreeLevel>H2</degreeLevel>
+        </studentDegree>""",
+    )
+    assert_equal_for_xml_and_xml_string(
+        student_degrees[1],
+        """
+        <studentDegree repeatId="1">
+            <degreeLevel>H4</degreeLevel>
+        </studentDegree>""",
+    )
+
+
 def test_create_student_degree_hp():
     source_record = ET.fromstring(
         """

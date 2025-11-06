@@ -1,0 +1,587 @@
+<?xml version='1.0' encoding='utf-8'?>
+<publication>
+  <publicationType>
+    <publicationTypeId>65</publicationTypeId>
+    <publicationTypeCode>studentThesis</publicationTypeCode>
+    <openUrlType>book</openUrlType>
+    <publicationTypeNames>
+      <publicationTypeName>
+        <publicationTypeNameId>250</publicationTypeNameId>
+        <locale>no</locale>
+        <publicationTypeName>Oppgave</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>231</publicationTypeNameId>
+        <locale>en</locale>
+        <publicationTypeName>Student thesis</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>230</publicationTypeNameId>
+        <locale>sv</locale>
+        <publicationTypeName>Studentuppsats (Examensarbete)</publicationTypeName>
+      </publicationTypeName>
+    </publicationTypeNames>
+    <roles />
+    <comprehensiveSummary>false</comprehensiveSummary>
+    <domainAdminOnly>false</domainAdminOnly>
+  </publicationType>
+  <pid>diva2:1297418</pid>
+  <administrativeInfo>
+    <domain>nordiskamuseet</domain>
+    <creatorInfo>
+      <userId>mock.mockson@nordiskamuseet.se</userId>
+      <ip>193.10.45.2</ip>
+      <name>Mock Mockson</name>
+      <date>2019-03-19T17:58:24.857+01:00</date>
+      <userType>DOMAINADMIN</userType>
+      <userAction>CREATED</userAction>
+    </creatorInfo>
+    <updaters>
+      <userInformation>
+        <userId>mock.mockson@nordiskamuseet.se</userId>
+        <ip>193.10.45.2</ip>
+        <name>Mock Mockson</name>
+        <date>2019-03-19T17:59:16.180+01:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>PUBLISHED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>mock.mockson@nordiskamuseet.se</userId>
+        <ip>193.10.45.2</ip>
+        <name>Mock Mockson</name>
+        <date>2019-03-19T18:02:27.735+01:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>mock.mockson@nordiskamuseet.se</userId>
+        <ip>193.10.45.2</ip>
+        <name>Mock Mockson</name>
+        <date>2019-03-19T18:07:25.953+01:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>mock.mockson@nordiskamuseet.se</userId>
+        <ip>193.10.45.2</ip>
+        <name>Mock Mockson</name>
+        <date>2019-03-26T11:33:17.474+01:00</date>
+        <userType>ADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>mock.mockson@nordiskamuseet.se</userId>
+        <ip>193.10.45.2</ip>
+        <name>Mock Mockson</name>
+        <date>2019-03-26T11:34:31.350+01:00</date>
+        <userType>ADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>mock.mockson@nordiskamuseet.se</userId>
+        <ip>193.10.45.2</ip>
+        <name>Mock Mockson</name>
+        <date>2019-03-26T11:35:30.722+01:00</date>
+        <userType>ADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>system</userId>
+        <ip>130.238.171.117</ip>
+        <name>System</name>
+        <date>2025-06-12T18:35:50.258+02:00</date>
+        <userType>SERVICE</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+    </updaters>
+    <createdDate>2019-03-19T17:58:24.857+01:00</createdDate>
+    <updatedDate>2025-06-12T18:35:50.258+02:00</updatedDate>
+  </administrativeInfo>
+  <publicationDate>2019-03-19T17:59:00.000+01:00</publicationDate>
+  <authors>
+    <person>
+      <firstName>Mock</firstName>
+      <lastName>Studentson</lastName>
+      <organisations>
+        <organisation>
+          <organisationId>877150</organisationId>
+          <organisationType>
+            <organisationTypeId>62</organisationTypeId>
+            <organisationTypeCode>museum</organisationTypeCode>
+            <organisationTypeNames>
+              <organisationTypeName>
+                <organisationTypeNameId>1927</organisationTypeNameId>
+                <locale>en</locale>
+                <organisationTypeName>Museum</organisationTypeName>
+              </organisationTypeName>
+              <organisationTypeName>
+                <organisationTypeNameId>1926</organisationTypeNameId>
+                <locale>sv</locale>
+                <organisationTypeName>Museum</organisationTypeName>
+              </organisationTypeName>
+            </organisationTypeNames>
+          </organisationType>
+          <organisationName>
+            <name>Nordiska museet</name>
+            <locale>sv</locale>
+          </organisationName>
+          <organisationHomepage>http://www.nordiskamuseet.se/</organisationHomepage>
+          <domain>nordiskamuseet</domain>
+          <organisationNumber>802002-4686</organisationNumber>
+          <organisationAlternativeNames>
+            <organisationName>
+              <organisationNameId>64350</organisationNameId>
+              <locale>en</locale>
+              <organisationName>The Nordic Museum</organisationName>
+            </organisationName>
+          </organisationAlternativeNames>
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <controlled>true</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>true</showInPortal>
+          <showInDefence>true</showInDefence>
+          <topLevel>true</topLevel>
+        </organisation>
+      </organisations>
+      <birthYear>1965</birthYear>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+  </authors>
+  <originalPublicationTitle>
+    <title>Nationellt och smakfullt</title>
+    <subTitle>omvärderingen av den gustavianska stilen och lanseringen av Georg Haupt som estetiskt ideal</subTitle>
+    <language>
+      <languageCode3>swe</languageCode3>
+      <languageCode2>sv</languageCode2>
+      <languageNames>
+        <languageName>
+          <languageNameId>1723</languageNameId>
+          <locale>sv</locale>
+          <languageName>Svenska</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>10261</languageNameId>
+          <locale>no</locale>
+          <languageName>svensk</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>1722</languageNameId>
+          <locale>en</locale>
+          <languageName>Swedish</languageName>
+        </languageName>
+      </languageNames>
+      <showsOnList>true</showsOnList>
+    </language>
+  </originalPublicationTitle>
+  <studentDegrees>
+    <studentDegree>
+      <thesisLevel>
+        <thesisLevelId>53</thesisLevelId>
+        <thesisLevelCode>H1</thesisLevelCode>
+        <thesisLevelOldCode>D</thesisLevelOldCode>
+        <thesisLevelNames>
+          <thesisLevelName>
+            <thesisLevelNameId>307</thesisLevelNameId>
+            <locale>sv</locale>
+            <thesisLevelName>Självständigt arbete på avancerad nivå (magisterexamen)</thesisLevelName>
+          </thesisLevelName>
+          <thesisLevelName>
+            <thesisLevelNameId>306</thesisLevelNameId>
+            <locale>en</locale>
+            <thesisLevelName>Independent thesis Advanced level (degree of Master (One Year))</thesisLevelName>
+          </thesisLevelName>
+        </thesisLevelNames>
+        <degrees />
+        <domain>diva</domain>
+      </thesisLevel>
+      <universityPoints>
+        <points>120</points>
+        <name__sv>180 hp</name__sv>
+        <name__en>180 HE credits</name__en>
+        <name__no>180 hp</name__no>
+        <hp>180</hp>
+      </universityPoints>
+    </studentDegree>
+  </studentDegrees>
+  <dateIssued>2012</dateIssued>
+  <pages>64</pages>
+  <publisher />
+  <nbn>urn:nbn:se:nordiskamuseet:diva-1431</nbn>
+  <oai>oai:DiVA.org:nordiskamuseet-1431</oai>
+  <identifiers />
+  <categories />
+  <nationalCategories>
+    <subject>
+      <subjectId>11795</subjectId>
+      <subjectType>
+        <subjectTypeId>57</subjectTypeId>
+        <subjectTypeCode>hsv</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3722</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>HSV categories</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3721</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3723</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>28740</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Konstvetenskap</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>28741</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Art History</subjectName>
+        </subjectName>
+      </subjectNames>
+      <subjectCode>60407</subjectCode>
+      <parents>
+        <subject>
+          <subjectId>11788</subjectId>
+          <subjectType>
+            <subjectTypeId>57</subjectTypeId>
+            <subjectTypeCode>hsv</subjectTypeCode>
+            <subjectTypeNames>
+              <subjectTypeName>
+                <subjectTypeNameId>3722</subjectTypeNameId>
+                <locale>en</locale>
+                <subjectTypeName>HSV categories</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3721</subjectTypeNameId>
+                <locale>sv</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3723</subjectTypeNameId>
+                <locale>no</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+            </subjectTypeNames>
+          </subjectType>
+          <subjectNames>
+            <subjectName>
+              <subjectNameId>28726</subjectNameId>
+              <locale>sv</locale>
+              <subjectName>Konst</subjectName>
+            </subjectName>
+            <subjectName>
+              <subjectNameId>28727</subjectNameId>
+              <locale>en</locale>
+              <subjectName>Arts</subjectName>
+            </subjectName>
+          </subjectNames>
+          <subjectCode>604</subjectCode>
+          <parents>
+            <subject>
+              <subjectId>11772</subjectId>
+              <subjectType>
+                <subjectTypeId>57</subjectTypeId>
+                <subjectTypeCode>hsv</subjectTypeCode>
+                <subjectTypeNames>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3722</subjectTypeNameId>
+                    <locale>en</locale>
+                    <subjectTypeName>HSV categories</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3721</subjectTypeNameId>
+                    <locale>sv</locale>
+                    <subjectTypeName>HSV kategorier</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3723</subjectTypeNameId>
+                    <locale>no</locale>
+                    <subjectTypeName>HSV kategorier</subjectTypeName>
+                  </subjectTypeName>
+                </subjectTypeNames>
+              </subjectType>
+              <subjectNames>
+                <subjectName>
+                  <subjectNameId>28695</subjectNameId>
+                  <locale>en</locale>
+                  <subjectName>Humanities and the Arts</subjectName>
+                </subjectName>
+                <subjectName>
+                  <subjectNameId>28694</subjectNameId>
+                  <locale>sv</locale>
+                  <subjectName>Humaniora och konst</subjectName>
+                </subjectName>
+              </subjectNames>
+              <subjectCode>6</subjectCode>
+              <parents />
+              <predecessors />
+              <domain>diva</domain>
+              <notEligible>false</notEligible>
+              <organisations />
+            </subject>
+          </parents>
+          <predecessors />
+          <domain>diva</domain>
+          <notEligible>false</notEligible>
+          <organisations />
+        </subject>
+      </parents>
+      <predecessors />
+      <domain>diva</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+  </nationalCategories>
+  <researchSubjects />
+  <keyWords class="hashtable">
+    <entry>
+      <language>
+        <languageCode3>swe</languageCode3>
+        <languageCode2>sv</languageCode2>
+        <languageNames>
+          <languageName>
+            <languageNameId>1723</languageNameId>
+            <locale>sv</locale>
+            <languageName>Svenska</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>10261</languageNameId>
+            <locale>no</locale>
+            <languageName>svensk</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1722</languageNameId>
+            <locale>en</locale>
+            <languageName>Swedish</languageName>
+          </languageName>
+        </languageNames>
+        <showsOnList>true</showsOnList>
+      </language>
+      <list>
+        <string>Möbelkonst</string>
+        <string>Gustaviansk stil</string>
+        <string>Nationell identitet</string>
+      </list>
+    </entry>
+  </keyWords>
+  <defence>
+    <room />
+  </defence>
+  <note />
+  <internalNote />
+  <attachments class="tree-set">
+    <no-comparator />
+    <attachment>
+      <mimeType>
+        <mimeTypeId>50</mimeTypeId>
+        <mimeTypeName>application/pdf</mimeTypeName>
+        <fileSuffix>pdf</fileSuffix>
+        <datasetOnly>false</datasetOnly>
+      </mimeType>
+      <fileLabel>
+        <fileLabelId>50</fileLabelId>
+        <fileLabelCode>fulltext</fileLabelCode>
+        <fileLabelNames>
+          <fileLabelName>
+            <fileLabelNameId>3674</fileLabelNameId>
+            <locale>no</locale>
+            <fileLabelName>fulltekst</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3651</fileLabelNameId>
+            <locale>sv</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3650</fileLabelNameId>
+            <locale>en</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+        </fileLabelNames>
+      </fileLabel>
+      <fileName>FULLTEXT01</fileName>
+      <fileSize>3241591</fileSize>
+      <selectedFileName>fulltext</selectedFileName>
+      <path>6a1719330f654555bf00cd8ed96f/Nationellt och smakfullt.pdf</path>
+      <checksums>
+        <checksum>
+          <type>SHA512</type>
+          <digest>7c8c1cc6fc5cf3fd6841bf1a73259d0da0b69fa2c3f0bd7e2679896889c2a3fdeb362561c4f2f917f894a97ea03ae43fd5df7e9588dc06b1c2b015249fdcff72</digest>
+        </checksum>
+      </checksums>
+      <order>0</order>
+      <uploadDate>2019-03-19T17:58:25.389+01:00</uploadDate>
+      <asyncUpload>false</asyncUpload>
+      <availableFrom>2019-03-19T18:02:23.183+01:00</availableFrom>
+      <deleteDate>2019-03-26T11:33:17.142+01:00</deleteDate>
+      <onHold>false</onHold>
+      <deleted>true</deleted>
+      <prePrint>false</prePrint>
+      <postPrint>false</postPrint>
+      <print>false</print>
+      <archiveOnly>false</archiveOnly>
+      <printOnDemand>true</printOnDemand>
+      <toBePublished>false</toBePublished>
+      <toBeArchived>false</toBeArchived>
+      <digitized>false</digitized>
+      <hasCoverPage>false</hasCoverPage>
+    </attachment>
+    <attachment>
+      <mimeType>
+        <mimeTypeId>50</mimeTypeId>
+        <mimeTypeName>application/pdf</mimeTypeName>
+        <fileSuffix>pdf</fileSuffix>
+        <datasetOnly>false</datasetOnly>
+      </mimeType>
+      <fileLabel>
+        <fileLabelId>50</fileLabelId>
+        <fileLabelCode>fulltext</fileLabelCode>
+        <fileLabelNames>
+          <fileLabelName>
+            <fileLabelNameId>3674</fileLabelNameId>
+            <locale>no</locale>
+            <fileLabelName>fulltekst</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3651</fileLabelNameId>
+            <locale>sv</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3650</fileLabelNameId>
+            <locale>en</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+        </fileLabelNames>
+      </fileLabel>
+      <fileName>FULLTEXT02</fileName>
+      <fileSize>3241591</fileSize>
+      <selectedFileName>fulltext</selectedFileName>
+      <path>8e00fe30462fc2d2828e02cfcad2/FULLTEXT01.pdf</path>
+      <checksums>
+        <checksum>
+          <type>SHA512</type>
+          <digest>7c8c1cc6fc5cf3fd6841bf1a73259d0da0b69fa2c3f0bd7e2679896889c2a3fdeb362561c4f2f917f894a97ea03ae43fd5df7e9588dc06b1c2b015249fdcff72</digest>
+        </checksum>
+      </checksums>
+      <order>0</order>
+      <uploadDate>2019-03-26T11:33:17.416+01:00</uploadDate>
+      <asyncUpload>false</asyncUpload>
+      <availableFrom>2019-03-26T11:33:17.030+01:00</availableFrom>
+      <deleteDate>2019-03-26T11:35:30.722+01:00</deleteDate>
+      <onHold>false</onHold>
+      <deleted>true</deleted>
+      <prePrint>false</prePrint>
+      <postPrint>false</postPrint>
+      <print>false</print>
+      <archiveOnly>false</archiveOnly>
+      <printOnDemand>false</printOnDemand>
+      <toBePublished>false</toBePublished>
+      <toBeArchived>false</toBeArchived>
+      <digitized>false</digitized>
+      <hasCoverPage>false</hasCoverPage>
+    </attachment>
+    <attachment>
+      <mimeType>
+        <mimeTypeId>50</mimeTypeId>
+        <mimeTypeName>application/pdf</mimeTypeName>
+        <fileSuffix>pdf</fileSuffix>
+        <datasetOnly>false</datasetOnly>
+      </mimeType>
+      <fileLabel>
+        <fileLabelId>50</fileLabelId>
+        <fileLabelCode>fulltext</fileLabelCode>
+        <fileLabelNames>
+          <fileLabelName>
+            <fileLabelNameId>3674</fileLabelNameId>
+            <locale>no</locale>
+            <fileLabelName>fulltekst</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3651</fileLabelNameId>
+            <locale>sv</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3650</fileLabelNameId>
+            <locale>en</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+        </fileLabelNames>
+      </fileLabel>
+      <fileName>FULLTEXT03</fileName>
+      <fileSize>3241591</fileSize>
+      <selectedFileName>fulltext</selectedFileName>
+      <path>8e00fe30462fc2d2828e02cfcad2/nationellt_och_smakfullt.pdf</path>
+      <checksums>
+        <checksum>
+          <type>SHA512</type>
+          <digest>7c8c1cc6fc5cf3fd6841bf1a73259d0da0b69fa2c3f0bd7e2679896889c2a3fdeb362561c4f2f917f894a97ea03ae43fd5df7e9588dc06b1c2b015249fdcff72</digest>
+        </checksum>
+      </checksums>
+      <order>1</order>
+      <uploadDate>2019-03-26T11:34:31.292+01:00</uploadDate>
+      <asyncUpload>false</asyncUpload>
+      <availableFrom>2019-03-26T11:34:30.997+01:00</availableFrom>
+      <onHold>false</onHold>
+      <deleted>false</deleted>
+      <prePrint>false</prePrint>
+      <postPrint>false</postPrint>
+      <print>false</print>
+      <archiveOnly>false</archiveOnly>
+      <printOnDemand>false</printOnDemand>
+      <toBePublished>false</toBePublished>
+      <toBeArchived>false</toBeArchived>
+      <digitized>false</digitized>
+      <hasCoverPage>false</hasCoverPage>
+    </attachment>
+  </attachments>
+  <formatElectronic>false</formatElectronic>
+  <formatPrint>false</formatPrint>
+  <agreementAccepted>true</agreementAccepted>
+  <reviewed>true</reviewed>
+  <reviewedBefore>true</reviewedBefore>
+  <migrated>false</migrated>
+  <importDuplicate>false</importDuplicate>
+  <registratedDuplicate>false</registratedDuplicate>
+  <artisticWork>false</artisticWork>
+  <externalCooperation>
+    <external>true</external>
+    <partners>
+      <partner>
+        <name>Stockholms Universitet, Konstvetenskapliga institutionen</name>
+      </partner>
+    </partners>
+  </externalCooperation>
+  <failed>false</failed>
+  <hidden>false</hidden>
+  <publicationOrder>
+    <orderLink>false</orderLink>
+    <validFrom>2019-03-26T11:33:15.356+01:00</validFrom>
+    <parameters />
+  </publicationOrder>
+  <canOrderOnline>false</canOrderOnline>
+  <academicTerm>
+    <year>2012</year>
+    <term>VT</term>
+  </academicTerm>
+</publication>

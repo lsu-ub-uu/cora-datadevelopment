@@ -230,10 +230,6 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <relatedItem type="conference">
             <conference>Some conference</conference>
         </relatedItem>
-        <studentDegree repeatId="0">
-            <degreeLevel>H2</degreeLevel>
-            <universityPoints>20</universityPoints>
-        </studentDegree>...
         <externalCollaboration>
             <namePart repeatId="0">En extern partner</namePart>
             <namePart repeatId="1">Ytterligare extern partner</namePart>
@@ -547,6 +543,91 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
     )
 
 
+def test_output_transform_student_thesis(mock_diva_search_requests):
+    fedora_xml = read_source_xml("test/data/fedora/mock_publication_student-thesis.xml")
+
+    result = transform_to_cora_output(fedora_xml, MockContext())
+
+    assert_equal_for_xml_and_xml_string(
+        result,
+        f"""
+        <output>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>diva_degree-project</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <permissionUnit>
+                    <linkedRecordType>permissionUnit</linkedRecordType>
+                    <linkedRecordId>nordiskamuseet</linkedRecordId>
+                </permissionUnit>
+                <visibility>published</visibility>
+                <oldId>diva2:1297418</oldId>
+            </recordInfo>
+            <dataQuality>2026</dataQuality>
+            <titleInfo lang="swe">
+                <title>Nationellt och smakfullt</title>
+                <subtitle>omvärderingen av den gustavianska stilen och lanseringen av Georg Haupt som estetiskt ideal</subtitle>
+            </titleInfo>
+            <subject lang="swe" repeatId="0">
+                <topic>Möbelkonst</topic>
+            </subject>
+            <subject lang="swe" repeatId="1">
+                <topic>Gustaviansk stil</topic>
+            </subject>
+            <subject lang="swe" repeatId="2">
+                <topic>Nationell identitet</topic>
+            </subject>
+            <originInfo>
+                <dateIssued>
+                    <year>2012</year>
+                </dateIssued>
+            </originInfo>
+            <physicalDescription>
+                <extent>64</extent>
+            </physicalDescription>
+            <classification authority="ssif" repeatId="0">60407</classification>
+            <genre type="outputType">diva_degree-project</genre>
+            <language repeatId="0">
+                <languageTerm authority="iso639-2b" type="code">swe</languageTerm>
+            </language>
+            <artisticWork type="outputType">false</artisticWork>
+            <name repeatId="0" type="personal">
+                <namePart type="family">Studentson</namePart>
+                <namePart type="given">Mock</namePart>
+                <role>
+                    <roleTerm>aut</roleTerm>
+                </role>
+                <affiliation repeatId="0">
+                    <organisation>
+                        <linkedRecordType>diva-organisation</linkedRecordType>
+                        <linkedRecordId>{mock_diva_search_requests["affiliation_organisation_id"]}</linkedRecordId>
+                    </organisation>
+                </affiliation>
+            </name>
+            <adminInfo>
+                <reviewed>true</reviewed>
+            </adminInfo>
+            <externalCollaboration>
+                <namePart repeatId="0">Stockholms Universitet, Konstvetenskapliga institutionen</namePart>
+            </externalCollaboration>
+            <academicSemester>
+                <year>2012</year>
+                <academicSemester>vt</academicSemester>
+            </academicSemester>
+            <studentDegree repeatId="0">
+                <degreeLevel>H1</degreeLevel>
+                <universityPoints>180</universityPoints>
+            </studentDegree>
+        </output>                     
+    """,
+    )
+
+
 def test_output_transform_minimal():
     fedora_xml = ET.fromstring(
         """
@@ -595,7 +676,7 @@ def test_output_transform_minimal():
     )
 
 
-def test_output_transform_wierd():
+def test_output_transform_with_missing_data():
     fedora_xml = ET.fromstring(
         """
         <publication>

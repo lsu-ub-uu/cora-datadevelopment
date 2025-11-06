@@ -235,6 +235,7 @@ def test_creates_for_author_only_validation_type():
         <publication>
             <publicationType>
                 <publicationTypeId>65</publicationTypeId>
+                <publicationTypeCode>studentThesis</publicationTypeCode>
                 <publicationTypeCode>diva_degree-project</publicationTypeCode>
             </publicationType>
             <authors>

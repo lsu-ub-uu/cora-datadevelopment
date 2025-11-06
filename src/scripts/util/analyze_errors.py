@@ -136,29 +136,17 @@ def generate_report(
         percentage = (count / total_failed) * 100
         examples = error_examples.get(error_msg, [])
         examples_str = ", ".join(examples) if examples else "no examples"
-        print(f"{i:2d}. [{count:4d} records, {percentage:5.1f}%] {error_msg}")
-        print(f"    📋 Examples: {examples_str}")
-
-    print()
-    print("=" * 80)
-
-    # Show top 10 most common errors in detail
-    print("\n🔥 TOP 10 MOST COMMON ERRORS:")
-    print("-" * 80)
-
-    for i, (error_msg, count) in enumerate(sorted_errors[:10], 1):
-        percentage = (count / total_failed) * 100
-        examples = error_examples.get(error_msg, [])
-        examples_str = ", ".join(examples) if examples else "no examples"
         print(f"\n{i}. Error: {error_msg}")
         print(f"   Count: {count:,} records ({percentage:.1f}% of all failures)")
         print(f"   Examples: {examples_str}")
+
+    print()
+    print("=" * 80)
 
 
 def analyze_and_print_report(log_file_path: str):
     try:
         print(f"🔍 Analyzing error log: {log_file_path}")
-        print("⏳ Processing...")
 
         error_counts, error_examples, total_failed, total_successful = (
             analyze_error_log(log_file_path)
@@ -186,7 +174,7 @@ def main():
     parser.add_argument(
         "log_file",
         nargs="?",
-        default="/home/leo/Repos/cora-datadevelopment/logs/outputs-import.log",
+        default="logs/outputs-import.log",
         help="Path to the error log file (default: outputs-import.log in logs/)",
     )
 
