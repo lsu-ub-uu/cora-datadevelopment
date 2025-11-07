@@ -131,22 +131,22 @@
   </publicationStatus>
   <publicationDate>
     2022-07-07T13:12:00.000+02:00</publicationDate>
-    <authors>
-                <person>
-                    <firstName>Michaela</firstName>
-                    <lastName>Andersson</lastName>
-                    <localId>mican434</localId>
-                    <identifiers>
-                        <entry>
-                        <personIdentifierType>orcid</personIdentifierType>
-                        <personIdentifier>
-                            <value>0000-0002-3134-8865</value>
-                            <type>orcid</type>
-                        </personIdentifier>
-                        </entry>
-                    </identifiers>
-                </person>
-            </authors>
+  <authors>
+    <person>
+      <firstName>Michaela</firstName>
+      <lastName>Andersson</lastName>
+      <localId>mican434</localId>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value>0000-0002-3134-8865</value>
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+  </authors>
   <editors>
     <person>
       <firstName>Östasiatiska museet</firstName>
@@ -285,25 +285,25 @@
   <isi>ISI.01</isi>
   <identifiers>
     <entry>
-        <publicationIdentifierType>doi</publicationIdentifierType>
-        <publicationIdentifier>
-            <value>10.1038/s41698-022-00278-4</value>
-            <type>doi</type>
-            <openAccess>true</openAccess>
-        </publicationIdentifier>
+      <publicationIdentifierType>doi</publicationIdentifierType>
+      <publicationIdentifier>
+        <value>10.1038/s41698-022-00278-4</value>
+        <type>doi</type>
+        <openAccess>true</openAccess>
+      </publicationIdentifier>
     </entry>
     <entry>
-        <publicationIdentifierType>libris</publicationIdentifierType>
-        <publicationIdentifier>
-            <value>0004</value>
-            <alternativeValues>
-                <value>
-                    <content>0005</content>
-                </value>
-            </alternativeValues>
-            <type>libris</type>
-            <openAccess>false</openAccess>
-        </publicationIdentifier>
+      <publicationIdentifierType>libris</publicationIdentifierType>
+      <publicationIdentifier>
+        <value>0004</value>
+        <alternativeValues>
+          <value>
+            <content>0005</content>
+          </value>
+        </alternativeValues>
+        <type>libris</type>
+        <openAccess>false</openAccess>
+      </publicationIdentifier>
     </entry>
   </identifiers>
   <patentNumber>Patentnummer01</patentNumber>
@@ -493,23 +493,23 @@
                 </subjectName>
               </subjectNames>
               <subjectCode>3</subjectCode>
-              <parents/>
-              <predecessors/>
+              <parents />
+              <predecessors />
               <domain>diva</domain>
               <notEligible>false</notEligible>
-              <organisations/>
+              <organisations />
             </subject>
           </parents>
-          <predecessors/>
+          <predecessors />
           <domain>diva</domain>
           <notEligible>false</notEligible>
-          <organisations/>
+          <organisations />
         </subject>
       </parents>
-      <predecessors/>
+      <predecessors />
       <domain>diva</domain>
       <notEligible>false</notEligible>
-      <organisations/>
+      <organisations />
     </subject>
     <subject>
       <subjectId>11783</subjectId>
@@ -621,26 +621,26 @@
                 </subjectName>
               </subjectNames>
               <subjectCode>6</subjectCode>
-              <parents/>
-              <predecessors/>
+              <parents />
+              <predecessors />
               <domain>diva</domain>
               <notEligible>false</notEligible>
-              <organisations/>
+              <organisations />
             </subject>
           </parents>
-          <predecessors/>
+          <predecessors />
           <domain>diva</domain>
           <notEligible>false</notEligible>
-          <organisations/>
+          <organisations />
         </subject>
       </parents>
-      <predecessors/>
+      <predecessors />
       <domain>diva</domain>
       <notEligible>false</notEligible>
-      <organisations/>
+      <organisations />
     </subject>
   </nationalCategories>
-    <researchSubjects>
+  <researchSubjects>
     <subject>
       <subjectId>40103</subjectId>
       <subjectType>
@@ -830,7 +830,7 @@
             <thesisLevelName>Independent thesis Advanced level (degree of Master (Two Years))</thesisLevelName>
           </thesisLevelName>
         </thesisLevelNames>
-        <degrees/>
+        <degrees />
         <domain>diva</domain>
       </thesisLevel>
       <universityPoints>
@@ -845,31 +845,31 @@
   <externalCooperation>
     <external>true</external>
     <partners>
-    <partner>
+      <partner>
         <name>En extern partner</name>
-    </partner>
-    <partner>
+      </partner>
+      <partner>
         <name>Ytterligare extern partner</name>
-    </partner>
+      </partner>
     </partners>
   </externalCooperation>
   <defence>
-      <date>2022-07-31T16:19:00.000+02:00</date>
-      <language>
-          <languageCode3>swe</languageCode3>
-      </language>
-      <room>
-          <name>Balsalen</name>
-          <street>Slottet</street>
-          <city>Uppsala</city>
-      </room>
-      <externalGrantingInstitution>
-          Uppsala universitet
-      </externalGrantingInstitution>
+    <date>2022-07-31T16:19:00.000+02:00</date>
+    <language>
+      <languageCode3>swe</languageCode3>
+    </language>
+    <room>
+      <name>Balsalen</name>
+      <street>Slottet</street>
+      <city>Uppsala</city>
+    </room>
+    <externalGrantingInstitution>
+      Uppsala universitet
+    </externalGrantingInstitution>
   </defence>
   <academicTerm>
-      <year>2022</year>
-      <term>HT</term>
+    <year>2022</year>
+    <term>HT</term>
   </academicTerm>
   <uncontrolledJournal>
     <journalNameUncontrolled>
@@ -890,49 +890,89 @@
       <projectName>Ett annat projekt</projectName>
     </project>
     <project>
-    <projectName>Ytterligare ett annat projekt</projectName>
+      <projectName>Ytterligare ett annat projekt</projectName>
     </project>
   </projects>
   <mediaType>
-      <autoId>1</autoId>
+    <autoId>1</autoId>
   </mediaType>
   <mediaInformation>
-                <types class="hashtable">
-                    <entry>
-                        <language>
-                            <languageCode3>swe</languageCode3>
-                        </language>
-                        <list>
-                            <string>Typ01</string>
-                            <string>Typ02</string>
-                        </list>
-                    </entry>
-                </types>
-                <materials class="hashtable">
-                    <entry>
-                        <language>
-                            <languageCode3>swe</languageCode3>
-                        </language>
-                        <list>
-                            <string>Material01</string>
-                            <string>Material02</string>
-                        </list>
-                    </entry>
-                </materials>
-                <techniques class="hashtable">
-                    <entry>
-                        <language>
-                            <languageCode3>swe</languageCode3>
-                        </language>
-                        <list>
-                            <string>Teknik01</string>
-                            <string>Teknik02</string>
-                        </list>
-                    </entry>
-                </techniques>
-                <size>
-                    22*32 km2
-                </size>
-                <duration>01:10:00</duration>
-            </mediaInformation>
+    <types class="hashtable">
+      <entry>
+        <language>
+          <languageCode3>swe</languageCode3>
+        </language>
+        <list>
+          <string>Typ01</string>
+          <string>Typ02</string>
+        </list>
+      </entry>
+    </types>
+    <materials class="hashtable">
+      <entry>
+        <language>
+          <languageCode3>swe</languageCode3>
+        </language>
+        <list>
+          <string>Material01</string>
+          <string>Material02</string>
+        </list>
+      </entry>
+    </materials>
+    <techniques class="hashtable">
+      <entry>
+        <language>
+          <languageCode3>swe</languageCode3>
+        </language>
+        <list>
+          <string>Teknik01</string>
+          <string>Teknik02</string>
+        </list>
+      </entry>
+    </techniques>
+    <size>
+      22*32 km2
+    </size>
+    <duration>01:10:00</duration>
+  </mediaInformation>
+  <funderInfos>
+    <funderInfo>
+      <funder>
+        <funderId>2</funderId>
+        <funderName>
+          <name>Vetenskapsrådet</name>
+          <locale>sv</locale>
+        </funderName>
+        <organisationNumber>202100-5208</organisationNumber>
+        <funderAlternativeNames>
+          <diva2.commons.aura.list.funder.FunderName>
+            <funderNameId>2</funderNameId>
+            <locale>en</locale>
+            <funderName>Swedish Research Council</funderName>
+          </diva2.commons.aura.list.funder.FunderName>
+        </funderAlternativeNames>
+        <doi>10.13039/501100004359</doi>
+      </funder>
+      <projectNumber>2021-00001</projectNumber>
+    </funderInfo>
+    <funderInfo>
+      <funder>
+        <funderId>2</funderId>
+        <funderName>
+          <name>Schmetenskapsrådet</name>
+          <locale>sv</locale>
+        </funderName>
+        <organisationNumber>202100-5208</organisationNumber>
+        <funderAlternativeNames>
+          <diva2.commons.aura.list.funder.FunderName>
+            <funderNameId>2</funderNameId>
+            <locale>en</locale>
+            <funderName>Swedish Research Council</funderName>
+          </diva2.commons.aura.list.funder.FunderName>
+        </funderAlternativeNames>
+        <doi>10.13039/501100004359</doi>
+      </funder>
+      <projectNumber>2021-00002</projectNumber>
+    </funderInfo>
+  </funderInfos>
 </publication>

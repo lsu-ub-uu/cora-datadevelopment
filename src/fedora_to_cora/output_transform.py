@@ -66,6 +66,9 @@ from fedora_to_cora.transform.create_subject_authority_sdg import (
 from fedora_to_cora.transform.related_items.create_conference_publication import (
     create_related_item_type_conference_publication,
 )
+from fedora_to_cora.transform.related_items.create_funder import (
+    create_related_item_type_funder,
+)
 from fedora_to_cora.transform.related_items.create_journal import (
     create_related_item_type_journal,
 )
@@ -283,7 +286,8 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
         target_record, create_related_item_type_project(source_record, context)
     )
 
+    append_if_value(
+        target_record, create_related_item_type_funder(source_record, context)
+    )
+
     return target_record
-
-
-# create_type_of_resource

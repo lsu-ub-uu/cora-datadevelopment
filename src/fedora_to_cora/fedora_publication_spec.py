@@ -577,7 +577,10 @@ fedora_publication_xml_spec: XMLSpec = {
     "proceedingsTitle": {"title": "text", "subTitle": "text"},
     "proceedingsEditor": "text",
     "funderInfos": {
-        "funder": fedora_funder_spec,
+        "funderInfo": {
+            "funder": fedora_funder_spec,
+            "projectNumber": "text",
+        }
     },
     "geoData": {
         "description": "text",

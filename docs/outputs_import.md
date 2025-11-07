@@ -225,7 +225,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - relatedItem type="series" otherType="link"
   - relatedItem type="series" otherType="text"
 
-- ⚠️ relatedItem type="conferencePublication" otherType="link"
+- 🆕 relatedItem type="conferencePublication" otherType="link"
   - proceeding (link to migrated record)
 - relatedItem type="conferencePublication" otherType="text"
   - titleInfo <- `proceedingsTitle`
@@ -241,9 +241,9 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - relatedItem type="series" otherType="link"
   - relatedItem type="series" otherType="text"
 - relatedItem type="conference" <- `conference`
-- ⚠️ relatedItem type="funder"
-  - ⚠️ funder (link to migrated record) <- `funderInfos/funder/funderId`
-  - ⚠️ identifier type="project" <- `funderInfos/funderId/projectNumber`
+- relatedItem type="funder"
+  - funder (link to migrated record) <- `funderInfos/funder/funderId`
+  - identifier type="project" <- `funderInfos/funderId/projectNumber`
 - 🆕 related <- N/A
 - 🆕 related type="retracted" <- N/A
 - ⚠️ related type="constituent" (link to migrated recordade avhandligar)

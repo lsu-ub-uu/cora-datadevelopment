@@ -23,6 +23,7 @@ def mock_diva_search_requests(requests_mock):
     subject_id = "diva-subject:30224"
     series_id = "diva-series:17450"
     publisher_id = "diva-publisher:12345"
+    funder_id = "diva-funder:67890"
 
     requests_mock.get(
         "https://pre.diva-portal.org/rest/record/searchResult/diva-organisationSearch",
@@ -40,12 +41,17 @@ def mock_diva_search_requests(requests_mock):
         "https://pre.diva-portal.org/rest/record/searchResult/diva-publisherSearch",
         text=_create_search_mock_response("publisher", publisher_id),
     )
+    requests_mock.get(
+        "https://pre.diva-portal.org/rest/record/searchResult/diva-funderSearch",
+        text=_create_search_mock_response("funder", funder_id),
+    )
 
     return {
         "affiliation_organisation_id": affiliation_organisation_id,
         "subject_id": subject_id,
         "series_id": series_id,
         "publisher_id": publisher_id,
+        "funder_id": funder_id,
     }
 
 
@@ -320,7 +326,20 @@ def test_output_transform_ultimate(mock_diva_search_requests):
                 <title>Ytterligare ett annat projekt</title>
             </titleInfo>
         </relatedItem>
-
+        <relatedItem repeatId="0" type="funder">
+        <funder>
+            <linkedRecordType>diva-funder</linkedRecordType>
+            <linkedRecordId>diva-funder:67890</linkedRecordId>
+        </funder>
+        <identifier type="project">2021-00001</identifier>
+        </relatedItem>
+        <relatedItem repeatId="1" type="funder">
+        <funder>
+            <linkedRecordType>diva-funder</linkedRecordType>
+            <linkedRecordId>diva-funder:67890</linkedRecordId>
+        </funder>
+        <identifier type="project">2021-00002</identifier>
+        </relatedItem>
     </output>
     """
 
