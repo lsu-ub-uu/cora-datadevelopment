@@ -94,9 +94,9 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - topic (link to migrated record) <- `subject/subjectId`
 - subject authority="sdg" <- `sustainableDevelopments`
   - topic <- mappning av `sustainableDevelopment/developmentId`
-- identifier type="isbn" <- `isbnNumbers/isbn/number`
+- identifier type="isbn" <- `isbnNumbers/isbn/number` if not chapter or conference paper
   - displayLabel <- mappning från `isbNumbers/isbn/type`
-- identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`)
+- identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) if not chapter or conference paper
 - 🆕 identifier type="ismn" <- N/A
 - identifier type="archiveNumber"> <- `archiveNumber`
 - 🆕 identifier type="openAlex"
@@ -216,8 +216,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
     - subtitle <- `subtitle`
     - language ❓
   - note type="statementOfResponsibility" <- `bookEditor`
-  - ⚠️ identifier type="isbn" ⚠️ Where do we get the correct identifier? ❓
-  - ⚠️ identifier type="doi"⚠️ Where do we get the correct identifier? ❓
+  - identifier type="isbn" <- `isbnNumbers/isbn/number` For chapters, isbn is on the book and not directly on the output
+  - identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) For chapters doi is on the book and not the output
     ❓ should we skip libris?
   - part/extent
     - start <- `startPage`
@@ -227,19 +227,19 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 
 - ⚠️ relatedItem type="conferencePublication" otherType="link"
   - proceeding (link to migrated record)
-- ⚠️ relatedItem type="conferencePublication" otherType="text"
+- relatedItem type="conferencePublication" otherType="text"
   - titleInfo <- `proceedingsTitle`
     - title <- `title`
     - subtitle <- `subtitle`
-    - language ❓
+    - language
   - note type="statementOfResponsibility" <- `proceedingsEditor`
-  - identifier type="isbn" ⚠️ Where do we get the correct identifier?
-  - identifier type="doi" ❓ should we skip libris? ⚠️ Where do we get the correct identifier?
+  - identifier type="isbn" <- `isbnNumbers/isbn/number` For conference paper, isbn should be on the conferencePublication and not directly on the output
+  - identifier type="doi" `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) For conference paper doi is on the conferencePublication and not the output
   - part/extent
     - start <- `startPage`
     - end <- `endPage`
-  - ⚠️ relatedItem type="series" otherType="link"
-  - ⚠️ relatedItem type="series" otherType="text"
+  - relatedItem type="series" otherType="link"
+  - relatedItem type="series" otherType="text"
 - relatedItem type="conference" <- `conference`
 - ⚠️ relatedItem type="funder"
   - ⚠️ funder (link to migrated record) <- `funderInfos/funder/funderId`

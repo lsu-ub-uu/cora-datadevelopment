@@ -27,10 +27,10 @@ def create_book(source_record: ET.Element, context: Context) -> ET.Element | Non
 
     append_if_value(related_item, _create_statement_of_responsibility(source_record))
 
-    # TODO How do we map ISBNs and DOIs?
+    append_if_value(related_item, create_identifier_type_isbn(source_record))
+    append_if_value(related_item, create_identifier_doi(source_record))
 
     append_if_value(related_item, _create_part(source_record))
-
     append_if_value(
         related_item, create_related_item_type_series(source_record, context)
     )

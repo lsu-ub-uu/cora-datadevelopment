@@ -524,6 +524,11 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                     <title>Skansen 125</title>
                 </titleInfo>
                 <note type="statementOfResponsibility">Fejkelina Jönsson</note>
+                <identifier displayLabel="print" repeatId="0" type="isbn">978-91-506-2649-0</identifier>
+                <identifier displayLabel="online" repeatId="1" type="isbn">978-92-893-7379-1</identifier>
+                <identifier displayLabel="undefined" repeatId="2" type="isbn">978-92-893-7380-7</identifier>
+                <identifier type="doi">10.1038/s41698-022-00278-4</identifier>
+
                 <part>
                     <extent>
                         <start>122</start>
@@ -623,6 +628,121 @@ def test_output_transform_student_thesis(mock_diva_search_requests):
                 <degreeLevel>H1</degreeLevel>
                 <universityPoints>180</universityPoints>
             </studentDegree>
+        </output>                     
+    """,
+    )
+
+
+def test_output_transform_conference_paper(mock_diva_search_requests):
+    fedora_xml = read_source_xml(
+        "test/data/fedora/mock_publication_conference-paper.xml"
+    )
+
+    result = transform_to_cora_output(fedora_xml, MockContext())
+
+    assert_equal_for_xml_and_xml_string(
+        result,
+        f"""
+        <output>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>conference_paper</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <permissionUnit>
+                    <linkedRecordType>permissionUnit</linkedRecordType>
+                    <linkedRecordId>uu</linkedRecordId>
+                </permissionUnit>
+                <visibility>published</visibility>
+                <oldId>diva2:807059</oldId>
+            </recordInfo>
+            <dataQuality>2026</dataQuality>
+            <genre type="contentType">ref</genre>
+            <titleInfo lang="eng">
+                <title>Laser heated ferromagnetic simulations</title>
+            </titleInfo>
+            <originInfo>
+                <dateIssued>
+                    <year>2015</year>
+                </dateIssued>
+            </originInfo>
+            <classification authority="ssif" repeatId="0">10399</classification>
+            <genre type="outputType">conference_paper</genre>
+            <language repeatId="0">
+                <languageTerm type="code" authority="iso639-2b">eng</languageTerm>
+            </language>
+            <artisticWork type="outputType">false</artisticWork>
+            <name repeatId="0" type="personal">
+                <namePart type="family">Mocksson</namePart>
+                <namePart type="given">Mock</namePart>
+                <role>
+                    <roleTerm>aut</roleTerm>
+                </role>
+                <nameIdentifier type="localId">XXXXX</nameIdentifier>
+            </name>
+            <name repeatId="1" type="personal">
+                <namePart type="family">Mockson</namePart>
+                <namePart type="given">Mock</namePart>
+                <role>
+                    <roleTerm>aut</roleTerm>
+                </role>
+                <nameIdentifier type="localId">XXXXX</nameIdentifier>
+            </name>
+            <name repeatId="2" type="personal">
+                <namePart type="family">Mockson</namePart>
+                <namePart type="given">Mock</namePart>
+                <role>
+                    <roleTerm>aut</roleTerm>
+                </role>
+                <nameIdentifier type="localId">XXXXX</nameIdentifier>
+            </name>
+            <name repeatId="3" type="personal">
+                <namePart type="family">Mockson</namePart>
+                <namePart type="given">Mock</namePart>
+                <role>
+                    <roleTerm>aut</roleTerm>
+                </role>
+            </name>
+            <name repeatId="4" type="personal">
+                <namePart type="family">Mockson</namePart>
+                <namePart type="given">Mock</namePart>
+                <role>
+                    <roleTerm>aut</roleTerm>
+                </role>
+            </name>
+            <abstract lang="eng" repeatId="0">Hej</abstract>
+            <adminInfo>
+                <reviewed>true</reviewed>
+            </adminInfo>
+            <identifier type="wos">000349745400025</identifier>
+            <relatedItem otherType="text" type="conferencePublication">
+                <titleInfo>
+                    <title>Ultrafast Magnetism I</title>
+                </titleInfo>
+                <note type="statementOfResponsibility">Doe, John</note>
+                <part>
+                    <extent>
+                    <start>76</start>
+                    <end>78</end>
+                    </extent>
+                </part>
+                <identifier displayLabel="print" repeatId="0" type="isbn">978-3-319-07743-7; 978-3-319-07742-0</identifier>
+                <identifier type="doi">10.1007/978-3-319-07743-7_25</identifier>
+                <relatedItem otherType="text" repeatId="uncontrolled0" type="series">
+                    <titleInfo>
+                        <title>Springer Proceedings in Physics</title>
+                    </titleInfo>
+                    <identifier displayLabel="pissn" type="issn">0930-8989</identifier>
+                    <partNumber>159</partNumber>
+                </relatedItem>
+            </relatedItem>
+            <relatedItem type="conference">
+                <conference>Ultrafast Magnetization Conference, OCT 28-NOV 01, 2013, Strasbourg, FRANCE</conference>
+            </relatedItem>
         </output>                     
     """,
     )
@@ -733,14 +853,14 @@ def test_output_transform_with_missing_data():
                     <userId>mathilda.angkvist@nordiskamuseet.se</userId>
                     <ip>193.10.45.2</ip>
                     <name>Mathilda Ängkvist</name>
-                    <date>2018-12-14T11:22:57.779+01:00</date>
+                    <date>2018-12-14T11:22:57.77901:00</date>
                     <userType>ADMIN</userType>
                     <userAction>CREATED</userAction>
                 </creatorInfo>
-                <createdDate>2018-12-14T11:22:57.779+01:00</createdDate>
-                <updatedDate>2025-06-12T18:41:53.887+02:00</updatedDate>
+                <createdDate>2018-12-14T11:22:57.77901:00</createdDate>
+                <updatedDate>2025-06-12T18:41:53.88702:00</updatedDate>
             </administrativeInfo>
-            <publicationDate>2018-12-14T11:22:57.698+01:00</publicationDate>
+            <publicationDate>2018-12-14T11:22:57.69801:00</publicationDate>
             <originalPublicationTitle />
             <bookTitle />
             <publisher />
@@ -765,7 +885,7 @@ def test_output_transform_with_missing_data():
             <hidden>false</hidden>
             <publicationOrder>
                 <orderLink>false</orderLink>
-                <validFrom>2018-12-14T11:22:54.341+01:00</validFrom>
+                <validFrom>2018-12-14T11:22:54.34101:00</validFrom>
                 <parameters />
             </publicationOrder>
             <canOrderOnline>false</canOrderOnline>

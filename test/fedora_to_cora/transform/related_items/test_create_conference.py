@@ -32,7 +32,7 @@ def test_empty_conference():
     assert conference is None
 
 
-def test_create_related_item_type_journal_with_title():
+def test_create_related_item_type_conference_with_title():
     source_record = ET.fromstring(
         """
         <publication>

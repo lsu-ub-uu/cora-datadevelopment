@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<publication>
+    <contentType>
+        <contentTypeId>50</contentTypeId>
+        <contentTypeCode>refereed</contentTypeCode>
+        <contentTypeNames>
+            <contentTypeName>
+                <contentTypeNameId>106</contentTypeNameId>
+                <locale>no</locale>
+                <contentTypeName>Fagfellevurdert</contentTypeName>
+            </contentTypeName>
+            <contentTypeName>
+                <contentTypeNameId>101</contentTypeNameId>
+                <locale>sv</locale>
+                <contentTypeName>Refereegranskat</contentTypeName>
+            </contentTypeName>
+            <contentTypeName>
+                <contentTypeNameId>100</contentTypeNameId>
+                <locale>en</locale>
+                <contentTypeName>Refereed</contentTypeName>
+            </contentTypeName>
+        </contentTypeNames>
+        <sortOrder>1</sortOrder>
+    </contentType>
+    <publicationType>
+        <publicationTypeId>59</publicationTypeId>
+        <publicationTypeCode>conferencePaper</publicationTypeCode>
+        <openUrlType>proceeding</openUrlType>
+        <publicationTypeNames>
+            <publicationTypeName>
+                <publicationTypeNameId>219</publicationTypeNameId>
+                <locale>en</locale>
+                <publicationTypeName>Conference paper</publicationTypeName>
+            </publicationTypeName>
+            <publicationTypeName>
+                <publicationTypeNameId>218</publicationTypeNameId>
+                <locale>sv</locale>
+                <publicationTypeName>Konferensbidrag</publicationTypeName>
+            </publicationTypeName>
+            <publicationTypeName>
+                <publicationTypeNameId>243</publicationTypeNameId>
+                <locale>no</locale>
+                <publicationTypeName>Konferansepaper</publicationTypeName>
+            </publicationTypeName>
+        </publicationTypeNames>
+        <roles />
+        <comprehensiveSummary>false</comprehensiveSummary>
+        <domainAdminOnly>false</domainAdminOnly>
+    </publicationType>
+    <pid>diva2:807059</pid>
+    <administrativeInfo>
+        <domain>uu</domain>
+        <creatorInfo>
+            <userId>XXXXX</userId>
+            <ip>130.238.171.136</ip>
+            <name>Mock Mocksson</name>
+            <date>2015-04-22T14:24:18.547+02:00</date>
+            <userType>SYSTEMADMIN</userType>
+            <userAction>CREATED</userAction>
+        </creatorInfo>
+        <updaters>
+            <userInformation>
+                <userId>XXXXX</userId>
+                <ip>130.238.171.136</ip>
+                <name>Mock Mocksson</name>
+                <date>2015-04-22T14:24:18.477+02:00</date>
+                <userType>SYSTEMADMIN</userType>
+                <userAction>AUTOPUBLISHED</userAction>
+            </userInformation>
+            <userInformation>
+                <userId>XXXXX</userId>
+                <ip />
+                <name>Mock Mocksson</name>
+                <date>2015-04-22T14:24:19.039+02:00</date>
+                <userType>SYSTEMADMIN</userType>
+                <userAction>UPDATED</userAction>
+            </userInformation>
+            <userInformation>
+                <userId>XXXXX</userId>
+                <ip>130.238.171.188</ip>
+                <name>Mock Mocksson</name>
+                <date>2017-01-25T16:53:09.626+01:00</date>
+                <userType>DOMAINADMIN</userType>
+                <userAction>UPDATED</userAction>
+            </userInformation>
+        </updaters>
+        <createdDate>2015-04-10T13:21:52.919+02:00</createdDate>
+        <updatedDate>2017-01-25T16:53:09.626+01:00</updatedDate>
+        <importSource>ISI</importSource>
+    </administrativeInfo>
+    <publicationDate>2015-04-22T14:24:18.477+02:00</publicationDate>
+    <authors>
+        <person>
+            <firstName>Mock</firstName>
+            <lastName>Mocksson</lastName>
+            <localId>XXXXX</localId>
+            <birthYear />
+            <deathYear />
+            <identifiers>
+                <entry>
+                    <personIdentifierType>orcid</personIdentifierType>
+                    <personIdentifier>
+                        <value />
+                        <type>orcid</type>
+                    </personIdentifier>
+                </entry>
+            </identifiers>
+            <authorityPid>authority-person:18194</authorityPid>
+        </person>
+        <person>
+            <firstName>Mock</firstName>
+            <lastName>Mockson</lastName>
+            <localId>XXXXX</localId>
+            <birthYear />
+            <deathYear />
+            <identifiers>
+                <entry>
+                    <personIdentifierType>orcid</personIdentifierType>
+                    <personIdentifier>
+                        <value />
+                        <type>orcid</type>
+                    </personIdentifier>
+                </entry>
+            </identifiers>
+            <authorityPid>authority-person:20059</authorityPid>
+        </person>
+        <person>
+            <firstName>Mock</firstName>
+            <lastName>Mockson</lastName>
+            <localId>XXXXX</localId>
+            <birthYear />
+            <deathYear />
+            <identifiers>
+                <entry>
+                    <personIdentifierType>orcid</personIdentifierType>
+                    <personIdentifier>
+                        <value />
+                        <type>orcid</type>
+                    </personIdentifier>
+                </entry>
+            </identifiers>
+            <authorityPid>authority-person:13116</authorityPid>
+        </person>
+        <person>
+            <firstName>Mock</firstName>
+            <lastName>Mockson</lastName>
+            <organisations />
+            <birthYear />
+            <deathYear />
+            <identifiers>
+                <entry>
+                    <personIdentifierType>orcid</personIdentifierType>
+                    <personIdentifier>
+                        <value />
+                        <type>orcid</type>
+                    </personIdentifier>
+                </entry>
+            </identifiers>
+        </person>
+        <person>
+            <firstName>Mock</firstName>
+            <lastName>Mockson</lastName>
+            <birthYear />
+            <deathYear />
+            <identifiers>
+                <entry>
+                    <personIdentifierType>orcid</personIdentifierType>
+                    <personIdentifier>
+                        <value />
+                        <type>orcid</type>
+                    </personIdentifier>
+                </entry>
+            </identifiers>
+            <authorityPid>authority-person:22161</authorityPid>
+        </person>
+    </authors>
+    <originalPublicationTitle>
+        <title>Laser heated ferromagnetic simulations</title>
+        <subTitle />
+        <language>
+            <languageCode3>eng</languageCode3>
+            <languageCode2>en</languageCode2>
+            <languageNames>
+                <languageName>
+                    <languageNameId>1145</languageNameId>
+                    <locale>en</locale>
+                    <languageName>English</languageName>
+                </languageName>
+                <languageName>
+                    <languageNameId>1144</languageNameId>
+                    <locale>sv</locale>
+                    <languageName>Engelska</languageName>
+                </languageName>
+                <languageName>
+                    <languageNameId>10120</languageNameId>
+                    <locale>no</locale>
+                    <languageName>engelsk</languageName>
+                </languageName>
+            </languageNames>
+            <showsOnList>true</showsOnList>
+        </language>
+    </originalPublicationTitle>
+    <uncontrolledSeriesInfo>
+        <series>
+            <seriesAlternativeTitles />
+            <issn>0930-8989</issn>
+            <subjects />
+            <relationships />
+            <seriesNameUncontrolled>Springer Proceedings in Physics</seriesNameUncontrolled>
+            <controlled>false</controlled>
+        </series>
+        <numberInSeries>159</numberInSeries>
+    </uncontrolledSeriesInfo>
+    <proceedingsTitle>
+        <title>Ultrafast Magnetism I</title>
+        <subTitle />
+        <language>
+            <languageCode3>eng</languageCode3>
+            <languageCode2>en</languageCode2>
+            <languageNames>
+                <languageName>
+                    <languageNameId>1145</languageNameId>
+                    <locale>en</locale>
+                    <languageName>English</languageName>
+                </languageName>
+                <languageName>
+                    <languageNameId>1144</languageNameId>
+                    <locale>sv</locale>
+                    <languageName>Engelska</languageName>
+                </languageName>
+                <languageName>
+                    <languageNameId>10120</languageNameId>
+                    <locale>no</locale>
+                    <languageName>engelsk</languageName>
+                </languageName>
+            </languageNames>
+            <showsOnList>true</showsOnList>
+        </language>
+    </proceedingsTitle>
+    <proceedingsEditor>Doe, John</proceedingsEditor>
+    <conference>Ultrafast Magnetization Conference, OCT 28-NOV 01, 2013, Strasbourg, FRANCE</conference>
+    <dateIssued>2015</dateIssued>
+    <startPage>76</startPage>
+    <endPage>78</endPage>
+    <publisher />
+    <isbnNumbers>
+        <isbn>
+            <number>978-3-319-07743-7; 978-3-319-07742-0</number>
+            <type>print</type>
+        </isbn>
+    </isbnNumbers>
+    <isi>000349745400025</isi>
+    <nbn>urn:nbn:se:uu:diva-249061</nbn>
+    <oai>oai:DiVA.org:uu-249061</oai>
+    <identifiers>
+        <entry>
+            <publicationIdentifierType>doi</publicationIdentifierType>
+            <publicationIdentifier>
+                <value>10.1007/978-3-319-07743-7_25</value>
+                <type>doi</type>
+                <openAccess>false</openAccess>
+            </publicationIdentifier>
+        </entry>
+    </identifiers>
+    <categories />
+    <nationalCategories>
+        <subject>
+            <subjectId>11527</subjectId>
+            <subjectType>
+                <subjectTypeId>57</subjectTypeId>
+                <subjectTypeCode>hsv</subjectTypeCode>
+                <subjectTypeNames>
+                    <subjectTypeName>
+                        <subjectTypeNameId>3722</subjectTypeNameId>
+                        <locale>en</locale>
+                        <subjectTypeName>HSV categories</subjectTypeName>
+                    </subjectTypeName>
+                    <subjectTypeName>
+                        <subjectTypeNameId>3721</subjectTypeNameId>
+                        <locale>sv</locale>
+                        <subjectTypeName>HSV kategorier</subjectTypeName>
+                    </subjectTypeName>
+                    <subjectTypeName>
+                        <subjectTypeNameId>3723</subjectTypeNameId>
+                        <locale>no</locale>
+                        <subjectTypeName>HSV kategorier</subjectTypeName>
+                    </subjectTypeName>
+                </subjectTypeNames>
+            </subjectType>
+            <subjectNames>
+                <subjectName>
+                    <subjectNameId>28205</subjectNameId>
+                    <locale>en</locale>
+                    <subjectName>Other Physics Topics</subjectName>
+                </subjectName>
+                <subjectName>
+                    <subjectNameId>28204</subjectNameId>
+                    <locale>sv</locale>
+                    <subjectName>Annan fysik</subjectName>
+                </subjectName>
+            </subjectNames>
+            <subjectCode>10399</subjectCode>
+            <parents>
+                <subject>
+                    <subjectId>11520</subjectId>
+                    <subjectType>
+                        <subjectTypeId>57</subjectTypeId>
+                        <subjectTypeCode>hsv</subjectTypeCode>
+                        <subjectTypeNames>
+                            <subjectTypeName>
+                                <subjectTypeNameId>3722</subjectTypeNameId>
+                                <locale>en</locale>
+                                <subjectTypeName>HSV categories</subjectTypeName>
+                            </subjectTypeName>
+                            <subjectTypeName>
+                                <subjectTypeNameId>3721</subjectTypeNameId>
+                                <locale>sv</locale>
+                                <subjectTypeName>HSV kategorier</subjectTypeName>
+                            </subjectTypeName>
+                            <subjectTypeName>
+                                <subjectTypeNameId>3723</subjectTypeNameId>
+                                <locale>no</locale>
+                                <subjectTypeName>HSV kategorier</subjectTypeName>
+                            </subjectTypeName>
+                        </subjectTypeNames>
+                    </subjectType>
+                    <subjectNames>
+                        <subjectName>
+                            <subjectNameId>28191</subjectNameId>
+                            <locale>en</locale>
+                            <subjectName>Physical Sciences</subjectName>
+                        </subjectName>
+                        <subjectName>
+                            <subjectNameId>28190</subjectNameId>
+                            <locale>sv</locale>
+                            <subjectName>Fysik</subjectName>
+                        </subjectName>
+                    </subjectNames>
+                    <subjectCode>103</subjectCode>
+                    <parents>
+                        <subject>
+                            <subjectId>11500</subjectId>
+                            <subjectType>
+                                <subjectTypeId>57</subjectTypeId>
+                                <subjectTypeCode>hsv</subjectTypeCode>
+                                <subjectTypeNames>
+                                    <subjectTypeName>
+                                        <subjectTypeNameId>3722</subjectTypeNameId>
+                                        <locale>en</locale>
+                                        <subjectTypeName>HSV categories</subjectTypeName>
+                                    </subjectTypeName>
+                                    <subjectTypeName>
+                                        <subjectTypeNameId>3721</subjectTypeNameId>
+                                        <locale>sv</locale>
+                                        <subjectTypeName>HSV kategorier</subjectTypeName>
+                                    </subjectTypeName>
+                                    <subjectTypeName>
+                                        <subjectTypeNameId>3723</subjectTypeNameId>
+                                        <locale>no</locale>
+                                        <subjectTypeName>HSV kategorier</subjectTypeName>
+                                    </subjectTypeName>
+                                </subjectTypeNames>
+                            </subjectType>
+                            <subjectNames>
+                                <subjectName>
+                                    <subjectNameId>28150</subjectNameId>
+                                    <locale>sv</locale>
+                                    <subjectName>Naturvetenskap</subjectName>
+                                </subjectName>
+                                <subjectName>
+                                    <subjectNameId>28151</subjectNameId>
+                                    <locale>en</locale>
+                                    <subjectName>Natural Sciences</subjectName>
+                                </subjectName>
+                            </subjectNames>
+                            <subjectCode>1</subjectCode>
+                            <parents />
+                            <predecessors />
+                            <domain>diva</domain>
+                            <organisations />
+                        </subject>
+                    </parents>
+                    <predecessors />
+                    <domain>diva</domain>
+                    <organisations />
+                </subject>
+            </parents>
+            <predecessors />
+            <domain>diva</domain>
+            <organisations />
+        </subject>
+    </nationalCategories>
+    <researchSubjects />
+    <abstracts>
+        <abstract>
+            <language>
+                <languageCode3>eng</languageCode3>
+                <languageCode2>en</languageCode2>
+                <languageNames>
+                    <languageName>
+                        <languageNameId>1145</languageNameId>
+                        <locale>en</locale>
+                        <languageName>English</languageName>
+                    </languageName>
+                    <languageName>
+                        <languageNameId>1144</languageNameId>
+                        <locale>sv</locale>
+                        <languageName>Engelska</languageName>
+                    </languageName>
+                    <languageName>
+                        <languageNameId>10120</languageNameId>
+                        <locale>no</locale>
+                        <languageName>engelsk</languageName>
+                    </languageName>
+                </languageNames>
+                <showsOnList>true</showsOnList>
+            </language>
+            <text>&lt;p&gt;Hej&lt;/p&gt;</text>
+        </abstract>
+    </abstracts>
+    <note />
+    <internalNote />
+    <formatElectronic>false</formatElectronic>
+    <formatPrint>false</formatPrint>
+    <agreementAccepted>false</agreementAccepted>
+    <reviewed>true</reviewed>
+    <reviewedBefore>true</reviewedBefore>
+    <migrated>false</migrated>
+    <importDuplicate>false</importDuplicate>
+    <registratedDuplicate>false</registratedDuplicate>
+    <artisticWork>false</artisticWork>
+    <cooperation>
+        <external>false</external>
+        <partner />
+    </cooperation>
+    <failed>false</failed>
+    <hidden>false</hidden>
+    <canOrderOnline>false</canOrderOnline>
+    <subtype>
+        <publicationSubtypeId>8</publicationSubtypeId>
+        <publicationSubtypeCode>publishedPaper</publicationSubtypeCode>
+        <publicationSubtypeNames>
+            <publicationSubtypeName>
+                <publicationSubtypeNameId>27</publicationSubtypeNameId>
+                <locale>en</locale>
+                <publicationSubtypeName>Published paper</publicationSubtypeName>
+            </publicationSubtypeName>
+            <publicationSubtypeName>
+                <publicationSubtypeNameId>29</publicationSubtypeNameId>
+                <locale>no</locale>
+                <publicationSubtypeName>Publicerat paper</publicationSubtypeName>
+            </publicationSubtypeName>
+            <publicationSubtypeName>
+                <publicationSubtypeNameId>28</publicationSubtypeNameId>
+                <locale>sv</locale>
+                <publicationSubtypeName>Publicerat paper</publicationSubtypeName>
+            </publicationSubtypeName>
+        </publicationSubtypeNames>
+    </subtype>
+</publication>

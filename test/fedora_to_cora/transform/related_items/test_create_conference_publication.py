@@ -1,45 +1,42 @@
 import xml.etree.ElementTree as ET
-from unittest.mock import MagicMock
 from common.test_helper import assert_equal_for_xml_and_xml_string
-from fedora_to_cora.transform.related_items.create_book import create_book
 from cora.context import MockContext
+from fedora_to_cora.transform.related_items.create_conference_publication import (
+    create_related_item_type_conference_publication,
+)
+from unittest.mock import MagicMock
 
 
-def test_create_minimal_book():
+def test_complete_conference_minimal():
     source_record = ET.fromstring(
         """
         <publication>
-            <bookTitle>
-                <title>En boktitel</title>
-            </bookTitle>
-
+            <proceedingsTitle>
+                <title>Proceedings of the International Conference on Testing</title>
+                <subTitle>Advances in Testing Methodologies</subTitle>
+            </proceedingsTitle>
         </publication>
         """
     )
-    result = create_book(source_record, MockContext())
+
+    conference = create_related_item_type_conference_publication(
+        source_record, MockContext()
+    )
+
     assert_equal_for_xml_and_xml_string(
-        result,
+        conference,
         """
-        <relatedItem type="book" otherType="text">
-            <titleInfo><title>En boktitel</title></titleInfo>
-        </relatedItem>
-    """,
+        <relatedItem type="conferencePublication" otherType="text">
+            <titleInfo>
+                <title>Proceedings of the International Conference on Testing</title>
+                <subtitle>Advances in Testing Methodologies</subtitle>
+            </titleInfo>
+        </relatedItem>   
+        """,
     )
 
 
-def test_create_no_book():
-    source_record = ET.fromstring(
-        """
-        <publication>
-        </publication>
-        """
-    )
-    result = create_book(source_record, MockContext())
-    assert result is None
-
-
-def test_create_maximal_book(monkeypatch):
-
+def test_complete_conference_maximal(monkeypatch):
     get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")
     monkeypatch.setattr(
         "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
@@ -49,13 +46,17 @@ def test_create_maximal_book(monkeypatch):
     source_record = ET.fromstring(
         """
         <publication>
-            <bookTitle>
-                <title>En boktitel</title>
-                <subTitle>En bokundertitel</subTitle>
-            </bookTitle>
-            <bookEditor>En redaktör</bookEditor>
+            <conference>En fiktiv konferens</conference>
+            <proceedingsTitle>
+                <title>Proceedings of the International Conference on Testing</title>
+                <subTitle>Advances in Testing Methodologies</subTitle>
+            </proceedingsTitle>
+            <proceedingsEditor>Dr. Test Example</proceedingsEditor>
             <startPage>10</startPage>
-            <endPage>30</endPage>   
+            <endPage>30</endPage>
+            <volume>12</volume>   
+            <articleId>123456</articleId>
+            <issueNumber>5</issueNumber>
             <isbnNumbers>
                 <isbn>
                     <number>978-91-506-2649-0</number>
@@ -70,6 +71,9 @@ def test_create_maximal_book(monkeypatch):
                 </isbn>
             </isbnNumbers>
             <identifiers>
+                <series>
+                    <seriesId>12345</seriesId>
+                </series>
                 <entry>
                     <publicationIdentifierType>doi</publicationIdentifierType>
                     <publicationIdentifier>
@@ -103,26 +107,33 @@ def test_create_maximal_book(monkeypatch):
         </publication>
         """
     )
-    result = create_book(source_record, MockContext())
+
+    conference = create_related_item_type_conference_publication(
+        source_record, MockContext()
+    )
+
     assert_equal_for_xml_and_xml_string(
-        result,
+        conference,
         """
-        <relatedItem type="book" otherType="text">
+        <relatedItem type="conferencePublication" otherType="text">
             <titleInfo>
-                <title>En boktitel</title>
-                <subtitle>En bokundertitel</subtitle>
+                <title>Proceedings of the International Conference on Testing</title>
+                <subtitle>Advances in Testing Methodologies</subtitle>
             </titleInfo>
-            <note type="statementOfResponsibility">En redaktör</note>
-            <identifier type="isbn" repeatId="0" displayLabel="print">978-91-506-2649-0</identifier>
-            <identifier type="isbn" repeatId="1" displayLabel="online">978-92-893-7379-1</identifier>
-            <identifier type="isbn" repeatId="2" displayLabel="undefined">978-92-893-7380-7</identifier>
-            <identifier type="doi">10.1038/s41698-022-00278-4</identifier>
+            <note type="statementOfResponsibility">Dr. Test Example</note>
             <part>
+                <detail type="volume"><number>12</number></detail>
+                <detail type="issue"><number>5</number></detail>
+                <detail type="artNo"><number>123456</number></detail>
                 <extent>
                     <start>10</start>
                     <end>30</end>
                 </extent>
             </part>
+            <identifier type="isbn" repeatId="0" displayLabel="print">978-91-506-2649-0</identifier>
+            <identifier type="isbn" repeatId="1" displayLabel="online">978-92-893-7379-1</identifier>
+            <identifier type="isbn" repeatId="2" displayLabel="undefined">978-92-893-7380-7</identifier>
+            <identifier type="doi">10.1038/s41698-022-00278-4</identifier>
             <relatedItem type="series" otherType="link" repeatId="controlled0">
                 <series>
                     <linkedRecordType>diva-series</linkedRecordType>
@@ -130,38 +141,6 @@ def test_create_maximal_book(monkeypatch):
                 </series>
                 <partNumber>66</partNumber>
             </relatedItem>
-        </relatedItem>
-    """,
+        </relatedItem>   
+        """,
     )
-
-
-def test_returns_none_if_no_book_title():
-    source_record = ET.fromstring(
-        """
-        <publication>
-            <startPage>10</startPage>
-            <endPage>30</endPage>
-        </publication>
-        """
-    )
-    result = create_book(source_record, MockContext())
-    assert result is None
-
-
-def test_create_weird_book(monkeypatch):
-
-    get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
-        get_cora_id_by_old_id_mock,
-    )
-
-    source_record = ET.fromstring(
-        """
-        <publication>
-            <bookTitle />
-        </publication>
-        """
-    )
-    result = create_book(source_record, MockContext())
-    assert result is None

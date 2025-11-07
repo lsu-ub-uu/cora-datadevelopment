@@ -491,7 +491,8 @@
       <checksums>
         <checksum>
           <type>SHA512</type>
-          <digest>916406572ab1c61b92b7c9ecf98cb8bd9cabb5ba0cb5dff26c4b157b79780ed4480e7fac50461f1e0f76bdce8d86fdf93a93dd48c6b8f810fcd552d853476ed7</digest>
+          <digest>
+            916406572ab1c61b92b7c9ecf98cb8bd9cabb5ba0cb5dff26c4b157b79780ed4480e7fac50461f1e0f76bdce8d86fdf93a93dd48c6b8f810fcd552d853476ed7</digest>
         </checksum>
       </checksums>
       <order>1</order>
@@ -546,7 +547,8 @@
       <checksums>
         <checksum>
           <type>SHA512</type>
-          <digest>24079a94db0aad515ea3008d0ec7d430d82098fbcf65b5dfdea26b8b4ad27ca020a73090aff935aa89a41073299b124adde31d1c24d16fc522671f54522d45d4</digest>
+          <digest>
+            24079a94db0aad515ea3008d0ec7d430d82098fbcf65b5dfdea26b8b4ad27ca020a73090aff935aa89a41073299b124adde31d1c24d16fc522671f54522d45d4</digest>
         </checksum>
       </checksums>
       <order>2</order>
@@ -585,4 +587,27 @@
   </publicationOrder>
   <canOrderOnline>false</canOrderOnline>
   <publicationChannel />
+  <isbnNumbers>
+    <isbn>
+      <number>978-91-506-2649-0</number>
+      <type>print</type>
+    </isbn>
+    <isbn>
+      <number>978-92-893-7379-1</number>
+      <type>electronic</type>
+    </isbn>
+    <isbn>
+      <number>978-92-893-7380-7</number>
+    </isbn>
+  </isbnNumbers>
+  <identifiers>
+    <entry>
+      <publicationIdentifierType>doi</publicationIdentifierType>
+      <publicationIdentifier>
+        <value>10.1038/s41698-022-00278-4</value>
+        <type>doi</type>
+        <openAccess>true</openAccess>
+      </publicationIdentifier>
+    </entry>
+  </identifiers>
 </publication>
