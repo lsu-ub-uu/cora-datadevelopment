@@ -12,7 +12,6 @@ LOCAL_PORT = 8080
 
 REMOTE_HOST = "diva-node7"
 REMOTE_PORT = 8083
-SOLR_SEARCH_URL = f"http://localhost:{LOCAL_PORT}/solr-admin/dream/select"
 
 
 def download_attachments(fedora_publication: ET.Element) -> None:

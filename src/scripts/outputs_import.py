@@ -1,10 +1,12 @@
 import argparse
 from common.arg_parser import create_argument_parser
+from common.ssh_tunnel import SSHTunnel
 from cora.context import CoraContext
 from fedora_to_cora.process_fedora_publication_files import (
     process_fedora_publication_files,
 )
 from scripts.util.analyze_errors import analyze_and_print_report
+from classic.config import SSH_HOST, SSH_PORT, SSH_USER
 
 
 def main():
@@ -54,12 +56,17 @@ def main():
         workers=args.workers,
     )
 
-    process_fedora_publication_files(
-        xml_dir=args.xml_dir,
-        context=context,
-        apply=args.apply,
-        limit=args.limit,
-    )
+    REMOTE_HOST = "10.0.2.68"
+    REMOTE_PORT = 8088
+    LOCAL_PORT = 8088
+
+    with SSHTunnel(SSH_HOST, SSH_PORT, SSH_USER, LOCAL_PORT, REMOTE_HOST, REMOTE_PORT):
+        process_fedora_publication_files(
+            xml_dir=args.xml_dir,
+            context=context,
+            apply=args.apply,
+            limit=args.limit,
+        )
 
     analyze_and_print_report("logs/outputs-import.log")
 

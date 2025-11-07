@@ -21,11 +21,11 @@ def attachment_transform(
 
     ET.SubElement(attachment, "type").text = get_attachment_type(source_attachment)
 
-    attachment_version = _get_attachment_version(source_attachment)
-    if attachment_version is not None:
-        ET.SubElement(attachment, "note", type="attachmentVersion").text = (
-            attachment_version
-        )
+    # attachment_version = _get_attachment_version(source_attachment)
+    # if attachment_version is not None:
+    #     ET.SubElement(attachment, "note", type="attachmentVersion").text = (
+    #         attachment_version
+    #     )
 
     append_if_value(
         attachment, _create_admin_info(source_attachment, file_upload_message)

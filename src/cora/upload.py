@@ -10,7 +10,7 @@ def upload_binary(
     binary_record: ET.Element, pid: str, file_name: str, context: Context
 ):
 
-    download_url = f"http://localhost:8080/fedora/get/{pid}/{file_name}"
+    download_url = f"http://localhost:8088/fedora/get/{pid}/{file_name}"
 
     upload_action_link = binary_record.find("./actionLinks/upload")
     assert (

@@ -36,13 +36,33 @@ def attachments_migrate(
             errors.append(error)
 
     if not errors:
-        update_record(record_to_update, context)
+        update_result = update_record(record_to_update, context)
+        if update_result.success:
+            context.log(
+                f"✅ Successfully migrated {len(attachments)} attachments for record with old id {source_record.findtext('.//pid')}"
+            )
+        else:
+            context.log(
+                f"❌ Failed to update record with attachments for record with old id {source_record.findtext('.//pid')}: {update_result.error}",
+                level="error",
+            )
+            errors.append(update_result.error)
+            _roll_back_binary_records(created_binary_records, context)
     else:
-        # roll back all created binary records if there are errors
-        for binary_record in created_binary_records:
-            delete_record(binary_record, context)
+        context.log(
+            "❌ Errors occurred during attachment migration, rolling back created binary records.",
+            level="error",
+        )
+        _roll_back_binary_records(created_binary_records, context)
 
     return len(errors) == 0, errors if errors else None
+
+
+def _roll_back_binary_records(
+    created_binary_records: list[ET.Element], context: Context
+):
+    for binary_record in created_binary_records:
+        delete_record(binary_record, context)
 
 
 def _migrate_attachment(
