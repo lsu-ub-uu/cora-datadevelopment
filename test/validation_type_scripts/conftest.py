@@ -25,7 +25,7 @@ def init_utils(ctx):
 @pytest.fixture(autouse=True)
 def reset_global_data():
     common_utils._ctx = None
-    common_utils._type_prefix = ""
+    common_utils._type_prefix = "__test_prefix"
     common_utils._record_type = ""
     common_utils._black_list = []
 
@@ -134,7 +134,7 @@ def sample_xml():
     <data>
         <metadata type="group">
             <recordInfo>
-                <id>divaTextNewGroup</id>
+                <id>__test_prefix_divaTextNewGroup</id>
                 <validationType>
                     <linkedRecordType>validationType</linkedRecordType>
                     <linkedRecordId>metadataGroup</linkedRecordId>

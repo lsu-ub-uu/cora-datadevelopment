@@ -1,6 +1,13 @@
 import xml.etree.ElementTree as ET
 
+import pytest
+
 from common import validation_type_utils as common_utils
+
+
+@pytest.fixture(autouse=True)
+def init_stuff(init_utils):
+    print("init stuff")
 
 
 def test_get_root_urls_for_validation_types(init_utils):
@@ -156,21 +163,21 @@ def test_update_final_value_no_update(init_utils):
     assert not common_utils.update_final_value_of_validation_type(record)
 
 
-def test_possibly_update_data_of_non_record_info_child_false(init_utils, record_node, monkeypatch):
+def test_possibly_update_data_of_non_record_info_child_false(record_node, monkeypatch):
     monkeypatch.setattr(common_utils, "set_data_quality_to_classic", lambda bool: False)
     monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda bool: False)
     monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda bool: False)
     assert not common_utils.possibly_update_data_of_non_record_info_child(record_node, "someId", False)
 
 
-def test_possibly_update_data_of_non_record_info_child_true_1(init_utils, record_node, monkeypatch):
+def test_possibly_update_data_of_non_record_info_child_true_1(record_node, monkeypatch):
     monkeypatch.setattr(common_utils, "set_data_quality_to_classic", lambda bool: True)
     monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda bool: False)
     monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda bool: False)
     assert common_utils.possibly_update_data_of_non_record_info_child(record_node, "someId", False)
 
 
-def test_possibly_update_data_of_non_record_info_child_true_2(init_utils, record_node, monkeypatch):
+def test_possibly_update_data_of_non_record_info_child_true_2(record_node, monkeypatch):
     monkeypatch.setattr(common_utils, "set_data_quality_to_classic", lambda bool: False)
     monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda bool: True)
     monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda bool: True)
@@ -274,7 +281,7 @@ def test_update_child_references_on_node_tree(create_node_tree):
             assert linked_id_text == record_id
 
 
-def test_create_new_id_with_prefix(init_utils, record_node):
+def test_create_new_id_with_prefix(record_node):
     original_id = f"{common_utils._type_prefix}existing_id"
     record_node.record_id = original_id
     global_id_mapping = {}
@@ -286,7 +293,7 @@ def test_create_new_id_with_prefix(init_utils, record_node):
     assert global_id_mapping[original_id] == record_node.record_id
 
 
-def test_create_new_id_without_prefix(init_utils, record_node):
+def test_create_new_id_without_prefix(record_node):
     original_id = "original_id"
     record_node.record_id = original_id
     global_id_mapping = {}
@@ -312,12 +319,12 @@ def test_remove_action_links(record_node):
 
 def test_parse_record_from_xml(sample_xml):
     node = common_utils.parse_record_from_xml(sample_xml, "http://some_url")
-    assert node.record_id == "divaTextNewGroup"
+    assert node.record_id == "__test_prefix_divaTextNewGroup"
     assert node.record_type == "metadata"
     assert node.url == "http://some_url"
 
 
-def test_fetch_record_as_xml(init_utils, monkeypatch, sample_xml):
+def test_fetch_record_as_xml(monkeypatch, sample_xml):
     xml = common_utils.fetch_record_as_xml("http://someurl/record")
     assert sample_xml in xml
 
@@ -367,7 +374,7 @@ def test_get_ids_for_record_type_matching_prefix(init_utils):
     assert results == ["__test_prefix_pres1", "__test_prefix_pres2"]
 
 
-def test_break_dependency_to_top_groups(init_utils, record_node):
+def test_break_dependency_to_top_groups(record_node):
     record_info = record_node.xml_content.find(".//recordInfo")
 
     metadata_id = ET.SubElement(record_info, "newMetadataId")
@@ -381,7 +388,7 @@ def test_break_dependency_to_top_groups(init_utils, record_node):
     assert linked_record_id.text.endswith("_wow_a_prefix")
 
 
-def test_update_dependency_to_top_groups(init_utils, record_node):
+def test_update_dependency_to_top_groups(record_node):
     record_info = record_node.xml_content.find(".//recordInfo")
 
     metadata_id = ET.SubElement(record_info, "newMetadataId")
@@ -395,7 +402,7 @@ def test_update_dependency_to_top_groups(init_utils, record_node):
     assert linked_record_id.text.endswith("_wow_a_prefix")
 
 
-def test_update_dependency_to_top_groups_no_doubles(init_utils, record_node):
+def test_update_dependency_to_top_groups_no_doubles(record_node):
     record_info = record_node.xml_content.find(".//recordInfo")
 
     metadata_id = ET.SubElement(record_info, "newMetadataId")
@@ -429,12 +436,12 @@ def test_possibly_set_to_not_create_presentations_not_group(record_node):
     assert not record_node.xml_content.findall(".//excludePGroupCreation")
 
 
-def test_try_to_create_record(init_utils, record_node):
+def test_try_to_create_record(record_node):
     errors = []
     assert common_utils.try_to_create_record(record_node, record_node.xml_content, errors)
 
 
-def test_try_to_create_record_not_201(init_utils, record_node):
+def test_try_to_create_record_not_201(record_node):
     errors = []
     record_node.new_record_id = "some_new_id"
     record_node.record_type = "return400"
@@ -442,7 +449,7 @@ def test_try_to_create_record_not_201(init_utils, record_node):
     assert "Failed to save some_new_id (400 - failed to post)" in errors
 
 
-def test_try_to_create_record_throws_exception(init_utils, record_node):
+def test_try_to_create_record_throws_exception(record_node):
     errors = []
     record_node.new_record_id = "some_new_id"
     record_node.record_type = "throw_exception"
@@ -450,32 +457,32 @@ def test_try_to_create_record_throws_exception(init_utils, record_node):
     assert "Error saving some_new_id: threw exception" in errors
 
 
-def test_try_to_update_record(init_utils, record_node):
+def test_try_to_update_record(record_node):
     errors = []
     assert common_utils.try_to_update_record(record_node, errors)
 
 
-def test_prepare_and_delete_record(init_utils, record_node):
+def test_prepare_and_delete_record(record_node):
     errors = []
     record_node.record_id = f"{common_utils._type_prefix}_record_id"
     assert common_utils.prepare_and_delete_record(record_node, errors)
 
 
-def test_prepare_and_delete_record_not_200(init_utils, record_node):
+def test_prepare_and_delete_record_not_200(record_node):
     errors = []
     record_node.record_id = f"{common_utils._type_prefix}_not200"
     assert not common_utils.prepare_and_delete_record(record_node, errors)
     assert "Failed to delete record: http://baseUrl/validationType/__test_prefix__not200" in errors
 
 
-def test_prepare_and_delete_record_not_matching_prefix(init_utils, record_node):
+def test_prepare_and_delete_record_not_matching_prefix(record_node):
     errors = []
     assert not common_utils.prepare_and_delete_record(record_node, errors)
     assert ("Tried to delete a record that probably wasn't supposed to be deleted... "
             "http://baseUrl/validationType/divaTextNewGroup") in errors
 
 
-def test_prepare_and_delete_record_throws_exception(init_utils, record_node):
+def test_prepare_and_delete_record_throws_exception(record_node):
     errors = []
     record_node.record_id = f"{common_utils._type_prefix}_throw_exception"
     assert not common_utils.prepare_and_delete_record(record_node, errors)

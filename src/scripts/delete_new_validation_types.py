@@ -27,20 +27,7 @@ TOTAL_PRESENTATION_DELETIONS = 0
 TOTAL_ERRORS = []
 
 
-# Representation of a record and its relationships ----------------------------------
-class RecordNode:
-    def __init__(self, record_id, record_type, url, xml_content):
-        self.record_id: str = record_id
-        self.record_type = record_type
-        self.url = url
-        self.xml_content = xml_content
-        self.child_urls = []
-        self.children = []
-        self.parents = []
-        self.new_record_id = None
-
-
-def main():
+def main():  # pragma: no cover
     global CTX, DRY_RUN, TYPE_PREFIX
 
     parser = create_argument_parser(
@@ -102,6 +89,8 @@ def delete_records_with_prefix():
 
 
 def delete_presentations():
+    global TOTAL_PRESENTATION_DELETIONS
+
     presentation_ids = utils.get_ids_for_record_type_matching_prefix("presentation")
     delete_urls = deque(construct_delete_urls_from_ids(presentation_ids))
 
@@ -110,11 +99,6 @@ def delete_presentations():
         return
 
     print("\n~ Heavy metal riff playing ~")
-    try_to_delete_presentations(delete_urls)
-
-
-def try_to_delete_presentations(delete_urls: deque[str]):
-    global TOTAL_PRESENTATION_DELETIONS
     total = len(delete_urls)
     retries: dict[str, int] = {}
     while delete_urls:
