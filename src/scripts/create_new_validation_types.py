@@ -1,6 +1,8 @@
 from collections import deque, defaultdict
 from typing import Any
 
+from tqdm import tqdm
+
 from common import validation_type_utils as common_utils
 from common.arg_parser import create_argument_parser
 from cora.context import CoraContext, Context
@@ -86,7 +88,7 @@ def create_new_validation_types_for_record_type():
     CTX.log(f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
 
     collect_record_info_children(GLOBAL_NODE_MAP)
-
+    print()
     common_utils.log("=== Processing node map ===")
 
     process_node_map_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
@@ -175,23 +177,25 @@ def process_node_map_bottom_up_and_store(global_node_map, global_id_mapping):
             leaf_queue.append(url)
 
     processed: set[str] = set()
-
+    progress = tqdm(total=len(global_node_map), desc="Processing records", bar_format="{l_bar}{bar:30}{r_bar}")
     while leaf_queue:
+
         child_reference_url = leaf_queue.popleft()
         node = global_node_map[child_reference_url]
 
         process_node(global_id_mapping, node)
         processed.add(child_reference_url)
+
         for parent in node.parents:
             if parent.url in unprocessed_child_map:
                 unprocessed_child_map[parent.url] -= 1
                 if unprocessed_child_map[parent.url] == 0:
                     leaf_queue.append(parent.url)
 
-        print(
-            f"Records processed: {len(processed)} - Records created: {TOTAL_CREATED} - Records updated: {TOTAL_UPDATES}",
-            end="\r", flush=True)
+        progress.update(1)
+        progress.set_postfix_str(f"Created: {TOTAL_CREATED}  Updated: {TOTAL_UPDATES}")
 
+    progress.close()
     print()
     check_for_unprocessed_nodes(global_node_map, processed)
 
@@ -269,14 +273,6 @@ def process_and_possibly_create(node, global_id_mapping):
         CTX.log(f"> Updated data divider of {original_id}")
 
     return prepare_and_try_to_save_record(node)
-
-
-# def update_parent_dependencies(leaf_queue: deque[str], node, unprocessed_child_map: dict[str, int]):
-#    for parent in node.parents:
-#        if parent.url in unprocessed_child_map:
-#            unprocessed_child_map[parent.url] -= 1
-#            if unprocessed_child_map[parent.url] == 0:
-#                leaf_queue.append(parent.url)
 
 
 def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
