@@ -68,7 +68,6 @@ def delete_records_with_prefix():
     if not validation_types:
         utils.log("No validationTypes found to delete...")
     else:
-        print("\n...artistic pause...")
         root_urls = utils.get_root_urls_for_validation_types(validation_types)
         for root_url in root_urls:
             utils.build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
@@ -79,7 +78,6 @@ def delete_records_with_prefix():
     if not GLOBAL_NODE_MAP:
         utils.log("There is nothing to delete...")
     else:
-        print("\n~ Heavy metal riff playing ~")
         process_node_map_and_delete_records(GLOBAL_NODE_MAP)
 
     utils.log("=== Script finished ===")
@@ -98,20 +96,19 @@ def delete_presentations():
         utils.log("No presentations found to delete...")
         return
 
-    print("\n~ Heavy metal riff playing ~")
     total = len(delete_urls)
     retries: dict[str, int] = {}
     while delete_urls:
         url = delete_urls.popleft()
         if DRY_RUN:
             TOTAL_PRESENTATION_DELETIONS += 1
-            print(f"Presentations annihilated from existance: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r",
+            print(f"Presentations deleted: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r",
                   flush=True)
         else:
             deleted = utils.try_to_delete_record(url, TOTAL_ERRORS)
             if deleted:
                 TOTAL_PRESENTATION_DELETIONS += 1
-                print(f"Presentations annihilated from existance: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r",
+                print(f"Presentations deleted: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r",
                       flush=True)
             else:
                 if retries.get(url, 0) >= 5:
@@ -176,7 +173,7 @@ def process_record(global_node_map, node):
     else:
         if prepare_url_and_possibly_delete(node):
             TOTAL_RECORD_DELETIONS += 1
-            print(f"Records purged from this world: {TOTAL_RECORD_DELETIONS} / {len(global_node_map)}", end="\r",
+            print(f"Records deleted: {TOTAL_RECORD_DELETIONS} / {len(global_node_map)}", end="\r",
                   flush=True)
 
 
