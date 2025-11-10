@@ -63,6 +63,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 
   - namePart type="family" <- `lastName`
   - namePart type="given" <- `firstName`
+  - namePart type="date" <- `birthYear - deathYear`
   - role/roleTerm <- aut | edt | `roles/role/marcCode`
   - orcid
   - lokalt id
@@ -170,6 +171,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - namePart <- `externalGrantingInstitution`
   - 🆕 identifier type="ror" <- N/A
 - supervisor <- `supervisors`
+  - same as name type="personal"
+  - title ?
 - examiner <- `examiners`
 - opponent <- `opponents`
 - defence <- `defence` For degree project (diva-degreeProject) the tag should be presentation instead of defence.

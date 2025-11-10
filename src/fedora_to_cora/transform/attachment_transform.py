@@ -7,6 +7,7 @@ from fedora_to_cora.transform.binary.get_attachment_type import get_attachment_t
 
 def attachment_transform(
     source_attachment: ET.Element,
+    validation_type: str,
     binary_record_id: str,
     file_upload_message: Optional[str] = None,
 ) -> ET.Element:
@@ -21,17 +22,39 @@ def attachment_transform(
 
     ET.SubElement(attachment, "type").text = get_attachment_type(source_attachment)
 
-    # attachment_version = _get_attachment_version(source_attachment)
-    # if attachment_version is not None:
-    #     ET.SubElement(attachment, "note", type="attachmentVersion").text = (
-    #         attachment_version
-    #     )
+    if should_have_attachment_version(validation_type):
+        append_if_value(
+            attachment,
+            _create_attachment_version(source_attachment),
+        )
 
     append_if_value(
         attachment, _create_admin_info(source_attachment, file_upload_message)
     )
 
     return attachment
+
+
+def should_have_attachment_version(validation_type: str) -> bool:
+    validation_types_with_attachment_version = {
+        "publication_newspaper-article",
+        "publication_book-review",
+        "publication_magazine-article",
+        "publication_journal-article",
+        "publication_review-article",
+        "publication_editorial-letter",
+    }
+    return validation_type in validation_types_with_attachment_version
+
+
+def _create_attachment_version(source_attachment: ET.Element) -> Optional[ET.Element]:
+    attachment_version = _get_attachment_version(source_attachment)
+    if attachment_version is None:
+        return None
+
+    note = ET.Element("note", type="attachmentVersion")
+    note.text = attachment_version
+    return note
 
 
 def _get_attachment_version(source_attachment: ET.Element) -> str | None:

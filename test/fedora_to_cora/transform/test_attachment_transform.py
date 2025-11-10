@@ -24,7 +24,11 @@ def test_attachment_transform(monkeypatch):
     )
     binary_record_id = "binary:12345"
 
-    attachment = attachment_transform(source_attachment, binary_record_id)
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type="publication_report",
+        binary_record_id=binary_record_id,
+    )
 
     assert_equal_for_xml_and_xml_string(
         attachment,
@@ -41,6 +45,69 @@ def test_attachment_transform(monkeypatch):
         </attachment>
         """,
     )
+
+
+@pytest.mark.parametrize(
+    "validation_type,should_have_attachment_version",
+    [
+        ("intellectual-property_patent", False),
+        ("publication_encyclopedia-entry", False),
+        ("conference_proceeding", False),
+        ("conference_poster", False),
+        ("publication_edited-book", False),
+        ("publication_licentiate-thesis-compilation", False),
+        ("publication_journal-issue", False),
+        ("artistic-work_artistic-thesis", False),
+        ("conference_paper", False),
+        ("publication_critical-edition", False),
+        ("conference_other", False),
+        ("publication_report", False),
+        ("publication_preprint", False),
+        ("publication_book-chapter", False),
+        ("publication_book", False),
+        ("diva_dissertation", False),
+        ("publication_licentiate-thesis-monograph", False),
+        ("publication_other", False),
+        ("artistic-work_original-creative-work", False),
+        ("publication_working-paper", False),
+        ("publication_report-chapter", False),
+        ("diva_degree-project", False),
+        ("publication_foreword-afterword", False),
+        ("publication_doctoral-thesis-monograph", False),
+        ("publication_doctoral-thesis-compilation", False),
+        ("publication_newspaper-article", True),
+        ("publication_book-review", True),
+        ("publication_magazine-article", True),
+        ("publication_journal-article", True),
+        ("publication_review-article", True),
+        ("publication_editorial-letter", True),
+    ],
+)
+def test_includes_attachment_version_depending_on_validation_type(
+    validation_type, should_have_attachment_version
+):
+    source_attachment = ET.fromstring(
+        f"""
+            <attachment>
+                <fileLabel>
+                    <fileLabelId>50</fileLabelId>
+                </fileLabel>
+                <path>test.pdf</path>
+                <prePrint>true</prePrint>
+            </attachment>
+        """
+    )
+
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type=validation_type,
+        binary_record_id="binary:12345",
+    )
+
+    if should_have_attachment_version:
+        assert attachment.findtext("./note[@type='attachmentVersion']") is not None
+    else:
+        assert attachment.findtext("./note[@type='attachmentVersion']") is None
 
 
 @pytest.mark.parametrize(
@@ -68,7 +135,11 @@ def test_attachment_version_submitted_when_preprint(
 
     binary_record_id = "binary:12345"
 
-    attachment = attachment_transform(source_attachment, binary_record_id)
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type="publication_newspaper-article",
+        binary_record_id=binary_record_id,
+    )
 
     attachment_version = attachment.findtext("note[@type='attachmentVersion']")
     assert attachment_version == expected_attachment_version
@@ -91,7 +162,11 @@ def test_raises_error_when_multiple_attachment_versions():
     binary_record_id = "binary:12345"
 
     with pytest.raises(ValueError, match="Multiple attachment versions found"):
-        attachment_transform(source_attachment, binary_record_id)
+        attachment_transform(
+            source_attachment,
+            validation_type="publication_newspaper-article",
+            binary_record_id=binary_record_id,
+        )
 
 
 def test_secrecy():
@@ -111,7 +186,11 @@ def test_secrecy():
 
     binary_record_id = "binary:12345"
 
-    attachment = attachment_transform(source_attachment, binary_record_id)
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type="publication_report",
+        binary_record_id=binary_record_id,
+    )
 
     assert attachment.findtext("./adminInfo/secrecy") == "true"
 
@@ -131,7 +210,11 @@ def test_registration_number():
 
     binary_record_id = "binary:12345"
 
-    attachment = attachment_transform(source_attachment, binary_record_id)
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type="publication_report",
+        binary_record_id=binary_record_id,
+    )
 
     assert (
         attachment.findtext("./adminInfo/identifier[@type='registrationNumber']")
@@ -156,7 +239,8 @@ def test_note_type_attachment():
 
     attachment = attachment_transform(
         source_attachment,
-        binary_record_id,
+        validation_type="publication_report",
+        binary_record_id=binary_record_id,
         file_upload_message="Some note about the attachment",
     )
 
@@ -164,15 +248,3 @@ def test_note_type_attachment():
         attachment.findtext("./adminInfo/note[@type='attachment']")
         == """**The following note was migrated from a DiVA Classic file upload message, and may not refer to this attachment**:\n\nSome note about the attachment"""
     )
-
-
-# <displayLabel>
-# <note type="attachmentVersion">
-# <adminInfo>
-#     <availability>
-#     <dateAvailability>
-#         <year>
-#         <month>
-#         <day>
-#     </availability>
-# </adminInfo>

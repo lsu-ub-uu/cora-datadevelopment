@@ -1,4 +1,3 @@
-import os
 import requests
 import xml.etree.ElementTree as ET
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -7,11 +6,8 @@ from cora.context import Context
 
 
 def upload_binary(
-    binary_record: ET.Element, pid: str, file_name: str, context: Context
+    binary_record: ET.Element, file_name: str, data: bytes, context: Context
 ):
-
-    download_url = f"http://localhost:8088/fedora/get/{pid}/{file_name}"
-
     upload_action_link = binary_record.find("./actionLinks/upload")
     assert (
         upload_action_link is not None
@@ -20,34 +16,27 @@ def upload_binary(
     request_url = upload_action_link.findtext("./url")
     assert request_url is not None, "Upload URL not found in action link"
 
-    try:
-        download_response = requests.get(download_url)
-        download_response.raise_for_status()
+    multipart_data = MultipartEncoder(
+        fields={
+            "file": (
+                file_name,
+                data,
+                "application/octet-stream",
+            )
+        }
+    )
 
-        multipart_data = MultipartEncoder(
-            fields={
-                "file": (
-                    file_name,
-                    download_response.content,
-                    "application/octet-stream",
-                )
-            }
-        )
-
-        response = requests.post(
-            request_url,
-            data=multipart_data,
-            headers={
-                "Authtoken": context.get_auth_token(),
-                "Content-Type": multipart_data.content_type,
-            },
-        )
-    except requests.RequestException as e:
-        context.log(f"Error downloading file from '{download_url}': {e}", level="error")
-        raise UploadError(f"Failed to download file from '{download_url}': {e}")
+    response = requests.post(
+        request_url,
+        data=multipart_data,
+        headers={
+            "Authtoken": context.get_auth_token(),
+            "Content-Type": multipart_data.content_type,
+        },
+    )
 
     if response.status_code == 200:
-        context.log(f"Upload successful: {file_name} (downloaded from {download_url})")
+        context.log(f"Upload successful: {file_name} ")
     else:
         context.log(f"Upload failed: {response.text}", level="error")
         raise UploadError(
