@@ -1,4 +1,5 @@
 import pytest
+from tqdm import tqdm
 
 import scripts.delete_new_validation_types as script
 from common import validation_type_utils as common_utils
@@ -188,5 +189,5 @@ def test_update_record(record_node):
 
 
 def test_process_record_expect_update(record_node):
-    script.process_record({"a": "b"}, record_node)
+    script.process_record(tqdm(total=1), record_node)
     assert script.TOTAL_RECORD_UPDATES == 1

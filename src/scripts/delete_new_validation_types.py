@@ -1,5 +1,7 @@
 from collections import deque
 
+from tqdm import tqdm
+
 from common import validation_type_utils as utils
 from common.arg_parser import create_argument_parser
 from cora.context import CoraContext, Context
@@ -98,18 +100,17 @@ def delete_presentations():
 
     total = len(delete_urls)
     retries: dict[str, int] = {}
+    progress = tqdm(total=total, desc="Deleting presentations", bar_format="{l_bar}{bar:30}{r_bar}")
     while delete_urls:
         url = delete_urls.popleft()
         if DRY_RUN:
             TOTAL_PRESENTATION_DELETIONS += 1
-            print(f"Presentations deleted: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r",
-                  flush=True)
+            progress.update(1)
         else:
             deleted = utils.try_to_delete_record(url, TOTAL_ERRORS)
             if deleted:
                 TOTAL_PRESENTATION_DELETIONS += 1
-                print(f"Presentations deleted: {TOTAL_PRESENTATION_DELETIONS} / {total}", end="\r",
-                      flush=True)
+                progress.update(1)
             else:
                 if retries.get(url, 0) >= 5:
                     TOTAL_ERRORS.append("Failed to delete " + url + " after 5 retries!")
@@ -118,6 +119,8 @@ def delete_presentations():
                         f"   - Failed to delete record. Will retry... number of retries so far: {retries.get(url, 0)} / 5\n")
                     delete_urls.append(url)
                     retries[url] = retries.get(url, 0) + 1
+
+    progress.close()
 
 
 def process_node_map_and_delete_records(global_node_map):
@@ -137,16 +140,15 @@ def process_node_map_and_delete_records(global_node_map):
             deletion_queue.append(url)
 
     processed: set[str] = set()
-
+    TOTAL_PREFIX_MATCHES = get_total_matching_prefixed_records()
+    progress = tqdm(total=TOTAL_PREFIX_MATCHES, desc="Deleting and/or updating records",
+                    bar_format="{l_bar}{bar:30}{r_bar}")
     while deletion_queue:
         url = deletion_queue.popleft()
         node = global_node_map[url]
 
+        process_record(progress, node)
         TOTAL_PROCESSED_RECORDS += 1
-        if TYPE_PREFIX in node.record_id:
-            TOTAL_PREFIX_MATCHES += 1
-        process_record(global_node_map, node)
-
         processed.add(url)
 
         for child in node.children:
@@ -157,11 +159,12 @@ def process_node_map_and_delete_records(global_node_map):
                 if remaining_parent_count[child_url] == 0:
                     deletion_queue.append(child_url)
 
+    progress.close()
     print()
     check_for_unprocessed_nodes(global_node_map, processed)
 
 
-def process_record(global_node_map, node):
+def process_record(progress, node):
     global TOTAL_RECORD_DELETIONS, TOTAL_RECORD_UPDATES
     if node.record_type == "validationType":
         CTX.log(f"ValidationType '{node.record_id}' was updated to original metadata new/update groups and not deleted")
@@ -169,12 +172,29 @@ def process_record(global_node_map, node):
         utils.remove_action_links(node.xml_content)
         if update_record(node):
             TOTAL_RECORD_UPDATES += 1
+            progress.update(1)
 
     else:
         if prepare_url_and_possibly_delete(node):
             TOTAL_RECORD_DELETIONS += 1
-            print(f"Records deleted: {TOTAL_RECORD_DELETIONS} / {len(global_node_map)}", end="\r",
-                  flush=True)
+            progress.update(1)
+
+
+def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
+    unprocessed = [url for url in global_node_map if url not in processed]
+    if unprocessed:
+        utils.log("Some records were not processed (and probably not deleted), check log for more info...")
+        for url in unprocessed:
+            TOTAL_ERRORS.append("Warning: Record: " + url + " was never processed")
+
+
+def prepare_url_and_possibly_delete(node):
+    if not f"{node.record_id}".startswith(TYPE_PREFIX):
+        return False
+    if DRY_RUN:
+        return True
+
+    return utils.prepare_and_delete_record(node, TOTAL_ERRORS)
 
 
 def log_results():  # pragma: no cover
@@ -203,24 +223,11 @@ def log_results():  # pragma: no cover
         utils.log("  No errors reported.")
 
 
-def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
-    unprocessed = [url for url in global_node_map if url not in processed]
-    if unprocessed:
-        utils.log("Some records were not processed (and probably not deleted), check log for more info...")
-        for url in unprocessed:
-            TOTAL_ERRORS.append("Warning: Record: " + url + " was never processed")
-
-
-def prepare_url_and_possibly_delete(node):
-    if not f"{node.record_id}".startswith(TYPE_PREFIX):
-        return False
-    if DRY_RUN:
-        return True
-
-    return utils.prepare_and_delete_record(node, TOTAL_ERRORS)
-
-
 # XML utilities ----------------------------------
+def get_total_matching_prefixed_records() -> int:
+    return sum(1 for node in GLOBAL_NODE_MAP.values() if node.record_id.startswith(TYPE_PREFIX))
+
+
 def construct_delete_urls_from_ids(ids: list) -> set[str]:
     delete_urls = set()
     for record_id in ids:
