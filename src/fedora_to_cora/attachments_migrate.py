@@ -2,6 +2,9 @@ from typing import Tuple
 import xml.etree.ElementTree as ET
 import os
 import copy
+
+import requests
+from classic import download_attachment
 from cora.context import Context
 from fedora_to_cora.transform.binary.binary_record_transform import (
     binary_record_transform,
@@ -17,7 +20,6 @@ def attachments_migrate(
     source_record: ET.Element,
     cora_record: ET.Element,
     context: Context,
-    xml_dir: str,
 ) -> Tuple[bool, list[str] | None]:
     created_binary_records = []
     record_to_update = copy.deepcopy(cora_record)
@@ -28,7 +30,7 @@ def attachments_migrate(
     attachments = source_record.findall("./attachments/attachment")
     for attachment in attachments:
         attachment, error = _migrate_attachment(
-            attachment, context, xml_dir, created_binary_records, source_record
+            attachment, context, created_binary_records, source_record
         )
         if attachment is not None:
             output.append(attachment)
@@ -36,19 +38,38 @@ def attachments_migrate(
             errors.append(error)
 
     if not errors:
-        update_record(record_to_update, context)
+        update_result = update_record(record_to_update, context)
+        if update_result.success:
+            context.log(
+                f"✅ Successfully migrated {len(attachments)} attachments for record with old id {source_record.findtext('.//pid')}"
+            )
+        else:
+            context.log(
+                f"❌ Failed to update record with attachments for record with old id {source_record.findtext('.//pid')}: {update_result.error}",
+                level="error",
+            )
+            errors.append(update_result.error)
+            _roll_back_binary_records(created_binary_records, context)
     else:
-        # roll back all created binary records if there are errors
-        for binary_record in created_binary_records:
-            delete_record(binary_record, context)
+        context.log(
+            "❌ Errors occurred during attachment migration, rolling back created binary records.",
+            level="error",
+        )
+        _roll_back_binary_records(created_binary_records, context)
 
     return len(errors) == 0, errors if errors else None
+
+
+def _roll_back_binary_records(
+    created_binary_records: list[ET.Element], context: Context
+):
+    for binary_record in created_binary_records:
+        delete_record(binary_record, context)
 
 
 def _migrate_attachment(
     attachment: ET.Element,
     context: Context,
-    xml_dir: str,
     created_binary_records: list[ET.Element],
     source_record: ET.Element,
 ) -> Tuple[ET.Element | None, str | None]:
@@ -65,9 +86,22 @@ def _migrate_attachment(
 
     if is_success_result(create_binary_result):
         created_binary_records.append(create_binary_result.response_data)
-        file_path = _get_file_path(attachment, xml_dir)
         try:
-            upload_binary(create_binary_result.response_data, pid, file_name, context)
+            binary_data = download_attachment(pid, file_name)
+        except Exception as e:
+            context.log(
+                f"Error downloading file for pid '{pid}' with filename '{file_name}': {e}",
+                level="error",
+            )
+            return None, str(e)
+
+        try:
+            upload_binary(
+                create_binary_result.response_data,
+                file_name=file_name,
+                data=binary_data,
+                context=context,
+            )
         except UploadError as e:
             context.log(f"Error uploading binary: {e}", level="error")
             return None, str(e)
@@ -86,9 +120,3 @@ def _migrate_attachment(
             "error",
         )
         return None, create_binary_result.error
-
-
-def _get_file_path(attachment: ET.Element, xml_dir: str) -> str:
-    path = attachment.findtext("./path")
-    assert path is not None, "Path not found in attachment"
-    return os.path.join(xml_dir, "binaries", path)

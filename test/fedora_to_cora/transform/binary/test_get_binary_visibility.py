@@ -3,7 +3,7 @@ from fedora_to_cora.transform.binary.get_binary_visibility import get_binary_vis
 from datetime import datetime
 
 
-def test_returns_hidden_when_deleted():
+def test_returns_unpublished_when_deleted():
     source_record = ET.fromstring(
         """
         <attachment>
@@ -13,7 +13,7 @@ def test_returns_hidden_when_deleted():
         </attachment>
         """
     )
-    assert get_binary_visibility(source_record) == "hidden"
+    assert get_binary_visibility(source_record) == "unpublished"
 
 
 def test_returns_published_when_available_from_in_the_past(monkeypatch):

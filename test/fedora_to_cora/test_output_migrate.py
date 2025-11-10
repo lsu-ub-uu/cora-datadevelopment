@@ -130,7 +130,7 @@ def test_migrate_with_apply_when_create_record_success(monkeypatch):
     # )
 
 
-def xtest_rollback_when_failed_to_migrate_attachment(monkeypatch):
+def test_rollback_when_failed_to_migrate_attachment(monkeypatch):
     mock_context = MockContext()
 
     source_record = ET.fromstring(
@@ -236,7 +236,3 @@ def test_migrate_with_apply_validation_errors(monkeypatch):
         record_type="diva-output",
         context=mock_context,
     )
-
-
-def xtest_migrate_rollback_when_attachment_migration_fails():
-    pass

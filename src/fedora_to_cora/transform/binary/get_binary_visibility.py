@@ -13,7 +13,7 @@ def get_binary_visibility(fedora_attachment: ET.Element) -> str:
     available_until = _parse_date(fedora_attachment.findtext("./availableUntil"))
 
     if deleted == "true":
-        return "hidden"
+        return "unpublished"
 
     if on_hold == "true":
         return "unpublished"
