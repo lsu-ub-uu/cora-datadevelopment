@@ -200,7 +200,7 @@ def set_data_quality_to_classic(xml_content):
 def normalize_regex_patterns(xml_root):
     updated = False
     if not record_info_group(xml_root):
-        for tag in ("regex", "regEx", "pattern"):
+        for tag in ("regex", "regEx"):
             for element in xml_root.findall(f".//{tag}"):
                 if element.text and element.text.strip() not in (None, ".+"):
                     element.text = ".+"
