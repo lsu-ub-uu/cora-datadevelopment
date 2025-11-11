@@ -44,7 +44,7 @@ def extract_error_messages(line: str) -> List[str]:
 
 def analyze_error_log(
     file_path: str,
-) -> Tuple[Dict[str, int], Dict[str, List[str]], int, int]:
+) -> Tuple[Dict[str, int], Dict[str, List[str]], int, int, int]:
     """
     Analyze the error log file and return error counts.
     Only analyzes entries after the LAST occurrence of "==== Processing complete ====".
@@ -58,6 +58,7 @@ def analyze_error_log(
     error_counts = defaultdict(int)
     error_examples = defaultdict(list)
     total_failed = 0
+    total_classic = 0
     total_successful = 0
 
     # Read all lines first to find the last occurrence of "Processing complete"
@@ -72,7 +73,13 @@ def analyze_error_log(
 
     if last_processing_complete_index == -1:
         # No "Processing complete" found, return empty results
-        return dict(error_counts), dict(error_examples), total_failed, total_successful
+        return (
+            dict(error_counts),
+            dict(error_examples),
+            total_failed,
+            total_classic,
+            total_successful,
+        )
 
     # Process only lines after the last "Processing complete"
     for line in all_lines[last_processing_complete_index + 1 :]:
@@ -81,6 +88,22 @@ def analyze_error_log(
         # Count successful transformations
         if "✅" in line:
             total_successful += 1
+            continue
+
+        # Count classic quality transformations
+        if "☣️" in line:
+            total_classic += 1
+
+            # Extract record ID from the line (format: "❌ diva2:1234567 - ...")
+            record_id_match = re.search(r"❌\s+(diva2:\d+)", line)
+            record_id = record_id_match.group(1) if record_id_match else "unknown"
+
+            error_messages = extract_error_messages(line)
+            for error_msg in error_messages:
+                error_counts[error_msg] += 1
+                # Keep up to 3 examples per error type
+                if len(error_examples[error_msg]) < 3:
+                    error_examples[error_msg].append(record_id)
             continue
 
         # Process failed transformations
@@ -98,13 +121,20 @@ def analyze_error_log(
                 if len(error_examples[error_msg]) < 3:
                     error_examples[error_msg].append(record_id)
 
-    return dict(error_counts), dict(error_examples), total_failed, total_successful
+    return (
+        dict(error_counts),
+        dict(error_examples),
+        total_failed,
+        total_classic,
+        total_successful,
+    )
 
 
 def generate_report(
     error_counts: Dict[str, int],
     error_examples: Dict[str, List[str]],
     total_failed: int,
+    total_classic: int,
     total_successful: int,
 ):
     """Generate and print the error analysis report."""
@@ -116,6 +146,7 @@ def generate_report(
 
     print(f"📊 SUMMARY:")
     print(f"   ✅ Successful transformations: {total_successful:,}")
+    print(f"   ☣️ Classic quality transformations: {total_classic:,}")
     print(f"   ❌ Failed transformations: {total_failed:,}")
     print(
         f"   📈 Success rate: {total_successful/(total_successful+total_failed)*100:.1f}%"
@@ -148,7 +179,7 @@ def analyze_and_print_report(log_file_path: str):
     try:
         print(f"🔍 Analyzing error log: {log_file_path}")
 
-        error_counts, error_examples, total_failed, total_successful = (
+        error_counts, error_examples, total_failed, total_classic, total_successful = (
             analyze_error_log(log_file_path)
         )
 
@@ -156,7 +187,9 @@ def analyze_and_print_report(log_file_path: str):
             print("❌ No error records found in the log file.")
             sys.exit(1)
 
-        generate_report(error_counts, error_examples, total_failed, total_successful)
+        generate_report(
+            error_counts, error_examples, total_failed, total_classic, total_successful
+        )
 
     except FileNotFoundError:
         print(f"❌ Error: File '{log_file_path}' not found.")

@@ -1,11 +1,15 @@
 import xml.etree.ElementTree as ET
-from unittest.mock import MagicMock
-from cora.create import CreateRecordSuccessResult
-from fedora_to_cora.output_migrate import output_migrate
+from unittest.mock import MagicMock, patch
+from common.test_helper import assert_equal_for_xml_and_xml_string
+from cora.create import CreateRecordFailureResult, CreateRecordSuccessResult
+from fedora_to_cora.output_migrate import add_repeat_ids, output_migrate
 from cora.context import MockContext
 
 
-def test_migrate_with_apply_false(monkeypatch):
+@patch("fedora_to_cora.output_migrate.transform_to_cora_output")
+@patch("fedora_to_cora.output_migrate.validate_record")
+@patch("fedora_to_cora.output_migrate.create_record")
+def test_migrate_with_apply_false(mock_create, mock_validate, mock_transform):
     mock_context = MockContext()
 
     source_record = ET.fromstring(
@@ -26,24 +30,13 @@ def test_migrate_with_apply_false(monkeypatch):
         """
     )
 
-    mock_transform = MagicMock(return_value=mock_cora_output)
-    monkeypatch.setattr(
-        "fedora_to_cora.output_migrate.transform_to_cora_output",
-        mock_transform,
-    )
+    mock_transform.return_value = mock_cora_output
+    mock_validate.return_value = (True, [])
 
-    mock_validate = MagicMock(return_value=(True, []))
-    monkeypatch.setattr("fedora_to_cora.output_migrate.validate_record", mock_validate)
+    result = output_migrate(source_record, mock_context, apply=False)
 
-    mock_create = MagicMock()
-    monkeypatch.setattr("fedora_to_cora.output_migrate.create_record", mock_create)
-
-    valid, errors = output_migrate(
-        source_record, mock_context, xml_dir="test/xml", apply=False
-    )
-
-    assert valid is True
-    assert errors == None
+    assert result.status == "SUCCESS"
+    assert result.errors is None
 
     mock_transform.assert_called_once_with(source_record, mock_context)
 
@@ -56,7 +49,13 @@ def test_migrate_with_apply_false(monkeypatch):
     mock_create.assert_not_called()
 
 
-def test_migrate_with_apply_when_create_record_success(monkeypatch):
+@patch("fedora_to_cora.output_migrate.transform_to_cora_output")
+@patch("fedora_to_cora.output_migrate.validate_record")
+@patch("fedora_to_cora.output_migrate.create_record")
+@patch("fedora_to_cora.output_migrate.attachments_migrate")
+def test_success_migrate_with_apply_true_and_with_binaries_true(
+    mock_attachments_migrate, mock_create_record, mock_validate_record, mock_transform
+):
     mock_context = MockContext()
 
     source_record = ET.fromstring(
@@ -77,60 +76,48 @@ def test_migrate_with_apply_when_create_record_success(monkeypatch):
         """
     )
 
-    mock_transform = MagicMock(return_value=mock_cora_output)
-    monkeypatch.setattr(
-        "fedora_to_cora.output_migrate.transform_to_cora_output",
-        mock_transform,
-    )
+    mock_transform.return_value = mock_cora_output
 
-    mock_validate = MagicMock(return_value=(True, []))
-    monkeypatch.setattr("fedora_to_cora.output_migrate.validate_record", mock_validate)
+    mock_validate_record.return_value = (True, [])
 
     mock_created_record = ET.Element("record")
-    mock_create = MagicMock(
-        return_value=CreateRecordSuccessResult(
-            record_id="123", response_data=mock_created_record
-        )
-    )
-    monkeypatch.setattr("fedora_to_cora.output_migrate.create_record", mock_create)
-
-    mock_attachments_migrate = MagicMock(return_value=(True, []))
-    monkeypatch.setattr(
-        "fedora_to_cora.output_migrate.attachments_migrate",
-        mock_attachments_migrate,
+    mock_create_record.return_value = CreateRecordSuccessResult(
+        record_id="123", response_data=mock_created_record
     )
 
-    mock_xml_dir = "test/xml"
-    valid, errors = output_migrate(
-        source_record, mock_context, xml_dir=mock_xml_dir, apply=True
-    )
+    mock_attachments_migrate.return_value = (True, [])
 
-    assert valid is True
-    assert errors == None
+    result = output_migrate(source_record, mock_context, apply=True, with_binaries=True)
+
+    assert result.status == "SUCCESS"
+    assert result.errors is None
 
     mock_transform.assert_called_once_with(source_record, mock_context)
 
-    mock_validate.assert_called_once_with(
+    mock_validate_record.assert_called_once_with(
         mock_cora_output,
         record_type="diva-output",
         context=mock_context,
     )
 
-    mock_create.assert_called_once_with(
+    mock_create_record.assert_called_once_with(
         mock_cora_output,
         record_type="diva-output",
         context=mock_context,
     )
 
-    # mock_attachments_migrate.assert_called_once_with(
-    #     source_record,
-    #     mock_created_record,
-    #     mock_context,
-    #     mock_xml_dir,
-    # )
+    mock_attachments_migrate.assert_called_once_with(
+        source_record, mock_created_record, mock_context
+    )
 
 
-def test_rollback_when_failed_to_migrate_attachment(monkeypatch):
+@patch("fedora_to_cora.output_migrate.transform_to_cora_output")
+@patch("fedora_to_cora.output_migrate.validate_record")
+@patch("fedora_to_cora.output_migrate.create_record")
+@patch("fedora_to_cora.output_migrate.attachments_migrate")
+def test_success_migrate_with_apply_true_and_with_binaries_false(
+    mock_attachments_migrate, mock_create_record, mock_validate_record, mock_transform
+):
     mock_context = MockContext()
 
     source_record = ET.fromstring(
@@ -151,47 +138,94 @@ def test_rollback_when_failed_to_migrate_attachment(monkeypatch):
         """
     )
 
-    mock_transform = MagicMock(return_value=mock_cora_output)
-    monkeypatch.setattr(
-        "fedora_to_cora.output_migrate.transform_to_cora_output",
-        mock_transform,
-    )
+    mock_transform.return_value = mock_cora_output
 
-    mock_validate = MagicMock(return_value=(True, []))
-    monkeypatch.setattr("fedora_to_cora.output_migrate.validate_record", mock_validate)
+    mock_validate_record.return_value = (True, [])
 
     mock_created_record = ET.Element("record")
-    mock_create = MagicMock(
-        return_value=CreateRecordSuccessResult(
-            record_id="123", response_data=mock_created_record
-        )
-    )
-    monkeypatch.setattr("fedora_to_cora.output_migrate.create_record", mock_create)
-
-    mock_attachments_migrate = MagicMock(
-        return_value=(False, ["Failed to upload file"])
-    )
-    monkeypatch.setattr(
-        "fedora_to_cora.output_migrate.attachments_migrate",
-        mock_attachments_migrate,
+    mock_create_record.return_value = CreateRecordSuccessResult(
+        record_id="123", response_data=mock_created_record
     )
 
-    mock_delete_record = MagicMock()
-    monkeypatch.setattr(
-        "fedora_to_cora.output_migrate.delete_record", mock_delete_record
+    mock_attachments_migrate.return_value = (True, [])
+
+    result = output_migrate(
+        source_record, mock_context, apply=True, with_binaries=False
     )
 
-    mock_xml_dir = "test/xml"
-    valid, errors = output_migrate(
-        source_record, mock_context, xml_dir=mock_xml_dir, apply=True
+    assert result.status == "SUCCESS"
+    assert result.errors is None
+
+    mock_transform.assert_called_once_with(source_record, mock_context)
+
+    mock_validate_record.assert_called_once_with(
+        mock_cora_output,
+        record_type="diva-output",
+        context=mock_context,
     )
 
-    assert valid is False
-    assert errors == ["Failed to upload file"]
+    mock_create_record.assert_called_once_with(
+        mock_cora_output,
+        record_type="diva-output",
+        context=mock_context,
+    )
+
+    mock_attachments_migrate.assert_not_called()
+
+
+@patch("fedora_to_cora.output_migrate.transform_to_cora_output")
+@patch("fedora_to_cora.output_migrate.validate_record")
+@patch("fedora_to_cora.output_migrate.create_record")
+@patch("fedora_to_cora.output_migrate.attachments_migrate")
+@patch("fedora_to_cora.output_migrate.delete_record")
+def test_rollback_when_failed_to_migrate_attachment(
+    mock_delete_record,
+    mock_attachments_migrate,
+    mock_create,
+    mock_validate,
+    mock_transform,
+):
+    mock_context = MockContext()
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <title>Test Publication</title>
+        </publication>
+        """
+    )
+
+    mock_cora_output = ET.fromstring(
+        """
+        <record>
+            <recordInfo>
+                <id>test-id</id>
+            </recordInfo>
+        </record>
+        """
+    )
+
+    mock_transform.return_value = mock_cora_output
+    mock_validate.return_value = (True, [])
+
+    mock_created_record = ET.Element("record")
+    mock_create.return_value = CreateRecordSuccessResult(
+        record_id="123", response_data=mock_created_record
+    )
+
+    mock_attachments_migrate.return_value = (False, ["Failed to upload file"])
+
+    result = output_migrate(source_record, mock_context, apply=True, with_binaries=True)
+
+    assert result.status == "FAILED"
+    assert result.errors == ["Failed to upload file"]
     mock_delete_record.assert_called_once_with(mock_created_record, mock_context)
 
 
-def test_migrate_with_apply_validation_errors(monkeypatch):
+@patch("fedora_to_cora.output_migrate.validate_record")
+@patch("fedora_to_cora.output_migrate.transform_to_cora_output")
+@patch("fedora_to_cora.output_migrate.create_record")
+def test_migrate_with_classic_quality(mock_create, mock_transform, mock_validate):
     mock_context = MockContext()
 
     source_record = ET.fromstring(
@@ -207,27 +241,25 @@ def test_migrate_with_apply_validation_errors(monkeypatch):
         <record>
             <recordInfo>
                 <id>test-id</id>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>publication_report</linkedRecordId>
+                </validationType>
             </recordInfo>
+            <dataQuality>2026</dataQuality>
         </record>
         """
     )
 
-    mock_transform = MagicMock(return_value=mock_cora_output)
-    monkeypatch.setattr(
-        "fedora_to_cora.output_migrate.transform_to_cora_output",
-        mock_transform,
-    )
+    mock_transform.return_value = mock_cora_output
 
     expected_errors = ["Missing required field", "Invalid format"]
-    mock_validate = MagicMock(return_value=(False, expected_errors))
-    monkeypatch.setattr("fedora_to_cora.output_migrate.validate_record", mock_validate)
+    mock_validate.return_value = (False, expected_errors)
 
-    valid, errors = output_migrate(
-        source_record, mock_context, xml_dir="test/xml", apply=False
-    )
+    result = output_migrate(source_record, mock_context, apply=False)
 
-    assert valid is False
-    assert errors == expected_errors
+    assert result.status == "CLASSIC_QUALITY"
+    assert result.errors == expected_errors
 
     mock_transform.assert_called_once_with(source_record, mock_context)
 
@@ -236,3 +268,105 @@ def test_migrate_with_apply_validation_errors(monkeypatch):
         record_type="diva-output",
         context=mock_context,
     )
+
+    assert mock_create.call_count == 1
+    created_output = mock_create.call_args[0][0]
+    assert_equal_for_xml_and_xml_string(
+        created_output,
+        """
+        <record>
+            <recordInfo>
+                <id>test-id</id>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>classic_publication_report</linkedRecordId>
+                </validationType>
+            </recordInfo>
+            <dataQuality>classic</dataQuality>
+        </record>
+        """,
+    )
+
+
+@patch("fedora_to_cora.output_migrate.validate_record")
+@patch("fedora_to_cora.output_migrate.transform_to_cora_output")
+@patch("fedora_to_cora.output_migrate.create_record")
+def test_migrate_with_classic_quality_failure(
+    mock_create, mock_transform, mock_validate
+):
+    mock_context = MockContext()
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <title>Test Publication</title>
+        </publication>
+        """
+    )
+
+    mock_cora_output = ET.fromstring(
+        """
+        <record>
+            <recordInfo>
+                <id>test-id</id>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>publication_report</linkedRecordId>
+                </validationType>
+            </recordInfo>
+            <dataQuality>2026</dataQuality>
+        </record>
+        """
+    )
+
+    mock_transform.return_value = mock_cora_output
+
+    mock_validate.return_value = (
+        False,
+        [
+            "Missing required field",
+            "Invalid format",
+        ],
+    )
+
+    mock_create.return_value = CreateRecordFailureResult(
+        error="Failed to create record"
+    )
+
+    result = output_migrate(source_record, mock_context, apply=False)
+
+    assert result.status == "FAILED"
+    assert result.errors == [
+        "Missing required field",
+        "Invalid format",
+        "Failed to create record",
+    ]
+
+    mock_transform.assert_called_once_with(source_record, mock_context)
+
+    mock_validate.assert_called_once_with(
+        mock_cora_output,
+        record_type="diva-output",
+        context=mock_context,
+    )
+
+    assert mock_create.call_count == 1
+
+
+def test_add_repeat_ids():
+    xml_input = ET.fromstring(
+        """
+        <record>
+            <group>
+                <item>Value1</item>
+                <item>Value2</item>
+            </group>
+            <single>Value3</single>
+        </record>
+        """
+    )
+
+    add_repeat_ids(xml_input)
+
+    # Since the function only prints, we will just ensure it runs without error.
+    # In a real test, we might want to capture stdout and verify the output.

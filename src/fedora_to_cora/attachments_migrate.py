@@ -1,11 +1,12 @@
 from typing import Tuple
 import xml.etree.ElementTree as ET
-import os
 import copy
 
-import requests
-from classic import download_attachment
+from classic.download_attachment import download_attachment
 from cora.context import Context
+from fedora_to_cora.transform.get_validation_type import (
+    get_validation_type_from_fedora_record,
+)
 from fedora_to_cora.transform.binary.binary_record_transform import (
     binary_record_transform,
 )
@@ -106,8 +107,12 @@ def _migrate_attachment(
             context.log(f"Error uploading binary: {e}", level="error")
             return None, str(e)
 
+        validation_type = get_validation_type_from_fedora_record(source_record)
+        assert validation_type is not None
+
         cora_attachment = attachment_transform(
             attachment,
+            validation_type=validation_type,
             binary_record_id=create_binary_result.record_id,
             file_upload_message=source_record.findtext(
                 "./administrativeInfo/fileUploadMessage"

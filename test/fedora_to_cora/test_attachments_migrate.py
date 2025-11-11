@@ -20,6 +20,9 @@ def test_attachments_migrate(monkeypatch):
     source_record = ET.fromstring(
         """
         <publication>
+        <publicationType>
+            <publicationTypeCode>report</publicationTypeCode>
+        </publicationType>
             <pid>pid:123</pid>
             <attachments>
                 <attachment>
@@ -117,6 +120,9 @@ def test_failed_to_create_binary_record(monkeypatch):
         """
         <publication>
             <pid>pid:123</pid>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
             <attachments>
                 <attachment>
                     <fileLabel>
@@ -175,6 +181,9 @@ def test_failed_to_download_attachment(monkeypatch):
         """
         <publication>
             <pid>pid:123</pid>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
             <attachments>
                 <attachment>
                     <fileLabel>
@@ -234,6 +243,9 @@ def test_failed_to_upload_binary(monkeypatch):
         """
         <publication>
             <pid>pid:123</pid>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
             <attachments>
                 <attachment>
                     <fileLabel>
@@ -296,6 +308,9 @@ def test_failed_to_update_record(monkeypatch):
         """
         <publication>
             <pid>pid:123</pid>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
             <attachments>
                 <attachment>
                     <fileLabel>
@@ -362,6 +377,9 @@ def test_roll_back_binary_records_when_something_fails(monkeypatch):
         """
         <publication>
             <pid>pid:123</pid>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
             <attachments>
                 <attachment>
                     <fileLabel>
@@ -426,6 +444,9 @@ def test_file_upload_message(monkeypatch):
         """
         <publication>
             <pid>pid:123</pid>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
             <administrativeInfo>
                 <fileUploadMessage>Some note about the attachment</fileUploadMessage>
             </administrativeInfo>

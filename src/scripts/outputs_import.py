@@ -44,6 +44,11 @@ def main():
                 "help": "Limit the number of processed files (for testing purposes)",
                 "default": None,
             },
+            "--binaries": {
+                "action": "store_true",
+                "help": "Also migrate binaries associated with the publications",
+                "default": False,
+            },
         },
     )
 
@@ -60,12 +65,31 @@ def main():
     REMOTE_PORT = 8088
     LOCAL_PORT = 8088
 
+    print(
+        """
+ _______   __  __     __   ______         __       __  __                                 __       ______            
+/       \ /  |/  |   /  | /      \       /  \     /  |/  |                               /  |     /      \           
+$$$$$$$  |$$/ $$ |   $$ |/$$$$$$  |      $$  \   /$$ |$$/   ______    ______   ______   _$$ |_   /$$$$$$  |  ______  
+$$ |  $$ |/  |$$ |   $$ |$$ |__$$ |      $$$  \ /$$$ |/  | /      \  /      \ /      \ / $$   |  $$$  \$$ | /      \ 
+$$ |  $$ |$$ |$$  \ /$$/ $$    $$ |      $$$$  /$$$$ |$$ |/$$$$$$  |/$$$$$$  |$$$$$$  |$$$$$$/   $$$$  $$ |/$$$$$$  |
+$$ |  $$ |$$ | $$  /$$/  $$$$$$$$ |      $$ $$ $$/$$ |$$ |$$ |  $$ |$$ |  $$/ /    $$ |  $$ | __ $$ $$ $$ |$$ |  $$/ 
+$$ |__$$ |$$ |  $$ $$/   $$ |  $$ |      $$ |$$$/ $$ |$$ |$$ \__$$ |$$ |     /$$$$$$$ |  $$ |/  |$$ \$$$$ |$$ |      
+$$    $$/ $$ |   $$$/    $$ |  $$ |      $$ | $/  $$ |$$ |$$    $$ |$$ |     $$    $$ |  $$  $$/ $$   $$$/ $$ |      
+$$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$$$$$$/    $$$$/   $$$$$$/  $$/       
+                                                          /  \__$$ |                                                 
+                                                          $$    $$/                                                  
+                                                           $$$$$$/                                                   
+                                                           
+"""
+    )
+
     with SSHTunnel(SSH_HOST, SSH_PORT, SSH_USER, LOCAL_PORT, REMOTE_HOST, REMOTE_PORT):
         process_fedora_publication_files(
             xml_dir=args.xml_dir,
             context=context,
             apply=args.apply,
             limit=args.limit,
+            binaries=args.binaries,
         )
 
     analyze_and_print_report("logs/outputs-import.log")

@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, patch
 from xml.etree import ElementTree as ET
 from common.xml_validate import XMLValidationError
 from cora.context import MockContext
+from fedora_to_cora.output_migrate import OutputMigrationResult
 from fedora_to_cora.process_fedora_publication_files import (
     process_fedora_publication_files,
 )
@@ -12,7 +13,7 @@ from fedora_to_cora.process_fedora_publication_files import (
 @patch("os.listdir")
 @patch("fedora_to_cora.process_fedora_publication_files.read_source_xml")
 @patch("fedora_to_cora.process_fedora_publication_files.validate_xml")
-def test_process_fedora_publication_files(
+def test_process_fedora_publication_files_without_binaries(
     mock_validate_xml,
     mock_read_source_xml,
     mock_listdir,
@@ -34,9 +35,55 @@ def test_process_fedora_publication_files(
     ]
 
     mock_output_migrate.side_effect = [
-        (True, []),  # test1.xml - success
-        (False, ["validation error"]),  # test2.xml - failure
-        (True, []),  # test3.xml - success
+        OutputMigrationResult("SUCCESS"),  # test1.xml - success
+        OutputMigrationResult("FAILED", ["failed to create"]),  # test2.xml - failure
+        OutputMigrationResult(
+            "CLASSIC_QUALITY", ["validation error 1", "validation error 2"]
+        ),  # test3.xml - classic quality
+    ]
+
+    process_fedora_publication_files(xml_dir, mock_context, apply, binaries=False)
+
+    assert mock_output_migrate.call_count == 3
+    assert mock_output_migrate.call_args.kwargs["with_binaries"] == False
+
+    mock_context.log.assert_any_call("✅ test1")  # type: ignore
+    mock_context.log.assert_any_call("❌ test2 - Errors: [failed to create]")  # type: ignore
+    mock_context.log.assert_any_call("☣️ test3 - Errors: [validation error 1, validation error 2]")  # type: ignore
+
+
+@patch("fedora_to_cora.process_fedora_publication_files.output_migrate")
+@patch("fedora_to_cora.process_fedora_publication_files.run_with_threads")
+@patch("os.listdir")
+@patch("fedora_to_cora.process_fedora_publication_files.read_source_xml")
+@patch("fedora_to_cora.process_fedora_publication_files.validate_xml")
+def test_process_fedora_publication_files_with_binaries(
+    mock_validate_xml,
+    mock_read_source_xml,
+    mock_listdir,
+    mock_run_with_threads,
+    mock_output_migrate,
+):
+    xml_dir = "test/xml"
+    mock_context = MockContext()
+    apply = False
+
+    mock_read_source_xml.side_effect = [
+        ET.fromstring("<publication><pid>test1</pid></publication>"),
+        ET.fromstring("<publication><pid>test2</pid></publication>"),
+        ET.fromstring("<publication><pid>test3</pid></publication>"),
+    ]
+    mock_listdir.return_value = ["test1.xml", "test2.xml", "test3.xml"]
+    mock_run_with_threads.side_effect = lambda items, func, workers, desc: [
+        func(item) for item in items
+    ]
+
+    mock_output_migrate.side_effect = [
+        OutputMigrationResult("SUCCESS"),  # test1.xml - success
+        OutputMigrationResult("FAILED", ["failed to create"]),  # test2.xml - failure
+        OutputMigrationResult(
+            "CLASSIC_QUALITY", ["validation error 1", "validation error 2"]
+        ),  # test3.xml - classic quality
     ]
 
     process_fedora_publication_files(xml_dir, mock_context, apply)
@@ -44,8 +91,8 @@ def test_process_fedora_publication_files(
     assert mock_output_migrate.call_count == 3
 
     mock_context.log.assert_any_call("✅ test1")  # type: ignore
-    mock_context.log.assert_any_call("❌ test2 - Errors: [validation error]")  # type: ignore
-    mock_context.log.assert_any_call("✅ test3")  # type: ignore
+    mock_context.log.assert_any_call("❌ test2 - Errors: [failed to create]")  # type: ignore
+    mock_context.log.assert_any_call("☣️ test3 - Errors: [validation error 1, validation error 2]")  # type: ignore
 
 
 @patch("fedora_to_cora.process_fedora_publication_files.output_migrate")
@@ -75,9 +122,9 @@ def test_handles_raised_exception_in_processing(
     ]
 
     mock_output_migrate.side_effect = [
-        (True, []),
+        OutputMigrationResult("SUCCESS"),
         Exception("Something went wrong during migration"),
-        (True, []),
+        OutputMigrationResult("SUCCESS"),
     ]
 
     process_fedora_publication_files(xml_dir, mock_context, apply)
@@ -129,6 +176,7 @@ def test_does_not_start_migrating_when_any_xml_validation_fails(
     mock_context.log.assert_any_call("❌ test2 - XML Validation Error: Some xml validation error")  # type: ignore
     mock_context.log.assert_any_call("❌ test3 - XML Validation Error: Some other xml validation error")  # type: ignore
 
+
 @patch("fedora_to_cora.process_fedora_publication_files.output_migrate")
 @patch("fedora_to_cora.process_fedora_publication_files.run_with_threads")
 @patch("os.listdir")
@@ -156,9 +204,9 @@ def test_process_fedora_publication_files_with_limit(
     ]
 
     mock_output_migrate.side_effect = [
-        (True, []),  # test1.xml - success
-        (False, ["validation error"]),  # test2.xml - failure
-        (True, []),  # test3.xml - success
+        OutputMigrationResult("SUCCESS"),  # test1.xml - success
+        OutputMigrationResult("FAILED", ["validation error"]),  # test2.xml - failure
+        OutputMigrationResult("SUCCESS"),  # test3.xml - success
     ]
 
     process_fedora_publication_files(xml_dir, mock_context, apply, limit=2)
