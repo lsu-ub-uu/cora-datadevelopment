@@ -1,4 +1,4 @@
-from collections import deque, defaultdict
+from collections import deque
 from typing import Any
 
 from tqdm import tqdm
@@ -69,12 +69,13 @@ def main():
         common_utils.log(
             "[SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
 
+    common_utils.log(
+        "Creating new validationTypes for recordType: " + RECORD_TYPE + " using prefix: " + TYPE_PREFIX + " on system: " + args.system)
     create_new_validation_types_for_record_type()
 
 
 def create_new_validation_types_for_record_type():
     global TOTAL_FETCHED
-    common_utils.log("Creating new validationTypes for recordType: " + RECORD_TYPE + " using prefix: " + TYPE_PREFIX)
 
     validation_types = get_validation_types_to_process()
 
@@ -114,11 +115,9 @@ def get_validation_types_to_process() -> list[Any]:
 
 def collect_record_info_children(global_node_map):
     processed = set()
-    parent_refs = defaultdict(set)
-
     record_info_roots = find_record_info_roots(global_node_map)
-
     queue = deque(record_info_roots)
+
     while queue:
         parent = queue.popleft()
         if parent.url in processed:
@@ -129,7 +128,6 @@ def collect_record_info_children(global_node_map):
             GLOBAL_RECORD_INFO_CHILDREN[parent.url] = parent
 
         for child in parent.children:
-            parent_refs[child.url].add(parent.url)
             if child.url not in processed:
                 queue.append(child)
 

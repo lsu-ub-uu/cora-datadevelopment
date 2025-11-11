@@ -55,12 +55,11 @@ def main():  # pragma: no cover
         utils.log(
             ">>> [SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
 
+    utils.log("Deleting all records and presentations that use prefix: " + TYPE_PREFIX + " on system: " + args.system)
     delete_records_with_prefix()
 
 
 def delete_records_with_prefix():
-    utils.log("Deleting all records and presentations that use prefix: " + TYPE_PREFIX)
-
     utils.log("=== Deleting all presentations ===")
     delete_presentations()
     print()
