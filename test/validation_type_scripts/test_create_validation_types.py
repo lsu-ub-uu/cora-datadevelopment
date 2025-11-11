@@ -5,7 +5,6 @@ import requests
 
 import scripts.create_new_validation_types as script
 from common import validation_type_utils as common_utils
-from validation_type_scripts.conftest import mock_top_level
 
 
 @pytest.fixture(autouse=True)
