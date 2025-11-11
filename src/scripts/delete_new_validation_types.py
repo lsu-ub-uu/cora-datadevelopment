@@ -62,24 +62,12 @@ def main():  # pragma: no cover
 def delete_records_with_prefix():
     utils.log("=== Deleting all presentations ===")
     delete_presentations()
-    print()
 
     utils.log("=== Building node map ===")
-    validation_types = utils.get_ids_for_record_type_matching_prefix("validationType")
-    if not validation_types:
-        utils.log("No validationTypes found to delete...")
-    else:
-        root_urls = utils.get_root_urls_for_validation_types(validation_types)
-        for root_url in root_urls:
-            utils.build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
+    build_node_map()
 
-    print()
     utils.log("=== Deleting records ===")
-
-    if not GLOBAL_NODE_MAP:
-        utils.log("There is nothing to delete...")
-    else:
-        process_node_map_and_delete_records(GLOBAL_NODE_MAP)
+    delete_records()
 
     utils.log("=== Script finished ===")
     log_results()
@@ -120,6 +108,24 @@ def delete_presentations():
                     retries[url] = retries.get(url, 0) + 1
 
     progress.close()
+
+
+def build_node_map():
+    validation_types = utils.get_ids_for_record_type_matching_prefix("validationType")
+    if not validation_types:
+        utils.log("No validationTypes found to delete...")
+    else:
+        root_urls = utils.get_root_urls_for_validation_types(validation_types)
+        for root_url in root_urls:
+            utils.build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
+    print()
+
+
+def delete_records():
+    if not GLOBAL_NODE_MAP:
+        utils.log("There is nothing to delete...")
+    else:
+        process_node_map_and_delete_records(GLOBAL_NODE_MAP)
 
 
 def process_node_map_and_delete_records(global_node_map):

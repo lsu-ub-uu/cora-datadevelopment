@@ -75,11 +75,22 @@ def main():
 
 
 def create_new_validation_types_for_record_type():
-    global TOTAL_FETCHED
-
-    validation_types = get_validation_types_to_process()
-
     common_utils.log("=== Building node map ===")
+    build_node_map()
+
+    common_utils.log("=== Processing node map ===")
+    collect_record_info_children()
+    process_node_map_bottom_up_and_store()
+
+    common_utils.log("=== Script finished ===")
+    log_results()
+
+    print(f"\n=== Output logged to {CTX.get_log_file_path()} ===")
+
+
+def build_node_map():
+    global TOTAL_FETCHED
+    validation_types = get_validation_types_to_process()
 
     root_urls = common_utils.get_root_urls_for_validation_types(validation_types)
     for root_url in root_urls:
@@ -87,17 +98,7 @@ def create_new_validation_types_for_record_type():
         TOTAL_FETCHED = len(GLOBAL_NODE_MAP)
 
     CTX.log(f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
-
-    collect_record_info_children(GLOBAL_NODE_MAP)
     print()
-    common_utils.log("=== Processing node map ===")
-
-    process_node_map_bottom_up_and_store(GLOBAL_NODE_MAP, GLOBAL_ID_MAPPING)
-
-    common_utils.log("=== Script finished ===")
-    log_results()
-
-    print(f"\n=== Output logged to {CTX.get_log_file_path()} ===")
 
 
 def get_validation_types_to_process() -> list[Any]:
@@ -113,9 +114,9 @@ def get_validation_types_to_process() -> list[Any]:
     return common_utils.get_validation_types_for_record_type()
 
 
-def collect_record_info_children(global_node_map):
+def collect_record_info_children():
     processed = set()
-    record_info_roots = find_record_info_roots(global_node_map)
+    record_info_roots = find_record_info_roots(GLOBAL_NODE_MAP)
     queue = deque(record_info_roots)
 
     while queue:
@@ -130,6 +131,7 @@ def collect_record_info_children(global_node_map):
         for child in parent.children:
             if child.url not in processed:
                 queue.append(child)
+    print()
 
 
 def find_record_info_roots(global_node_map) -> list[Any]:
@@ -138,6 +140,39 @@ def find_record_info_roots(global_node_map) -> list[Any]:
         if common_utils.record_info_group(node.xml_content)
     ]
     return record_info_roots
+
+
+def process_node_map_bottom_up_and_store():
+    unprocessed_child_map = {}
+    leaf_queue = deque()
+    for url, node in GLOBAL_NODE_MAP.items():
+        number_of_children = len(node.children)
+        unprocessed_child_map[url] = number_of_children
+        if number_of_children == 0:
+            leaf_queue.append(url)
+
+    processed: set[str] = set()
+    progress = tqdm(total=len(GLOBAL_NODE_MAP), desc="Processing records", bar_format="{l_bar}{bar:30}{r_bar}")
+    while leaf_queue:
+
+        child_reference_url = leaf_queue.popleft()
+        node = GLOBAL_NODE_MAP[child_reference_url]
+
+        process_node(GLOBAL_ID_MAPPING, node)
+        processed.add(child_reference_url)
+
+        for parent in node.parents:
+            if parent.url in unprocessed_child_map:
+                unprocessed_child_map[parent.url] -= 1
+                if unprocessed_child_map[parent.url] == 0:
+                    leaf_queue.append(parent.url)
+
+        progress.update(1)
+        progress.set_postfix_str(f"Created: {TOTAL_CREATED}  Updated: {TOTAL_UPDATES}")
+
+    progress.close()
+    print()
+    check_for_unprocessed_nodes(GLOBAL_NODE_MAP, processed)
 
 
 def log_results():  # pragma: no cover
@@ -157,45 +192,6 @@ def log_results():  # pragma: no cover
             CTX.log(f" > {error}")
     else:
         common_utils.log("No errors reported.")
-
-
-def process_node_map_bottom_up_and_store(global_node_map, global_id_mapping):
-    """
-    Kahn's algorithm for topological sorting.
-    Processes nodes only after all their children have been processed.
-    """
-
-    # Build map and leaf queue of records to process
-    unprocessed_child_map = {}
-    leaf_queue = deque()
-    for url, node in global_node_map.items():
-        number_of_children = len(node.children)
-        unprocessed_child_map[url] = number_of_children
-        if number_of_children == 0:
-            leaf_queue.append(url)
-
-    processed: set[str] = set()
-    progress = tqdm(total=len(global_node_map), desc="Processing records", bar_format="{l_bar}{bar:30}{r_bar}")
-    while leaf_queue:
-
-        child_reference_url = leaf_queue.popleft()
-        node = global_node_map[child_reference_url]
-
-        process_node(global_id_mapping, node)
-        processed.add(child_reference_url)
-
-        for parent in node.parents:
-            if parent.url in unprocessed_child_map:
-                unprocessed_child_map[parent.url] -= 1
-                if unprocessed_child_map[parent.url] == 0:
-                    leaf_queue.append(parent.url)
-
-        progress.update(1)
-        progress.set_postfix_str(f"Created: {TOTAL_CREATED}  Updated: {TOTAL_UPDATES}")
-
-    progress.close()
-    print()
-    check_for_unprocessed_nodes(global_node_map, processed)
 
 
 def process_node(global_id_mapping, node):

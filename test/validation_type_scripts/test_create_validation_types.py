@@ -72,7 +72,8 @@ def test_get_validation_types_to_process2(monkeypatch):
 
 
 def test_collect_record_info_children(create_node_tree):
-    script.collect_record_info_children(create_node_tree)
+    script.GLOBAL_NODE_MAP = create_node_tree
+    script.collect_record_info_children()
 
     expected_children = {"urlC", "urlD", "urlE"}
     assert expected_children <= script.GLOBAL_RECORD_INFO_CHILDREN.keys()
@@ -168,6 +169,8 @@ def test_process_node_map_bottom_up_and_store(create_node_tree, monkeypatch):
         "urlC": node_tree["C"]
     }
 
+    script.GLOBAL_NODE_MAP = global_node_map
+
     processed_order = []
 
     def fake_process_node(mapping, node):
@@ -178,8 +181,9 @@ def test_process_node_map_bottom_up_and_store(create_node_tree, monkeypatch):
     monkeypatch.setattr(script, "process_node", fake_process_node)
 
     global_id_mapping = {"divaTextNewGroup": "some_new_id"}
+    script.GLOBAL_ID_MAPPING = global_id_mapping
 
-    script.process_node_map_bottom_up_and_store(global_node_map, global_id_mapping)
+    script.process_node_map_bottom_up_and_store()
 
     assert script.TOTAL_PROCESSED_RECORDS == 5
     assert processed_order[0] == "E"
