@@ -63,25 +63,25 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 
   - namePart type="family" <- `lastName`
   - namePart type="given" <- `firstName`
-  - namePart type="date" <- `birthYear - deathYear`
+  - namePart type="date" <- `birthYear-deathYear` only birthYear: "1988" birth and death year: "1988-2050" only deathYear: "-1850"
   - role/roleTerm <- aut | edt | `roles/role/marcCode`
-  - orcid
-  - lokalt id
-    ❓Can we ignore birthYear and deathYear in the migration? Possibly needs to be added to publication model in Cora. No decision yet.
-  - affiliations <- `organisations/organisation` ,
-
+  - orcid <- `identifiers/entry/personIdentifier/value` where type is "orcid"
+  - lokalt id <- `localId` ⚠️ Some members need local ids to not be publically visible. Solution needed.
+  - affiliations <- `organisations/organisation`, ⚠️ `researchGroup` should probably be an affiliation with description "Research group". waiting for decision.
     - organisation (link to migrated record) <- `organisation/organisationId`
-    - name type="corporate" <- `organisation/organisationNameUnconrolled`
+    - name type="corporate" <- `organisation/organisationNameUncontrolled`
     - 🆕 identifier type="ror" <- N/A
-    - ⚠️ country
-    - ⚠️ description
+    - 🆕 country <- N/A
+    - description <- N/A
 
-- 🆕 name type="corporate" <- N/A
+- 🔨 name type="corporate" <- `responsibleOrganisations`
+  - organisation (link to migrated record) <- `organisation/organisationId`
+  - role/roleTerm <- "cre"
 - note type="creatorCount" <- `noOfContributors`
-- ⚠️ abstract <- `abstracts/abstract/text` Does not handle latex or image tags
+- ⚠️ abstract <- `abstracts/abstract/text` HTML formatting is converted to plain text. ⚠️ Does not yet handle latex or image tags
   - language <- `language/languageCode3`
 - originInfo
-  - dateIssued/year <- `dateIssued` (Only year is used in)
+  - ⚠️ dateIssued/year <- `dateIssued` ⚠️ Newspaper articles may contain month and day. Needs to handle iso dates.
   - 🆕 copyrightDate <- N/A
   - 🆕 dateOther type="online" <- N/A
   - agent
@@ -89,12 +89,15 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
     - namePart <- `publisherName`
   - place/placeTerm <- `publisher/city`
   - edition <- `edition`
-- ❓ extent <- `pages`
 - classification authority="ssif" <- `nationalCategories/subject/subjectCode`
 - subject authority="diva"<- `researchSubjects`
   - topic (link to migrated record) <- `subject/subjectId`
-- subject authority="sdg" <- `sustainableDevelopments`
+- subject authority="sdg" <- `sustainableDevelopments` ⚠️ Some ids cannot be mapped to sdg codes.
+
   - topic <- mappning av `sustainableDevelopment/developmentId`
+
+  ======= Reviewed to this point =========
+
 - identifier type="isbn" <- `isbnNumbers/isbn/number` if not chapter or conference paper
   - displayLabel <- mappning från `isbNumbers/isbn/type`
 - identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) if not chapter or conference paper
@@ -145,7 +148,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - technique <- `mediaInformation/techniques`
 - size <- `mediaInformation/size`
 - duration <- `mediaInformation/duration`
-- ⚠️ physicalDescription <- `mediaInformation/physicalDescriptions` Not done. Needs output-test.
+- ⚠️ physicalDescription <- `pages` `mediaInformation/physicalDescriptions` Not done. Needs output-test.
 - 🆕 note type="context" <- N/A ❓
 - dateOther type="patent" <- `patentDate` Not done. Needs output-test.
 - identifier type="patentNumber" <- `patentNumber`
@@ -170,11 +173,11 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - degreeGrantingInstitution type="corporate" otherType="text" <- `defence/externalGrantingInstitution`
   - namePart <- `externalGrantingInstitution`
   - 🆕 identifier type="ror" <- N/A
-- supervisor <- `supervisors`
+- supervisor <- `supervisors` ⚠️ Metadata will change to move to <name type="personal">
   - same as name type="personal"
   - title ?
-- examiner <- `examiners`
-- opponent <- `opponents`
+- examiner <- `examiners` ⚠️ Metadata will change to move to <name type="personal">
+- opponent <- `opponents` ⚠️ Metadata will change to move to <name type="personal">
 - defence <- `defence` For degree project (diva-degreeProject) the tag should be presentation instead of defence.
 - presentation <- `defence` See above
   - `language` <- `languageTerm/language`
