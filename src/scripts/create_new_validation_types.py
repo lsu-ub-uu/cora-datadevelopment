@@ -113,7 +113,7 @@ def get_validation_types_to_process() -> list[Any]:
 
 
 def collect_record_info_children(global_node_map):
-    visited = set()
+    processed = set()
     parent_refs = defaultdict(set)
 
     record_info_roots = find_record_info_roots(global_node_map)
@@ -121,16 +121,16 @@ def collect_record_info_children(global_node_map):
     queue = deque(record_info_roots)
     while queue:
         parent = queue.popleft()
-        if parent.url in visited:
+        if parent.url in processed:
             continue
-        visited.add(parent.url)
+        processed.add(parent.url)
 
         if parent.url not in {root.url for root in record_info_roots}:
             GLOBAL_RECORD_INFO_CHILDREN[parent.url] = parent
 
         for child in parent.children:
             parent_refs[child.url].add(parent.url)
-            if child.url not in visited:
+            if child.url not in processed:
                 queue.append(child)
 
 
