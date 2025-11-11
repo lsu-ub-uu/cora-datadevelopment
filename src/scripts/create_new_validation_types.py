@@ -171,9 +171,9 @@ def process_node_map_bottom_up_and_store(global_node_map, global_id_mapping):
     unprocessed_child_map = {}
     leaf_queue = deque()
     for url, node in global_node_map.items():
-        cnt = len(node.children)
-        unprocessed_child_map[url] = cnt
-        if cnt == 0:
+        number_of_children = len(node.children)
+        unprocessed_child_map[url] = number_of_children
+        if number_of_children == 0:
             leaf_queue.append(url)
 
     processed: set[str] = set()
