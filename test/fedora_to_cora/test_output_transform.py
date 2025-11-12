@@ -246,18 +246,18 @@ def test_output_transform_ultimate(mock_diva_search_requests):
                 <roleTerm>dgg</roleTerm>
             </role>
         </degreeGrantingInstitution>
-        <name type="personal" otherType="degreeSupervisor" repeatId="0">
+        <name type="personal" otherType="thesisAdvisor" repeatId="0">
             <namePart type="family">Handledare</namePart>
             <namePart type="given">Helge</namePart>
             <role>
-                <roleTerm repeatId="0">dgs</roleTerm>
+                <roleTerm repeatId="0">ths</roleTerm>
             </role>
         </name>
-        <name type="personal" otherType="thesisAdvisor" repeatId="0">
+        <name type="personal" otherType="degreeSupervisor" repeatId="0">
             <namePart type="family">Examinator</namePart>
             <namePart type="given">Erik</namePart>
             <role>
-                <roleTerm repeatId="0">ths</roleTerm>
+                <roleTerm repeatId="0">dgs</roleTerm>
             </role>
         </name>
         <name type="personal" otherType="opponent" repeatId="0">
@@ -642,18 +642,18 @@ def test_output_transform_student_thesis(mock_diva_search_requests):
             <externalCollaboration>
                 <namePart repeatId="0">Stockholms Universitet, Konstvetenskapliga institutionen</namePart>
             </externalCollaboration>
-            <name type="personal" otherType="degreeSupervisor" repeatId="0">
+            <name type="personal" otherType="thesisAdvisor" repeatId="0">
             <namePart type="family">Handledare</namePart>
             <namePart type="given">Helge</namePart>
                 <role>
-                    <roleTerm repeatId="0">dgs</roleTerm>
+                    <roleTerm repeatId="0">ths</roleTerm>
                 </role>
             </name>
-            <name type="personal" otherType="thesisAdvisor" repeatId="0">
+            <name type="personal" otherType="degreeSupervisor" repeatId="0">
                 <namePart type="family">Examinator</namePart>
                 <namePart type="given">Erik</namePart>
                 <role>
-                    <roleTerm repeatId="0">ths</roleTerm>
+                    <roleTerm repeatId="0">dgs</roleTerm>
                 </role>
             </name>
             <academicSemester>

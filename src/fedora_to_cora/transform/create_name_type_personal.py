@@ -57,10 +57,10 @@ def create_supervisors(source_record: ET.Element, context: Context) -> list[ET.E
     return [
         create_name_type_personal(
             supervisor,
-            ["dgs"],
+            ["ths"],
             i,
             context,
-            otherType="degreeSupervisor",
+            otherType="thesisAdvisor",
         )
         for i, supervisor in enumerate(supervisors)
     ]
@@ -85,10 +85,10 @@ def create_examiners(source_record: ET.Element, context: Context) -> list[ET.Ele
     return [
         create_name_type_personal(
             examiner,
-            ["ths"],
+            ["dgs"],
             i,
             context,
-            otherType="thesisAdvisor",
+            otherType="degreeSupervisor",
         )
         for i, examiner in enumerate(examiners)
     ]

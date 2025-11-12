@@ -404,10 +404,10 @@ def test_create_supervisors():
     assert_equal_for_xml_and_xml_string(
         names[0],
         """
-        <name type="personal" otherType="degreeSupervisor" repeatId="0">
+        <name type="personal" otherType="thesisAdvisor" repeatId="0">
             <namePart type="family">Smith</namePart>
             <namePart type="given">Sarah</namePart>
-            <role><roleTerm repeatId="0">dgs</roleTerm></role>
+            <role><roleTerm repeatId="0">ths</roleTerm></role>
             <affiliation repeatId="0">
                 <name type="corporate">
                     <namePart>Extern organisation</namePart>
@@ -420,10 +420,10 @@ def test_create_supervisors():
     assert_equal_for_xml_and_xml_string(
         names[1],
         """
-        <name type="personal" otherType="degreeSupervisor" repeatId="1">
+        <name type="personal" otherType="thesisAdvisor" repeatId="1">
             <namePart type="family">Kmith</namePart>
             <namePart type="given">Karah</namePart>
-            <role><roleTerm repeatId="0">dgs</roleTerm></role>
+            <role><roleTerm repeatId="0">ths</roleTerm></role>
         </name>
         """,
     )
@@ -488,10 +488,10 @@ def test_create_examiners():
     assert_equal_for_xml_and_xml_string(
         names[0],
         """
-        <name type="personal" otherType="thesisAdvisor" repeatId="0">
+        <name type="personal" otherType="degreeSupervisor" repeatId="0">
             <namePart type="family">Eriksson</namePart>
             <namePart type="given">Erik</namePart>
-            <role><roleTerm repeatId="0">ths</roleTerm></role>
+            <role><roleTerm repeatId="0">dgs</roleTerm></role>
         </name>
         """,
     )
