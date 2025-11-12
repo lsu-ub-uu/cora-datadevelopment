@@ -42,7 +42,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - permissionUnit <- `administrativeInfo/domain`
   - oldId <- `pid`
   - ⚠️ visibility <- Logic based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ⚠️ Needs updating when changes to visibility is done in Cora
-- ⚠️ dataQuality <- `2026` if validation passes, otherwise `classic`
+- dataQuality <- `2026` if validation passes, otherwise `classic`
 - genre type="contentType" <- Mapping from `contentType/contentTypeCode`,
 - titleInfo <- `originalPublicationTitle`
   - title <- `title`
@@ -63,7 +63,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 
   - namePart type="family" <- `lastName`
   - namePart type="given" <- `firstName`
-  - namePart type="date" <- `birthYear-deathYear` only birthYear: "1988" birth and death year: "1988-2050" only deathYear: "-1850"
+  - 🔨 namePart type="date" <- `birthYear-deathYear` only birthYear: "1988" birth and death year: "1988-2050" only deathYear: "-1850"
   - role/roleTerm <- aut | edt | `roles/role/marcCode`
   - orcid <- `identifiers/entry/personIdentifier/value` where type is "orcid"
   - lokalt id <- `localId` ⚠️ Some members need local ids to not be publically visible. Solution needed.
