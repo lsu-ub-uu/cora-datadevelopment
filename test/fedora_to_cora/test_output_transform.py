@@ -215,7 +215,7 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <identifier type="pmid">pmid123</identifier>
         <identifier type="wos">ISI.01</identifier>
         <identifier type="scopus">Scopus.01</identifier>
-        <identifier type="se-libr">0004</identifier>
+        <identifier type="se-libr" repeatId="1">0004</identifier>
         <identifier type="doi">10.1038/s41698-022-00278-4</identifier>
         <identifier type="patentNumber">Patentnummer01</identifier>
         <location repeatId="0">

@@ -352,16 +352,6 @@
   <nbn>urn:nbn:se:varldskulturmuseerna:diva-6</nbn>
   <oai>
     oai:DiVA.org:varldskulturmuseerna-6</oai>
-  <identifiers>
-    <entry>
-      <publicationIdentifierType>libris</publicationIdentifierType>
-      <publicationIdentifier>
-        <value>8259174</value>
-        <type>libris</type>
-        <openAccess>false</openAccess>
-      </publicationIdentifier>
-    </entry>
-  </identifiers>
   <sustainableDevelopments>
     <sustainableDevelopment>
       <developmentId>850</developmentId>
