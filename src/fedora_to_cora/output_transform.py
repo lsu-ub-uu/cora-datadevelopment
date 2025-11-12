@@ -2,6 +2,9 @@ import xml.etree.ElementTree as ET
 from cora.context import Context
 from common.xml_utils import append_if_value
 
+from fedora_to_cora.transform.create_name_type_corporate import (
+    create_name_type_corporate,
+)
 from fedora_to_cora.transform.patent.create_patent_country import create_patent_country
 from fedora_to_cora.transform.patent.create_date_other_type_patent import (
     create_date_other_type_patent,
@@ -150,8 +153,9 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
 
     append_if_value(target_record, create_title_info_type_alternative(source_record))
 
-    # Does not handle linked persons yet
     append_if_value(target_record, create_name_type_personals(source_record, context))
+
+    append_if_value(target_record, create_name_type_corporate(source_record, context))
 
     append_if_value(
         target_record,

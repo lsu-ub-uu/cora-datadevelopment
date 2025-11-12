@@ -74,12 +74,10 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
     - 🆕 country <- N/A
     - description <- N/A
 
-- name type="personal" otherType="degreeSupervisor" <- `supervisors` ⚠️ Metadata will change to move to <name type="personal">
-- same as name type="personal"
-- title ?
-- Name type="personal" otherType="thesisAdvisor" <- `examiners` ⚠️ Metadata will change to move to <name type="personal">
-- name type="personal" otherType="opponent" <- `opponents` ⚠️ Metadata will change to move to <name type="personal">
-- 🔨 name type="corporate" <- `responsibleOrganisations`
+- name type="personal" otherType="degreeSupervisor" <- `supervisors`
+- Name type="personal" otherType="thesisAdvisor" <- `examiners`
+- name type="personal" otherType="opponent" <- `opponents`
+- name type="corporate" <- `responsibleOrganisations`
   - organisation (link to migrated record) <- `organisation/organisationId`
   - role/roleTerm <- "cre"
 - note type="creatorCount" <- `noOfContributors`
@@ -220,11 +218,10 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - titleInfo `bookTitle`
     - title <- `title`
     - subtitle <- `subtitle`
-    - language ❓
   - note type="statementOfResponsibility" <- `bookEditor`
   - identifier type="isbn" <- `isbnNumbers/isbn/number` For chapters, isbn is on the book and not directly on the output
   - identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) For chapters doi is on the book and not the output
-    ❓ should we skip libris?
+  - identifier type="libr" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) For chapters doi is on the book and not the output
   - part/extent
     - start <- `startPage`
     - end <- `endPage`

@@ -630,6 +630,142 @@
       <organisations />
     </subject>
   </nationalCategories>
+  <responsibleOrganisations>
+    <organisation>
+      <organisationId>199</organisationId>
+      <organisationType>
+        <organisationTypeId>54</organisationTypeId>
+        <organisationTypeCode>department</organisationTypeCode>
+        <organisationTypeNames>
+          <organisationTypeName>
+            <organisationTypeNameId>1908</organisationTypeNameId>
+            <locale>sv</locale>
+            <organisationTypeName>Institution</organisationTypeName>
+          </organisationTypeName>
+          <organisationTypeName>
+            <organisationTypeNameId>1909</organisationTypeNameId>
+            <locale>en</locale>
+            <organisationTypeName>Department</organisationTypeName>
+          </organisationTypeName>
+        </organisationTypeNames>
+      </organisationType>
+      <organisationName>
+        <name>Metallernas gjutning</name>
+        <locale>sv</locale>
+      </organisationName>
+      <organisationHomepage />
+      <domain>kth</domain>
+      <oldDivaDb>kth</oldDivaDb>
+      <oldDivaId>24</oldDivaId>
+      <oldParentId>1</oldParentId>
+      <organisationAlternativeNames>
+        <organisationName>
+          <organisationNameId>2084</organisationNameId>
+          <locale>en</locale>
+          <organisationName>Casting of Metals</organisationName>
+        </organisationName>
+      </organisationAlternativeNames>
+      <organisationContacts />
+      <organisationAddress>
+        <addressId>1453</addressId>
+        <postbox />
+        <street />
+        <postnumber>10044</postnumber>
+        <city>Stockholm</city>
+        <country>
+          <countryCode>se</countryCode>
+          <countryNames>
+            <countryName>
+              <countryNameId>775</countryNameId>
+              <locale>sv</locale>
+              <countryName>Sverige</countryName>
+            </countryName>
+            <countryName>
+              <countryNameId>774</countryNameId>
+              <locale>en</locale>
+              <countryName>Sweden</countryName>
+            </countryName>
+          </countryNames>
+          <showsOnList>true</showsOnList>
+        </country>
+      </organisationAddress>
+      <organisationParents>
+        <organisation>
+          <organisationId>177</organisationId>
+          <organisationType>
+            <organisationTypeId>50</organisationTypeId>
+            <organisationTypeCode>university</organisationTypeCode>
+            <organisationTypeNames>
+              <organisationTypeName>
+                <organisationTypeNameId>1901</organisationTypeNameId>
+                <locale>en</locale>
+                <organisationTypeName>University</organisationTypeName>
+              </organisationTypeName>
+              <organisationTypeName>
+                <organisationTypeNameId>1900</organisationTypeNameId>
+                <locale>sv</locale>
+                <organisationTypeName>Universitet</organisationTypeName>
+              </organisationTypeName>
+            </organisationTypeNames>
+          </organisationType>
+          <organisationName>
+            <name>KTH</name>
+            <locale>sv</locale>
+          </organisationName>
+          <organisationHomepage>http://www.kth.se</organisationHomepage>
+          <domain>kth</domain>
+          <oldDivaDb>kth</oldDivaDb>
+          <oldDivaId>1</oldDivaId>
+          <organisationAlternativeNames>
+            <organisationName>
+              <organisationNameId>2062</organisationNameId>
+              <locale>en</locale>
+              <organisationName>KTH</organisationName>
+            </organisationName>
+          </organisationAlternativeNames>
+          <organisationContacts />
+          <organisationAddress>
+            <addressId>1431</addressId>
+            <postbox />
+            <street />
+            <postnumber>10044</postnumber>
+            <city>Stockholm</city>
+            <country>
+              <countryCode>se</countryCode>
+              <countryNames>
+                <countryName>
+                  <countryNameId>775</countryNameId>
+                  <locale>sv</locale>
+                  <countryName>Sverige</countryName>
+                </countryName>
+                <countryName>
+                  <countryNameId>774</countryNameId>
+                  <locale>en</locale>
+                  <countryName>Sweden</countryName>
+                </countryName>
+              </countryNames>
+              <showsOnList>true</showsOnList>
+            </country>
+          </organisationAddress>
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <controlled>true</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisationParents>
+      <organisationPredecessors />
+      <organisationPredecessorDescriptions />
+      <controlled>true</controlled>
+      <notEligible>false</notEligible>
+      <showInPortal>false</showInPortal>
+      <showInDefence>false</showInDefence>
+      <topLevel>false</topLevel>
+    </organisation>
+  </responsibleOrganisations>
   <researchSubjects>
     <subject>
       <subjectId>40103</subjectId>

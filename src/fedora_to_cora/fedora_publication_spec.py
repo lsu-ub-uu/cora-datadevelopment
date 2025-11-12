@@ -636,7 +636,7 @@ fedora_publication_xml_spec: XMLSpec = {
     },
     "formatElectronic": "text",
     "formatPrint": "text",
-    "responsibleOrganisation": {"organisation": fedora_organisation_spec},
+    "responsibleOrganisations": {"organisation": fedora_organisation_spec},
     "canOrderOnline": "text",
     "publicationOrder": {
         "orderProfileId": "text",
