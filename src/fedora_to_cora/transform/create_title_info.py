@@ -47,6 +47,9 @@ def _create_title_info(source_title: ET.Element) -> ET.Element | None:
     if languageCode is None:
         return None
 
+    if (title is None or title == "") and (sub_title is None or sub_title == ""):
+        return None
+
     titleInfo = ET.Element("titleInfo", lang=languageCode)
 
     if title is not None and title != "":
