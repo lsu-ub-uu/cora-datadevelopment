@@ -2,6 +2,9 @@ import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from cora.context import Context
+from fedora_to_cora.transform.get_validation_type import (
+    get_validation_type_from_fedora_record,
+)
 
 
 def create_name_type_corporate(
@@ -11,15 +14,31 @@ def create_name_type_corporate(
         "./responsibleOrganisations/organisation/organisationId"
     )
 
+    author_only = _is_author_only_type(source_record)
+
     return [
-        _create_name_type_corporate_from_organisation_id(org_id.text, context, index)
+        _create_name_type_corporate_from_organisation_id(
+            org_id.text, context, author_only, index
+        )
         for index, org_id in enumerate(responsible_organisation_ids)
         if org_id.text is not None and org_id.text.strip() != ""
     ]
 
 
+def _is_author_only_type(source_record: ET.Element) -> bool:
+    author_only_validation_types = {
+        "conference_paper",
+        "conference_other",
+        "publication_preprint",
+    }
+    return (
+        get_validation_type_from_fedora_record(source_record)
+        in author_only_validation_types
+    )
+
+
 def _create_name_type_corporate_from_organisation_id(
-    old_id: str, context: Context, repeat_id: int = 0
+    old_id: str, context: Context, author_only: bool, repeat_id: int = 0
 ) -> ET.Element:
     name = ET.Element("name", type="corporate", repeatId=str(repeat_id))
 
@@ -34,6 +53,9 @@ def _create_name_type_corporate_from_organisation_id(
     name.append(organisation_link)
 
     role = ET.SubElement(name, "role")
-    ET.SubElement(role, "roleTerm").text = "cre"
+    if author_only:
+        ET.SubElement(role, "roleTerm").text = "aut"
+    else:
+        ET.SubElement(role, "roleTerm", repeatId="0").text = "cre"
 
     return name
