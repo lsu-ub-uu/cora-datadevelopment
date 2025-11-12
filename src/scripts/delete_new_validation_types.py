@@ -51,11 +51,12 @@ def main():  # pragma: no cover
 
     utils.init(CTX, TYPE_PREFIX, "diva-output", BLACKLIST_TYPES)
 
+    utils.log(utils.start_delete_script_printout(args.system))
+
     if DRY_RUN:
         utils.log(
             ">>> [SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
 
-    utils.log("Deleting all records and presentations that use prefix: " + TYPE_PREFIX + " on system: " + args.system)
     delete_records_with_prefix()
 
 
@@ -213,11 +214,9 @@ def log_results():  # pragma: no cover
     utils.log(
         f"  Total updated or deleted records out of matching prefixes: {total_changed_or_updated} / {TOTAL_PREFIX_MATCHES}")
 
-    if TOTAL_PROCESSED_RECORDS == len(GLOBAL_NODE_MAP):
-        utils.log("  > All records in node map were processed...")
-    else:
-        utils.log(
-            f"\n   Warning: The number of successfully processed records ({TOTAL_PROCESSED_RECORDS}) are less than the expected total of {len(GLOBAL_NODE_MAP)}!")
+    if TOTAL_PROCESSED_RECORDS != len(GLOBAL_NODE_MAP):
+        utils.log(f"\n   Warning: The number of successfully processed records ({TOTAL_PROCESSED_RECORDS})"
+                  f" are less than the expected total of {len(GLOBAL_NODE_MAP)}!")
 
     if TOTAL_ERRORS:
         print("\nWarning! There were errors reported during processing, please check the log file for details.")
