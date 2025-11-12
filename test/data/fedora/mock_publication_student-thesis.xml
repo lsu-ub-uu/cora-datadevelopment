@@ -388,6 +388,18 @@
   </defence>
   <note />
   <internalNote />
+  <examiners>
+    <person>
+      <firstName>Erik</firstName>
+      <lastName>Examinator</lastName>
+    </person>
+  </examiners>
+  <supervisors>
+    <person>
+      <firstName>Helge</firstName>
+      <lastName>Handledare</lastName>
+    </person>
+  </supervisors>
   <attachments class="tree-set">
     <no-comparator />
     <attachment>

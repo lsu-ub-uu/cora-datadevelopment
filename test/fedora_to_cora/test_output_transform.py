@@ -246,27 +246,27 @@ def test_output_transform_ultimate(mock_diva_search_requests):
                 <roleTerm>dgg</roleTerm>
             </role>
         </degreeGrantingInstitution>
-        <supervisor type="personal" repeatId="0">
+        <name type="personal" otherType="degreeSupervisor" repeatId="0">
             <namePart type="family">Handledare</namePart>
             <namePart type="given">Helge</namePart>
             <role>
-                <roleTerm repeatId="0">ths</roleTerm>
+                <roleTerm repeatId="0">dgs</roleTerm>
             </role>
-        </supervisor>
-        <examiner type="personal" repeatId="0">
+        </name>
+        <name type="personal" otherType="thesisAdvisor" repeatId="0">
             <namePart type="family">Examinator</namePart>
             <namePart type="given">Erik</namePart>
             <role>
-                <roleTerm repeatId="0">dgs</roleTerm>
+                <roleTerm repeatId="0">ths</roleTerm>
             </role>
-        </examiner>
-        <opponent type="personal" repeatId="0">
+        </name>
+        <name type="personal" otherType="opponent" repeatId="0">
             <namePart type="family">Opponent</namePart>
             <namePart type="given">Olivia</namePart>
             <role>
                 <roleTerm repeatId="0">opn</roleTerm>
             </role>
-        </opponent>
+        </name>
         <academicSemester>
             <year>2022</year>
             <academicSemester>ht</academicSemester>
@@ -421,6 +421,7 @@ def test_output_transform_book(mock_diva_search_requests):
             <name type="personal" repeatId="0">
                 <namePart type="family">Bergman</namePart>
                 <namePart type="given">Ingrid</namePart>
+                <namePart type="date">1934-2013</namePart>
                 <role>
                     <roleTerm repeatId="0">edt</roleTerm>
                 </role>
@@ -524,6 +525,7 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
             <name type="personal" repeatId="0">
                 <namePart type="family">Mockson</namePart>
                 <namePart type="given">Mock</namePart>
+                <namePart type="date">1954</namePart>
                 <role>
                     <roleTerm repeatId="0">aut</roleTerm>
                 </role>
@@ -623,6 +625,7 @@ def test_output_transform_student_thesis(mock_diva_search_requests):
             <name repeatId="0" type="personal">
                 <namePart type="family">Studentson</namePart>
                 <namePart type="given">Mock</namePart>
+                <namePart type="date">1965</namePart>
                 <role>
                     <roleTerm>aut</roleTerm>
                 </role>
@@ -639,6 +642,20 @@ def test_output_transform_student_thesis(mock_diva_search_requests):
             <externalCollaboration>
                 <namePart repeatId="0">Stockholms Universitet, Konstvetenskapliga institutionen</namePart>
             </externalCollaboration>
+            <name type="personal" otherType="degreeSupervisor" repeatId="0">
+            <namePart type="family">Handledare</namePart>
+            <namePart type="given">Helge</namePart>
+                <role>
+                    <roleTerm repeatId="0">dgs</roleTerm>
+                </role>
+            </name>
+            <name type="personal" otherType="thesisAdvisor" repeatId="0">
+                <namePart type="family">Examinator</namePart>
+                <namePart type="given">Erik</namePart>
+                <role>
+                    <roleTerm repeatId="0">ths</roleTerm>
+                </role>
+            </name>
             <academicSemester>
                 <year>2012</year>
                 <academicSemester>vt</academicSemester>

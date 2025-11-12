@@ -22,7 +22,7 @@ def test_creates_name_type_personal():
             <authors>
                 <person>
                     <firstName>Michaela</firstName>
-                    <lastName>Andersson</lastName>
+                    <lastName>Andersson</lastName>      
                 </person>
             </authors>
         </publication>
@@ -38,6 +38,112 @@ def test_creates_name_type_personal():
         <name type="personal" repeatId="0">
             <namePart type="family">Andersson</namePart>
             <namePart type="given">Michaela</namePart>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
+        </name>
+        """,
+    )
+
+
+def test_creates_name_type_personal_birth_year():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
+            </publicationType>
+            <authors>
+                <person>
+                    <firstName>Michaela</firstName>
+                    <lastName>Andersson</lastName>      
+                    <birthYear>1802</birthYear>
+                </person>
+            </authors>
+        </publication>
+        """
+    )
+    names = create_name_type_personals(
+        source_record,
+        mock_context,
+    )
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">Andersson</namePart>
+            <namePart type="given">Michaela</namePart>
+            <namePart type="date">1802</namePart>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
+        </name>
+        """,
+    )
+
+
+def test_creates_name_type_personal_death_year():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
+            </publicationType>
+            <authors>
+                <person>
+                    <firstName>Michaela</firstName>
+                    <lastName>Andersson</lastName>      
+                    <deathYear>1802</deathYear>
+                </person>
+            </authors>
+        </publication>
+        """
+    )
+    names = create_name_type_personals(
+        source_record,
+        mock_context,
+    )
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">Andersson</namePart>
+            <namePart type="given">Michaela</namePart>
+            <namePart type="date">-1802</namePart>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
+        </name>
+        """,
+    )
+
+
+def test_creates_name_type_personal_birth_and_death_year():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
+            </publicationType>
+            <authors>
+                <person>
+                    <firstName>Michaela</firstName>
+                    <lastName>Andersson</lastName>      
+                    <birthYear>1802</birthYear>
+                    <deathYear>1977</deathYear>
+                </person>
+            </authors>
+        </publication>
+        """
+    )
+    names = create_name_type_personals(
+        source_record,
+        mock_context,
+    )
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">Andersson</namePart>
+            <namePart type="given">Michaela</namePart>
+            <namePart type="date">1802-1977</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
         </name>
         """,
@@ -298,27 +404,27 @@ def test_create_supervisors():
     assert_equal_for_xml_and_xml_string(
         names[0],
         """
-        <supervisor type="personal" repeatId="0">
+        <name type="personal" otherType="degreeSupervisor" repeatId="0">
             <namePart type="family">Smith</namePart>
             <namePart type="given">Sarah</namePart>
-            <role><roleTerm repeatId="0">ths</roleTerm></role>
+            <role><roleTerm repeatId="0">dgs</roleTerm></role>
             <affiliation repeatId="0">
                 <name type="corporate">
                     <namePart>Extern organisation</namePart>
                 </name>
             </affiliation>
-        </supervisor>
+        </name>
         """,
     )
 
     assert_equal_for_xml_and_xml_string(
         names[1],
         """
-        <supervisor type="personal" repeatId="1">
+        <name type="personal" otherType="degreeSupervisor" repeatId="1">
             <namePart type="family">Kmith</namePart>
             <namePart type="given">Karah</namePart>
-            <role><roleTerm repeatId="0">ths</roleTerm></role>
-        </supervisor>
+            <role><roleTerm repeatId="0">dgs</roleTerm></role>
+        </name>
         """,
     )
 
@@ -348,11 +454,11 @@ def test_create_opponents():
     assert_equal_for_xml_and_xml_string(
         names[0],
         """
-        <opponent type="personal" repeatId="0">
+        <name type="personal" otherType="opponent" repeatId="0">
             <namePart type="family">Olsen</namePart>
             <namePart type="given">Oliver</namePart>
             <role><roleTerm repeatId="0">opn</roleTerm></role>
-        </opponent>
+        </name>
         """,
     )
 
@@ -382,11 +488,11 @@ def test_create_examiners():
     assert_equal_for_xml_and_xml_string(
         names[0],
         """
-        <examiner type="personal" repeatId="0">
+        <name type="personal" otherType="thesisAdvisor" repeatId="0">
             <namePart type="family">Eriksson</namePart>
             <namePart type="given">Erik</namePart>
-            <role><roleTerm repeatId="0">dgs</roleTerm></role>
-        </examiner>
+            <role><roleTerm repeatId="0">ths</roleTerm></role>
+        </name>
         """,
     )
 
@@ -448,7 +554,6 @@ def test_other_contributor_without_role():
                 <contributor>
                     <firstName>Fiona</firstName>
                     <lastName>The Roleless</lastName>
-                    <birthYear>1910</birthYear>
                     <identifiers>
                         <entry>
                         <personIdentifierType>orcid</personIdentifierType>

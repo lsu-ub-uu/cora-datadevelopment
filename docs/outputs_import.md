@@ -63,7 +63,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 
   - namePart type="family" <- `lastName`
   - namePart type="given" <- `firstName`
-  - 🔨 namePart type="date" <- `birthYear-deathYear` only birthYear: "1988" birth and death year: "1988-2050" only deathYear: "-1850"
+  - namePart type="date" <- `birthYear-deathYear` only birthYear: "1988" birth and death year: "1988-2050" only deathYear: "-1850"
   - role/roleTerm <- aut | edt | `roles/role/marcCode`
   - orcid <- `identifiers/entry/personIdentifier/value` where type is "orcid"
   - lokalt id <- `localId` ⚠️ Some members need local ids to not be publically visible. Solution needed.
@@ -74,6 +74,11 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
     - 🆕 country <- N/A
     - description <- N/A
 
+- name type="personal" otherType="degreeSupervisor" <- `supervisors` ⚠️ Metadata will change to move to <name type="personal">
+- same as name type="personal"
+- title ?
+- Name type="personal" otherType="thesisAdvisor" <- `examiners` ⚠️ Metadata will change to move to <name type="personal">
+- name type="personal" otherType="opponent" <- `opponents` ⚠️ Metadata will change to move to <name type="personal">
 - 🔨 name type="corporate" <- `responsibleOrganisations`
   - organisation (link to migrated record) <- `organisation/organisationId`
   - role/roleTerm <- "cre"
@@ -173,11 +178,6 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - degreeGrantingInstitution type="corporate" otherType="text" <- `defence/externalGrantingInstitution`
   - namePart <- `externalGrantingInstitution`
   - 🆕 identifier type="ror" <- N/A
-- supervisor <- `supervisors` ⚠️ Metadata will change to move to <name type="personal">
-  - same as name type="personal"
-  - title ?
-- examiner <- `examiners` ⚠️ Metadata will change to move to <name type="personal">
-- opponent <- `opponents` ⚠️ Metadata will change to move to <name type="personal">
 - defence <- `defence` For degree project (diva-degreeProject) the tag should be presentation instead of defence.
 - presentation <- `defence` See above
   - `language` <- `languageTerm/language`

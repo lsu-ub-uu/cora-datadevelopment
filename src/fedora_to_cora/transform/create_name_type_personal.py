@@ -57,10 +57,10 @@ def create_supervisors(source_record: ET.Element, context: Context) -> list[ET.E
     return [
         create_name_type_personal(
             supervisor,
-            ["ths"],
+            ["dgs"],
             i,
             context,
-            tagName="supervisor",
+            otherType="degreeSupervisor",
         )
         for i, supervisor in enumerate(supervisors)
     ]
@@ -74,7 +74,7 @@ def create_opponents(source_record: ET.Element, context: Context) -> list[ET.Ele
             ["opn"],
             i,
             context,
-            tagName="opponent",
+            otherType="opponent",
         )
         for i, opponent in enumerate(opponents)
     ]
@@ -85,10 +85,10 @@ def create_examiners(source_record: ET.Element, context: Context) -> list[ET.Ele
     return [
         create_name_type_personal(
             examiner,
-            ["dgs"],
+            ["ths"],
             i,
             context,
-            tagName="examiner",
+            otherType="thesisAdvisor",
         )
         for i, examiner in enumerate(examiners)
     ]
@@ -100,12 +100,15 @@ def create_name_type_personal(
     repeatId: int,
     context: Context,
     author_only: bool = False,
-    tagName: str = "name",
+    otherType: str | None = None,
 ) -> ET.Element:
     """
     Create a cora person element from a classic person element.
     """
-    name_type_personal = ET.Element(tagName, type="personal", repeatId=str(repeatId))
+    name_type_personal = ET.Element("name", type="personal", repeatId=str(repeatId))
+
+    if otherType is not None:
+        name_type_personal.set("otherType", otherType)
 
     # TODO Handle linked person
 
@@ -121,6 +124,8 @@ def create_name_type_personal(
             first_name.text
         )
 
+    append_if_value(name_type_personal, _create_date_part(person))
+
     append_if_value(name_type_personal, _create_role(role_terms, author_only))
 
     local_id = person.find("./localId")
@@ -135,6 +140,28 @@ def create_name_type_personal(
         name_type_personal.append(create_affiliation(organisation, i, context))
 
     return name_type_personal
+
+
+def _create_date_part(person: ET.Element) -> ET.Element | None:
+    birth_year = person.findtext("./birthYear")
+    death_year = person.findtext("./deathYear")
+
+    has_birth_year = birth_year is not None and birth_year.strip() != ""
+    has_death_year = death_year is not None and death_year.strip() != ""
+
+    if not has_birth_year and not has_death_year:
+        return None
+
+    date_part = ET.Element("namePart", type="date")
+
+    if has_birth_year and not has_death_year:
+        date_part.text = birth_year
+    elif not has_birth_year and has_death_year:
+        date_part.text = f"-{death_year}"
+    else:
+        date_part.text = f"{birth_year}-{death_year}"
+
+    return date_part
 
 
 def _create_role(role_terms: list[str], author_only: bool) -> ET.Element:
