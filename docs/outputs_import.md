@@ -247,9 +247,9 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - relatedItem type="funder"
   - funder (link to migrated record) <- `funderInfos/funder/funderId`
   - identifier type="project" <- `funderInfos/funderId/projectNumber`
-- 🆕 related <- N/A
+- 🆕 related <- N/A ❓ `hostPublications`, `relations`
 - 🆕 related type="retracted" <- N/A
-- ⚠️ related type="constituent" (link to migrated recordade avhandligar)
+- ⚠️ related type="constituent" (link to migrated recordade avhandligar) ❓ `partsOfPublication`
   - output (link to migrated record) <- `partsOfPublication/publication/pid`
 - relatedItem type="publicationChannel"
   - publicationChannel <- `publicationChannel`
