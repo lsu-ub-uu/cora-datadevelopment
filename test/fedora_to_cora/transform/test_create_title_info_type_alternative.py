@@ -114,3 +114,33 @@ def test_create_multiple_alternative_titles():
         </titleInfo>
         """,
     )
+
+
+def test_empty_title():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <alternativePublicationTitles>
+                <title>
+                    <title/>
+                    <subTitle>A subtitle</subTitle>
+                    <language>
+                        <languageCode3>eng</languageCode3>
+                        <languageCode2>en</languageCode2>
+                        <showsOnList>true</showsOnList>
+                    </language>
+                </title>
+            </alternativePublicationTitles>
+        </publication>
+        """
+    )
+    alternative_titles = create_title_info_type_alternative(source_record)
+
+    assert_equal_for_xml_and_xml_string(
+        alternative_titles[0],
+        """
+        <titleInfo type="alternative" lang="eng" repeatId="0">
+            <subtitle>A subtitle</subtitle>
+        </titleInfo>
+        """,
+    )
