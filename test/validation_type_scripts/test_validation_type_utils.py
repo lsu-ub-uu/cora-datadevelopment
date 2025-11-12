@@ -164,24 +164,27 @@ def test_update_final_value_no_update(init_utils):
 
 
 def test_possibly_update_data_of_non_record_info_child_false(record_node, monkeypatch):
-    monkeypatch.setattr(common_utils, "set_data_quality_to_classic", lambda bool: False)
-    monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda bool: False)
-    monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda bool: False)
-    assert not common_utils.possibly_update_data_of_non_record_info_child(record_node, "someId", False)
+    record_info_groups = {"some_record_info_group"}
+    monkeypatch.setattr(common_utils, "set_data_quality_to_classic", lambda node: False)
+    monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda node: False)
+    monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda node, groups: False)
+    assert not common_utils.possibly_update_data_of_non_record_info_child(record_node, record_info_groups, False)
 
 
 def test_possibly_update_data_of_non_record_info_child_true_1(record_node, monkeypatch):
-    monkeypatch.setattr(common_utils, "set_data_quality_to_classic", lambda bool: True)
-    monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda bool: False)
-    monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda bool: False)
-    assert common_utils.possibly_update_data_of_non_record_info_child(record_node, "someId", False)
+    record_info_groups = {"some_record_info_group"}
+    monkeypatch.setattr(common_utils, "set_data_quality_to_classic", lambda node: True)
+    monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda node: False)
+    monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda node, groups: False)
+    assert common_utils.possibly_update_data_of_non_record_info_child(record_node, record_info_groups, False)
 
 
 def test_possibly_update_data_of_non_record_info_child_true_2(record_node, monkeypatch):
-    monkeypatch.setattr(common_utils, "set_data_quality_to_classic", lambda bool: False)
-    monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda bool: True)
-    monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda bool: True)
-    assert common_utils.possibly_update_data_of_non_record_info_child(record_node, "someId", False)
+    record_info_groups = {"some_record_info_group"}
+    monkeypatch.setattr(common_utils, "set_data_quality_to_classic", lambda node: False)
+    monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda node: True)
+    monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda node, groups: True)
+    assert common_utils.possibly_update_data_of_non_record_info_child(record_node, record_info_groups, False)
 
 
 def test_set_data_quality_to_classic():
@@ -235,7 +238,7 @@ def test_normalize_regex_patterns_record_info_child(record_node, monkeypatch):
 def test_normalize_child_reference_repeat(monkeypatch, record_node):
     monkeypatch.setattr(common_utils, "record_info_group", lambda boolean: False)
 
-    assert common_utils.normalize_child_reference_repeat(record_node.xml_content)
+    assert common_utils.normalize_child_reference_repeat(record_node.xml_content, {"some_record_info_group"})
     child = record_node.xml_content.find(".//childReference")
     assert child.find("repeatMin").text == "0"
     assert child.find("repeatMax").text == "X"
@@ -244,11 +247,27 @@ def test_normalize_child_reference_repeat(monkeypatch, record_node):
 def test_normalize_child_reference_repeat_record_info_child(monkeypatch, record_node):
     monkeypatch.setattr(common_utils, "record_info_group", lambda boolean: True)
 
-    assert not common_utils.normalize_child_reference_repeat(record_node.xml_content)
+    assert not common_utils.normalize_child_reference_repeat(record_node.xml_content, {"some_record_info_group"})
 
     child = record_node.xml_content.find(".//childReference")
     assert child.find("repeatMin").text == "1"
     assert child.find("repeatMax").text == "1"
+
+
+def test_normalize_child_reference_repeat_record_info_child_no_update_due_to_record_info_group(monkeypatch,
+                                                                                               mock_top_level):
+    monkeypatch.setattr(common_utils, "record_info_group", lambda boolean: False)
+
+    assert common_utils.normalize_child_reference_repeat(mock_top_level.xml_content, {"recordInfoNewDivaTextGroup"})
+
+    record_info_reference = None
+    for child_reference in mock_top_level.xml_content.findall(".//childReference"):
+        if child_reference.findtext(".//linkedRecordId") == "recordInfoNewDivaTextGroup":
+            record_info_reference = child_reference
+            break
+
+    assert record_info_reference.find("repeatMin").text == "1"
+    assert record_info_reference.find("repeatMax").text == "1"
 
 
 def test_update_data_divider(record_node):

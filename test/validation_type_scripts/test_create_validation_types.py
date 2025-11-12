@@ -46,7 +46,7 @@ def test_process_queue_and_add_note_to_map(sample_xml, monkeypatch):
 def test_process_and_possibly_save_not_saved_due_to_not_updated(record_node, monkeypatch):
     monkeypatch.setattr(script, "is_already_processed", lambda node, mapping: False)
     monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda node: False)
-    monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda node: False)
+    monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda node, record_info_groups: False)
     monkeypatch.setattr(common_utils, "update_data_divider", lambda node: False)
 
     result = script.process_and_possibly_create(record_node, {"123": "XYZ_123"})

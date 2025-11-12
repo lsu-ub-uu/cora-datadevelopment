@@ -34,6 +34,7 @@ EXTENSIVE_LOGGING = True
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
 GLOBAL_RECORD_INFO_CHILDREN = {}
+RECORD_INFO_GROUPS = set()
 TOTAL_PROCESSED_RECORDS = 0
 TOTAL_UPDATES = 0
 TOTAL_CREATED = 0
@@ -117,6 +118,9 @@ def get_validation_types_to_process() -> list[Any]:
 def collect_record_info_children():
     processed = set()
     record_info_roots = find_record_info_roots(GLOBAL_NODE_MAP)
+    for node in record_info_roots:
+        RECORD_INFO_GROUPS.add(node.record_id)
+
     queue = deque(record_info_roots)
 
     while queue:
@@ -250,7 +254,7 @@ def process_and_possibly_create(node, global_id_mapping):
         return False
 
     else:
-        updated = common_utils.possibly_update_data_of_non_record_info_child(node, original_id, updated)
+        updated = common_utils.possibly_update_data_of_non_record_info_child(node, RECORD_INFO_GROUPS, updated)
 
     child_renamed = any(child.record_id in global_id_mapping for child in node.children)
 

@@ -172,19 +172,27 @@ def update_final_value_of_validation_type(xml_content):
     return False
 
 
-def possibly_update_data_of_non_record_info_child(node, original_id, updated: bool) -> bool:
+def possibly_update_data_of_non_record_info_child(node, record_info_groups: set, updated: bool) -> bool:
     if set_data_quality_to_classic(node.xml_content):
-        _ctx.log(f"> Set data quality to classic in {original_id}")
+        _ctx.log(f"> Set data quality to classic in {node.record_id}")
         updated = True
 
     if normalize_regex_patterns(node.xml_content):
-        _ctx.log(f"> Normalized regex pattern(s) to '.+' in {original_id}")
+        _ctx.log(f"> Normalized regex pattern(s) to '.+' in {node.record_id}")
         updated = True
 
-    if normalize_child_reference_repeat(node.xml_content):
-        _ctx.log(f"> Normalized childReference(s) Min Max to '0-X' in {original_id}")
+    if normalize_child_reference_repeat(node.xml_content, record_info_groups):
+        _ctx.log(f"> Normalized childReference(s) Min Max to '0-X' in {node.record_id}")
         updated = True
     return updated
+
+
+def is_record_info_child_ref(child_reference: Element, record_info_groups: set) -> bool:
+    linked_record_id = child_reference.find(".//ref/linkedRecordId")
+    if linked_record_id is not None and linked_record_id.text in record_info_groups:
+        _ctx.log(f"Skipped normalizing '{linked_record_id.text}' due to being a record info group")
+        return True
+    return False
 
 
 def set_data_quality_to_classic(xml_content):
@@ -209,10 +217,13 @@ def normalize_regex_patterns(xml_root):
     return updated
 
 
-def normalize_child_reference_repeat(xml_root):
+def normalize_child_reference_repeat(xml_root: Element, record_info_groups: set):
     updated = False
     if not record_info_group(xml_root):
         for child_reference in xml_root.findall(".//childReferences/childReference"):
+            if is_record_info_child_ref(child_reference, record_info_groups):
+                continue
+
             repeat_min_element = child_reference.find("repeatMin")
             repeat_max_element = child_reference.find("repeatMax")
 
