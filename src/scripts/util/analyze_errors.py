@@ -94,8 +94,8 @@ def analyze_error_log(
         if "☣️" in line:
             total_classic += 1
 
-            # Extract record ID from the line (format: "❌ diva2:1234567 - ...")
-            record_id_match = re.search(r"❌\s+(diva2:\d+)", line)
+            # Extract record ID from the line (format: "☣️ diva2:1234567 - ...")
+            record_id_match = re.search(r"☣️\s+(diva2:\d+)", line)
             record_id = record_id_match.group(1) if record_id_match else "unknown"
 
             error_messages = extract_error_messages(line)
@@ -149,7 +149,7 @@ def generate_report(
     print(f"   ☣️ Classic quality transformations: {total_classic:,}")
     print(f"   ❌ Failed transformations: {total_failed:,}")
     print(
-        f"   📈 Success rate: {total_successful/(total_successful+total_failed)*100:.1f}%"
+        f"   📈 Success rate: {total_successful/(total_successful+total_classic+total_failed)*100:.1f}%"
     )
     print()
 
@@ -164,7 +164,7 @@ def generate_report(
     print("-" * 80)
 
     for i, (error_msg, count) in enumerate(sorted_errors, 1):
-        percentage = (count / total_failed) * 100
+        percentage = (count / (total_failed + total_classic)) * 100
         examples = error_examples.get(error_msg, [])
         examples_str = ", ".join(examples) if examples else "no examples"
         print(f"\n{i}. Error: {error_msg}")

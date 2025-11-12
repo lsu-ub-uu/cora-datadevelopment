@@ -6,7 +6,9 @@ from fedora_to_cora.attachments_migrate import attachments_migrate
 from fedora_to_cora.output_transform import transform_to_cora_output
 from cora.validate import validate_record
 from cora.create import create_record, is_success_result
-from common.xml_utils import pretty_print_xml
+from fedora_to_cora.transform.transform_output_to_classic_quality import (
+    transform_output_to_classic_quality,
+)
 
 
 class OutputMigrationResult:
@@ -41,7 +43,12 @@ def output_migrate(
     )
 
     if not valid:
-        create_result = _create_classic_quality_record(cora_output, context)
+        classic_quality_record = transform_output_to_classic_quality(cora_output)
+        create_result = create_record(
+            classic_quality_record,
+            record_type="diva-output",
+            context=context,
+        )
         if is_success_result(create_result):
             return OutputMigrationResult(status="CLASSIC_QUALITY", errors=errors)
         else:
@@ -84,57 +91,3 @@ def output_migrate(
                 )
 
     return OutputMigrationResult(status="SUCCESS")
-
-
-def _create_classic_quality_record(cora_output: ET.Element, context: Context):
-    validation_type_link = cora_output.find(
-        "./recordInfo/validationType/linkedRecordId"
-    )
-    assert validation_type_link is not None and validation_type_link.text is not None
-    validation_type_link.text = "classic_" + validation_type_link.text
-    data_quality = cora_output.find("./dataQuality")
-    assert data_quality is not None
-    data_quality.text = "classic"
-
-    for index, child in enumerate(cora_output):
-        add_repeat_ids(child, index)
-
-    return create_record(
-        cora_output,
-        record_type="diva-output",
-        context=context,
-    )
-
-
-def add_repeat_ids(element: ET.Element, repeat_id: int = 0):
-
-    if element.get("repeatId") is None:
-        element.set("repeatId", str(repeat_id))
-
-    if len(element) > 0:
-        if element.tag == "recordInfo":
-            return
-
-        for index, child in enumerate(element):
-            add_repeat_ids(child, index)
-
-
-if __name__ == "__main__":
-    el = ET.fromstring(
-        """
-        <record>
-            <recordInfo>
-                <item>Value1</item>
-                <item>Value2</item>
-            </recordInfo>
-            <group repeatId="23123">
-                <item>Value1</item>
-                <item>Value2</item>
-            </group>
-            <single>Value3</single>
-        </record>
-        """
-    )
-    add_repeat_ids(el)
-
-    print(pretty_print_xml(el))

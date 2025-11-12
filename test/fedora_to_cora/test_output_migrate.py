@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from unittest.mock import MagicMock, patch
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.create import CreateRecordFailureResult, CreateRecordSuccessResult
-from fedora_to_cora.output_migrate import add_repeat_ids, output_migrate
+from fedora_to_cora.output_migrate import output_migrate
 from cora.context import MockContext
 
 
@@ -282,7 +282,7 @@ def test_migrate_with_classic_quality(mock_create, mock_transform, mock_validate
                     <linkedRecordId>classic_publication_report</linkedRecordId>
                 </validationType>
             </recordInfo>
-            <dataQuality>classic</dataQuality>
+            <dataQuality repeatId="1">classic</dataQuality>
         </record>
         """,
     )
@@ -351,22 +351,3 @@ def test_migrate_with_classic_quality_failure(
     )
 
     assert mock_create.call_count == 1
-
-
-def test_add_repeat_ids():
-    xml_input = ET.fromstring(
-        """
-        <record>
-            <group>
-                <item>Value1</item>
-                <item>Value2</item>
-            </group>
-            <single>Value3</single>
-        </record>
-        """
-    )
-
-    add_repeat_ids(xml_input)
-
-    # Since the function only prints, we will just ensure it runs without error.
-    # In a real test, we might want to capture stdout and verify the output.
