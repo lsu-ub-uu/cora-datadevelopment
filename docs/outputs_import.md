@@ -221,7 +221,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - note type="statementOfResponsibility" <- `bookEditor`
   - identifier type="isbn" <- `isbnNumbers/isbn/number` For chapters, isbn is on the book and not directly on the output
   - identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) For chapters doi is on the book and not the output
-  - identifier type="libr" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) For chapters doi is on the book and not the output
+  - identifier type="se-libr" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "se-libr"`) For chapters se-libr is on the book and not the output
   - part/extent
     - start <- `startPage`
     - end <- `endPage`

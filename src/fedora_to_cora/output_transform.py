@@ -218,10 +218,9 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
         create_identifier(source_record, type="scopus", source_selector="./scopusId"),
     )
 
-    append_if_value(target_record, create_identifier_se_libr(source_record))
-
     if not is_part_of_book(source_record) and not is_part_of_conference(source_record):
         append_if_value(target_record, create_identifier_doi(source_record))
+        append_if_value(target_record, create_identifier_se_libr(source_record))
 
     append_if_value(
         target_record,

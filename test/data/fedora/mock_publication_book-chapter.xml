@@ -609,5 +609,18 @@
         <openAccess>true</openAccess>
       </publicationIdentifier>
     </entry>
+    <entry>
+      <publicationIdentifierType>libris</publicationIdentifierType>
+      <publicationIdentifier>
+        <value>0004</value>
+        <alternativeValues>
+          <value>
+            <content>0005</content>
+          </value>
+        </alternativeValues>
+        <type>libris</type>
+        <openAccess>false</openAccess>
+      </publicationIdentifier>
+    </entry>
   </identifiers>
 </publication>

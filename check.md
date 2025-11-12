@@ -24,6 +24,4 @@ i ny modellen så så blir det en kommaseparead lista
 
 - physicalDescription, hur tar vi hand om datat? slå ihop fält?
 
-Marcus:
-
-- hur hanterar vi andra värden i collectionVars?
+- openAccess på doi? något vi behöver ta hand om?

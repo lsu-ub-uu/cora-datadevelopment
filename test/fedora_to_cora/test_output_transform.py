@@ -222,8 +222,8 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <identifier type="pmid">pmid123</identifier>
         <identifier type="wos">ISI.01</identifier>
         <identifier type="scopus">Scopus.01</identifier>
-        <identifier type="se-libr" repeatId="1">0004</identifier>
         <identifier type="doi">10.1038/s41698-022-00278-4</identifier>
+        <identifier type="se-libr" repeatId="1">0004</identifier>
         <identifier type="patentNumber">Patentnummer01</identifier>
         <location repeatId="0">
             <url>http://example.com</url>
@@ -556,7 +556,7 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                 <identifier displayLabel="online" repeatId="1" type="isbn">978-92-893-7379-1</identifier>
                 <identifier displayLabel="undefined" repeatId="2" type="isbn">978-92-893-7380-7</identifier>
                 <identifier type="doi">10.1038/s41698-022-00278-4</identifier>
-
+                <identifier type="se-libr" repeatId="1">0004</identifier>
                 <part>
                     <extent>
                         <start>122</start>

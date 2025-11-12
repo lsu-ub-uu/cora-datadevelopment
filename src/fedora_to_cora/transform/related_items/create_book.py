@@ -3,6 +3,7 @@ from cora.context import Context
 from common.xml_utils import append_if_value
 from fedora_to_cora.transform.identifiers.create_doi_se_libr import (
     create_identifier_doi,
+    create_identifier_se_libr,
 )
 from fedora_to_cora.transform.identifiers.create_isbn import create_identifier_type_isbn
 from fedora_to_cora.transform.related_items.create_series import (
@@ -29,6 +30,7 @@ def create_book(source_record: ET.Element, context: Context) -> ET.Element | Non
 
     append_if_value(related_item, create_identifier_type_isbn(source_record))
     append_if_value(related_item, create_identifier_doi(source_record))
+    append_if_value(related_item, create_identifier_se_libr(source_record))
 
     append_if_value(related_item, _create_part(source_record))
     append_if_value(
