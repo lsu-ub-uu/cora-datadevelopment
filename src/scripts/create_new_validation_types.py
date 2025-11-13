@@ -66,13 +66,21 @@ def main():
 
     common_utils.init(CTX, TYPE_PREFIX, RECORD_TYPE, BLACKLIST_TYPES)
 
-    common_utils.log(common_utils.start_create_script_printout(args.system))
+    common_utils.log(start_create_script_printout(args.system))
 
     if DRY_RUN:
         common_utils.log(
             "[SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
 
     create_new_validation_types_for_record_type()
+
+
+def start_create_script_printout(system: str):
+    return f'''=== Creating new validation types ===
+ • System: {system}
+ • System base url: {CTX.get_base_url()}
+ • Prefix: {TYPE_PREFIX}
+ • Record type: {RECORD_TYPE}'''
 
 
 def create_new_validation_types_for_record_type():
@@ -199,7 +207,7 @@ def log_results():  # pragma: no cover
 
 
 def process_node(global_id_mapping, node):
-    global TOTAL_PROCESSED_RECORDS, TOTAL_UPDATES, TOTAL_ERRORS, EXISTING_VALIDATION_TYPES_WITH_PREFIX, TOTAL_CREATED
+    global TOTAL_PROCESSED_RECORDS, TOTAL_UPDATES, TOTAL_CREATED
 
     try:
         TOTAL_PROCESSED_RECORDS += 1

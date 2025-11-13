@@ -51,13 +51,20 @@ def main():  # pragma: no cover
 
     utils.init(CTX, TYPE_PREFIX, "diva-output", BLACKLIST_TYPES)
 
-    utils.log(utils.start_delete_script_printout(args.system))
+    utils.log(start_delete_script_printout(args.system))
 
     if DRY_RUN:
         utils.log(
             ">>> [SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
 
     delete_records_with_prefix()
+
+
+def start_delete_script_printout(system: str): # pragma: no cover
+    return f'''=== Deleting new validation types ===
+ • System: {system}
+ • System base url: {CTX.get_base_url()}
+ • Prefix: {TYPE_PREFIX}'''
 
 
 def delete_records_with_prefix():

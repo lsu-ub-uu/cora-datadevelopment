@@ -94,21 +94,6 @@ delete_validation_type_args: dict[str, ArgumentConfig] = {
 }
 
 
-def start_create_script_printout(system: str):
-    return f'''=== Creating new validation types ===
- • System: {system}
- • System base url: {_ctx.get_base_url()}
- • Prefix: {_type_prefix}
- • Record type: {_record_type}'''
-
-
-def start_delete_script_printout(system: str):
-    return f'''=== Deleting new validation types ===
- • System: {system}
- • System base url: {_ctx.get_base_url()}
- • Prefix: {_type_prefix}'''
-
-
 # Representation of a record and its relationships ----------------------------------
 class RecordNode:
     def __init__(self, record_id: str, record_type: str, url: str, xml_content: Element):
