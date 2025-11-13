@@ -53,8 +53,9 @@ def _add_repeat_ids_recursive(element: ET.Element, repeat_id: int = 0):
 def _add_validation_errors_to_internal_note(
     classic_quality_output: ET.Element, validation_errors: list[str] | None
 ):
-    if validation_errors is None:
-        return
+    if not validation_errors or len(validation_errors) == 0:
+        return None
+
     existing_internal_note = classic_quality_output.find("./note[@type='internal']")
 
     validation_error_text = (
@@ -64,7 +65,7 @@ def _add_validation_errors_to_internal_note(
 
     if existing_internal_note is not None:
         note_element = existing_internal_note
-        note_element.text = note_element.text or "" + "\n\n" + validation_error_text
+        note_element.text = (note_element.text or "") + "\n\n" + validation_error_text
     else:
         note_element = ET.Element("note", type="internal")
         classic_quality_output.append(note_element)
