@@ -60,7 +60,7 @@ def main():  # pragma: no cover
     delete_records_with_prefix()
 
 
-def start_delete_script_printout(system: str): # pragma: no cover
+def start_delete_script_printout(system: str):  # pragma: no cover
     return f'''=== Deleting new validation types ===
  • System: {system}
  • System base url: {CTX.get_base_url()}
@@ -116,6 +116,14 @@ def delete_presentations():
                     retries[url] = retries.get(url, 0) + 1
 
     progress.close()
+
+
+def construct_delete_urls_from_ids(ids: list) -> set[str]:
+    delete_urls = set()
+    for record_id in ids:
+        if TYPE_PREFIX in record_id:
+            delete_urls.add(CTX.get_base_url() + "presentation/" + record_id)
+    return delete_urls
 
 
 def build_node_map():
@@ -177,6 +185,10 @@ def process_node_map_and_delete_records(global_node_map):
     check_for_unprocessed_nodes(global_node_map, processed)
 
 
+def get_total_matching_prefixed_records() -> int:
+    return sum(1 for node in GLOBAL_NODE_MAP.values() if node.record_id.startswith(TYPE_PREFIX))
+
+
 def process_record(progress, node):
     global TOTAL_RECORD_DELETIONS, TOTAL_RECORD_UPDATES
     if node.record_type == "validationType":
@@ -199,6 +211,14 @@ def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
         utils.log("Some records were not processed (and probably not deleted), check log for more info...")
         for url in unprocessed:
             TOTAL_ERRORS.append("Warning: Record: " + url + " was never processed")
+
+
+def update_record(node):
+    if DRY_RUN:
+        CTX.log(f"  Dry run mode - not saving {node.new_record_id}\n")
+        return True
+
+    return utils.try_to_update_record(node, TOTAL_ERRORS)
 
 
 def prepare_url_and_possibly_delete(node):
@@ -232,27 +252,6 @@ def log_results():  # pragma: no cover
             CTX.log(f" > {error}")
     else:
         utils.log("  No errors reported.")
-
-
-# XML utilities ----------------------------------
-def get_total_matching_prefixed_records() -> int:
-    return sum(1 for node in GLOBAL_NODE_MAP.values() if node.record_id.startswith(TYPE_PREFIX))
-
-
-def construct_delete_urls_from_ids(ids: list) -> set[str]:
-    delete_urls = set()
-    for record_id in ids:
-        if TYPE_PREFIX in record_id:
-            delete_urls.add(CTX.get_base_url() + "presentation/" + record_id)
-    return delete_urls
-
-
-def update_record(node):
-    if DRY_RUN:
-        CTX.log(f"  Dry run mode - not saving {node.new_record_id}\n")
-        return True
-
-    return utils.try_to_update_record(node, TOTAL_ERRORS)
 
 
 if __name__ == "__main__":  # pragma: no cover

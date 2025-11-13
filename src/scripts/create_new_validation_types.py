@@ -77,6 +77,7 @@ def main():
 
 def start_create_script_printout(system: str):
     return f'''=== Creating new validation types ===
+    
  • System: {system}
  • System base url: {CTX.get_base_url()}
  • Prefix: {TYPE_PREFIX}
