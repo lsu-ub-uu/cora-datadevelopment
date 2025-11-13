@@ -23,7 +23,7 @@ def test_adds_repeat_id_to_children():
         """
     )
 
-    classic_quality_output = transform_output_to_classic_quality(cora_output)
+    classic_quality_output = transform_output_to_classic_quality(cora_output, [])
 
     assert_equal_for_xml_and_xml_string(
         classic_quality_output,
@@ -64,7 +64,7 @@ def test_adds_repeat_id_to_nested_children():
         """
     )
 
-    classic_quality_output = transform_output_to_classic_quality(cora_output)
+    classic_quality_output = transform_output_to_classic_quality(cora_output, [])
 
     assert_equal_for_xml_and_xml_string(
         classic_quality_output,
@@ -107,7 +107,7 @@ def test_does_not_addrepeat_id_to_record_info_children():
         """
     )
 
-    classic_quality_output = transform_output_to_classic_quality(cora_output)
+    classic_quality_output = transform_output_to_classic_quality(cora_output, [])
 
     assert_equal_for_xml_and_xml_string(
         classic_quality_output,
@@ -148,7 +148,7 @@ def test_does_not_overwrite_existing_repeat_id():
         """
     )
 
-    classic_quality_output = transform_output_to_classic_quality(cora_output)
+    classic_quality_output = transform_output_to_classic_quality(cora_output, [])
 
     assert_equal_for_xml_and_xml_string(
         classic_quality_output,
@@ -164,6 +164,95 @@ def test_does_not_overwrite_existing_repeat_id():
             <someChild1 repeatId="one">someValue1</someChild1>
             <someChild1 repeatId="two">someValue2</someChild1>
             <someChild2 repeatId="4">someValue3</someChild2>
+        </record>
+        """,
+    )
+
+
+def test_adds_internal_note_with_validation_errors():
+    cora_output = ET.fromstring(
+        """
+        <record>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>publication_report</linkedRecordId>
+                </validationType>
+            </recordInfo>
+            <dataQuality>2026</dataQuality>
+            <someChild1 repeatId="one">someValue1</someChild1>
+            <someChild1 repeatId="two">someValue2</someChild1>
+            <someChild2>someValue3</someChild2>
+        </record>
+        """
+    )
+    validation_errors = [
+        "Missing required field",
+        "Invalid format",
+    ]
+    classic_quality_output = transform_output_to_classic_quality(
+        cora_output, validation_errors
+    )
+    assert_equal_for_xml_and_xml_string(
+        classic_quality_output,
+        """
+        <record>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>classic_publication_report</linkedRecordId>
+                </validationType>
+            </recordInfo>
+            <dataQuality repeatId="1">classic</dataQuality>
+            <someChild1 repeatId="one">someValue1</someChild1>
+            <someChild1 repeatId="two">someValue2</someChild1>
+            <someChild2 repeatId="4">someValue3</someChild2>
+            <note type="internal" repeatId="5">Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic.\n\nValidation errors:\n- Missing required field\n- Invalid format</note>
+        </record>
+        """,
+    )
+
+
+def test_adds_validation_errors_to_existing_internal_note():
+    cora_output = ET.fromstring(
+        """
+        <record>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>publication_report</linkedRecordId>
+                </validationType>
+            </recordInfo>
+            <dataQuality>2026</dataQuality>
+            <someChild1 repeatId="one">someValue1</someChild1>
+            <someChild1 repeatId="two">someValue2</someChild1>
+            <someChild2>someValue3</someChild2>
+            <note type="internal" repeatId="5">Some internal note.</note>
+        </record>
+        """
+    )
+    validation_errors = [
+        "Missing required field",
+        "Invalid format",
+    ]
+    classic_quality_output = transform_output_to_classic_quality(
+        cora_output, validation_errors
+    )
+    assert_equal_for_xml_and_xml_string(
+        classic_quality_output,
+        """
+        <record>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>classic_publication_report</linkedRecordId>
+                </validationType>
+            </recordInfo>
+            <dataQuality repeatId="1">classic</dataQuality>
+            <someChild1 repeatId="one">someValue1</someChild1>
+            <someChild1 repeatId="two">someValue2</someChild1>
+            <someChild2 repeatId="4">someValue3</someChild2>
+            <note type="internal" repeatId="5">Some internal note.\n\nRecord created with dataQuality "classic" due to validation errors during migration from DiVA Classic.\n\nValidation errors:\n- Missing required field\n- Invalid format</note>
         </record>
         """,
     )

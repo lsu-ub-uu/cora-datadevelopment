@@ -43,7 +43,9 @@ def output_migrate(
     )
 
     if not valid:
-        classic_quality_record = transform_output_to_classic_quality(cora_output)
+        classic_quality_record = transform_output_to_classic_quality(
+            cora_output, errors
+        )
         create_result = create_record(
             classic_quality_record,
             record_type="diva-output",

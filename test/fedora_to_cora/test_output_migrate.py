@@ -247,6 +247,7 @@ def test_migrate_with_classic_quality(mock_create, mock_transform, mock_validate
                 </validationType>
             </recordInfo>
             <dataQuality>2026</dataQuality>
+            <note type="internal">Some internal note.</note>
         </record>
         """
     )
@@ -283,6 +284,7 @@ def test_migrate_with_classic_quality(mock_create, mock_transform, mock_validate
                 </validationType>
             </recordInfo>
             <dataQuality repeatId="1">classic</dataQuality>
+            <note type="internal">Some internal note.\n\nRecord created with dataQuality "classic" due to validation errors during migration from DiVA Classic.\n\nValidation errors:\n- Missing required field\n- Invalid format</note>
         </record>
         """,
     )

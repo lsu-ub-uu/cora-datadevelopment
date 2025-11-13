@@ -4,11 +4,14 @@ VALIDATION_TYPE_PREFIX = "classic_"
 TAGS_WITHOUT_REPEAT_ID = {"recordInfo"}
 
 
-def transform_output_to_classic_quality(cora_output: ET.Element):
+def transform_output_to_classic_quality(
+    cora_output: ET.Element, validation_errors: list[str] | None
+):
     classic_quality_output = ET.fromstring(ET.tostring(cora_output))
 
     _update_validation_type(classic_quality_output)
     _update_data_quality(classic_quality_output)
+    _add_validation_errors_to_internal_note(classic_quality_output, validation_errors)
     _add_repeat_ids(classic_quality_output)
 
     return classic_quality_output
@@ -45,3 +48,24 @@ def _add_repeat_ids_recursive(element: ET.Element, repeat_id: int = 0):
     if len(element) > 0:
         for index, child in enumerate(element):
             _add_repeat_ids_recursive(child, index)
+
+
+def _add_validation_errors_to_internal_note(
+    classic_quality_output: ET.Element, validation_errors: list[str] | None
+):
+    if validation_errors is None:
+        return
+    existing_internal_note = classic_quality_output.find("./note[@type='internal']")
+
+    validation_error_text = (
+        'Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic.\n\nValidation errors:\n- '
+        + "\n- ".join(validation_errors)
+    )
+
+    if existing_internal_note is not None:
+        note_element = existing_internal_note
+        note_element.text = note_element.text or "" + "\n\n" + validation_error_text
+    else:
+        note_element = ET.Element("note", type="internal")
+        classic_quality_output.append(note_element)
+        note_element.text = validation_error_text
