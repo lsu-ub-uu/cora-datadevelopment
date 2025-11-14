@@ -4,13 +4,13 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from cora.context import MockContext
-from scripts.programme_import import programme_import
+from scripts.programmes_import import programmes_import
 
 
-@patch("scripts.programme_import.create_record_list")
-@patch("scripts.programme_import.validate_record_list")
-@patch("scripts.programme_import.common_data.read_source_xml")
-def test_programme_import_does_not_create_when_apply_false(
+@patch("scripts.programmes_import.create_record_list")
+@patch("scripts.programmes_import.validate_record_list")
+@patch("scripts.programmes_import.common_data.read_source_xml")
+def test_programmes_import_does_not_create_when_apply_false(
     mock_read_source_xml, mock_validate_record_list, mock_create_record_list
 ):
 
@@ -18,15 +18,15 @@ def test_programme_import_does_not_create_when_apply_false(
     mock_read_source_xml.return_value = ET.fromstring(mock_source_xml)
     mock_validate_record_list.return_value = [(True, None), (True, None), (True, None)]
 
-    programme_import(MockContext(), "some/path.xml", False)
+    programmes_import(MockContext(), "some/path.xml", False)
 
     mock_create_record_list.assert_not_called()
 
 
-@patch("scripts.programme_import.create_record_list")
-@patch("scripts.programme_import.validate_record_list")
-@patch("scripts.programme_import.common_data.read_source_xml")
-def test_programme_import_does_not_create_when_apply_true_and_not_valid(
+@patch("scripts.programmes_import.create_record_list")
+@patch("scripts.programmes_import.validate_record_list")
+@patch("scripts.programmes_import.common_data.read_source_xml")
+def test_programmes_import_does_not_create_when_apply_true_and_not_valid(
     mock_read_source_xml, mock_validate_record_list, mock_create_record_list
 ):
 
@@ -37,15 +37,15 @@ def test_programme_import_does_not_create_when_apply_true_and_not_valid(
         (True, None),
     ]
 
-    programme_import(MockContext(), "some/path.xml", True)
+    programmes_import(MockContext(), "some/path.xml", True)
 
     mock_create_record_list.assert_not_called()
 
 
-@patch("scripts.programme_import.create_record_list")
-@patch("scripts.programme_import.validate_record_list")
-@patch("scripts.programme_import.common_data.read_source_xml")
-def test_programme_import_when_apply_true_and_valid(
+@patch("scripts.programmes_import.create_record_list")
+@patch("scripts.programmes_import.validate_record_list")
+@patch("scripts.programmes_import.common_data.read_source_xml")
+def test_programmes_import_when_apply_true_and_valid(
     mock_read_source_xml, mock_validate_record_list, mock_create_record_list
 ):
 
@@ -56,7 +56,7 @@ def test_programme_import_when_apply_true_and_valid(
         (True, None),
     ]
 
-    programme_import(MockContext(), "some/path.xml", True)
+    programmes_import(MockContext(), "some/path.xml", True)
 
     mock_create_record_list.assert_called_once()
     transformed_records = mock_create_record_list.call_args.args[0]
@@ -100,10 +100,10 @@ mock_source_xml = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 
-@patch("scripts.programme_import.common_data.read_source_xml")
-@patch("scripts.programme_import.validate_record_list")
-@patch("scripts.programme_import.create_record_list")
-def test_programme_import_raises_error_when_invalid_source_data(
+@patch("scripts.programmes_import.common_data.read_source_xml")
+@patch("scripts.programmes_import.validate_record_list")
+@patch("scripts.programmes_import.create_record_list")
+def test_programmes_import_raises_error_when_invalid_source_data(
     mock_create_record_list, mock_validate_record_list, mock_read_source_xml
 ):
     subject_xml = ET.fromstring(
@@ -150,7 +150,7 @@ def test_programme_import_raises_error_when_invalid_source_data(
     mock_context = MockContext()
 
     with pytest.raises(Exception):
-        programme_import(mock_context, "some/path", True)
+        programmes_import(mock_context, "some/path", True)
 
     mock_validate_record_list.assert_not_called()
     mock_create_record_list.assert_not_called()

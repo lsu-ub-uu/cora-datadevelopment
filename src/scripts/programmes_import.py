@@ -6,7 +6,9 @@ from common import common_data
 import xml.etree.ElementTree as ET
 from cora.validate import validate_record_list
 from cora.create import create_record_list
-from db_to_cora.subject_programme_transform import transform_subject_programme
+from db_to_cora.subject_programme_course_transform import (
+    transform_course,
+)
 
 RECORD_TYPE = "diva-programme"
 
@@ -25,10 +27,10 @@ def main():
         app_token=args.app_token,
         workers=args.workers,
     )
-    programme_import(context, args.xml_path, args.apply)
+    programmes_import(context, args.xml_path, args.apply)
 
 
-def programme_import(context: Context, xml_path: str, apply: bool):
+def programmes_import(context: Context, xml_path: str, apply: bool):
     context.log("Data processing started")
     starttime = time.time()
 
@@ -36,7 +38,7 @@ def programme_import(context: Context, xml_path: str, apply: bool):
 
     cora_programme = transform_record_list(
         source_records,
-        lambda record: transform_subject_programme(record, "programme"),
+        lambda record: transform_course(record),
         context,
     )
 

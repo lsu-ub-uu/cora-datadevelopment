@@ -1,16 +1,16 @@
 from common.arg_parser import create_argument_parser
 from common.xml_utils import save_to_file
-from classic.get_programme import get_programme
+from classic.get_courses import get_courses
 from datetime import datetime
 import getpass
 
 
 def main():
     argparser = create_argument_parser(
-        description="Export programmes from DiVA Classic",
+        description="Export courses from DiVA Classic",
         arguments={
             "--domain": {
-                "help": "Domain to export programmes from",
+                "help": "Domain to export courses from",
                 "type": str,
                 "required": True,
             }
@@ -29,12 +29,10 @@ def main():
         return
 
     print("Password entered. Starting export...")
-    programmes = get_programme(
-        domain=args.domain, db_user=db_user, db_password=password
-    )
-    filename = f"data/db_xml/programmes_{_get_now().isoformat()}.xml"
-    save_to_file(programmes, filename)
-    print(f"--- Successfully exported programmes to {filename} ---")
+    courses = get_courses(domain=args.domain, db_user=db_user, db_password=password)
+    filename = f"data/db_xml/courses_{_get_now().isoformat()}.xml"
+    save_to_file(courses, filename)
+    print(f"--- Successfully exported courses to {filename} ---")
 
 
 def _get_now():

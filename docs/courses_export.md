@@ -1,8 +1,8 @@
-# Subjects export
+# Courses export
 
-This script gets all subjects from DiVA Classic database and saves them to an XML file, that can be imported using the [`subjects-import`](./subjects_import.md) script.
+This script gets all courses from DiVA Classic database and saves them to an XML file, that can be imported using the [`courses-import`](./courses_import.md) script.
 
-The output is saved to `data/db_xml/subjects_{TIMESTAMP}.xml`
+The output is saved to `data/db_xml/courses_{TIMESTAMP}.xml`
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ pip install .
 ## Running the script
 
 ```bash
-subjects-export --domain someDomain
+courses-export --domain someDomain
 ```
 
 You will be prompted for the database username and password.

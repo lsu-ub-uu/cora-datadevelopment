@@ -10,12 +10,13 @@ from db_to_cora.subject_programme_course_transform import (
     transform_course,
 )
 
-RECORD_TYPE = "diva-subject"
+
+RECORD_TYPE = "diva-course"
 
 
 def main():
     parser = create_argument_parser(
-        description="Import subjects from XML",
+        description="Import course from XML",
         arguments=common_arguments,
     )
 
@@ -27,25 +28,25 @@ def main():
         app_token=args.app_token,
         workers=args.workers,
     )
-    subjects_import(context, args.xml_path, args.apply)
+    course_import(context, args.xml_path, args.apply)
 
 
-def subjects_import(context: Context, xml_path: str, apply: bool):
+def course_import(context: Context, xml_path: str, apply: bool):
     context.log("Data processing started")
     starttime = time.time()
 
     source_records = _read_source_records(context, xml_path)
 
-    cora_subjects = transform_record_list(
+    cora_course = transform_record_list(
         source_records,
         lambda record: transform_course(record),
         context,
     )
 
-    validation_results = validate_record_list(cora_subjects, RECORD_TYPE, context)
+    validation_results = validate_record_list(cora_course, RECORD_TYPE, context)
 
     if apply and all(valid for (valid, _) in validation_results):
-        create_record_list(cora_subjects, RECORD_TYPE, context)
+        create_record_list(cora_course, RECORD_TYPE, context)
 
     context.log(f"Run time: {time.time() - starttime}")
     print(
