@@ -13,7 +13,7 @@ from classic.get_journals import get_journals
 from cora_to_cora.organisations_migrate import organisations_migrate
 from db_to_cora.series_transform import transform_series
 from db_to_cora.subject_programme_transform import transform_subject_programme
-from classic.get_subjects import get_subjects
+from classic.get_subjects import get_programme
 from classic.get_series import get_series
 
 
@@ -134,7 +134,7 @@ def _migrate_organisations(args, context: Context):
 
 def _migrate_subjects(args, context: Context):
     print(f"--- Start migrating subjects for {args.domain} ---")
-    classic_subjects = get_subjects(
+    classic_subjects = get_programme(
         db_user=args.db_user, db_password=args.db_password, domain=args.domain
     ).findall(".//DATA_RECORD")
     cora_subjects = transform_record_list(
