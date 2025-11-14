@@ -1,7 +1,7 @@
 import pytest
 from xml.etree import ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
-from fedora_to_cora.transform.create_title_info import _create_title_info
+from fedora_to_cora.transform.create_title_info import create_title_info
 
 
 def test_create_title_info():
@@ -18,7 +18,7 @@ def test_create_title_info():
       </publication>
   """
     )
-    title_info = _create_title_info(source_record)
+    title_info = create_title_info(source_record)
 
     assert_equal_for_xml_and_xml_string(
         title_info,
@@ -42,7 +42,7 @@ def test_create_title_info_with_subtitle():
         </publication>
     """
     )
-    title_info = _create_title_info(source_record_with_subtitle)
+    title_info = create_title_info(source_record_with_subtitle)
 
     assert_equal_for_xml_and_xml_string(
         title_info,
@@ -66,7 +66,7 @@ def test_create_title_info_missing_title():
     """
     )
 
-    assert _create_title_info(source_record) is None
+    assert create_title_info(source_record) is None
 
 
 def test_create_title_info_missing_language():
@@ -80,7 +80,7 @@ def test_create_title_info_missing_language():
     """
     )
 
-    assert _create_title_info(source_record_with_subtitle) is None
+    assert create_title_info(source_record_with_subtitle) is None
 
 
 def test_create_title_info_empty_tag():
@@ -92,7 +92,7 @@ def test_create_title_info_empty_tag():
     """
     )
 
-    assert _create_title_info(source_record_with_subtitle) is None
+    assert create_title_info(source_record_with_subtitle) is None
 
 
 def test_create_title_with_html():
@@ -108,7 +108,7 @@ def test_create_title_with_html():
     """
     )
 
-    title_info = _create_title_info(source_record_with_html)
+    title_info = create_title_info(source_record_with_html)
     assert_equal_for_xml_and_xml_string(
         title_info,
         """

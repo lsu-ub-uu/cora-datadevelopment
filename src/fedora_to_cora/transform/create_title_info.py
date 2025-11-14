@@ -40,16 +40,21 @@ def _create_alternative_title(
 
 
 def _create_title_info(source_title: ET.Element) -> ET.Element | None:
-    languageCode = source_title.findtext(".//language/languageCode3")
-    title = source_title.findtext(".//title")
+    languageCode = source_title.findtext("./language/languageCode3")
+    title = source_title.findtext("./title")
+    sub_title = source_title.findtext("./subTitle")
 
-    if languageCode is None or title is None:
+    if languageCode is None:
+        return None
+
+    if (title is None or title == "") and (sub_title is None or sub_title == ""):
         return None
 
     titleInfo = ET.Element("titleInfo", lang=languageCode)
-    ET.SubElement(titleInfo, "title").text = clean_rich_text(title)
-    sub_title = source_title.find(".//subTitle")
-    if sub_title is not None and sub_title.text:
-        ET.SubElement(titleInfo, "subtitle").text = clean_rich_text(sub_title.text)
+
+    if title is not None and title != "":
+        ET.SubElement(titleInfo, "title").text = clean_rich_text(title)
+    if sub_title is not None and sub_title != "":
+        ET.SubElement(titleInfo, "subtitle").text = clean_rich_text(sub_title)
 
     return titleInfo
