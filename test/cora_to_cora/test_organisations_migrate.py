@@ -78,7 +78,9 @@ def test_creates_transformed_record_when_apply_and_two_results(
     domain = "test_domain"
 
     # Load test data from JSON file
-    test_data = _read_json_file("old_cora_search_result_two_organisations.json")
+    test_data = _read_json_file(
+        "data/data/old_cora_search_result_two_organisations.json"
+    )
 
     requests_mock.get(
         f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}},{{"name":"rows","value":"1000"}}]}}',
@@ -149,7 +151,7 @@ def test_aborts_migration_when_any_create_record_fails(
     ]
 
     # Load test data from JSON file
-    test_data = _read_json_file("old_cora_search_result_two_organisations.json")
+    test_data = _read_json_file("data/old_cora_search_result_two_organisations.json")
 
     requests_mock.get(
         f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}},{{"name":"rows","value":"1000"}}]}}',
@@ -195,7 +197,7 @@ def test_ignores_root_organisation(
 
     # Load test data from JSON file
     test_data = _read_json_file(
-        "old_cora_search_result_two_organisations_and_root.json"
+        "data/old_cora_search_result_two_organisations_and_root.json"
     )
 
     requests_mock.get(
