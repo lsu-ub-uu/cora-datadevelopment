@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 
 import pytest
 from common.xml_validate import XMLValidationError
-from db_to_cora.subject_transform import transform_subject
+from db_to_cora.subject_programme_transform import transform_subject_programme
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
@@ -17,7 +17,7 @@ def test_required_xml():
         """
     )
 
-    result = transform_subject(source_record)
+    result = transform_subject_programme(source_record, "subject")
 
     expected_xml = """
         <subject>
@@ -45,6 +45,45 @@ def test_required_xml():
     assert_equal_for_xml_and_xml_string(result, expected_xml)
 
 
+def test_create_tag_for_programme():
+    source_record = ET.fromstring(
+        """
+        <DATA_RECORD>
+            <domain>varldskulturmuseerna</domain>
+            <old_id>40102</old_id>
+            <name_swe>En test</name_swe>
+        </DATA_RECORD>      
+        """
+    )
+
+    result = transform_subject_programme(source_record, "programme")
+
+    expected_xml = """
+        <programme>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>diva-programme</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <permissionUnit>
+                    <linkedRecordType>permissionUnit</linkedRecordType>
+                    <linkedRecordId>varldskulturmuseerna</linkedRecordId>
+                </permissionUnit>
+                <oldId>40102</oldId>
+            </recordInfo>
+            <authority lang="swe">
+                <topic>En test</topic>
+            </authority>
+        </programme>
+    """
+
+    assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
 def test_complete_without_links_xml():
     source_record = ET.fromstring(
         """
@@ -58,8 +97,8 @@ def test_complete_without_links_xml():
         """
     )
 
-    result = transform_subject(source_record)
-    secondResultSameRun = transform_subject(source_record)
+    result = transform_subject_programme(source_record, "subject")
+    secondResultSameRun = transform_subject_programme(source_record, "subject")
 
     expected_xml = """
         <subject>
@@ -111,7 +150,7 @@ def test_complete_xml():
         """
     )
 
-    result = transform_subject(source_record)
+    result = transform_subject_programme(source_record, "subject")
 
     expected_xml = """
         <subject>
@@ -158,7 +197,7 @@ def test_no_name_swe():
         """
     )
 
-    result = transform_subject(source_record)
+    result = transform_subject_programme(source_record, "subject")
 
     expected_xml = """
         <subject>
@@ -204,4 +243,4 @@ def test_raises_error_when_unknown_element():
         XMLValidationError,
         match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
     ):
-        transform_subject(source_record)
+        transform_subject_programme(source_record, "subject")
