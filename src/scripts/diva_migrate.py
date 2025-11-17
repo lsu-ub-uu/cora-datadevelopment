@@ -77,7 +77,7 @@ def main():
 
         _migrate_publishers(args, context)
         _migrate_funders(args, context)
-        # _migrate_journals(args, context)
+        _migrate_journals(args, context)
         # TODO Persons
         # TODO Projects
 
