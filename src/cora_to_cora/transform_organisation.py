@@ -31,7 +31,7 @@ def transform_organisation(old_org: dict, context: Context) -> ET.Element:
     append_if_value(organisation, _create_name_english(old_org_data))
     append_if_value(organisation, _create_end_date(old_org_data))
     append_if_value(organisation, _create_address(old_org_data))
-    append_if_value(organisation, _create_organisation_code(old_org_data))
+    append_if_value(organisation, _create_local_id(old_org_data))
     append_if_value(organisation, _create_organisation_number(old_org_data))
     append_if_value(organisation, _create_location(old_org_data))
     return organisation
@@ -169,16 +169,16 @@ def _create_address(old_org_data: dict):
     return address_element
 
 
-def _create_organisation_code(old_org_data: dict):
+def _create_local_id(old_org_data: dict):
     old_org_code = get_first_atomic_value_with_name_in_data(
         old_org_data["children"], "organisationCode"
     )
     if old_org_code is None:
         return None
 
-    organisation_code_element = ET.Element("identifier", type="organisationCode")
-    organisation_code_element.text = old_org_code
-    return organisation_code_element
+    local_id_element = ET.Element("identifier", type="localId")
+    local_id_element.text = old_org_code
+    return local_id_element
 
 
 def _create_organisation_number(old_org_data: dict):

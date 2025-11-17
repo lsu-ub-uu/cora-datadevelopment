@@ -47,6 +47,10 @@ def journals_import(context: Context, xml_path: str, apply: bool):
     print(
         f"Processing completed in {time.time() - starttime}s. Output logged to {context.get_log_file_path()}"
     )
+    valid_count = sum(1 for valid, _ in validation_results if valid)
+    invalid_count = sum(1 for valid, _ in validation_results if not valid)
+    print(f"✅ {valid_count} valid")
+    print(f"❌ {invalid_count} invalid")
 
 
 def _read_source_records(context: Context, xml_path: str):

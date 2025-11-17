@@ -34,9 +34,11 @@ def organisations_migrate(context: Context, domain: str):
         )
         if not is_success_result(created_org):
             context.log(
-                f"Failed to create organisation for old ID {old_org.get('id')}: {created_org.error}"
+                f"Failed to create organisation for old ID {new_org.findtext('./recordInfo/oldId')}: {created_org.error}"
             )
-            raise Exception("Aborting migration due to create record failure.")
+            raise Exception(
+                f"Aborting migration due to create record failure for old ID {new_org.findtext('./recordInfo/oldId')}: {created_org.error}"
+            )
         organisation_migration_pairs.append((old_org, created_org.response_data))
 
     run_with_threads(

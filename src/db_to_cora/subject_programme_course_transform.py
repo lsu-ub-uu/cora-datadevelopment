@@ -70,9 +70,9 @@ def _create_element_with_common_children(
 
 
 def _create_end_date(source_record: ET.Element) -> ET.Element | None:
-    end_date = source_record.find(f"./end_date")
-    if end_date is not None and end_date.text:
-        return create_end_date(end_date.text)
+    end_date = source_record.findtext(f"./end_date")
+    if end_date:
+        return create_end_date(end_date)
 
 
 def _create_authority(source_record: ET.Element) -> ET.Element | None:

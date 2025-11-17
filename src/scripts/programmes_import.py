@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 from cora.validate import validate_record_list
 from cora.create import create_record_list
 from db_to_cora.subject_programme_course_transform import (
-    transform_course,
+    transform_programme,
 )
 
 RECORD_TYPE = "diva-programme"
@@ -38,7 +38,7 @@ def programmes_import(context: Context, xml_path: str, apply: bool):
 
     cora_programme = transform_record_list(
         source_records,
-        lambda record: transform_course(record),
+        lambda record: transform_programme(record),
         context,
     )
 
@@ -48,9 +48,14 @@ def programmes_import(context: Context, xml_path: str, apply: bool):
         create_record_list(cora_programme, RECORD_TYPE, context)
 
     context.log(f"Run time: {time.time() - starttime}")
+
     print(
         f"Processing completed in {time.time() - starttime}s. Output logged to {context.get_log_file_path()}"
     )
+    valid_count = sum(1 for valid, _ in validation_results if valid)
+    invalid_count = sum(1 for valid, _ in validation_results if not valid)
+    print(f"✅ {valid_count} valid")
+    print(f"❌ {invalid_count} invalid")
 
 
 def _read_source_records(context: Context, xml_path: str):

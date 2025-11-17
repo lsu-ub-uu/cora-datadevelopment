@@ -13,7 +13,7 @@ def create_record_list(
         record_list,
         lambda record: create_record(record, record_type=record_type, context=context),
         workers=context.get_workers(),
-        desc="Creating records",
+        desc=f"Creating {record_type} records in Cora {context.get_system()}",
     )
 
     successful_creates = [
