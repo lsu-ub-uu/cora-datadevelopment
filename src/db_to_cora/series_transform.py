@@ -64,7 +64,7 @@ def transform_series(source_record: ET.Element) -> ET.Element:
         ),
     )
     append_if_value(series, _create_location(source_record))
-    append_if_value(series, _create_note(source_record, note_type="external"))
+    append_if_value(series, _create_note(source_record, note_type="internal"))
     append_if_value(series, _create_genre(source_record))
 
     return series

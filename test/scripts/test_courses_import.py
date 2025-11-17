@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from cora.context import MockContext
-from scripts.courses_import import course_import
+from scripts.courses_import import courses_import
 
 
 @patch("scripts.courses_import.create_record_list")
@@ -18,7 +18,7 @@ def test_course_import_does_not_create_when_apply_false(
     mock_read_source_xml.return_value = ET.fromstring(mock_source_xml)
     mock_validate_record_list.return_value = [(True, None), (True, None), (True, None)]
 
-    course_import(MockContext(), "some/path.xml", False)
+    courses_import(MockContext(), "some/path.xml", False)
 
     mock_create_record_list.assert_not_called()
 
@@ -37,7 +37,7 @@ def test_course_import_does_not_create_when_apply_true_and_not_valid(
         (True, None),
     ]
 
-    course_import(MockContext(), "some/path.xml", True)
+    courses_import(MockContext(), "some/path.xml", True)
 
     mock_create_record_list.assert_not_called()
 
@@ -56,7 +56,7 @@ def test_course_import_when_apply_true_and_valid(
         (True, None),
     ]
 
-    course_import(MockContext(), "some/path.xml", True)
+    courses_import(MockContext(), "some/path.xml", True)
 
     mock_create_record_list.assert_called_once()
     transformed_records = mock_create_record_list.call_args.args[0]
@@ -150,7 +150,7 @@ def test_course_import_raises_error_when_invalid_source_data(
     mock_context = MockContext()
 
     with pytest.raises(Exception):
-        course_import(mock_context, "some/path", True)
+        courses_import(mock_context, "some/path", True)
 
     mock_validate_record_list.assert_not_called()
     mock_create_record_list.assert_not_called()

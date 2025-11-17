@@ -107,7 +107,7 @@ def test_complete_without_links_xml():
             <location>
                 <url>www.enurl.se</url>
             </location>
-            <note type="external">Some note</note>
+            <note type="internal">Some note</note>
             <genre repeatId="0" type="outputType">conference_paper</genre>
         </series>
     """
@@ -178,7 +178,7 @@ def skip_test_complete_xml_with_series_links():
             <location>
                 <url>www.enurl.se</url>
             </location>
-            <note type="external">Some note</note>
+            <note type="internal">Some note</note>
             <genre repeatId="0" type="outputType">conference_paper</genre>
             <organisation>
                 <linkedRecordType>diva-organisation</linkedRecordType>

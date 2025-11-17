@@ -1,11 +1,7 @@
 from common.arg_parser import create_argument_parser
 from classic.get_publishers import get_publishers
 from classic.get_funders import get_funders
-from common.xml_utils import transform_record_list
-from cora import context
 from cora.context import Context, CoraContext
-from cora.validate import validate_record_list
-from cora.create import create_record_list
 from db_to_cora.funder_transform import transform_funder
 from db_to_cora.journal_transform import transform_journal
 from db_to_cora.publisher_transform import transform_publisher
@@ -21,6 +17,7 @@ from classic.get_subjects import get_subjects
 from classic.get_programmes import get_programmes
 from classic.get_courses import get_courses
 from classic.get_series import get_series
+from db_to_cora.records_import import records_import
 
 
 def main():
@@ -105,11 +102,14 @@ def _migrate_publishers(args, context: Context):
         db_user=args.db_user, db_password=args.db_password
     ).findall(".//DATA_RECORD")
 
-    cora_publishers = transform_record_list(
-        classic_publishers, transform_publisher, context
+    records_import(
+        context,
+        record_type="diva-publisher",
+        source_records=classic_publishers,
+        transform_function=transform_publisher,
+        apply=True,
     )
-    create_record_list(cora_publishers, "diva-publisher", context)
-    print(f"--- {len(cora_publishers)} Publishers imported to Cora ---")
+    print(f"--- {len(classic_publishers)} Publishers imported to Cora ---")
 
 
 def _migrate_funders(args, context: Context):
@@ -117,9 +117,16 @@ def _migrate_funders(args, context: Context):
     classic_funders = get_funders(
         db_user=args.db_user, db_password=args.db_password
     ).findall(".//DATA_RECORD")
-    cora_funders = transform_record_list(classic_funders, transform_funder, context)
-    create_record_list(cora_funders, "diva-funder", context)
-    print(f"--- {len(cora_funders)} Funders imported to Cora ---")
+
+    records_import(
+        context,
+        record_type="diva-funder",
+        source_records=classic_funders,
+        transform_function=transform_funder,
+        apply=True,
+    )
+
+    print(f"--- {len(classic_funders)} Funders imported to Cora ---")
 
 
 def _migrate_journals(args, context: Context):
@@ -127,9 +134,15 @@ def _migrate_journals(args, context: Context):
     classic_journals = get_journals(
         db_user=args.db_user, db_password=args.db_password
     ).findall(".//DATA_RECORD")
-    cora_journals = transform_record_list(classic_journals, transform_journal, context)
-    create_record_list(cora_journals, "diva-journal", context)
-    print(f"--- {len(cora_journals)} Journals imported to Cora ---")
+
+    records_import(
+        context,
+        record_type="diva-journal",
+        source_records=classic_journals,
+        transform_function=transform_journal,
+        apply=True,
+    )
+    print(f"--- {len(classic_journals)} Journals imported to Cora ---")
 
 
 def _migrate_organisations(args, context: Context):
@@ -143,9 +156,15 @@ def _migrate_subjects(args, context: Context):
     classic_subjects = get_subjects(
         db_user=args.db_user, db_password=args.db_password, domain=args.domain
     ).findall(".//DATA_RECORD")
-    cora_subjects = transform_record_list(classic_subjects, transform_subject, context)
-    create_record_list(cora_subjects, "diva-subject", context)
-    print(f"--- {len(cora_subjects)} Subjects imported to Cora ---")
+
+    records_import(
+        context,
+        record_type="diva-subject",
+        source_records=classic_subjects,
+        transform_function=transform_subject,
+        apply=True,
+    )
+    print(f"--- {len(classic_subjects)} Subjects imported to Cora ---")
 
 
 def _migrate_programmes(args, context: Context):
@@ -153,11 +172,15 @@ def _migrate_programmes(args, context: Context):
     classic_programmes = get_programmes(
         db_user=args.db_user, db_password=args.db_password, domain=args.domain
     ).findall(".//DATA_RECORD")
-    cora_programmes = transform_record_list(
-        classic_programmes, transform_programme, context
+
+    records_import(
+        context,
+        record_type="diva-programme",
+        source_records=classic_programmes,
+        transform_function=transform_programme,
+        apply=True,
     )
-    create_record_list(cora_programmes, "diva-programme", context)
-    print(f"--- {len(cora_programmes)} Programmes imported to Cora ---")
+    print(f"--- {len(classic_programmes)} Programmes imported to Cora ---")
 
 
 def _migrate_course(args, context: Context):
@@ -165,9 +188,15 @@ def _migrate_course(args, context: Context):
     classic_courses = get_courses(
         db_user=args.db_user, db_password=args.db_password, domain=args.domain
     ).findall(".//DATA_RECORD")
-    cora_courses = transform_record_list(classic_courses, transform_course, context)
-    create_record_list(cora_courses, "diva-course", context)
-    print(f"--- {len(cora_courses)} Courses imported to Cora ---")
+
+    records_import(
+        context,
+        record_type="diva-course",
+        source_records=classic_courses,
+        transform_function=transform_course,
+        apply=True,
+    )
+    print(f"--- {len(classic_courses)} Courses imported to Cora ---")
 
 
 def _migrate_series(args, context: Context):
@@ -175,9 +204,15 @@ def _migrate_series(args, context: Context):
     classic_series = get_series(
         db_user=args.db_user, db_password=args.db_password, domain=args.domain
     ).findall(".//DATA_RECORD")
-    cora_series = transform_record_list(classic_series, transform_series, context)
-    create_record_list(cora_series, "diva-series", context)
-    print(f"--- {len(cora_series)} Series imported to Cora ---")
+
+    records_import(
+        context,
+        record_type="diva-series",
+        source_records=classic_series,
+        transform_function=transform_series,
+        apply=True,
+    )
+    print(f"--- {len(classic_series)} Series imported to Cora ---")
 
 
 if __name__ == "__main__":
