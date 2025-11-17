@@ -12,8 +12,14 @@ from db_to_cora.publisher_transform import transform_publisher
 from classic.get_journals import get_journals
 from cora_to_cora.organisations_migrate import organisations_migrate
 from db_to_cora.series_transform import transform_series
-from db_to_cora.subject_transform import transform_subject
+from db_to_cora.subject_programme_course_transform import (
+    transform_subject,
+    transform_programme,
+    transform_course,
+)
 from classic.get_subjects import get_subjects
+from classic.get_programmes import get_programmes
+from classic.get_courses import get_courses
 from classic.get_series import get_series
 
 
@@ -71,7 +77,7 @@ def main():
 
         _migrate_publishers(args, context)
         _migrate_funders(args, context)
-        # _migrate_journals(args, context)
+        _migrate_journals(args, context)
         # TODO Persons
         # TODO Projects
 
@@ -86,8 +92,8 @@ def main():
     _migrate_organisations(args, context)
     _migrate_subjects(args, context)
     _migrate_series(args, context)
-    # TODO Courses
-    # TODO Programmes
+    _migrate_programmes(args, context)
+    _migrate_course(args, context)
     # TODO Outputs
 
     print(f"=== Data migration for {args.domain} domain completed ===")
@@ -140,6 +146,28 @@ def _migrate_subjects(args, context: Context):
     cora_subjects = transform_record_list(classic_subjects, transform_subject, context)
     create_record_list(cora_subjects, "diva-subject", context)
     print(f"--- {len(cora_subjects)} Subjects imported to Cora ---")
+
+
+def _migrate_programmes(args, context: Context):
+    print(f"--- Start migrating programmes for {args.domain} ---")
+    classic_programmes = get_programmes(
+        db_user=args.db_user, db_password=args.db_password, domain=args.domain
+    ).findall(".//DATA_RECORD")
+    cora_programmes = transform_record_list(
+        classic_programmes, transform_programme, context
+    )
+    create_record_list(cora_programmes, "diva-programme", context)
+    print(f"--- {len(cora_programmes)} Programmes imported to Cora ---")
+
+
+def _migrate_course(args, context: Context):
+    print(f"--- Start migrating courses for {args.domain} ---")
+    classic_courses = get_courses(
+        db_user=args.db_user, db_password=args.db_password, domain=args.domain
+    ).findall(".//DATA_RECORD")
+    cora_courses = transform_record_list(classic_courses, transform_course, context)
+    create_record_list(cora_courses, "diva-course", context)
+    print(f"--- {len(cora_courses)} Courses imported to Cora ---")
 
 
 def _migrate_series(args, context: Context):

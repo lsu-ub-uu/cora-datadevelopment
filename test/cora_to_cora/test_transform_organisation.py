@@ -10,14 +10,14 @@ from common.xml_utils import pretty_print_xml
 
 
 def test_transform_top_organisation():
-    with open("test/cora_to_cora/old_cora_top_organisation.json", "r") as f:
+    with open("test/cora_to_cora/data/old_cora_top_organisation.json", "r") as f:
         old_top_organisation = json.load(f)
     transformed_organisation = transform_organisation(
         old_top_organisation, MockContext()
     )
 
     expected_xml = read_source_xml(
-        os.path.join("test/cora_to_cora/new_cora_top_organisation.xml")
+        os.path.join("test/cora_to_cora/data/new_cora_top_organisation.xml")
     )
 
     assert_equal_for_xml_and_xml_string(
@@ -27,14 +27,14 @@ def test_transform_top_organisation():
 
 
 def test_transform_sub_organisation():
-    with open("test/cora_to_cora/old_cora_sub_organisation.json", "r") as f:
+    with open("test/cora_to_cora/data/old_cora_sub_organisation.json", "r") as f:
         old_sub_organisation = json.load(f)
     transformed_organisation = transform_organisation(
         old_sub_organisation, MockContext()
     )
 
     expected_xml = read_source_xml(
-        os.path.join("test/cora_to_cora/new_cora_sub_organisation.xml")
+        os.path.join("test/cora_to_cora/data/new_cora_sub_organisation.xml")
     )
 
     assert_equal_for_xml_and_xml_string(

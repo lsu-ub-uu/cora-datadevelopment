@@ -37,7 +37,7 @@
         <place>Some city</place>
         <country>sw</country>
     </address>
-    <identifier type="organisationCode">someCode</identifier>
+    <identifier type="localId">someCode</identifier>
     <identifier type="organisationNumber">202100-0696</identifier>
     <location>
         <url>https://www.example.com</url>

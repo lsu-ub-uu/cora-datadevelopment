@@ -2,11 +2,15 @@ import xml.etree.ElementTree as ET
 
 import pytest
 from common.xml_validate import XMLValidationError
-from db_to_cora.subject_transform import transform_subject
+from db_to_cora.subject_programme_course_transform import (
+    transform_course,
+    transform_programme,
+    transform_subject,
+)
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
-def test_required_xml():
+def test_create_tag_for_subject():
     source_record = ET.fromstring(
         """
         <DATA_RECORD>
@@ -40,6 +44,84 @@ def test_required_xml():
                 <topic>En test</topic>
             </authority>
         </subject>
+    """
+
+    assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
+def test_create_tag_for_programme():
+    source_record = ET.fromstring(
+        """
+        <DATA_RECORD>
+            <domain>varldskulturmuseerna</domain>
+            <old_id>40102</old_id>
+            <name_swe>En test</name_swe>
+        </DATA_RECORD>      
+        """
+    )
+
+    result = transform_programme(source_record)
+
+    expected_xml = """
+        <programme>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>diva-programme</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <permissionUnit>
+                    <linkedRecordType>permissionUnit</linkedRecordType>
+                    <linkedRecordId>varldskulturmuseerna</linkedRecordId>
+                </permissionUnit>
+                <oldId>40102</oldId>
+            </recordInfo>
+            <authority lang="swe">
+                <topic>En test</topic>
+            </authority>
+        </programme>
+    """
+
+    assert_equal_for_xml_and_xml_string(result, expected_xml)
+
+
+def test_create_tag_for_course():
+    source_record = ET.fromstring(
+        """
+        <DATA_RECORD>
+            <domain>varldskulturmuseerna</domain>
+            <old_id>40102</old_id>
+            <name_swe>En test</name_swe>
+        </DATA_RECORD>      
+        """
+    )
+
+    result = transform_course(source_record)
+
+    expected_xml = """
+        <course>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>diva-course</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <permissionUnit>
+                    <linkedRecordType>permissionUnit</linkedRecordType>
+                    <linkedRecordId>varldskulturmuseerna</linkedRecordId>
+                </permissionUnit>
+                <oldId>40102</oldId>
+            </recordInfo>
+            <authority lang="swe">
+                <topic>En test</topic>
+            </authority>
+        </course>
     """
 
     assert_equal_for_xml_and_xml_string(result, expected_xml)
@@ -204,4 +286,4 @@ def test_raises_error_when_unknown_element():
         XMLValidationError,
         match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
     ):
-        transform_subject(source_record)
+        transform_course(source_record)
