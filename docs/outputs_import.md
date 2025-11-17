@@ -99,15 +99,13 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 
   - topic <- mappning av `sustainableDevelopment/developmentId`
 
-  ======= Reviewed to this point =========
-
 - identifier type="isbn" <- `isbnNumbers/isbn/number` if not chapter or conference paper
   - displayLabel <- mappning från `isbNumbers/isbn/type`
 - identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) if not chapter or conference paper
 - 🆕 identifier type="ismn" <- N/A
 - identifier type="archiveNumber"> <- `archiveNumber`
-- 🆕 identifier type="openAlex"
-- identifier type="se-libr" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "libris"`)
+- 🆕 identifier type="openAlex" <- N/A
+- ⚠️ identifier type="se-libr" <- `identifiers/entry/publicationIdentifier/value` samt `identifiers/entry/publicationIdentifier/alternativeValue` where (`publicationIdentifierType == "libris"`), alternative number.
 - identifier type="localId" <- `localId`
 - identifier type type="pmid" <- `pmid`
 - identifier type type="wos" <- `isi`
@@ -117,8 +115,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - url <-`url/url`
   - displayLabel <- `url/label`
 - ⚠️ location displayLabel="orderLink" Need to check what to set as displayLabel
-  - url <- `publicationOrder/orderURL`
-  - displayLabel <- Leave blank or determine based on orderProfileId ❓
+- url <- `publicationOrder/orderURL`
+- displayLabel <- Fixed text "Beställ/Order" (clients will show a translated text)
 - note type="external" <- `note`
 - relatedItem type="series" otherType="link" <- `seriesInfos/seresInfo`
   - series (link to migrated record) <- `series/seriesId`
@@ -136,22 +134,23 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - relatedItem type="project" otherType="text" <- `projects`
   - titleInfo/title <- `project/projectName`
   - titleInfo/subTitle <- N/A
-- 🆕 relatedItem type="initiative"
-- 🆕 accessCondition authority="kb.se"
-- 🆕 localGenericMarkup
+    -❓relatedItem type="initiative" <- Some funders should be mapped to initiative instead. Awaiting more info.
+    -❓🆕 accessCondition authority="kb.se" <- Possibly should look at openAccess flags in data? Awaiting more info.
+- 🆕 localLabel (localGenericMarkup) <- might put non-valid sdg as tags
 - adminInfo
   - failed <- `failed`
   - reviewed <- `reviewed`
-  - note type="internal" <- `internalNote`
-- genre type="subcategory" <- `subType` subTypeId 66=policyDocument 3=exhibitionCatalog Not done
-- note type="publicationStatus" <- `publicationStatus`
+- note type="internal" <- `internalNote` For migrations that fail validation and are created as "classic quality", validation errors are appended here.
+- genre type="subcategory" <- `subType` subTypeId 66=policyDocument 3=exhibitionCatalog
+- note type="publicationStatus" <- mapping from `publicationStatus`
 - typeOfResource <- `mediaType`
-- type <- `mediaInformation/types`
+- ⚠️ type <- `mediaInformation/types` Check implementation
 - material <- `mediaInformation/materials`
 - technique <- `mediaInformation/techniques`
 - size <- `mediaInformation/size`
 - duration <- `mediaInformation/duration`
-- ⚠️ physicalDescription <- `pages` `mediaInformation/physicalDescriptions` Not done. Needs output-test.
+- ⚠️❓ physicalDescription <- `pages` `mediaInformation/physicalDescriptions` New attribute unit="pages"? Needs investigation.
+  ======= Reviewed to this point =========
 - 🆕 note type="context" <- N/A ❓
 - dateOther type="patent" <- `patentDate` Not done. Needs output-test.
 - identifier type="patentNumber" <- `patentNumber`
@@ -271,7 +270,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - `registratedDuplicate`
 - `importDuplicate`
 - `categories`
-- ⚠️ `imprint` (Only for Uppsala University)
+- ⚠️ `imprint` (Only for Uppsala University)'
+- `openAccess`
 
 ## Binary
 

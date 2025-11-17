@@ -5,9 +5,9 @@ map_media_type = {
     "2": "artifact",  # three dimensional object
     "3": "soundRecording",  # sound recording
     "4": "notatedMusic",  # notated music
+    "5": "softwareMultimedia",  # software, multimedia
     "6": "movingImage",  # moving image
     "7": "mixedMaterial",  # mixed material
-    "5": "softwareMultimedia",  # software, multimedia
     "8": "soundRecordingMusical",  # sound recording-musical
     "9": "soundRecordingNonMusical",  # sound recording-nonmusical
     "10": "text",  # text
