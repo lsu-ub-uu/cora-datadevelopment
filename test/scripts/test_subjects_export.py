@@ -34,11 +34,11 @@ def test_subjects_export(
         domain="norden", db_user="testuser", db_password="testpassword"
     )
     mock_save_to_file.assert_called_once_with(
-        mock_subjects, "data/db_xml/subjects_2023-01-01T12:00:00.xml"
+        mock_subjects, "data/db_xml/subjects_norden_2023-01-01T12:00:00.xml"
     )
     mock_print.assert_any_call("Password entered. Starting export...")
     mock_print.assert_any_call(
-        "--- Successfully exported subjects to data/db_xml/subjects_2023-01-01T12:00:00.xml ---"
+        "--- Successfully exported subjects to data/db_xml/subjects_norden_2023-01-01T12:00:00.xml ---"
     )
 
 

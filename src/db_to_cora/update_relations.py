@@ -1,3 +1,4 @@
+from operator import index
 import xml.etree.ElementTree as ET
 from common.threads import run_with_threads
 from cora.context import Context
@@ -38,28 +39,49 @@ def _update_relations_for_single_record(
 ):
     modified = False
     old_record, new_record = record_pair
-    new_record_data = new_record.find(f"./data/*")
+    new_record_data = new_record.find(f"./data/{link_name}")
     assert new_record_data is not None
 
     for old_relation_tag, new_relation_type in relations_mapping:
-        old_relation_id = old_record.findtext(f"./{old_relation_tag}")
-        if old_relation_id and old_relation_id in old_id_to_new_id_map:
-            new_relation_id = old_id_to_new_id_map[old_relation_id]
-            related_item_element = ET.Element(
-                "relatedItem", {"type": new_relation_type}
-            )
-            related_item_element.append(
-                create_record_link_using_name_type_id(
-                    link_name, record_type, new_relation_id
+        old_relation_ids = _get_old_relation_ids(old_record, old_relation_tag)
+        for index, old_relation_id in enumerate(old_relation_ids):
+            if old_relation_id in old_id_to_new_id_map:
+                new_relation_id = old_id_to_new_id_map[old_relation_id]
+
+                new_record_data.append(
+                    _create_related_item(
+                        type=new_relation_type,
+                        repeat_id=str(index),
+                        link_name=link_name,
+                        record_type=record_type,
+                        new_relation_id=new_relation_id,
+                    )
                 )
-            )
-            modified = True
+
+                modified = True
 
     if modified:
         update_record(
             new_record_data,
             context,
         )
+
+
+def _get_old_relation_ids(old_record: ET.Element, old_relation_tag: str) -> list[str]:
+    old_relation_id_text = old_record.findtext(f"./{old_relation_tag}")
+    return old_relation_id_text.split(",") if old_relation_id_text else []
+
+
+def _create_related_item(
+    type: str, repeat_id: str, link_name: str, record_type: str, new_relation_id: str
+) -> ET.Element:
+    related_item_element = ET.Element(
+        "relatedItem", {"type": type, "repeatId": repeat_id}
+    )
+    related_item_element.append(
+        create_record_link_using_name_type_id(link_name, record_type, new_relation_id)
+    )
+    return related_item_element
 
 
 def _create_old_id_to_new_id_map(

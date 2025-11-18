@@ -24,7 +24,7 @@ allowed_children: XMLSpec = {
     "format_id": "text",
     "format_code": "text",
     "url": "text",
-    "external_note": "text",
+    "internal_note": "text",
     "publication_type_id": "text",
     "publication_type_code": "text",
     "relation_type_id": "text",

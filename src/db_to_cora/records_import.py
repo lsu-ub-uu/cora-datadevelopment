@@ -63,7 +63,13 @@ def apply_import(
     print(f"Created {len(record_mapping)} records.")
     if relations_mapping:
         print(f"Updating relations for {len(record_mapping)} records.")
-        update_relations(record_mapping, relations_mapping, context)
+        update_relations(
+            record_mapping,
+            relations_mapping,
+            record_type=record_type,
+            link_name=record_type.split("-")[-1],
+            context=context,
+        )
 
 
 def dry_run(

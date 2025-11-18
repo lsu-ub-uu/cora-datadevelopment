@@ -18,6 +18,7 @@ from classic.get_programmes import get_programmes
 from classic.get_courses import get_courses
 from classic.get_series import get_series
 from db_to_cora.records_import import records_import
+from db_to_cora.update_relations import update_relations
 
 
 def main():
@@ -72,9 +73,9 @@ def main():
     if args.include_common_data:
         print(f"=== Start migrating common data to {args.system} ===")
 
-        _migrate_publishers(args, context)
-        _migrate_funders(args, context)
-        _migrate_journals(args, context)
+        # _migrate_publishers(args, context)
+        # _migrate_funders(args, context)
+        # _migrate_journals(args, context)
         # TODO Persons
         # TODO Projects
 
@@ -86,8 +87,8 @@ def main():
 
     print(f"=== Start migrating data for {args.domain} domain to {args.system} ===")
 
-    _migrate_organisations(args, context)
-    _migrate_subjects(args, context)
+    # _migrate_organisations(args, context)
+    # _migrate_subjects(args, context)
     _migrate_series(args, context)
     _migrate_programmes(args, context)
     _migrate_course(args, context)
@@ -162,8 +163,13 @@ def _migrate_subjects(args, context: Context):
         record_type="diva-subject",
         source_records=classic_subjects,
         transform_function=transform_subject,
+        relations_mapping=[
+            ("broader_id", "broader"),
+            ("earlier_id", "earlier"),
+        ],
         apply=True,
     )
+
     print(f"--- {len(classic_subjects)} Subjects imported to Cora ---")
 
 
@@ -178,6 +184,10 @@ def _migrate_programmes(args, context: Context):
         record_type="diva-programme",
         source_records=classic_programmes,
         transform_function=transform_programme,
+        relations_mapping=[
+            ("broader_id", "broader"),
+            ("earlier_id", "earlier"),
+        ],
         apply=True,
     )
     print(f"--- {len(classic_programmes)} Programmes imported to Cora ---")
@@ -194,6 +204,10 @@ def _migrate_course(args, context: Context):
         record_type="diva-course",
         source_records=classic_courses,
         transform_function=transform_course,
+        relations_mapping=[
+            ("broader_id", "broader"),
+            ("earlier_id", "earlier"),
+        ],
         apply=True,
     )
     print(f"--- {len(classic_courses)} Courses imported to Cora ---")
@@ -210,6 +224,10 @@ def _migrate_series(args, context: Context):
         record_type="diva-series",
         source_records=classic_series,
         transform_function=transform_series,
+        relations_mapping=[
+            ("relative_id_host", "host"),
+            ("relative_id_preceding", "preceding"),
+        ],
         apply=True,
     )
     print(f"--- {len(classic_series)} Series imported to Cora ---")
