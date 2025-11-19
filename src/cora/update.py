@@ -57,7 +57,6 @@ def update_record(
             context.log(
                 f"Successfully updated record with id {record_id}",
             )
-            context.log(pretty_print_xml(response_data))
             return UpdateRecordResult(
                 success=True,
                 record_id=record_id,

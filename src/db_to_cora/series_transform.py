@@ -24,7 +24,7 @@ allowed_children: XMLSpec = {
     "format_id": "text",
     "format_code": "text",
     "url": "text",
-    "external_note": "text",
+    "internal_note": "text",
     "publication_type_id": "text",
     "publication_type_code": "text",
     "relation_type_id": "text",
@@ -64,7 +64,7 @@ def transform_series(source_record: ET.Element) -> ET.Element:
         ),
     )
     append_if_value(series, _create_location(source_record))
-    append_if_value(series, _create_note(source_record, note_type="external"))
+    append_if_value(series, _create_note(source_record, note_type="internal"))
     append_if_value(series, _create_genre(source_record))
 
     return series
@@ -131,7 +131,7 @@ def _create_location(source_record: ET.Element) -> ET.Element | None:
 
 
 def _create_note(source_record: ET.Element, note_type: str) -> ET.Element | None:
-    note = source_record.find(f"./external_note")
+    note = source_record.find(f"./internal_note")
     if note is not None and note.text:
         return create_note(note.text, note_type)
 
