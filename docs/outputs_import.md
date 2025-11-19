@@ -105,7 +105,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - 🆕 identifier type="ismn" <- N/A
 - identifier type="archiveNumber"> <- `archiveNumber`
 - 🆕 identifier type="openAlex" <- N/A
-- ⚠️ identifier type="se-libr" <- `identifiers/entry/publicationIdentifier/value` samt `identifiers/entry/publicationIdentifier/alternativeValue` where (`publicationIdentifierType == "libris"`), alternative number.
+- identifier type="se-libr" <- `identifiers/entry/publicationIdentifier/value` and `identifiers/entry/publicationIdentifier/alternativeValue/content` where (`publicationIdentifierType == "libris"`).
 - identifier type="localId" <- `localId`
 - identifier type type="pmid" <- `pmid`
 - identifier type type="wos" <- `isi`
