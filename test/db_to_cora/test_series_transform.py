@@ -61,7 +61,7 @@ def test_complete_without_links_xml():
             <identifier_pissn>1234-1234</identifier_pissn>
             <identifier_eissn>9876-9876</identifier_eissn>
             <url>www.enurl.se</url>
-            <external_note>Some note</external_note>
+            <internal_note>Some note</internal_note>
             <publication_type_id>59</publication_type_id>
         </DATA_RECORD>   
         """
@@ -130,7 +130,7 @@ def skip_test_complete_xml_with_series_links():
             <identifier_pissn>1234-1234</identifier_pissn>
             <identifier_eissn>9876-9876</identifier_eissn>
             <url>www.enurl.se</url>
-            <external_note>Some note</external_note>
+            <internal_note>Some note</internal_note>
             <publication_type_id>59</publication_type_id>
             <relative_id_host>diva-series:22116988688327947</relative_id_host>
             <relative_id_preceding>diva-series:22116988688327947</relative_id_preceding>
@@ -253,7 +253,7 @@ def test_raises_error_when_unknown_element():
             <identifier_pissn>1234-1234</identifier_pissn>
             <identifier_eissn>9876-9876</identifier_eissn>
             <url>www.enurl.se</url>
-            <external_note>Some note</external_note>
+            <internal_note>Some note</internal_note>
             <publication_type_id>59</publication_type_id>
             <relative_id_host>diva-series:22116988688327947</relative_id_host>
             <relative_id_preceding>diva-series:22116988688327947</relative_id_preceding>

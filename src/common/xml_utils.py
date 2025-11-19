@@ -64,12 +64,12 @@ def transform_record_list(
     source_records: list[ET.Element],
     transform_function: Callable[[ET.Element], ET.Element],
     context: Context,
-) -> list[tuple[ET.Element, ET.Element]]:
+) -> list[ET.Element]:
     success = True
-    results: list[tuple[ET.Element, ET.Element]] = []
+    results: list[ET.Element] = []
     for source_record in source_records:
         try:
-            results.append((source_record, transform_function(source_record)))
+            results.append(transform_function(source_record))
         except Exception as e:
             context.log(
                 f"Error transforming record with oldId {source_record.findtext("old_id")}: {str(e)}",

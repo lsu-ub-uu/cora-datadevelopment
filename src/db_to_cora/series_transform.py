@@ -131,7 +131,7 @@ def _create_location(source_record: ET.Element) -> ET.Element | None:
 
 
 def _create_note(source_record: ET.Element, note_type: str) -> ET.Element | None:
-    note = source_record.find(f"./external_note")
+    note = source_record.find(f"./internal_note")
     if note is not None and note.text:
         return create_note(note.text, note_type)
 

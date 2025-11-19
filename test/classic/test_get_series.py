@@ -39,7 +39,7 @@ FROM
     and sre.relation_type_id = '50'
     left join publication_type pt on s.publication_type_id = pt.publication_type_id --borde_vara_string_agg?
 WHERE
-    s.domain = % (domain) s
+    s.domain = %(domain)s
 GROUP BY
     s.domain,
     s.series_id,

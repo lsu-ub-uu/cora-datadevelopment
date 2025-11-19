@@ -5,9 +5,7 @@ from cora.context import CoraContext, Context
 from common import common_data
 from cora.validate import validate_record_list
 from cora.create import create_record_list
-from db_to_cora.records_import import records_import
 from db_to_cora.series_transform import transform_series
-import xml.etree.ElementTree as ET
 
 RECORD_TYPE = "diva-series"
 
@@ -26,15 +24,8 @@ def main():
         app_token=args.app_token,
         workers=args.workers,
     )
-    source_records = _read_source_records(context, args.xml_path)
-    records_import(
-        context,
-        record_type=RECORD_TYPE,
-        source_records=source_records,
-        transform_function=transform_series,
-        relations_mapping=None,
-        apply=args.apply,
-    )
+
+    series_import(context, args.xml_path, args.apply)
 
 
 def series_import(context: Context, xml_path: str, apply: bool):
