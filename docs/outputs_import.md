@@ -59,15 +59,15 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - subtitle `subtitle`
   - language <- `language/languageCode3`
 - name type="personal" <- ` authors/person` , ` editors/person` , `otherContributors/contributor`
-- ⚠️ person (link to migrated record) <- `authorityPid`
 
+  - ⚠️ person (link to migrated record) <- `authorityPid`
   - namePart type="family" <- `lastName`
   - namePart type="given" <- `firstName`
   - namePart type="date" <- `birthYear-deathYear` only birthYear: "1988" birth and death year: "1988-2050" only deathYear: "-1850"
   - role/roleTerm <- aut | edt | `roles/role/marcCode`
   - orcid <- `identifiers/entry/personIdentifier/value` where type is "orcid"
   - lokalt id <- `localId` ⚠️ Some members need local ids to not be publically visible. Solution needed.
-  - affiliations <- `organisations/organisation`, ⚠️ `researchGroup` should probably be an affiliation with description "Research group". waiting for decision.
+  - affiliations <- `organisations/organisation`, ⚠️❓ `researchGroup` should probably be an affiliation with description "Research group". waiting for decision.
     - organisation (link to migrated record) <- `organisation/organisationId`
     - name type="corporate" <- `organisation/organisationNameUncontrolled`
     - 🆕 identifier type="ror" <- N/A
@@ -114,9 +114,9 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - location <- `urls/url`
   - url <-`url/url`
   - displayLabel <- `url/label`
-- ⚠️ location displayLabel="orderLink" Need to check what to set as displayLabel
-- url <- `publicationOrder/orderURL`
-- displayLabel <- Fixed text "Beställ/Order" (clients will show a translated text)
+- location displayLabel="orderLink"
+  - url <- `publicationOrder/orderURL`
+  - displayLabel <- Fixed text "Beställ/Order" (clients will show a translated text)
 - note type="external" <- `note`
 - relatedItem type="series" otherType="link" <- `seriesInfos/seresInfo`
   - series (link to migrated record) <- `series/seriesId`

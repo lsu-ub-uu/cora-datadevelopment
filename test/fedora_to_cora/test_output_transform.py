@@ -230,6 +230,10 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             <url>http://example.com</url>
             <displayLabel>BMFEA vol 1-75</displayLabel>
         </location>
+        <location displayLabel="orderLink">
+            <url>http://acta.mamutweb.com/Shop/Product/0476-Laparoscopic-or-Open-Inguinal-Hernia-Repair---Whic/diva2:232194</url>
+            <displayLabel>Beställ/Order</displayLabel>
+        </location>
         <note type="external">This is an external note.</note>
         <relatedItem type="publicationChannel">
             <publicationChannel>Discovery Channel</publicationChannel>

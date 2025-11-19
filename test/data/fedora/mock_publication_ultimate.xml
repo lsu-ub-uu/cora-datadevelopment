@@ -919,8 +919,11 @@
   </failed>
   <hidden>false</hidden>
   <publicationOrder>
-    <orderLink>false</orderLink>
-    <parameters></parameters>
+    <orderProfileId>OrderProfile-2</orderProfileId>
+    <orderURL>http://acta.mamutweb.com/Shop/Product/0476-Laparoscopic-or-Open-Inguinal-Hernia-Repair---Whic/diva2:232194</orderURL>
+    <orderLink>true</orderLink>
+    <validFrom>2013-05-14T15:20:53.957+02:00</validFrom>
+    <parameters />
   </publicationOrder>
   <canOrderOnline>false</canOrderOnline>
   <publicationChannel>Discovery Channel</publicationChannel>

@@ -62,7 +62,10 @@ from fedora_to_cora.transform.create_classification_authority_ssif import (
 )
 from fedora_to_cora.transform.identifiers.create_identifier import create_identifier
 from fedora_to_cora.transform.create_note import create_note
-from fedora_to_cora.transform.create_location import create_locations
+from fedora_to_cora.transform.create_location import (
+    create_locations,
+    create_location_display_label_order_link,
+)
 from fedora_to_cora.transform.create_subject_authority_sdg import (
     create_subject_authority_sdg,
 )
@@ -230,6 +233,11 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     append_if_value(
         target_record,
         create_locations(source_record),
+    )
+
+    append_if_value(
+        target_record,
+        create_location_display_label_order_link(source_record),
     )
 
     append_if_value(
