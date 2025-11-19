@@ -1,19 +1,3 @@
-"""
-find all organisations for domain in prod cora
-for each org:
-    if validationType is not rootOrganisation and domain is not invalid member;
-        transform record
-        validate/create
-        remember  old_Id=>new_id mapping.
-        remember earlier org relations
-        remember parent org relation
-
-        for each created org:
-            add relations
-            update
-
-"""
-
 from common.arg_parser import create_argument_parser, common_arguments
 from cora.context import CoraContext
 from cora_to_cora.organisations_migrate import organisations_migrate

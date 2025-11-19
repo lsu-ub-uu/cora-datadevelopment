@@ -28,10 +28,10 @@ def main():
         app_token=args.app_token,
         workers=args.workers,
     )
-    course_import(context, args.xml_path, args.apply)
+    courses_import(context, args.xml_path, args.apply)
 
 
-def course_import(context: Context, xml_path: str, apply: bool):
+def courses_import(context: Context, xml_path: str, apply: bool):
     context.log("Data processing started")
     starttime = time.time()
 

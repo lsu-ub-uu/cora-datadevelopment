@@ -32,7 +32,7 @@ def main():
     subjects = get_subjects(
         domain=args.domain, db_user=args.db_user, db_password=args.db_password
     )
-    filename = f"data/db_xml/subjects_{_get_now().isoformat()}.xml"
+    filename = f"data/db_xml/subjects_{args.domain}_{_get_now().isoformat()}.xml"
     save_to_file(subjects, filename)
     print(f"--- Successfully exported subjects to {filename} ---")
 

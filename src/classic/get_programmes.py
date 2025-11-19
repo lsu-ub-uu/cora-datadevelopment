@@ -4,8 +4,11 @@ from classic.db_client import execute_sql
 
 
 def get_programmes(*, domain: str, db_user: str, db_password: str) -> ET.Element:
-    with open("src/classic/sql_scripts/programme_select.sql", "r") as file:
+    with open("src/classic/sql_scripts/subject_select.sql", "r") as file:
         query = file.read()
     return execute_sql(
-        query, params={"domain": domain}, db_user=db_user, db_password=db_password
+        query,
+        params={"domain": domain, "subject_type_id": "56"},
+        db_user=db_user,
+        db_password=db_password,
     )

@@ -66,13 +66,13 @@ def transform_record_list(
     context: Context,
 ) -> list[ET.Element]:
     success = True
-    transformed_records = []
-    for record in source_records:
+    results: list[ET.Element] = []
+    for source_record in source_records:
         try:
-            transformed_records.append(transform_function(record))
+            results.append(transform_function(source_record))
         except Exception as e:
             context.log(
-                f"Error transforming record with oldId {record.findtext("old_id")}: {str(e)}",
+                f"Error transforming record with oldId {source_record.findtext("old_id")}: {str(e)}",
                 "error",
             )
             success = False
@@ -81,4 +81,4 @@ def transform_record_list(
     if not success:
         raise Exception("One or more records failed to transform.")
 
-    return transformed_records
+    return results
