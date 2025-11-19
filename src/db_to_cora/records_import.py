@@ -4,7 +4,7 @@ from common.threads import run_with_threads
 from cora.validate import validate_record
 from cora.create import create_record, is_success_result
 from cora.context import Context
-from db_to_cora.update_relations import update_relations
+from db_to_cora.update_relations import RelationMapping, update_relations
 
 
 def records_import(
@@ -12,7 +12,7 @@ def records_import(
     record_type: str,
     source_records: list[ET.Element],
     transform_function: Callable[[ET.Element], ET.Element],
-    relations_mapping: list[tuple[str, str]] | None = None,
+    relation_mappings: list[RelationMapping] | None = None,
     apply: bool = False,
 ):
     context.log(
@@ -25,7 +25,7 @@ def records_import(
 
     if apply:
         apply_import(
-            record_type, source_records, transform_function, context, relations_mapping
+            record_type, source_records, transform_function, context, relation_mappings
         )
     else:
         dry_run(
@@ -41,7 +41,7 @@ def apply_import(
     source_records: list[ET.Element],
     transform_function: Callable[[ET.Element], ET.Element],
     context: Context,
-    relations_mapping: list[tuple[str, str]] | None,
+    relation_mappings: list[RelationMapping] | None = None,
 ):
     def process_record(source_record: ET.Element):
         transformed_record = transform_function(source_record)
@@ -61,13 +61,12 @@ def apply_import(
         desc=f"Creating {record_type} records",
     )
     print(f"Created {len(record_mapping)} records.")
-    if relations_mapping:
+    if relation_mappings:
         print(f"Updating relations for {len(record_mapping)} records.")
         update_relations(
             record_mapping,
-            relations_mapping,
+            relation_mappings,
             record_type=record_type,
-            link_name=record_type.split("-")[-1],
             context=context,
         )
 

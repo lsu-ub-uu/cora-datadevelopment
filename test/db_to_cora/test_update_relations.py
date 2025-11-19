@@ -1,8 +1,41 @@
 import xml.etree.ElementTree as ET
-from db_to_cora.update_relations import update_relations
+
+import pytest
+from db_to_cora.update_relations import (
+    RelationMapping,
+    RelationMapping,
+    update_relations,
+)
 from cora.context import MockContext
 from unittest.mock import patch
 from common.test_helper import assert_equal_for_xml_and_xml_string
+from cora.update import UpdateRecordResult
+
+
+@patch("db_to_cora.update_relations.update_record")
+def test_update_relations_update_failed(mock_update_record):
+    mock_update_record.return_value = UpdateRecordResult(
+        success=False, error="Update failed"
+    )
+
+    (old_child, new_child) = _create_mock_record("1", "100", parents=["2"])
+    (old_parent, new_parent) = _create_mock_record("2", "200")
+
+    record_mapping = [
+        (old_child, new_child),
+        (old_parent, new_parent),
+    ]
+
+    relation_mappings = [
+        RelationMapping(
+            old_relation_tag="parent_id",
+            new_relation_link="foo",
+            new_relation_type="parent",
+        ),
+    ]
+
+    with pytest.raises(Exception):
+        update_relations(record_mapping, relation_mappings, "diva-foo", MockContext())
 
 
 @patch("db_to_cora.update_relations.update_record")
@@ -15,13 +48,15 @@ def test_update_relations(mock_update_record):
         (old_parent, new_parent),
     ]
 
-    relations_mapping = [
-        ("parent_id", "parent"),
+    relation_mappings = [
+        RelationMapping(
+            old_relation_tag="parent_id",
+            new_relation_link="foo",
+            new_relation_type="parent",
+        ),
     ]
 
-    update_relations(
-        record_mapping, relations_mapping, "diva-foo", "foo", MockContext()
-    )
+    update_relations(record_mapping, relation_mappings, "diva-foo", MockContext())
 
     assert mock_update_record.call_count == 1
     updated_record_xml = mock_update_record.call_args.args[0]
@@ -29,18 +64,22 @@ def test_update_relations(mock_update_record):
     assert_equal_for_xml_and_xml_string(
         updated_record_xml,
         """
-        <foo>
-            <recordInfo>
-                <id>100</id>
-                <oldId>1</oldId>
-            </recordInfo>
-            <relatedItem type="parent" repeatId="0">
+        <record>
+            <data>
                 <foo>
-                    <linkedRecordType>diva-foo</linkedRecordType>
-                    <linkedRecordId>200</linkedRecordId>
+                    <recordInfo>
+                        <id>100</id>
+                        <oldId>1</oldId>
+                    </recordInfo>
+                    <related type="parent" repeatId="0">
+                        <foo>
+                            <linkedRecordType>diva-foo</linkedRecordType>
+                            <linkedRecordId>200</linkedRecordId>
+                        </foo>
+                    </related>
                 </foo>
-            </relatedItem>
-        </foo>
+            </data>
+        </record>
         """,
     )
 
@@ -61,14 +100,20 @@ def test_update_relations_multiple(mock_update_record):
         (old_parent, new_parent),
     ]
 
-    relations_mapping = [
-        ("parent_id", "parent"),
-        ("earlier_id", "earlier"),
+    relation_mappings = [
+        RelationMapping(
+            old_relation_tag="parent_id",
+            new_relation_link="foo",
+            new_relation_type="parent",
+        ),
+        RelationMapping(
+            old_relation_tag="earlier_id",
+            new_relation_link="foo",
+            new_relation_type="earlier",
+        ),
     ]
 
-    update_relations(
-        record_mapping, relations_mapping, "diva-foo", "foo", MockContext()
-    )
+    update_relations(record_mapping, relation_mappings, "diva-foo", MockContext())
 
     assert mock_update_record.call_count == 1
     updated_record_xml = mock_update_record.call_args.args[0]
@@ -76,30 +121,34 @@ def test_update_relations_multiple(mock_update_record):
     assert_equal_for_xml_and_xml_string(
         updated_record_xml,
         """
-        <foo>
-            <recordInfo>
-                <id>100</id>
-                <oldId>1</oldId>
-            </recordInfo>
-            <relatedItem type="parent" repeatId="0">
+        <record>
+            <data>
                 <foo>
-                    <linkedRecordType>diva-foo</linkedRecordType>
-                    <linkedRecordId>200</linkedRecordId>
+                    <recordInfo>
+                        <id>100</id>
+                        <oldId>1</oldId>
+                    </recordInfo>
+                    <related type="parent" repeatId="0">
+                        <foo>
+                            <linkedRecordType>diva-foo</linkedRecordType>
+                            <linkedRecordId>200</linkedRecordId>
+                        </foo>
+                    </related>
+                    <related type="earlier" repeatId="0">
+                        <foo>
+                            <linkedRecordType>diva-foo</linkedRecordType>
+                            <linkedRecordId>300</linkedRecordId>
+                        </foo>
+                    </related>
+                    <related type="earlier" repeatId="1">
+                        <foo>
+                            <linkedRecordType>diva-foo</linkedRecordType>
+                            <linkedRecordId>400</linkedRecordId>
+                        </foo>
+                    </related>
                 </foo>
-            </relatedItem>
-            <relatedItem type="earlier" repeatId="0">
-                <foo>
-                    <linkedRecordType>diva-foo</linkedRecordType>
-                    <linkedRecordId>300</linkedRecordId>
-                </foo>
-            </relatedItem>
-            <relatedItem type="earlier" repeatId="1">
-                <foo>
-                    <linkedRecordType>diva-foo</linkedRecordType>
-                    <linkedRecordId>400</linkedRecordId>
-                </foo>
-            </relatedItem>
-        </foo>
+            </data>
+        </record>
         """,
     )
 
