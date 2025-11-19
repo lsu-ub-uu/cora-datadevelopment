@@ -3,6 +3,8 @@ from cora.context import MockContext
 import xml.etree.ElementTree as ET
 from unittest.mock import MagicMock, patch
 
+from db_to_cora.update_relations import RelationMapping
+
 
 @patch("db_to_cora.records_import.validate_record")
 @patch("db_to_cora.records_import.create_record")
@@ -89,8 +91,8 @@ def test_records_import_no_relations(mock_create_record, mock_validate_record):
 
 @patch("db_to_cora.records_import.validate_record")
 @patch("db_to_cora.records_import.create_record")
-@patch("db_to_cora.update_relations.update_relations")
-def xtest_records_import_with_relations(
+@patch("db_to_cora.records_import.update_relations")
+def test_records_import_with_relations(
     mock_update_relations, mock_create_record, mock_validate_record
 ):
     mock_source_records = [
@@ -105,7 +107,13 @@ def xtest_records_import_with_relations(
         "test-type",
         mock_source_records,
         mock_transform_function,
-        [("relatedRecord", "related_id"), ("anotherRelation", "another_id")],
+        [
+            RelationMapping(
+                old_relation_tag="parent_id",
+                new_relation_link="test",
+                new_relation_type="parent",
+            )
+        ],
         apply=True,
     )
 
