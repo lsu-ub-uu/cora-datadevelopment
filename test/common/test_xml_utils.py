@@ -1,8 +1,5 @@
 import xml.etree.ElementTree as ET
-
-import pytest
-from common.xml_utils import append_if_value, transform_record_list
-from cora.context import MockContext
+from common.xml_utils import append_if_value
 
 
 def test_append_if_value_appends_element_with_child_node():
