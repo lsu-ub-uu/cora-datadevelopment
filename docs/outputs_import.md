@@ -144,7 +144,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - genre type="subcategory" <- `subType` subTypeId 66=policyDocument 3=exhibitionCatalog
 - note type="publicationStatus" <- mapping from `publicationStatus`
 - typeOfResource <- `mediaType`
-- ⚠️ type <- `mediaInformation/types` Check implementation
+- type <- `mediaInformation/types`
 - material <- `mediaInformation/materials`
 - technique <- `mediaInformation/techniques`
 - size <- `mediaInformation/size`

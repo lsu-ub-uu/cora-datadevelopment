@@ -36,22 +36,21 @@ def create_techniques(
 def _create_tags(
     source_record: ET.Element, source_tag: str, new_tag_name: str
 ) -> list[ET.Element]:
-    source_strings = source_record.findall(f"./{source_tag}/entry/list/string")
-    source_language = source_record.find(f"./{source_tag}/entry/language/languageCode3")
-
-    if len(source_strings) == 0:
-        return []
-
-    if source_language is None or not source_language.text:
-        raise ValueError(f"Language code must be present for element: {new_tag_name}")
-
+    entries = source_record.findall(f"./{source_tag}/entry")
     tags = []
-    for i, source_string in enumerate(source_strings):
-        new_tag = ET.Element(new_tag_name, lang=source_language.text)
-        if source_string is not None and source_string.text:
-            new_tag.text = source_string.text
-            new_tag.set("repeatId", str(i))
-            tags.append(new_tag)
+    repeat_id = 0
+    for entry in entries:
+        language_code = entry.findtext("./language/languageCode3")
+        strings = entry.findall("./list/string")
+        for string in strings:
+            new_tag = ET.Element(
+                new_tag_name, lang=language_code if language_code else ""
+            )
+            if string is not None and string.text:
+                new_tag.text = string.text
+                new_tag.set("repeatId", str(repeat_id))
+                tags.append(new_tag)
+                repeat_id += 1
 
     return tags
 

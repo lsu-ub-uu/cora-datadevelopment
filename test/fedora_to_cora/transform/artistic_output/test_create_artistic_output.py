@@ -53,6 +53,74 @@ def test_create_types():
     )
 
 
+def test_multiple_languages():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <mediaInformation>
+                <types class="hashtable">
+                    <entry>
+                        <language>
+                            <languageCode3>swe</languageCode3>
+                        </language>
+                        <list>
+                            <string>Swe01</string>
+                            <string>Swe02</string>
+                        </list>
+                    </entry>
+                    <entry>
+                        <language>
+                            <languageCode3>eng</languageCode3>
+                        </language>
+                        <list>
+                            <string>Eng01</string>
+                            <string>Eng02</string>
+                        </list>
+                    </entry>
+                </types>
+            </mediaInformation>
+        </publication>
+        """
+    )
+
+    types = create_types(source_record)
+
+    assert len(types) == 4
+
+    assert_equal_for_xml_and_xml_string(
+        types[0],
+        """
+        <type lang="swe" repeatId="0">
+            Swe01
+        </type>
+        """,
+    )
+    assert_equal_for_xml_and_xml_string(
+        types[1],
+        """
+        <type lang="swe" repeatId="1">
+            Swe02
+        </type>
+        """,
+    )
+    assert_equal_for_xml_and_xml_string(
+        types[2],
+        """
+        <type lang="eng" repeatId="2">
+            Eng01
+        </type>
+        """,
+    )
+    assert_equal_for_xml_and_xml_string(
+        types[3],
+        """
+        <type lang="eng" repeatId="3">
+            Eng02
+        </type>
+        """,
+    )
+
+
 def test_create_types_without_language():
     source_record = ET.fromstring(
         """
@@ -62,7 +130,6 @@ def test_create_types_without_language():
                     <entry>
                         <list>
                             <string>Typ01</string>
-                            <string>Typ02</string>
                         </list>
                     </entry>
                 </types>
@@ -71,8 +138,16 @@ def test_create_types_without_language():
         """
     )
 
-    with pytest.raises(ValueError):
-        create_types(source_record)
+    types = create_types(source_record)
+
+    assert_equal_for_xml_and_xml_string(
+        types[0],
+        """
+        <type lang="" repeatId="0">
+            Typ01
+        </type>
+        """,
+    )
 
 
 def test_create_types_empty_media_information():
