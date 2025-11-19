@@ -70,7 +70,7 @@ def test_create_identifier_se_libr():
     libris = create_identifier_se_libr(source_record)
     assert_equal_for_xml_and_xml_string(
         libris[0],
-        """<identifier type="se-libr" repeatId="2">0004</identifier>""",
+        """<identifier type="se-libr" repeatId="0">0004</identifier>""",
     )
 
 
@@ -97,13 +97,22 @@ def test_create_identifier_se_libr_when_missing():
 
 def test_create_multiple_identifier_se_libr():
     libris_identifiers = create_identifier_se_libr(source_record)
+    assert len(libris_identifiers) == 4
     assert_equal_for_xml_and_xml_string(
         libris_identifiers[0],
-        """<identifier type="se-libr" repeatId="2">0004</identifier>""",
+        """<identifier type="se-libr" repeatId="0">0004</identifier>""",
     )
     assert_equal_for_xml_and_xml_string(
         libris_identifiers[1],
-        """<identifier type="se-libr" repeatId="3">0006</identifier>""",
+        """<identifier type="se-libr" repeatId="1">0005</identifier>""",
+    )
+    assert_equal_for_xml_and_xml_string(
+        libris_identifiers[2],
+        """<identifier type="se-libr" repeatId="2">0006</identifier>""",
+    )
+    assert_equal_for_xml_and_xml_string(
+        libris_identifiers[3],
+        """<identifier type="se-libr" repeatId="3">0007</identifier>""",
     )
 
 

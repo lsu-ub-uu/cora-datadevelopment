@@ -117,7 +117,8 @@ def test_create_maximal_book(monkeypatch):
             <identifier type="isbn" repeatId="1" displayLabel="online">978-92-893-7379-1</identifier>
             <identifier type="isbn" repeatId="2" displayLabel="undefined">978-92-893-7380-7</identifier>
             <identifier type="doi">10.1038/s41698-022-00278-4</identifier>
-            <identifier type="se-libr" repeatId="1">0004</identifier>
+            <identifier type="se-libr" repeatId="0">0004</identifier>
+            <identifier type="se-libr" repeatId="1">0005</identifier>
             <part>
                 <extent>
                     <start>10</start>

@@ -11,16 +11,34 @@ def create_identifier_doi(source_record):
             )
 
 
-def create_identifier_se_libr(source_record):
+def create_identifier_se_libr(source_record: ET.Element):
     entries = source_record.findall("./identifiers/entry")
-    return [
-        _create_identifier(
-            value=entry.findtext("./publicationIdentifier/value"),
-            id_type="se-libr",
-            repeat_id=str(index),
+
+    def extract_values_from_entry(entry: ET.Element) -> list[str]:
+        """Extract all libris identifier values from an entry."""
+        value = entry.findtext("./publicationIdentifier/value")
+
+        values = [value] if value is not None else []
+
+        alt_values = entry.findall("./publicationIdentifier/alternativeValues/value")
+        values.extend(
+            content
+            for alt_value in alt_values
+            if (content := alt_value.findtext("./content")) is not None
         )
-        for (index, entry) in enumerate(entries)
+
+        return values
+
+    all_values = [
+        value
+        for entry in entries
         if _is_entry_of_type(entry, "libris")
+        for value in extract_values_from_entry(entry)
+    ]
+
+    return [
+        _create_identifier(value=value, id_type="se-libr", repeat_id=str(index))
+        for index, value in enumerate(all_values)
     ]
 
 
