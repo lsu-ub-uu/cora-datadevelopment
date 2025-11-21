@@ -131,7 +131,7 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             <edition>3</edition>
         </originInfo>
         <physicalDescription>
-            <extent>208</extent>
+            <extent unit="pages">208</extent>
         </physicalDescription>
         <classification authority="ssif" repeatId="0">30224</classification>
         <classification authority="ssif" repeatId="1">60301</classification>
@@ -416,7 +416,7 @@ def test_output_transform_book(mock_diva_search_requests):
                 </place>
             </originInfo>
             <physicalDescription>
-                <extent>335</extent>
+                <extent unit="pages">335</extent>
             </physicalDescription>
             <classification authority="ssif" repeatId="0">60503</classification>
             <subject authority="diva">
@@ -627,7 +627,7 @@ def test_output_transform_student_thesis(mock_diva_search_requests):
                 </dateIssued>
             </originInfo>
             <physicalDescription>
-                <extent>64</extent>
+                <extent unit="pages">64</extent>
             </physicalDescription>
             <classification authority="ssif" repeatId="0">60407</classification>
             <genre type="outputType">diva_degree-project</genre>

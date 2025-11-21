@@ -225,12 +225,14 @@ def test_rollback_when_failed_to_migrate_attachment(
 @patch("fedora_to_cora.output_migrate.validate_record")
 @patch("fedora_to_cora.output_migrate.transform_to_cora_output")
 @patch("fedora_to_cora.output_migrate.create_record")
-def test_migrate_with_classic_quality(mock_create, mock_transform, mock_validate):
+@patch("fedora_to_cora.output_migrate.pretty_print_xml")
+def test_migrate_with_classic_quality(mock_pretty_print, mock_create, mock_transform, mock_validate):
     mock_context = MockContext()
 
     source_record = ET.fromstring(
         """
         <publication>
+            <pid>12345</pid>
             <title>Test Publication</title>
         </publication>
         """
@@ -247,7 +249,9 @@ def test_migrate_with_classic_quality(mock_create, mock_transform, mock_validate
                 </validationType>
             </recordInfo>
             <dataQuality>2026</dataQuality>
-            <note type="internal">Some internal note.</note>
+            <adminInfo>
+                <note type="internal">Some internal note.</note>
+            </adminInfo>
         </record>
         """
     )
@@ -256,6 +260,7 @@ def test_migrate_with_classic_quality(mock_create, mock_transform, mock_validate
 
     expected_errors = ["Missing required field", "Invalid format"]
     mock_validate.return_value = (False, expected_errors)
+    mock_pretty_print.return_value = "pretty printed xml"
 
     result = output_migrate(source_record, mock_context, apply=False)
 
@@ -269,6 +274,9 @@ def test_migrate_with_classic_quality(mock_create, mock_transform, mock_validate
         record_type="diva-output",
         context=mock_context,
     )
+
+    # Check that pretty_print_xml was called
+    mock_pretty_print.assert_called_once()
 
     assert mock_create.call_count == 1
     created_output = mock_create.call_args[0][0]
@@ -284,7 +292,9 @@ def test_migrate_with_classic_quality(mock_create, mock_transform, mock_validate
                 </validationType>
             </recordInfo>
             <dataQuality repeatId="1">classic</dataQuality>
-            <note repeatId="2" type="internal">Some internal note.\n\nRecord created with dataQuality "classic" due to validation errors during migration from DiVA Classic.\n\nValidation errors:\n- Missing required field\n- Invalid format</note>
+            <adminInfo repeatId="2">
+                <note repeatId="0" type="internal">Some internal note.Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic. Validation errors:- Missing required field- Invalid format</note>
+            </adminInfo>
         </record>
         """,
     )
@@ -293,14 +303,16 @@ def test_migrate_with_classic_quality(mock_create, mock_transform, mock_validate
 @patch("fedora_to_cora.output_migrate.validate_record")
 @patch("fedora_to_cora.output_migrate.transform_to_cora_output")
 @patch("fedora_to_cora.output_migrate.create_record")
+@patch("fedora_to_cora.output_migrate.pretty_print_xml")
 def test_migrate_with_classic_quality_failure(
-    mock_create, mock_transform, mock_validate
+    mock_pretty_print, mock_create, mock_transform, mock_validate
 ):
     mock_context = MockContext()
 
     source_record = ET.fromstring(
         """
         <publication>
+            <pid>12345</pid>
             <title>Test Publication</title>
         </publication>
         """
@@ -330,6 +342,7 @@ def test_migrate_with_classic_quality_failure(
             "Invalid format",
         ],
     )
+    mock_pretty_print.return_value = "pretty printed xml"
 
     mock_create.return_value = CreateRecordFailureResult(
         error="Failed to create record"

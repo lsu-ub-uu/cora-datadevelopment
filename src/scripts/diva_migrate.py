@@ -75,7 +75,7 @@ def main():
 
         migrate_publishers(args, context)
         migrate_funders(args, context)
-        migrate_journals(args, context)
+        # migrate_journals(args, context)
         # TODO Persons
         # TODO Projects
 
@@ -87,8 +87,8 @@ def main():
 
     print(f"=== Start migrating data for {args.domain} domain to {args.system} ===")
 
-    # migrate_organisations(args, context)
-    # migrate_subjects(args, context)
+    migrate_organisations(args, context)
+    migrate_subjects(args, context)
     migrate_series(args, context)
     migrate_programmes(args, context)
     migrate_course(args, context)

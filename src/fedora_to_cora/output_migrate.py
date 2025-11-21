@@ -1,5 +1,6 @@
 from typing import Literal
 import xml.etree.ElementTree as ET
+from common.xml_utils import pretty_print_xml
 from cora.context import Context
 from cora.delete import delete_record
 from fedora_to_cora.attachments_migrate import attachments_migrate
@@ -45,6 +46,10 @@ def output_migrate(
     if not valid:
         classic_quality_record = transform_output_to_classic_quality(
             cora_output, errors
+        )
+        context.log(
+            f"Creating classic quality record for old id {source_record.findtext('.//pid')}:\n{pretty_print_xml(classic_quality_record)}",
+            level="warning",
         )
         create_result = create_record(
             classic_quality_record,

@@ -207,7 +207,9 @@ def test_adds_internal_note_with_validation_errors():
             <someChild1 repeatId="one">someValue1</someChild1>
             <someChild1 repeatId="two">someValue2</someChild1>
             <someChild2 repeatId="4">someValue3</someChild2>
-            <note type="internal" repeatId="5">Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic.\n\nValidation errors:\n- Missing required field\n- Invalid format</note>
+            <adminInfo repeatId="5">
+                <note repeatId="0" type="internal">Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic. Validation errors:- Missing required field- Invalid format</note>
+            </adminInfo>
         </record>
         """,
     )
@@ -227,7 +229,9 @@ def test_adds_validation_errors_to_existing_internal_note():
             <someChild1 repeatId="one">someValue1</someChild1>
             <someChild1 repeatId="two">someValue2</someChild1>
             <someChild2>someValue3</someChild2>
-            <note type="internal" repeatId="5">Some internal note.</note>
+            <adminInfo>
+                <note type="internal" repeatId="5">Some internal note.</note>
+            </adminInfo>
         </record>
         """
     )
@@ -252,7 +256,9 @@ def test_adds_validation_errors_to_existing_internal_note():
             <someChild1 repeatId="one">someValue1</someChild1>
             <someChild1 repeatId="two">someValue2</someChild1>
             <someChild2 repeatId="4">someValue3</someChild2>
-            <note type="internal" repeatId="5">Some internal note.\n\nRecord created with dataQuality "classic" due to validation errors during migration from DiVA Classic.\n\nValidation errors:\n- Missing required field\n- Invalid format</note>
+            <adminInfo repeatId="5">
+                <note type="internal" repeatId="5">Some internal note.Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic. Validation errors:- Missing required field- Invalid format</note>
+            </adminInfo>
         </record>
         """,
     )

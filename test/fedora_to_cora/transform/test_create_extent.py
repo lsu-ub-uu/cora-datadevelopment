@@ -18,7 +18,7 @@ def test_create_extent():
         origin_info,
         """
         <physicalDescription>
-            <extent>208</extent>
+            <extent unit="pages">208</extent>
         </physicalDescription>
         """,
     )

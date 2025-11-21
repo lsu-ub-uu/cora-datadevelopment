@@ -56,17 +56,24 @@ def _add_validation_errors_to_internal_note(
     if not validation_errors or len(validation_errors) == 0:
         return None
 
-    existing_internal_note = classic_quality_output.find("./note[@type='internal']")
+    existing_admin_info = classic_quality_output.find("./adminInfo")
+    if existing_admin_info is None:
+        admin_info = ET.Element("adminInfo")
+        classic_quality_output.append(admin_info)
+    else:
+        admin_info = existing_admin_info
+
+    existing_internal_note = admin_info.find("./note[@type='internal']")
 
     validation_error_text = (
-        'Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic.\n\nValidation errors:\n- '
-        + "\n- ".join(validation_errors)
+        'Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic. Validation errors:- '
+        + "- ".join(validation_errors)
     )
 
     if existing_internal_note is not None:
         note_element = existing_internal_note
-        note_element.text = (note_element.text or "") + "\n\n" + validation_error_text
+        note_element.text = (note_element.text or "") + validation_error_text
     else:
         note_element = ET.Element("note", type="internal")
-        classic_quality_output.append(note_element)
+        admin_info.append(note_element)
         note_element.text = validation_error_text
