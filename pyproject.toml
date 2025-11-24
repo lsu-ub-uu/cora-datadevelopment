@@ -35,7 +35,7 @@ outputs-testdata-create = "scripts.outputs_testdata_create:main"
 organisations-migrate = "scripts.organisations_migrate:main"
 diva-migrate = "scripts.diva_migrate:main"
 create-validation-types = "scripts.create_new_validation_types:main"
-delete-validation-types = "scripts.delete_validation_types:main"
+delete-validation-types = "scripts.delete_new_validation_types:main"
 analyze-errors = "scripts.util.analyze_errors:main"
 
 [build-system]
