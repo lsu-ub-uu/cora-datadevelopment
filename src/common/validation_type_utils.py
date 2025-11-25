@@ -195,9 +195,8 @@ def is_record_info_child_ref(child_reference: Element, record_info_groups: set) 
     return False
 
 
-def set_data_quality_to_classic(xml_content):
-    name_in_data = xml_content.findtext(".//metadata/nameInData")
-    if name_in_data == "dataQuality":
+def set_data_quality_to_classic(xml_content: Element):
+    if is_data_quality(xml_content):
         final_value = xml_content.find(".//metadata/finalValue")
         if final_value is not None:
             final_value.text = "classic"
@@ -256,10 +255,21 @@ def update_child_references(xml_root, id_mapping):
 
 
 def create_new_id_and_update_mapping(global_id_mapping, node) -> str:
-    new_id = node.record_id if node.record_id.startswith(_type_prefix) else f"{_type_prefix}{node.record_id}"
+    if node.record_id.startswith(_type_prefix):
+        new_id = node.record_id
+    elif is_data_quality(node.xml_content):
+        new_id = f"{_type_prefix}dataQualityCollectionVar"
+    else:
+        new_id = f"{_type_prefix}{node.record_id}"
+
     node.new_record_id = new_id
     global_id_mapping[node.record_id] = new_id
     return new_id
+
+
+def is_data_quality(xml_content: Element):
+    name_in_data = xml_content.findtext(".//metadata/nameInData")
+    return name_in_data == "dataQuality"
 
 
 def update_record_id_in_xml(xml_root, new_id):
