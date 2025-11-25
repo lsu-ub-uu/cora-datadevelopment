@@ -134,9 +134,9 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - relatedItem type="project" otherType="text" <- `projects`
   - titleInfo/title <- `project/projectName`
   - titleInfo/subTitle <- N/A
-    -❓relatedItem type="initiative" <- Some funders should be mapped to initiative instead. Awaiting more info.
-    -❓🆕 accessCondition authority="kb.se" <- Possibly should look at openAccess flags in data? Awaiting more info.
-- 🆕 localLabel (localGenericMarkup) <- might put non-valid sdg as tags
+- ❓⚠️ relatedItem type="initiative" <- Some funders should be mapped to initiative instead of relatedItem type="funder". See funder.xml.
+- 🆕 accessCondition authority="kb.se" <- N/A
+- 🆕⚠️ localLabel <- might put non-valid sdg as tags
 - adminInfo
   - failed <- `failed`
   - reviewed <- `reviewed`
@@ -149,17 +149,17 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - technique <- `mediaInformation/techniques`
 - size <- `mediaInformation/size`
 - duration <- `mediaInformation/duration`
-- ⚠️❓ physicalDescription <- `pages` `mediaInformation/physicalDescriptions` New attribute unit="pages"? Needs investigation.
-  ======= Reviewed to this point =========
-- 🆕 note type="context" <- N/A ❓
+- physicalDescription
+  - extent unit="pages" <- `pages`
+  - ⚠️ extent unit="other" <- `mediaInformation/physicalDescriptions` Joined by comma.
+- ⚠️ note type="context" <- `descriptions`
 - dateOther type="patent" <- `patentDate` Not done. Needs output-test.
 - identifier type="patentNumber" <- `patentNumber`
-- patentHolder type="corporate" ❓
+- ❓⚠️ patentHolder type="corporate" Change metadata to <name type="corporate">?
   - namePart <- `patentOrganisation`
-  - 🆕 identifier type="ror" <- N/A ❓
-  - 🆕 description <- N/A ❓
+  - 🆕 identifier type="ror" <- N/A
+  - 🆕 description <- N/A
 - patentCountry <- `patentCountry/countryCode`
-
 - academicSemester <- `academicTerm`
   - year <- `year`
   - academicSemester <- `term` (to lower case)
@@ -169,21 +169,20 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - course (link to migrated record) <- `studentDegree/undergraduateSubject/subjectId`
   - programme (link to migrated record) <- `studentDegree/educationalProgramme/subjectId`
 - externalCollaboration <- `externalCooperation`
-  - namePart <- `partners/partner/name` If `external` is true and no partner name exists, a default text "Externt samarbete" is set.
-- degreeGrantingInstitution type="corporate" otherType="link" <- `defence/grantingInstitution`
+  - ❓⚠️ namePart <- `partners/partner/name` If `external` is true and no partner name exists, a default text "Externt samarbete" is set.
+- degreeGrantingInstitution type="corporate" otherType="link" <- `defence/grantingInstitution` ❓⚠️Metadata change to <name type="corporate">? ❓⚠️ If link to other member's root organisation, migrate as otherType="text"
   - organisation (link to migrated record) <- `organisationId`
-- degreeGrantingInstitution type="corporate" otherType="text" <- `defence/externalGrantingInstitution`
+- ❓⚠️ degreeGrantingInstitution type="corporate" otherType="text" <- `defence/externalGrantingInstitution` ❓⚠️Metadata change to <name type="corporate">?
   - namePart <- `externalGrantingInstitution`
   - 🆕 identifier type="ror" <- N/A
 - defence <- `defence` For degree project (diva-degreeProject) the tag should be presentation instead of defence.
-- presentation <- `defence` See above
+- presentation <- `defence` See above ⚠️ Will be merged with <defence> in metadata model
   - `language` <- `languageTerm/language`
   - `dateOther` <- `date`
-  - `location` <- `room> <name`
+  - `location` <- `room/name`
   - `address` <- `room/street`
   - `place/placeTerm` <- `room/city`
-  - `degreeGrantingInstitution` <- `grantingInstitution`
-  - `organisation` <- `organisationId`
+    ===🔍=== Reviewed to this point ===🔍===
 - relatedItem type="journal" otherType="link" <- `journal`
   - journal (link to migrated record) <- `journalId`
     - part Nedanstående taggar finns direkt under `publication`.
@@ -244,7 +243,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - relatedItem type="series" otherType="text"
 - relatedItem type="conference" <- `conference`
 - relatedItem type="funder"
-  - funder (link to migrated record) <- `funderInfos/funder/funderId`
+  - funder (link to migrated record) <- `funderInfos/funder/funderId` Exclude funders are to be mapped as initiatives
   - identifier type="project" <- `funderInfos/funderId/projectNumber`
 - 🆕 related <- N/A ❓ `hostPublications`, `relations`
 - 🆕 related type="retracted" <- N/A
