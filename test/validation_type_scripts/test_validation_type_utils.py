@@ -325,6 +325,21 @@ def test_create_new_id_without_prefix(record_node):
     assert global_id_mapping[original_id] == updated_prefixed_id
 
 
+def test_create_new_id_for_data_quality(record_node):
+    name_in_data = record_node.xml_content.find(".//metadata/nameInData")
+    name_in_data.text = "dataQuality"
+
+    original_id = "existing_id"
+    record_node.record_id = original_id
+    global_id_mapping = {}
+
+    new_id = common_utils.create_new_id_and_update_mapping(global_id_mapping, record_node)
+
+    assert new_id == f"{common_utils._type_prefix}dataQualityCollectionVar"
+    assert record_node.new_record_id == f"{common_utils._type_prefix}dataQualityCollectionVar"
+    assert global_id_mapping[original_id] == f"{common_utils._type_prefix}dataQualityCollectionVar"
+
+
 def test_update_record_id_in_xml(record_node):
     common_utils.update_record_id_in_xml(record_node.xml_content, "over9000")
     assert record_node.xml_content.find(".//recordInfo/id").text == "over9000"
