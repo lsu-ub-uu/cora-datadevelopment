@@ -209,7 +209,8 @@ def normalize_regex_patterns(xml_root):
     if not record_info_group(xml_root):
         for tag in ("regex", "regEx"):
             for element in xml_root.findall(f".//{tag}"):
-                if element.text and element.text.strip() not in (None, ".+"):
+                regex = element.text
+                if regex and regex.strip() and regex != ".+" and r"[\s\S]+" not in regex:
                     element.text = ".+"
                     updated = True
 

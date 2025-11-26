@@ -227,6 +227,16 @@ def test_normalize_regex_patterns(record_node, monkeypatch):
     assert regex_text == ".+"
 
 
+def test_normalize_regex_patterns_ignore_variant(record_node, monkeypatch):
+    regex = record_node.xml_content.find(".//regEx")
+    regex.text = "^[\s\S]+$"
+    monkeypatch.setattr(common_utils, "record_info_group", lambda boolean: False)
+    updated = common_utils.normalize_regex_patterns(record_node.xml_content)
+    regex_text = record_node.xml_content.find(".//regEx").text
+    assert not updated
+    assert regex_text == "^[\s\S]+$"
+
+
 def test_normalize_regex_patterns_record_info_child(record_node, monkeypatch):
     monkeypatch.setattr(common_utils, "record_info_group", lambda boolean: True)
     updated = common_utils.normalize_regex_patterns(record_node.xml_content)
