@@ -413,19 +413,6 @@ def get_ids_for_record_type_matching_prefix(record_type: str):
     return collect_ids_from_response_matching_prefix(record_type, response_body)
 
 
-def get_validation_types_using_search_data(record_type: str, search_data: bytes):
-    search_url = _ctx.get_base_url() + f"searchResult/{record_type}Search"
-    headers = {"Authtoken": _ctx.get_auth_token(),
-               "Accept": "application/vnd.cora.recordList+xml",
-               "Content-Type": "application/vnd.cora.recordList+xml"}
-
-    response = requests.get(search_url, params={"searchData": search_data}, headers=headers)
-    response.raise_for_status()
-    response_body = ET.fromstring(response.text)
-
-    return response_body
-
-
 def collect_ids_from_response_matching_prefix(record_type: str, response_body: ET.Element) -> list[Any]:
     ids = []
     for element in response_body.findall(f".//{record_type}/recordInfo/id"):
@@ -509,6 +496,19 @@ def log_creation_summary(node, record_type_url: str, xml_bytes: bytes | Any):  #
 
 
 # ---- API
+
+def get_validation_types_using_search_data(record_type: str, search_data: bytes):
+    search_url = _ctx.get_base_url() + f"searchResult/{record_type}Search"
+    headers = {"Authtoken": _ctx.get_auth_token(),
+               "Accept": "application/vnd.cora.recordList+xml",
+               "Content-Type": "application/vnd.cora.recordList+xml"}
+
+    response = requests.get(search_url, params={"searchData": search_data}, headers=headers)
+    response.raise_for_status()
+    response_body = ET.fromstring(response.text)
+
+    return response_body
+
 
 def try_to_create_record(node, content_root, errors: list) -> bool:
     xml_bytes = to_xml_bytes(content_root)
