@@ -182,7 +182,6 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - `location` <- `room/name`
   - `address` <- `room/street`
   - `place/placeTerm` <- `room/city`
-    ===🔍=== Reviewed to this point ===🔍===
 - relatedItem type="journal" otherType="link" <- `journal`
   - journal (link to migrated record) <- `journalId`
     - part Nedanstående taggar finns direkt under `publication`.
@@ -217,22 +216,21 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
     - title <- `title`
     - subtitle <- `subtitle`
   - note type="statementOfResponsibility" <- `bookEditor`
-  - identifier type="isbn" <- `isbnNumbers/isbn/number` For chapters, isbn is on the book and not directly on the output
-  - identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) For chapters doi is on the book and not the output
-  - identifier type="se-libr" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "se-libr"`) For chapters se-libr is on the book and not the output
+  - identifier type="isbn" <- `isbnNumbers/isbn/number` For chapters, isbn is on the book and not directly on the output (⚠️ If no title for the book skip isbn if chapter)
+  - identifier type="doi" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) For chapters doi is on the book and not the output (⚠️ If no title for the book add doi on the output)
+  - identifier type="se-libr" <- `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "se-libr"`) For chapters se-libr is on the book and not the output (⚠️ If no title for the book add se-libr on the output)
   - part/extent
     - start <- `startPage`
     - end <- `endPage`
-  - relatedItem type="series" otherType="link"
-  - relatedItem type="series" otherType="text"
+  - ⚠️relatedItem type="series" otherType="liink" (⚠️ same as outputen)
+  - ⚠️relatedItem type="series" otherType="text" (⚠️ same as outputen)
 
-- 🆕 relatedItem type="conferencePublication" otherType="link"
+- 🆕 relatedItem type="conferencePublication" otherType="link" (⚠️conferencePublication byter namn till conferenceProceeding)
   - proceeding (link to migrated record)
-- relatedItem type="conferencePublication" otherType="text"
-  - titleInfo <- `proceedingsTitle`
+- relatedItem type="conferenceProceeding" otherType="text" (⚠️conferencePublication byter namn till conferenceProceeding)
+  - titleInfo <- `proceedingsTitle` ⚠️ kolla att html tas bort
     - title <- `title`
     - subtitle <- `subtitle`
-    - language
   - note type="statementOfResponsibility" <- `proceedingsEditor`
   - identifier type="isbn" <- `isbnNumbers/isbn/number` For conference paper, isbn should be on the conferencePublication and not directly on the output
   - identifier type="doi" `identifiers/entry/publicationIdentifier/value` where (`publicationIdentifierType == "doi"`) For conference paper doi is on the conferencePublication and not the output
@@ -245,9 +243,9 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - relatedItem type="funder"
   - funder (link to migrated record) <- `funderInfos/funder/funderId` Exclude funders are to be mapped as initiatives
   - identifier type="project" <- `funderInfos/funderId/projectNumber`
-- 🆕 related <- N/A ❓ `hostPublications`, `relations`
+- 🆕 related <- N/A
 - 🆕 related type="retracted" <- N/A
-- ⚠️ related type="constituent" (link to migrated recordade avhandligar) ❓ `partsOfPublication`
+- ⚠️ related type="constituent" (link to migrated records thesis) ❓ `partsOfPublication`
   - output (link to migrated record) <- `partsOfPublication/publication/pid`
 - relatedItem type="publicationChannel"
   - publicationChannel <- `publicationChannel`
@@ -259,18 +257,18 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 ### Taggar ej i Cora
 
 - `reviewedBefore`
-- `distributor`
-- `distributorAsDist`
-- `formatElectronic`
-- `formatPrint`
-- `canOrderOnline`
-- `migrated`
-- `version`
-- `registratedDuplicate`
-- `importDuplicate`
-- `categories`
-- ⚠️ `imprint` (Only for Uppsala University)'
-- `openAccess`
+
+- `distributor` från diva1 för avhandlingar, slutat med
+- `distributorAsDist` samma
+- `formatElectronic` swepub som inte har behov av det
+- `formatPrint` samma
+- `canOrderOnline` bäställningslänkar
+- `migrated` migrerat från annat ställe
+- `version` datasätt
+- `registratedDuplicate` oklar funktion, enbart värde false
+- `importDuplicate` oklar funktion, enbart värde false
+- `categories` använder änmeskattegorier nu
+- `openAccess` swepub hanterar inte detta på url längre
 
 ## Binary
 
