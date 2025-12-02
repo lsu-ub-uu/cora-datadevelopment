@@ -1,0 +1,978 @@
+# Outputs import, skipped tags
+- contentType
+  - contentTypeId <- Nej, använder `contentTypeCode` istället
+  - contentTypeCode <- OK
+  - contentTypeNames <- Nej, använder inte översättningarna
+  - sortOrder <- Nej
+- publicationType
+  - publicationTypeId  <- Nej
+  - publicationTypeCode <- För att få validationType
+  - openUrlType <- Nej
+  - publicationTypeNames <- använder inte översättningarna
+  - roles <- Nej
+  - comprehensiveSummary <- Nej
+  - domainAdminOnly <-Nej
+- pid <- OK
+- administrativeInfo
+  - domain <- För att hitta medlämmn
+  - creatorInfo 
+    - userId <- Nej
+    - ip <- Nej
+    - name <- Nej
+    - date <- Nej
+    - userType <- Nej
+    - userAction <- används för att sätta vissibility. 
+  - createdDate <- flyttas inte över till Cora, får nytt
+  - updatedDate <- historiken flyttas inte över till Cora
+- publicationDate <- flyttas inte över till Cora
+- editors
+  - person
+    - firstName<- Ja
+    - lastName<- Ja
+    - organisations
+      - organisation
+        - organisationId<- Ja
+        - organisationType <- Nej
+          - organisationTypeId <- Nej
+          - organisationTypeCode <- Nej
+          - organisationTypeNames <- använder inte översättningarna
+        - organisationName <- Nej
+          - name <- Nej
+          - locale <- Nej
+        - organisationHomepage <- Nej
+        - domain <- Nej
+        - organisationNumber <- Nej
+        - organisationAlternativeNames <- Nej
+          - organisationName
+            - organisationNameId <- Nej
+            - locale <- Nej
+            - organisationName <- Nej
+        - organisationContacts
+        - organisationParents
+        - organisationPredecessors
+        - organisationPredecessorDescriptions <- Nej
+        - controlled <- Ja
+        - notEligible <- Nej
+        - showInPortal <- Nej
+        - showInDefence <- Nej
+        - topLevel <- Nej
+      - organisation (uncontrolled)
+          organisationContacts <- Nej
+          organisationPredecessors <- Nej
+          organisationPredecessorDescriptions <- Nej
+          organisationNameUncontrolled<- Ja
+          controlled <- Nej
+          notEligible <- Nej
+          showInPortal <- Nej
+          showInDefence <- Nej
+    - identifiers <- Ja
+      - entry <- Ja
+        - personIdentifierType <- Ja
+        - personIdentifiercategories <- Ja
+          - value <- Ja
+          - type <- Ja
+- originalPublicationTitle
+  - title <- Ja
+  - subTitle <- Ja
+  - language <- Ja
+    - languageCode3 <-    >([^<]+)</([^>]+)>
+    - languageCode2 <- Nej
+    - languageNames <- använder inte översättningarna
+    - showsOnList <- Nej
+- seriesInfos
+  - seriesInfo
+    - series
+      - seriesId
+      - seriesTitle
+        - titleId
+        - mainTitle
+        - locale
+      - seriesAlternativeTitles
+      - issn
+      - subjects
+      - relationships
+      - domain
+      - controlled
+    - numberInSeries
+- dateIssued
+- distributor <- från diva1 för avhandlingar, slutat med
+  - organisationAlternativeNames <- Nej
+  - organisationContacts <- Nej
+  - organisationParents <- Nej
+  - organisationPredecessors <- Nej
+  - organisationPredecessorDescriptions <- Nej
+  - controlled <- Nej
+  - notEligible <- Nej
+  - showInPortal <- Nej
+  - showInDefence <- Nej
+  - topLevel <- Nej
+- publisher
+  - city
+- urls
+  - url
+    - url
+    - label
+    - openAccess <- swepub hanterar inte detta på url längre
+- nbn
+- oai
+- identifiers
+  - entry
+    - publicationIdentifierType
+    - publicationIdentifier
+      - value
+      - type
+      - openAccess <- handerar inte detta på doi längre
+- categories
+- nationalCategories
+- researchSubjects
+- keyWords class="hashtable"
+  - entry
+    - language
+      - languageCode3
+      - languageCode2 <- Nej
+      - languageNames <- använder inte översättningarna
+      - showsOnList
+    - list
+      - string
+- note <- note
+- identifiers
+    - entry
+      - publicationIdentifierType
+      - publicationIdentifier
+        - value
+        - type
+        - openAccess
+- internalNote <- internal note
+- formatElectronic <- swepub, har inte behov av det
+- formatPrint <- swepubs, har inte behov av det
+- distributorAsDist <- från diva1 för avhandlingar, slutat med
+  - distributorNames <- Nej
+- agreementAccepted
+- reviewed
+- reviewedBefore <- Okänt
+- migrated <- migrerat från annat ställe till DiVA
+- importDuplicate <- oklar funktion, enbart värde false
+- registratedDuplicate <- oklar funktion, enbart värde false
+- artisticWork <- artisticWork
+- failed <- adminInfo/failed
+- hidden
+- version <- datasätt
+- publicationOrder
+  - orderLink
+  - parameters
+- canOrderOnline <- bäställningslänkar
+- publicationChannel
+- categories <- använder änmeskattegorier nu
+
+
+
+
+
+## UU
+
+- publication
+  - contentType
+    - contentTypeId
+    - contentTypeCode
+    - contentTypeNames
+      - contentTypeName
+        - contentTypeNameId
+        - locale
+        - contentTypeName
+      - contentTypeName
+        - contentTypeNameId
+        - locale
+        - contentTypeName
+      -
+      - contentTypeName
+        - contentTypeNameId
+        - locale
+        - contentTypeName
+    - sortOrder
+  - publicationType
+    - publicationTypeId
+    - publicationTypeCode
+    - openUrlType
+    - publicationTypeNames
+      - publicationTypeName
+        - publicationTypeNameId
+        - locale
+        - publicationTypeName
+      - publicationTypeName
+        - publicationTypeNameId
+        - locale
+        - publicationTypeName
+      - publicationTypeName
+        - publicationTypeNameId
+        - locale
+        - publicationTypeName
+    - roles
+    - comprehensiveSummary
+    - domainAdminOnly
+  - pid
+  - administrativeInfo
+    - domain
+    - creatorInfo
+      - userId
+      - ip
+      - name
+      - date
+      - userType
+      - userAction
+    - updaters
+      - userInformation
+        - userId
+        - ip
+        - name
+        - date
+        - userType
+        - userAction
+      - userInformation
+        - userId
+        - ip
+        - name
+        - date
+        - userType
+        - userAction
+    - createdDate
+    - updatedDate
+    - fileUploadMessage
+  - publicationDate
+  - editors
+    - person
+      - firstName
+      - lastName
+      - email
+      - identifiers
+        - entry
+          - personIdentifierType
+          - personIdentifier
+            - value
+            - type
+    - person
+      - firstName
+      - lastName
+      - localId
+      - organisations
+        - organisation
+          - organisationContacts
+          - organisationPredecessors
+          - organisationPredecessorDescriptions
+          - organisationNameUncontrolled
+          - controlled
+          - notEligible
+          - showInPortal
+          - showInDefence
+          - topLevel
+   - email
+      - birthYear
+      - title
+      - identifiers
+        - entry
+          - personIdentifierType
+          - personIdentifier
+            - value
+            - type
+      - authorityPid
+    - person
+      - firstName
+      - lastName
+      - localId
+      - organisations
+        - organisation
+          - organisationId
+          - organisationType
+            - organisationTypeId
+            - organisationTypeCode
+            - organisationTypeNames
+              - organisationTypeName
+                - organisationTypeNameId
+                - locale
+                - organisationTypeName
+              - organisationTypeName
+                - organisationTypeNameId
+                - locale
+                - organisationTypeName
+          - organisationName
+            - name
+            - locale
+          - organisationHomepage
+          - domain
+          - oldDivaDb
+          - oldDivaId
+          - oldParentId
+          - organisationAlternativeNames
+            - organisationName
+              - organisationNameId
+              - locale
+              - organisationName
+          - organisationContacts
+          - organisationAddress
+            - addressId
+            - postbox
+            - street
+            - postnumber
+            - city
+            - country
+              - countryCode
+              - countryNames
+                - countryName
+                  - countryNameId
+                  - locale
+                  - countryName
+                - countryName
+                  - countryNameId
+                  - locale
+                  - countryName
+                - countryName
+                  - countryNameId
+                  - locale
+                  - countryName
+              - showsOnList
+          - organisationParents
+            - organisation
+              - organisationId
+              - organisationType
+                - organisationTypeId
+                - organisationTypeCode
+                - organisationTypeNames
+                  - organisationTypeName
+                    - organisationTypeNameId
+                    - locale
+                    - organisationTypeName
+                  - organisationTypeName
+                    - organisationTypeNameId
+                    - locale
+                    - organisationTypeName
+              - organisationName
+                - name
+                - locale
+              - organisationHomepage
+              - domain
+              - oldDivaDb
+              - oldDivaId
+              - oldParentId
+              - organisationAlternativeNames
+                - organisationName
+                  - organisationNameId
+                  - locale
+                  - organisationName
+              - organisationContacts
+              - organisationAddress
+                - addressId
+                - postbox
+                - street
+                - postnumber
+                - city
+                - country
+                  - countryCode
+                  - countryNames
+                    - countryName
+                      - countryNameId
+                      - locale
+                      - countryName
+                    - countryName
+                      - countryNameId
+                      - locale
+                      - countryName
+                    - countryName
+                      - countryNameId
+                      - locale
+                      - countryName
+                  - showsOnList
+              - organisationParents
+                - organisation
+                  - organisationId
+                  - organisationType
+                    - organisationTypeId
+                    - organisationTypeCode
+                    - organisationTypeNames
+                      - organisationTypeName
+                        - organisationTypeNameId
+                        - locale
+                        - organisationTypeName
+                      - organisationTypeName
+                        - organisationTypeNameId
+                        - locale
+                        - organisationTypeName
+                  - organisationName
+                    - name
+                    - locale
+                  - domain
+                  - oldDivaDb
+                  - oldDivaId
+                  - oldParentId
+                  - organisationAlternativeNames
+                    - organisationName
+                      - organisationNameId
+                      - locale
+                      - organisationName
+                  - organisationContacts
+                  - organisationAddress
+                    - addressId
+                    - postbox
+                    - postnumber
+                    - city
+                    - country
+                      - countryCode
+                      - countryNames
+                        - countryName
+                          - countryNameId          
+                - locale
+                          - countryName
+                        
+                        - countryName
+                          - countryNameId
+                          - locale
+                          - countryName
+                        
+                        - countryName
+                          - countryNameId
+                          - locale
+                          - countryName
+                      - showsOnList
+                  - organisationParents
+                    - organisation
+                      - organisationId
+                      - organisationType
+                        - organisationTypeId
+                        - organisationTypeCode
+                        - organisationTypeNames
+                          - organisationTypeName
+                            - organisationTypeNameId
+                            - locale
+                            - organisationTypeName
+                          - organisationTypeName
+                            - organisationTypeNameId
+                            - locale
+                            - organisationTypeName
+                      - organisationName
+                        - name
+                        - locale
+                      - domain
+                      - oldDivaDb
+                      - oldDivaId
+                      - oldParentId
+                      - organisationAlternativeNames
+                        - organisationName
+                          - organisationNameId
+                          - locale
+                          - organisationName
+                      - organisationContacts
+                      - organisationAddress
+                        - addressId
+                        - postbox
+                        - postnumber
+                        - city
+                        - country
+                          - countryCode
+                          - countryNames
+                            - countryName
+                              - countryNameId
+                              - locale
+                              - countryName
+                            - countryName
+                              - countryNameId
+                              - locale
+                              - countryName
+                            - countryName
+                              - countryNameId
+                              - locale
+                              - countryName
+                          - showsOnList
+                      - organisationParents
+                        - organisation
+                          - organisationId
+                          - organisationType
+                            - organisationTypeId
+                            - organisationTypeCode
+                            - organisationTypeNames
+                              - organisationTypeName
+                                - organisationTypeNameId
+                                - locale
+                                - organisationTypeName
+                              - organisationTypeName
+                                - organisationTypeNameId
+                                - locale
+                                - organisationTypeName
+                          - organisationName
+                            - name
+                            - locale
+                          - organisationHomepage
+                          - domain
+                          - organisationNumber
+                          - oldDivaDb
+                          - oldDivaId
+                          - organisationAlternativeNames
+                            - organisationName
+                              - organisationNameId
+                              - locale
+                              - organisationName
+                          - organisationContacts
+                          - organisationAddress
+                            - addressId
+                            - postbox
+                            - postnumber
+                            - city
+                            - country
+                              - countryCode
+                              - countryNames
+                                - countryName
+                                  - countryNameId
+                                  - locale
+                                  - countryName
+                                - countryName
+                                  - countryNameId
+                                  - locale
+                                  - countryName
+                                - countryName
+                                  - countryNameId
+                                  - locale
+                                  - countryName
+                              - showsOnList
+                          - organisationParents
+                            - organisation
+                              - organisationId
+                              - organisationType
+                                - organisationTypeId
+                                - organisationTypeCode
+                                - organisationTypeNames-                      
+            - organisationTypeName
+                                    - organisationTypeNameId
+                                    - locale
+                                    - organisationTypeName
+                                  
+                                  - organisationTypeName
+                                    - organisationTypeNameId
+                                    - locale
+                                    - organisationTypeName
+                              - organisationName
+                                - name
+                                - locale
+                              - domain
+                              - organisationAlternativeNames
+                                - organisationName
+                                  - organisationNameId
+                                  - locale
+                                  - organisationName
+                              - organisationContacts
+                              - organisationParents
+                              - organisationPredecessors
+                              - organisationPredecessorDescriptions
+                              - controlled
+                              - notEligible
+                              - showInPortal
+                              - showInDefence
+                              - topLevel
+                          - organisationPredecessors
+                          - organisationPredecessorDescriptions
+                          - controlled
+                          - notEligible
+                          - showInPortal
+                          - showInDefence
+                          - topLevel
+                      - organisationPredecessors
+                      - organisationPredecessorDescriptions
+                      - controlled
+                      - notEligible
+                      - showInPortal
+                      - showInDefence
+                      - topLevel
+                  - organisationPredecessors
+                  - organisationPredecessorDescriptions
+                  - controlled
+                  - notEligible
+                  - showInPortal
+                  - showInDefence
+                  - topLevel
+              - organisationPredecessors-
+              - organisationPredecessorDescriptions-
+              - controlled
+              - notEligible
+              - showInPortal
+              - showInDefence
+              - topLevel
+          - organisationPredecessors
+          - organisationPredecessorDescriptions
+          - notEligible
+          - showInPortal
+          - showInDefence
+          - topLevel
+      - email
+      - birthYear
+      - title
+      - identifiers
+        - entry
+          - personIdentifierType
+          - personIdentifier
+            - value
+            - type
+      - authorityPid
+  - originalPublicationTitle
+    - title
+    - subTitle
+    - language
+      - languageCode3
+      - languageCode2
+      - languageNames
+        - languageName
+          - languageNameId
+          - locale
+          - languageName
+        - languageName
+          - languageNameId
+          - locale
+          - languageName
+        -
+        - languageName
+          - languageNameId
+          - locale
+          - languageName
+      - showsOnList
+  - uncontrolledSeriesInfo
+    - series
+      - seriesAlternativeTitles
+      - issn
+      - subjects
+      - relationships
+      - seriesNameUncontrolled
+      - controlled
+    - numberInSeries
+  - dateIssued
+  - pages
+  - distributor
+    - organisationAlternativeNames
+    - organisationContacts
+    - organisationParents
+    - organisationPredecessors
+    - organisationPredecessorDescriptions
+    - controlled
+    - notEligible
+    - showInPortal
+    - showInDefence
+    - topLevel
+  - publisher
+    - city
+    - publisherName
+    - publishingHouse
+      - publishingHouseId
+      - nordicListId
+      - fridaLevel
+        - fridaLevelId
+        - fridaLevelCode
+        - fridaLevelNames
+          - fridaLevelName
+            - fridaLevelNameId
+            - locale
+            - fridaLevelName
+          - fridaLevelName
+            - fridaLevelNameId
+            - locale
+            - fridaLevelName
+      - name
+      - externalId
+  - urls
+    - url
+      - url
+      - openAccess
+  - isbnNumbers
+    - isbn
+      - number
+      - type
+    - isbn
+      - number
+      - type
+  - nbn
+  - oai
+  - identifiers
+  - categories
+  - nationalCategories
+    - subject
+      - subjectId
+      - subjectType
+        - subjectTypeId
+        - subjectTypeCode
+        - subjectTypeNames
+          - subjectTypeName
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+          - subjectTypeName
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+          - subjectTypeName
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+          - subjectNames
+            - subjectName
+              - subjectNameId
+              - locale
+              - subjectName
+            - subjectName
+              - subjectNameId
+              - locale
+              - subjectName
+          - subjectCode
+          - parents
+          - predecessors
+          - domain
+          - notEligible
+          - organisations
+  - researchSubjects
+    - subject
+      - subjectId
+      - subjectType
+        - subjectTypeId
+        - subjectTypeCode
+        - subjectTypeNames
+          - subjectTypeName
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+          - subjectTypeName
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+          - subjectTypeName
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+      - subjectNames
+        - subjectName
+          - subjectNameId
+          - locale
+          - subjectName
+        - subjectName
+          - subjectNameId
+          - locale
+          - subjectName
+      - parents
+      - predecessors
+      - oldDivaDb
+      - oldDivaId
+      - domain
+      - notEligible
+      - organisations
+    - subject
+      - subjectId
+      - subjectType
+        - subjectTypeId
+        - subjectTypeCode
+        - subjectTypeNames
+          - subjectTypeName
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+          - subjectTypeName
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+          - subjectTypeName
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+      - subjectNames
+        - subjectName
+          - subjectNameId
+          - locale
+          - subjectName
+        -
+        - subjectName-
+          - subjectNameId
+          - locale
+          - subjectName
+        -
+      -
+      - parents-
+      - predecessors-
+      - oldDivaDb
+      - oldDivaId
+      - domain
+      - notEligible
+      - organisations-
+    -
+    - subject-
+      - subjectId
+      - subjectType-
+        - subjectTypeId
+        - subjectTypeCode
+        - subjectTypeNames-
+          - subjectTypeName-
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+          -
+          - subjectTypeName-
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+          -
+          - subjectTypeName-
+            - subjectTypeNameId
+            - locale
+            - subjectTypeName
+          -
+        -
+      -
+      - subjectNames-
+        - subjectName-
+          - subjectNameId
+          - locale
+          - subjectName
+        -
+        - subjectName-
+          - subjectNameId
+          - locale
+          - subjectName
+        -
+      -
+      - parents-
+      - predecessors-
+      - oldDivaDb
+      - oldDivaId
+      - domain
+      - notEligible
+      - organisations-
+    -
+  -
+  - keyWords class="hashtable"-
+    - entry-
+      - language-
+        - languageCode3
+        - languageCode2
+        - languageNames-
+          - languageName-
+            - languageNameId
+            - locale
+            - languageName
+          -
+          - languageName-
+            - languageNameId
+            - locale
+            - languageName
+          -
+          - languageName-
+            - languageNameId
+            - locale
+            - languageName
+          -
+        -
+        - showsOnList
+      -
+      - list-
+        - string
+        - string
+        - string
+        - string
+      -
+    -
+  -
+  - abstracts-
+    - abstract-
+      - language-
+        - languageCode3
+        - languageCode2
+        - languageNames-
+          - languageName-
+            - languageNameId
+            - locale
+            - languageName
+          -
+          - languageName-
+            - languageNameId
+            - locale
+            - languageName
+          -
+          - languageName-
+            - languageNameId
+            - locale
+            - languageName
+          -
+        -
+        - showsOnList
+      -
+      - text
+    -
+  -
+  - note-
+  - internalNote-
+  - attachments class="tree-set"-
+    - no-comparator-comparator-
+    - attachment-
+      - mimeType-
+        - mimeTypeId
+        - mimeTypeName
+        - fileSuffix
+        - datasetOnly
+      -
+      - fileLabel-
+        - fileLabelId
+        - fileLabelCode
+        - fileLabelNames-
+          - fileLabelName-
+            - fileLabelNameId
+            - locale
+            - fileLabelName
+          -
+          - fileLabelName-
+            - fileLabelNameId
+            - locale
+            - fileLabelName
+          -
+          - fileLabelName-
+            - fileLabelNameId
+            - locale
+            - fileLabelName
+          -
+        -
+      -
+      - fileName
+      - fileSize
+      - selectedFileName
+      - path
+      - checksums-
+        - checksum-
+          - type
+          - digest
+        -
+      -
+      - order
+      - uploadDate
+      - asyncUpload
+      - availableFrom
+      - onHold
+      - deleted
+      - prePrint
+      - postPrint
+      - print
+      - archiveOnly
+      - printOnDemand
+      - toBePublished
+      - toBeArchived
+      - digitized
+      - hasCoverPage
+    -
+  -
+  - formatElectronic
+  - formatPrint
+  - distributorAsDist-
+    - distributorNames-
+  -
+  - agreementAccepted
+  - reviewed
+  - reviewedBefore
+  - migrated
+  - importDuplicate
+  - registratedDuplicate
+  - artisticWork
+  - failed
+  - hidden
+  - publicationOrder-
+    - orderLink
+    - parameters-
+  -
+  - canOrderOnline
+  - publicationChannel-
+-
