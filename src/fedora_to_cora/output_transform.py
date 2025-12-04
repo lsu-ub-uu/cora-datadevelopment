@@ -102,6 +102,7 @@ from fedora_to_cora.transform.thesis.create_defence_or_presentation import (
 )
 from fedora_to_cora.transform.artistic_output.create_artistic_output import (
     create_duration,
+    create_note_type_context,
     create_size,
     create_techniques,
     create_materials,
@@ -167,6 +168,8 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
             source_record, type="creatorCount", source_selector="./noOfContributors"
         ),
     )
+
+    append_if_value(target_record, create_note_type_context(source_record))
 
     append_if_value(target_record, create_type_of_resource(source_record))
 

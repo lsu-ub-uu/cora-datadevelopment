@@ -3,6 +3,7 @@ import pytest
 
 from fedora_to_cora.transform.artistic_output.create_artistic_output import (
     create_duration,
+    create_note_type_context,
     create_size,
     create_techniques,
     create_materials,
@@ -437,3 +438,60 @@ def test_create_duration_missing_media_information():
         <duration></duration>
         """,
     )
+
+
+def test_create_note_type_context():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <descriptions>
+                <abstract>
+                    <language>
+                        <languageCode3>swe</languageCode3>
+                    </language>
+                    <text>&lt;p&gt;Abstrakt på svenska&lt;/p&gt;</text>
+                </abstract>
+                <abstract>
+                    <language>
+                        <languageCode3>eng</languageCode3>
+                    </language>
+                    <text>&lt;p&gt;Another abstract&lt;/p&gt;</text>
+                </abstract>
+            </descriptions>
+        </publication>
+        """
+    )
+
+    note = create_note_type_context(source_record)
+
+    assert len(note) == 2
+    assert_equal_for_xml_and_xml_string(
+        note[0],
+        """
+        <note type="context" lang="swe" repeatId="0">
+            Abstrakt på svenska
+        </note>
+        """,
+    )
+    assert_equal_for_xml_and_xml_string(
+        note[1],
+        """
+        <note type="context" lang="eng" repeatId="1">
+            Another abstract
+        </note>
+        """,
+    )
+
+
+def test_create_note_type_context_empty_descriptions():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <descriptions />
+        </publication>
+        """
+    )
+
+    note = create_note_type_context(source_record)
+
+    assert len(note) == 0

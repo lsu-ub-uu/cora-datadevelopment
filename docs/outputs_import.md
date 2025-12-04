@@ -151,8 +151,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - duration <- `mediaInformation/duration`
 - physicalDescription
   - extent unit="pages" <- `pages`
-  - ⚠️ extent unit="other" <- `mediaInformation/physicalDescriptions` Joined by comma.
-- ⚠️ note type="context" <- `descriptions`
+  - extent unit="other" <- `mediaInformation/physicalDescriptions` Joined by comma.
+- note type="context" <- `descriptions`
 - dateOther type="patent" <- `patentDate` Not done. Needs output-test.
 - identifier type="patentNumber" <- `patentNumber`
 - name type="corporate" otherType="patentHolder"
@@ -169,7 +169,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - course (link to migrated record) <- `studentDegree/undergraduateSubject/subjectId`
   - programme (link to migrated record) <- `studentDegree/educationalProgramme/subjectId`
 - externalCollaboration <- `externalCooperation`
-  - ❓⚠️ namePart <- `partners/partner/name` If `external` is true and no partner name exists, a default text "Externt samarbete" is set.
+  - namePart <- `partners/partner/name` If `external` is true and no partner name exists, a default text "Externt samarbete" is set.
 - name type="corporate" otherType="degreeGrantingInstitution" <- `defence/externalGrantingInstitution`
   - organisation (link to migrated record) <- `organisationId`
   - namePart <- `externalGrantingInstitution`

@@ -176,6 +176,7 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             <role><roleTerm repeatId="0">cre</roleTerm></role>
         </name>
         <note type="creatorCount">1</note>
+        <note type="context" lang="swe" repeatId="0">Fritextbeskrivning Fritextbeskrivning</note>
         <typeOfResource>stillImage</typeOfResource>
         <type lang="swe" repeatId="0">
             Typ01
@@ -283,6 +284,7 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             <year>2022</year>
             <academicSemester>ht</academicSemester>
         </academicSemester>
+
         <studentDegree repeatId="0">
             <degreeLevel>H2</degreeLevel>
             <universityPoints>20</universityPoints>

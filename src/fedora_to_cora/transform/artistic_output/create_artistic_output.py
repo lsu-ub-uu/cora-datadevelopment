@@ -77,3 +77,35 @@ def create_duration(source_record: ET.Element) -> ET.Element:
         ss_element.text = ss
 
     return duration
+
+
+def create_note_type_context(source_record: ET.Element) -> list[ET.Element]:
+    descriptions = source_record.findall("./descriptions/abstract")
+    repeat_id = 0
+
+    notes = []
+    for description in descriptions:
+        note = _create_note_from_abstract(description)
+        if note is not None:
+            note.set("repeatId", str(repeat_id))
+            notes.append(note)
+            repeat_id += 1
+
+    return notes
+
+
+def _create_note_from_abstract(
+    abstract: ET.Element,
+) -> ET.Element | None:
+    language_code = abstract.findtext("./language/languageCode3")
+    abstract_text = abstract.findtext("./text")
+
+    if abstract_text is None or len(abstract_text) == 0:
+        return None
+
+    note = ET.Element(
+        "note", type="context", lang=language_code if language_code else ""
+    )
+    note.text = clean_rich_text(abstract_text)
+
+    return note

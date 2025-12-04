@@ -920,7 +920,8 @@
   <hidden>false</hidden>
   <publicationOrder>
     <orderProfileId>OrderProfile-2</orderProfileId>
-    <orderURL>http://acta.mamutweb.com/Shop/Product/0476-Laparoscopic-or-Open-Inguinal-Hernia-Repair---Whic/diva2:232194</orderURL>
+    <orderURL>
+      http://acta.mamutweb.com/Shop/Product/0476-Laparoscopic-or-Open-Inguinal-Hernia-Repair---Whic/diva2:232194</orderURL>
     <orderLink>true</orderLink>
     <validFrom>2013-05-14T15:20:53.957+02:00</validFrom>
     <parameters />
@@ -1025,6 +1026,35 @@
   <mediaType>
     <autoId>1</autoId>
   </mediaType>
+  <descriptions>
+    <abstract>
+      <language>
+        <languageCode3>swe</languageCode3>
+        <languageCode2>sv</languageCode2>
+        <languageNames>
+          <languageName>
+            <languageNameId>10261</languageNameId>
+            <locale>no</locale>
+            <languageName>svensk</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1723</languageNameId>
+            <locale>sv</locale>
+            <languageName>Svenska</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1722</languageNameId>
+            <locale>en</locale>
+            <languageName>Swedish</languageName>
+          </languageName>
+        </languageNames>
+        <showsOnList>true</showsOnList>
+      </language>
+      <text>
+        &lt;p&gt;Fritextbeskrivning&lt;strong&gt; Fritextbeskrivning&lt;/strong&gt;&lt;/p&gt;
+      </text>
+    </abstract>
+  </descriptions>
   <mediaInformation>
     <types class="hashtable">
       <entry>
