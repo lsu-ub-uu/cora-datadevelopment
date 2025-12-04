@@ -222,13 +222,13 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - part/extent
     - start <- `startPage`
     - end <- `endPage`
-  - ⚠️relatedItem type="series" otherType="liink" (⚠️ same as outputen)
+  - ⚠️relatedItem type="series" otherType="link" (⚠️ same as outputen)
   - ⚠️relatedItem type="series" otherType="text" (⚠️ same as outputen)
 
 - 🆕 relatedItem type="proceeding" otherType="link"
   - proceeding (link to migrated record)
 - relatedItem type="proceeding" otherType="text"
-  - titleInfo <- `proceedingsTitle` ⚠️ kolla att html tas bort
+  - titleInfo <- `proceedingsTitle`
     - title <- `title`
     - subtitle <- `subtitle`
   - note type="statementOfResponsibility" <- `proceedingsEditor`
@@ -250,14 +250,9 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - relatedItem type="publicationChannel"
   - publicationChannel <- `publicationChannel`
 
-### Needs more information
-
-- `hidden` - Om true visas posten ej i sökgränssnittet. Och måste sökas fram med särskild flagga. kommer behöva hanteras vid migrering. Kanske blir visibility: unpublished?
-
 ### Taggar ej i Cora
 
 - `reviewedBefore`
-
 - `distributor` från diva1 för avhandlingar, slutat med
 - `distributorAsDist` samma
 - `formatElectronic` swepub som inte har behov av det
