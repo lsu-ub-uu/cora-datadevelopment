@@ -59,7 +59,7 @@ def test_return_unpublished_when_last_update_unpublished():
     assert get_visibility(ET.fromstring(fedora_xml)) == "unpublished"
 
 
-def test_return_hidden_when_last_update_deleted():
+def test_return_unpublished_when_last_update_deleted():
     fedora_xml = """
     <publication>
         <administrativeInfo>
@@ -74,7 +74,7 @@ def test_return_hidden_when_last_update_deleted():
         </administrativeInfo>
     </publication>
     """
-    assert get_visibility(ET.fromstring(fedora_xml)) == "hidden"
+    assert get_visibility(ET.fromstring(fedora_xml)) == "unpublished"
 
 
 def test_ignores_updated_actions():
@@ -109,9 +109,9 @@ def test_return_published_when_no_updaters_but_creator_info_has_userAction_creat
     <publication>
         <administrativeInfo>
             <creatorInfo>
-                <userId>helena.rundkrantz@varldskulturmuseerna.se</userId>
-                <ip>130.242.56.66</ip>
-                <name>Helena Rundkrantz</name>
+                <userId>test.testsson@domain.se</userId>
+                <ip>111.111.11.11</ip>
+                <name>Test Testsson</name>
                 <date>2022-10-13T15:25:08.480+02:00</date>
                 <userType>DOMAINADMIN</userType>
                 <userAction>CREATED</userAction>
