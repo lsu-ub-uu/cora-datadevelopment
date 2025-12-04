@@ -51,8 +51,8 @@ from fedora_to_cora.transform.identifiers.create_doi_se_libr import (
 )
 from fedora_to_cora.transform.patent.create_patent_holder import create_patent_holder
 from fedora_to_cora.transform.related_items.create_book import create_book
-from fedora_to_cora.transform.related_items.create_proceeding import (
-    create_related_item_type_proceeding,
+from fedora_to_cora.transform.related_items.create_conference import (
+    create_related_item_type_conference,
 )
 from fedora_to_cora.transform.identifiers.create_isbn import create_identifier_type_isbn
 from fedora_to_cora.transform.create_origin_info import create_origin_info
@@ -269,7 +269,7 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
             create_related_item_type_conference_publication(source_record, context),
         )
 
-    append_if_value(target_record, create_related_item_type_proceeding(source_record))
+    append_if_value(target_record, create_related_item_type_conference(source_record))
 
     append_if_value(
         target_record,

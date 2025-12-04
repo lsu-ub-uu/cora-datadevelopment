@@ -246,8 +246,8 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             </series>
             <partNumber>1-75</partNumber>
         </relatedItem>
-        <relatedItem type="proceeding">
-            <proceeding>Some conference</proceeding>
+        <relatedItem type="conference">
+            <conference>Some conference</conference>
         </relatedItem>
         <externalCollaboration>
             <namePart repeatId="0">En extern partner</namePart>
@@ -787,8 +787,8 @@ def test_output_transform_conference_paper(mock_diva_search_requests):
                     <partNumber>159</partNumber>
                 </relatedItem>
             </relatedItem>
-            <relatedItem type="proceeding">
-                <proceeding>Ultrafast Magnetization Conference, OCT 28-NOV 01, 2013, Strasbourg, FRANCE</proceeding>
+            <relatedItem type="conference">
+                <conference>Ultrafast Magnetization Conference, OCT 28-NOV 01, 2013, Strasbourg, FRANCE</conference>
             </relatedItem>
         </output>                     
     """,
