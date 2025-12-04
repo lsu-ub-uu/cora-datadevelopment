@@ -136,8 +136,7 @@ def create_name_type_personal(
     if orcid is not None and orcid.text:
         name_type_personal.append(_create_name_identifier_orcid(orcid))
 
-    for i, organisation in enumerate(person.findall("./organisations/organisation")):
-        name_type_personal.append(create_affiliation(organisation, i, context))
+    append_if_value(name_type_personal, _create_affiliations(person, context))
 
     return name_type_personal
 
@@ -172,6 +171,23 @@ def _create_role(role_terms: list[str], author_only: bool) -> ET.Element:
         if not author_only:
             role_term_el.set("repeatId", str(i))
     return role
+
+
+def _create_affiliations(person: ET.Element, context: Context) -> list[ET.Element]:
+    repeat_id = 0
+    affiliations = []
+
+    for organisation in person.findall("./organisations/organisation"):
+        affiliations.append(create_affiliation(organisation, repeat_id, context))
+        repeat_id += 1
+
+    research_group = person.findtext("./researchGroup")
+    if research_group:
+        affiliations.append(
+            _create_affiliation_from_research_group(research_group, repeat_id)
+        )
+
+    return affiliations
 
 
 def create_affiliation(
@@ -223,6 +239,17 @@ def create_affiliation_for_uncontrolled_organisation(
     uncontrolled_name = organisation.find("./organisationNameUncontrolled")
     if uncontrolled_name is not None and uncontrolled_name.text:
         ET.SubElement(affiliation, "namePart").text = uncontrolled_name.text
+
+    return affiliation
+
+
+def _create_affiliation_from_research_group(
+    research_group: str, repeat_id: int
+) -> ET.Element:
+    affiliation = ET.Element("affiliation", repeatId=str(repeat_id))
+
+    ET.SubElement(affiliation, "namePart").text = research_group
+    ET.SubElement(affiliation, "description").text = "researchGroup"
 
     return affiliation
 

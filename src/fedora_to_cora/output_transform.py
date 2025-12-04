@@ -56,7 +56,9 @@ from fedora_to_cora.transform.related_items.create_proceeding import (
 )
 from fedora_to_cora.transform.identifiers.create_isbn import create_identifier_type_isbn
 from fedora_to_cora.transform.create_origin_info import create_origin_info
-from fedora_to_cora.transform.create_extent import create_extent
+from fedora_to_cora.transform.create_physical_description import (
+    create_physical_description,
+)
 from fedora_to_cora.transform.create_classification_authority_ssif import (
     create_classification_authority_ssif,
 )
@@ -99,7 +101,6 @@ from fedora_to_cora.transform.thesis.create_defence_or_presentation import (
     create_defence_or_presentation,
 )
 from fedora_to_cora.transform.artistic_output.create_artistic_output import (
-    create_physical_description,
     create_duration,
     create_size,
     create_techniques,
@@ -136,7 +137,7 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
 
     append_if_value(target_record, create_origin_info(source_record, context))
 
-    append_if_value(target_record, create_extent(source_record))
+    append_if_value(target_record, create_physical_description(source_record))
 
     append_if_value(target_record, create_classification_authority_ssif(source_record))
 

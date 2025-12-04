@@ -2,7 +2,6 @@ import xml.etree.ElementTree as ET
 import pytest
 
 from fedora_to_cora.transform.artistic_output.create_artistic_output import (
-    create_physical_description,
     create_duration,
     create_size,
     create_techniques,
@@ -438,60 +437,3 @@ def test_create_duration_missing_media_information():
         <duration></duration>
         """,
     )
-
-
-def test_create_physical_description():
-    source_record = ET.fromstring(
-        """
-        <publication>
-            <mediaInformation>
-                <physicalDescriptions>
-                    <abstract>
-                        <text>&lt;p&gt;Fysisk beskrivning Fysisk beskrivning &lt;em&gt;Fysisk beskrivning&lt;/em&gt;&lt;/p&gt;</text>
-                    </abstract>
-                </physicalDescriptions>
-            </mediaInformation>
-        </publication>
-        """
-    )
-
-    description = create_physical_description(source_record)
-
-    assert_equal_for_xml_and_xml_string(
-        description,
-        """
-        <physicalDescription>
-            <extent>
-                Fysisk beskrivning Fysisk beskrivning Fysisk beskrivning
-            </extent>
-        </physicalDescription>
-        """,
-    )
-
-
-def test_create_physical_description_empty_media_information():
-    source_record = ET.fromstring(
-        """
-        <publication>
-            <mediaInformation>
-            </mediaInformation>
-        </publication>
-        """
-    )
-
-    description = create_physical_description(source_record)
-
-    assert description is None
-
-
-def test_create_physical_description_missing_media_information():
-    source_record = ET.fromstring(
-        """
-        <publication>
-        </publication>
-        """
-    )
-
-    description = create_physical_description(source_record)
-
-    assert description is None

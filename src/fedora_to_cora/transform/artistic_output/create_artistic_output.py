@@ -77,20 +77,3 @@ def create_duration(source_record: ET.Element) -> ET.Element:
         ss_element.text = ss
 
     return duration
-
-
-def create_physical_description(source_record: ET.Element) -> ET.Element | None:
-    physical_description_source = source_record.findtext(
-        "./mediaInformation/physicalDescriptions/abstract/text"
-    )
-
-    if physical_description_source is None or len(physical_description_source) == 0:
-        return None
-
-    physical_description = ET.Element("physicalDescription")
-
-    ET.SubElement(physical_description, "extent").text = clean_rich_text(
-        physical_description_source
-    )
-
-    return physical_description

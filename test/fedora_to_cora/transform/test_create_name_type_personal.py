@@ -22,7 +22,7 @@ def test_creates_name_type_personal():
             <authors>
                 <person>
                     <firstName>Michaela</firstName>
-                    <lastName>Andersson</lastName>      
+                    <lastName>Schmanderson</lastName>      
                 </person>
             </authors>
         </publication>
@@ -36,7 +36,7 @@ def test_creates_name_type_personal():
         names[0],
         """
         <name type="personal" repeatId="0">
-            <namePart type="family">Andersson</namePart>
+            <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
         </name>
@@ -55,7 +55,7 @@ def test_creates_name_type_personal_birth_year():
             <authors>
                 <person>
                     <firstName>Michaela</firstName>
-                    <lastName>Andersson</lastName>      
+                    <lastName>Schmanderson</lastName>      
                     <birthYear>1802</birthYear>
                 </person>
             </authors>
@@ -70,7 +70,7 @@ def test_creates_name_type_personal_birth_year():
         names[0],
         """
         <name type="personal" repeatId="0">
-            <namePart type="family">Andersson</namePart>
+            <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
             <namePart type="date">1802</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
@@ -90,7 +90,7 @@ def test_creates_name_type_personal_death_year():
             <authors>
                 <person>
                     <firstName>Michaela</firstName>
-                    <lastName>Andersson</lastName>      
+                    <lastName>Schmanderson</lastName>      
                     <deathYear>1802</deathYear>
                 </person>
             </authors>
@@ -105,7 +105,7 @@ def test_creates_name_type_personal_death_year():
         names[0],
         """
         <name type="personal" repeatId="0">
-            <namePart type="family">Andersson</namePart>
+            <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
             <namePart type="date">-1802</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
@@ -125,7 +125,7 @@ def test_creates_name_type_personal_birth_and_death_year():
             <authors>
                 <person>
                     <firstName>Michaela</firstName>
-                    <lastName>Andersson</lastName>      
+                    <lastName>Schmanderson</lastName>      
                     <birthYear>1802</birthYear>
                     <deathYear>1977</deathYear>
                 </person>
@@ -141,7 +141,7 @@ def test_creates_name_type_personal_birth_and_death_year():
         names[0],
         """
         <name type="personal" repeatId="0">
-            <namePart type="family">Andersson</namePart>
+            <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
             <namePart type="date">1802-1977</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
@@ -241,7 +241,7 @@ def test_creates_uncontrolled_affiliation():
             <authors>
                 <person>
                     <firstName>Michaela</firstName>
-                    <lastName>Andersson</lastName>
+                    <lastName>Schmanderson</lastName>
                     <organisations>
                         <organisation>
                             <organisationNameUncontrolled>Extern organisation</organisationNameUncontrolled>
@@ -261,7 +261,7 @@ def test_creates_uncontrolled_affiliation():
         names[0],
         """
         <name type="personal" repeatId="0">
-            <namePart type="family">Andersson</namePart>
+            <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
             <affiliation repeatId="0">
@@ -297,7 +297,7 @@ def test_creates_controlled_affiliation(monkeypatch):
             <authors>
                 <person>
                     <firstName>Michaela</firstName>
-                    <lastName>Andersson</lastName>
+                    <lastName>Schmanderson</lastName>
                     <organisations>
                         <organisation>
                             <organisationId>{mock_old_id}</organisationId>
@@ -319,7 +319,7 @@ def test_creates_controlled_affiliation(monkeypatch):
         names[0],
         f"""
         <name type="personal" repeatId="0">
-            <namePart type="family">Andersson</namePart>
+            <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
             <affiliation repeatId="0">
@@ -504,8 +504,8 @@ def test_creates_name_identifiers():
             <authors>
                 <person>
                     <firstName>Michaela</firstName>
-                    <lastName>Andersson</lastName>
-                    <localId>mican434</localId>
+                    <lastName>Schmanderson</lastName>
+                    <localId>aaaa111</localId>
                     <identifiers>
                         <entry>
                         <personIdentifierType>orcid</personIdentifierType>
@@ -528,10 +528,10 @@ def test_creates_name_identifiers():
         names[0],
         """
         <name type="personal" repeatId="0">
-            <namePart type="family">Andersson</namePart>
+            <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
-            <nameIdentifier type="localId">mican434</nameIdentifier>
+            <nameIdentifier type="localId">aaaa111</nameIdentifier>
             <nameIdentifier type="orcid">0000-0002-3134-8865</nameIdentifier>
         </name>
         """,
@@ -575,6 +575,48 @@ def test_other_contributor_without_role():
         <name type="personal" repeatId="0">
             <namePart type="family">The Roleless</namePart>
             <namePart type="given">Fiona</namePart>
+        </name>
+        """,
+    )
+
+
+def test_creates_affiliation_from_research_group():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
+            </publicationType>
+            <authors>
+                <person>
+                    <firstName>Michaela</firstName>
+                    <lastName>Schmanderson</lastName>
+                    <researchGroup>Forskargänget</researchGroup>
+                </person>
+            </authors>
+        </publication>
+        """
+    )
+
+    names = create_name_type_personals(
+        source_record,
+        mock_context,
+    )
+
+    assert len(names) == 1
+
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">Schmanderson</namePart>
+            <namePart type="given">Michaela</namePart>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <affiliation repeatId="0">
+                <namePart>Forskargänget</namePart>
+                <description>researchGroup</description>
+            </affiliation>
         </name>
         """,
     )

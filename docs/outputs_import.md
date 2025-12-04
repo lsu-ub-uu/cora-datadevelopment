@@ -67,12 +67,12 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - role/roleTerm <- aut | edt | `roles/role/marcCode`
   - orcid <- `identifiers/entry/personIdentifier/value` where type is "orcid"
   - lokalt id <- `localId` ⚠️ Some members need local ids to not be publically visible. Solution needed.
-  - affiliations <- `organisations/organisation`, ⚠️❓ `researchGroup` should probably be an affiliation with description "Research group". waiting for decision.
+  - affiliations <- `organisations/organisation` and `researchGroup`
     - organisation (link to migrated record) <- `organisation/organisationId`
-    - name type="corporate" <- `organisation/organisationNameUncontrolled`
+    - name type="corporate" <- `organisation/organisationNameUncontrolled` or `researchGroup`
     - 🆕 identifier type="ror" <- N/A
     - 🆕 country <- N/A
-    - description <- N/A
+    - description <- "researchGroup" if created from a `researchGroup` tag otherwise not present
 
 - name type="personal" otherType="degreeSupervisor" <- `supervisors`
 - Name type="personal" otherType="thesisAdvisor" <- `examiners`
