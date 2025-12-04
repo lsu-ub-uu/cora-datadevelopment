@@ -222,8 +222,7 @@ def create_affiliation_for_uncontrolled_organisation(
 
     uncontrolled_name = organisation.find("./organisationNameUncontrolled")
     if uncontrolled_name is not None and uncontrolled_name.text:
-        name = ET.SubElement(affiliation, "name", type="corporate")
-        ET.SubElement(name, "namePart").text = uncontrolled_name.text
+        ET.SubElement(affiliation, "namePart").text = uncontrolled_name.text
 
     return affiliation
 

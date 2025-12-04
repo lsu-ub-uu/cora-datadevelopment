@@ -41,7 +41,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - validationType <- Mapping from `publicationType/publicationTypeCode` and `subtype/publicationSubtypeCode`
   - permissionUnit <- `administrativeInfo/domain`
   - oldId <- `pid`
-  - ⚠️ visibility <- Logic based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ⚠️ Needs updating when changes to visibility is done in Cora
+  - visibility <- Logic based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ❓ Check that mapping is correct.
 - dataQuality <- `2026` if validation passes, otherwise `classic`
 - genre type="contentType" <- Mapping from `contentType/contentTypeCode`,
 - titleInfo <- `originalPublicationTitle`

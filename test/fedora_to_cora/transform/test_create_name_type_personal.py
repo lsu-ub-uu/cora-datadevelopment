@@ -265,9 +265,7 @@ def test_creates_uncontrolled_affiliation():
             <namePart type="given">Michaela</namePart>
             <role><roleTerm repeatId="0">aut</roleTerm></role>
             <affiliation repeatId="0">
-                <name type="corporate">
-                    <namePart>Extern organisation</namePart>
-                </name>
+                <namePart>Extern organisation</namePart>
             </affiliation>
         </name>
         """,
@@ -409,9 +407,7 @@ def test_create_supervisors():
             <namePart type="given">Sarah</namePart>
             <role><roleTerm repeatId="0">ths</roleTerm></role>
             <affiliation repeatId="0">
-                <name type="corporate">
-                    <namePart>Extern organisation</namePart>
-                </name>
+                <namePart>Extern organisation</namePart>
             </affiliation>
         </name>
         """,
