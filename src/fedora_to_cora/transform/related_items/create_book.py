@@ -9,6 +9,7 @@ from fedora_to_cora.transform.identifiers.create_isbn import create_identifier_t
 from fedora_to_cora.transform.related_items.create_series import (
     create_related_item_type_series,
 )
+from fedora_to_cora.clean_rich_text import clean_rich_text
 
 
 def create_book(source_record: ET.Element, context: Context) -> ET.Element | None:
@@ -21,10 +22,11 @@ def create_book(source_record: ET.Element, context: Context) -> ET.Element | Non
     title_info = ET.SubElement(related_item, "titleInfo")
     title_text = source_book_title.findtext("./title")
     subtitle_text = source_book_title.findtext("./subTitle")
-    ET.SubElement(title_info, "title").text = title_text
+    if title_text is not None and len(title_text) > 0:
+        ET.SubElement(title_info, "title").text = clean_rich_text(title_text)
 
     if subtitle_text is not None and len(subtitle_text) > 0:
-        ET.SubElement(title_info, "subtitle").text = subtitle_text
+        ET.SubElement(title_info, "subtitle").text = clean_rich_text(subtitle_text)
 
     append_if_value(related_item, _create_statement_of_responsibility(source_record))
 

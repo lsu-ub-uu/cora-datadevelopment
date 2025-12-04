@@ -167,3 +167,28 @@ def test_create_weird_book(monkeypatch):
     )
     result = create_book(source_record, MockContext())
     assert result is None
+
+
+def test_create_book_with_html_in_title():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <bookTitle>
+                <title>&lt;p&gt;En boktitel&lt;/p&gt;</title>
+                <subTitle>&lt;div&gt;En bokundertitel&lt;/div&gt;</subTitle>
+            </bookTitle>
+        </publication>
+        """
+    )
+    result = create_book(source_record, MockContext())
+    assert_equal_for_xml_and_xml_string(
+        result,
+        """
+        <relatedItem type="book" otherType="text">
+            <titleInfo>
+                <title>En boktitel</title>
+                <subtitle>En bokundertitel</subtitle>
+            </titleInfo>
+        </relatedItem>
+    """,
+    )

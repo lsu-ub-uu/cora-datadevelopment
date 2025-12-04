@@ -766,7 +766,7 @@ def test_output_transform_conference_paper(mock_diva_search_requests):
                 <reviewed>true</reviewed>
             </adminInfo>
             <identifier type="wos">000349745400025</identifier>
-            <relatedItem otherType="text" type="conferencePublication">
+            <relatedItem otherType="text" type="proceeding">
                 <titleInfo>
                     <title>Ultrafast Magnetism I</title>
                 </titleInfo>

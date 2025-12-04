@@ -71,14 +71,14 @@ from fedora_to_cora.transform.create_location import (
 from fedora_to_cora.transform.create_subject_authority_sdg import (
     create_subject_authority_sdg,
 )
-from fedora_to_cora.transform.related_items.create_conference_publication import (
-    create_related_item_type_conference_publication,
-)
 from fedora_to_cora.transform.related_items.create_funder import (
     create_related_item_type_funder,
 )
 from fedora_to_cora.transform.related_items.create_journal import (
     create_related_item_type_journal,
+)
+from fedora_to_cora.transform.related_items.create_proceeding import (
+    create_related_item_type_proceeding,
 )
 from fedora_to_cora.transform.related_items.create_series import (
     create_related_item_type_series,
@@ -266,7 +266,7 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     if is_part_of_conference(source_record):
         append_if_value(
             target_record,
-            create_related_item_type_conference_publication(source_record, context),
+            create_related_item_type_proceeding(source_record, context),
         )
 
     append_if_value(target_record, create_related_item_type_conference(source_record))

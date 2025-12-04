@@ -225,7 +225,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - ⚠️relatedItem type="series" otherType="liink" (⚠️ same as outputen)
   - ⚠️relatedItem type="series" otherType="text" (⚠️ same as outputen)
 
-- 🆕 relatedItem type="conferencePublication" otherType="link" (⚠️conferencePublication byter namn till proceeding, pratade tidigare om conferenceProceeding)
+- 🆕 relatedItem type="proceeding" otherType="link"
   - proceeding (link to migrated record)
 - relatedItem type="proceeding" otherType="text"
   - titleInfo <- `proceedingsTitle` ⚠️ kolla att html tas bort
