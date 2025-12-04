@@ -108,12 +108,12 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             <month>08</month>
             <day>15</day>
         </dateOther>
-        <patentHolder type="corporate">
+        <name type="corporate" otherType="patentHolder">
             <namePart>Patentorganisation</namePart>
             <role>
                 <roleTerm>pth</roleTerm>
             </role>
-        </patentHolder>
+        </name>
         <patentCountry>au</patentCountry>
         <originInfo>
             <dateIssued>
@@ -252,12 +252,12 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             <namePart repeatId="0">En extern partner</namePart>
             <namePart repeatId="1">Ytterligare extern partner</namePart>
         </externalCollaboration>
-        <degreeGrantingInstitution type="corporate" otherType="text">
+        <name type="corporate" otherType="degreeGrantingInstitution">
             <namePart>Uppsala universitet</namePart>
             <role>
                 <roleTerm>dgg</roleTerm>
             </role>
-        </degreeGrantingInstitution>
+        </name>
         <name type="personal" otherType="thesisAdvisor" repeatId="0">
             <namePart type="family">Handledare</namePart>
             <namePart type="given">Helge</namePart>
@@ -298,15 +298,11 @@ def test_output_transform_ultimate(mock_diva_search_requests):
                 <hh>16</hh>
                 <mm>19</mm>
             </dateOther>
-            <location>
-                Balsalen
-            </location>
-            <address>Slottet</address>
-            <place>
-                <placeTerm>
-                    Uppsala
-                </placeTerm>
-            </place>
+            <address>
+                <location>Balsalen</location>
+                <street>Slottet</street>
+                <city>Uppsala</city>
+            </address>
         </defence>
         <relatedItem type="journal" otherType="text">
             <titleInfo>

@@ -16,12 +16,12 @@ def test_create_patent_holder():
     assert_equal_for_xml_and_xml_string(
         patent_country,
         """
-            <patentHolder type="corporate">
+            <name type="corporate" otherType="patentHolder">
                 <namePart>Patentorganisation</namePart>
                 <role>
                     <roleTerm>pth</roleTerm>
                 </role>
-            </patentHolder>
+            </name>
         """,
     )
 

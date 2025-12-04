@@ -62,7 +62,7 @@ def test_create_degree_granting_institution_controlled(mock_get_cora_id_by_old_i
     assert_equal_for_xml_and_xml_string(
         degree_granting_institutions[0],
         """
-           <degreeGrantingInstitution type="corporate" otherType="link">
+           <name type="corporate" otherType="degreeGrantingInstitution">
                 <organisation>
                     <linkedRecordType>diva-organisation</linkedRecordType>
                     <linkedRecordId>cora-id-for-1956</linkedRecordId>
@@ -70,7 +70,7 @@ def test_create_degree_granting_institution_controlled(mock_get_cora_id_by_old_i
                 <role>
                     <roleTerm>dgg</roleTerm>
                 </role>
-           </degreeGrantingInstitution>
+           </name>
         """,
     )
 
@@ -105,12 +105,12 @@ def test_create_degree_granting_institution_uncontrolled():
     assert_equal_for_xml_and_xml_string(
         degree_granting_institutions[0],
         """
-           <degreeGrantingInstitution type="corporate" otherType="text">
+           <name type="corporate" otherType="degreeGrantingInstitution">
                 <namePart>Lunds universitet</namePart>
                 <role>
                     <roleTerm>dgg</roleTerm>
                 </role>
-           </degreeGrantingInstitution>
+           </name>
         """,
     )
 
@@ -157,7 +157,7 @@ def test_create_controlled_and_uncontrolled_institution(mock_get_cora_id_by_old_
     assert_equal_for_xml_and_xml_string(
         degree_granting_institutions[0],
         """
-            <degreeGrantingInstitution type="corporate" otherType="link">
+            <name type="corporate" otherType="degreeGrantingInstitution">
                 <organisation>
                     <linkedRecordType>diva-organisation</linkedRecordType>
                     <linkedRecordId>cora-id-for-1956</linkedRecordId>
@@ -165,17 +165,17 @@ def test_create_controlled_and_uncontrolled_institution(mock_get_cora_id_by_old_
                 <role>
                     <roleTerm>dgg</roleTerm>
                 </role>
-           </degreeGrantingInstitution>
+           </name>
         """,
     )
     assert_equal_for_xml_and_xml_string(
         degree_granting_institutions[1],
         """
-           <degreeGrantingInstitution type="corporate" otherType="text">
+           <name type="corporate" otherType="degreeGrantingInstitution">
                 <namePart>Lunds universitet</namePart>
                 <role>
                     <roleTerm>dgg</roleTerm>
                 </role>
-           </degreeGrantingInstitution>
+           </name>
         """,
     )

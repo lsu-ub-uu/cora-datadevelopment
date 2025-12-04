@@ -155,7 +155,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - ⚠️ note type="context" <- `descriptions`
 - dateOther type="patent" <- `patentDate` Not done. Needs output-test.
 - identifier type="patentNumber" <- `patentNumber`
-- ❓⚠️ patentHolder type="corporate" Change metadata to <name type="corporate">?
+- name type="corporate" otherType="patentHolder"
   - namePart <- `patentOrganisation`
   - 🆕 identifier type="ror" <- N/A
   - 🆕 description <- N/A
@@ -170,18 +170,18 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - programme (link to migrated record) <- `studentDegree/educationalProgramme/subjectId`
 - externalCollaboration <- `externalCooperation`
   - ❓⚠️ namePart <- `partners/partner/name` If `external` is true and no partner name exists, a default text "Externt samarbete" is set.
-- degreeGrantingInstitution type="corporate" otherType="link" <- `defence/grantingInstitution` ❓⚠️Metadata change to <name type="corporate">? ❓⚠️ If link to other member's root organisation, migrate as otherType="text"
+- name type="corporate" otherType="degreeGrantingInstitution" <- `defence/externalGrantingInstitution`
   - organisation (link to migrated record) <- `organisationId`
-- ❓⚠️ degreeGrantingInstitution type="corporate" otherType="text" <- `defence/externalGrantingInstitution` ❓⚠️Metadata change to <name type="corporate">?
   - namePart <- `externalGrantingInstitution`
   - 🆕 identifier type="ror" <- N/A
 - defence <- `defence` For degree project (diva-degreeProject) the tag should be presentation instead of defence.
-- presentation <- `defence` See above ⚠️ Will be merged with <defence> in metadata model
+- presentation <- `defence` ❓
   - `language` <- `languageTerm/language`
   - `dateOther` <- `date`
-  - `location` <- `room/name`
-  - `address` <- `room/street`
-  - `place/placeTerm` <- `room/city`
+  - address
+    - `location` <- `room/name`
+    - `street` <- `room/street`
+    - `city` <- `room/city`
 - relatedItem type="journal" otherType="link" <- `journal`
   - journal (link to migrated record) <- `journalId`
     - part Nedanstående taggar finns direkt under `publication`.
@@ -225,9 +225,9 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - ⚠️relatedItem type="series" otherType="liink" (⚠️ same as outputen)
   - ⚠️relatedItem type="series" otherType="text" (⚠️ same as outputen)
 
-- 🆕 relatedItem type="conferencePublication" otherType="link" (⚠️conferencePublication byter namn till conferenceProceeding)
+- 🆕 relatedItem type="conferencePublication" otherType="link" (⚠️conferencePublication byter namn till proceeding, pratade tidigare om conferenceProceeding)
   - proceeding (link to migrated record)
-- relatedItem type="conferenceProceeding" otherType="text" (⚠️conferencePublication byter namn till conferenceProceeding)
+- relatedItem type="proceeding" otherType="text"
   - titleInfo <- `proceedingsTitle` ⚠️ kolla att html tas bort
     - title <- `title`
     - subtitle <- `subtitle`

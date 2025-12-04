@@ -46,16 +46,15 @@ def test_create_defence():
                     <hh>16</hh>
                     <mm>19</mm>
                 </dateOther>
-                <location>
-
-                    Balsalen
-                </location>
-                <address>Slottet</address>
-                <place>
-                    <placeTerm>
+                <address>
+                    <location>
+                        Balsalen
+                    </location>
+                    <street>Slottet</street>
+                    <city>
                         Uppsala
-                    </placeTerm>
-                </place>
+                    </city>
+                </address>
             </defence>
         """,
     )
@@ -154,15 +153,15 @@ def test_create_presentation_if_degree_project():
                     <hh>16</hh>
                     <mm>19</mm>
                 </dateOther>
-                <location>
-                    Balsalen
-                </location>
-                <address>Slottet</address>
-                <place>
-                    <placeTerm>
+                <address>
+                    <location>
+                        Balsalen
+                    </location>
+                    <street>Slottet</street>
+                    <city>
                         Uppsala
-                    </placeTerm>
-                </place>
+                    </city>
+                </address>
             </presentation>
         """,
     )

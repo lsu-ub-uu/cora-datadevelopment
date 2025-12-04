@@ -14,11 +14,7 @@ def create_defence_or_presentation(source_record: ET.Element) -> ET.Element:
 
     append_if_value(defence, _create_duration(source_record))
 
-    append_if_value(defence, _create_location(source_record))
-
     append_if_value(defence, _create_address(source_record))
-
-    append_if_value(defence, _create_place(source_record))
 
     return defence
 
@@ -29,20 +25,28 @@ def _is_degree_project(source_record: ET.Element) -> bool:
     )
 
 
-def _create_place(source_record: ET.Element) -> ET.Element:
-    place = ET.Element("place")
-    city = source_record.findtext("./defence/room/city")
-    if city is not None:
-        ET.SubElement(place, "placeTerm").text = city
-    return place
-
-
 def _create_address(source_record: ET.Element) -> ET.Element:
     address = ET.Element("address")
-    street = source_record.findtext("./defence/room/street")
-    address.text = street
+    append_if_value(address, _create_location(source_record))
+    append_if_value(address, _create_street(source_record))
+    append_if_value(address, _create_city(source_record))
 
     return address
+
+
+def _create_street(source_record: ET.Element) -> ET.Element:
+    street_text = source_record.findtext("./defence/room/street")
+    street = ET.Element("street")
+    street.text = street_text
+
+    return street
+
+
+def _create_city(source_record: ET.Element) -> ET.Element:
+    city = ET.Element("city")
+    city_text = source_record.findtext("./defence/room/city")
+    city.text = city_text
+    return city
 
 
 def _create_location(source_record: ET.Element) -> ET.Element:

@@ -6,7 +6,7 @@ def create_patent_holder(source_record: ET.Element) -> ET.Element | None:
     if patent_organisation is None or len(patent_organisation) == 0:
         return None
 
-    patent_holder = ET.Element("patentHolder", type="corporate")
+    patent_holder = ET.Element("name", type="corporate", otherType="patentHolder")
     ET.SubElement(patent_holder, "namePart").text = patent_organisation
 
     role = ET.SubElement(patent_holder, "role")

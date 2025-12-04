@@ -38,7 +38,7 @@ def _create_controlled_degree_granting_institution(
     organisation_old_id: str, context: Context
 ) -> ET.Element:
     degree_granting_institution = ET.Element(
-        "degreeGrantingInstitution", type="corporate", otherType="link"
+        "name", type="corporate", otherType="degreeGrantingInstitution"
     )
 
     cora_id = get_cora_id_by_old_id(
@@ -62,7 +62,7 @@ def _create_uncontrolled_degree_granting_institution(
     external_granting_institution: str,
 ) -> ET.Element:
     degree_granting_institution = ET.Element(
-        "degreeGrantingInstitution", type="corporate", otherType="text"
+        "name", type="corporate", otherType="degreeGrantingInstitution"
     )
 
     name_part = ET.SubElement(degree_granting_institution, "namePart")
