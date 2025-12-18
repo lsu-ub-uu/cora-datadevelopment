@@ -69,7 +69,7 @@ def create_record(
     *,
     record_type: str,
     context: Context,
-    max_retries: int = 3,
+    max_retries: int = 9,
     initial_delay: float = 1.0,
 ) -> CreateRecordSuccessResult | CreateRecordFailureResult:
     """Creates a Cora record from the given XML element.
@@ -121,6 +121,8 @@ def create_record(
                     f"⚠️ Conflict (409) for {record_type} with oldId {old_id_text}. Retrying in {delay}s (attempt {attempt + 1}/{max_retries + 1})",
                     "warning",
                 )
+                context.log(response.text)
+                context.log(request_body)
                 time.sleep(delay)
                 continue
 
