@@ -129,8 +129,8 @@ def create_name_type_personal(
     append_if_value(name_type_personal, _create_role(role_terms, author_only))
 
     local_id = person.find("./localId")
-    if local_id is not None and local_id.text:
-        name_type_personal.append(_create_name_identifier_local_id(local_id))
+    # if local_id is not None and local_id.text:
+    # name_type_personal.append(_create_name_identifier_local_id(local_id))
 
     orcid = person.find("./identifiers/entry/personIdentifier/value")
     if orcid is not None and orcid.text:
