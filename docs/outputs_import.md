@@ -175,7 +175,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - namePart <- `externalGrantingInstitution`
   - 🆕 identifier type="ror" <- N/A
 - defence <- `defence` For degree project (diva-degreeProject) the tag should be presentation instead of defence.
-- presentation <- `defence` ❓
+- presentation <- `defence`
   - `language` <- `languageTerm/language`
   - `dateOther` <- `date`
   - address
@@ -222,8 +222,8 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - part/extent
     - start <- `startPage`
     - end <- `endPage`
-  - ⚠️relatedItem type="series" otherType="link" (⚠️ same as outputen)
-  - ⚠️relatedItem type="series" otherType="text" (⚠️ same as outputen)
+  - relatedItem type="series" otherType="link"
+  - relatedItem type="series" otherType="text"
 
 - 🆕 relatedItem type="proceeding" otherType="link"
   - proceeding (link to migrated record)
