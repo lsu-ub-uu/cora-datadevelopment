@@ -65,6 +65,18 @@ class SSHTunnel:
         return self._tunnel.__enter__()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Close the SSH tunnel."""
+        """Close the SSH tunnel and the underlying SSH connection."""
+        tunnel_exc = None
         if self._tunnel:
-            return self._tunnel.__exit__(exc_type, exc_val, exc_tb)
+            try:
+                self._tunnel.__exit__(exc_type, exc_val, exc_tb)
+            except Exception as e:
+                tunnel_exc = e
+        if self._connection:
+            try:
+                self._connection.close()
+            except Exception as e:
+                if not tunnel_exc:
+                    tunnel_exc = e
+        if tunnel_exc:
+            raise tunnel_exc

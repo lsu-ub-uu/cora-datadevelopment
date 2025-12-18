@@ -34,12 +34,10 @@ def upload_binary(binary_record: ET.Element, file_name: str, data, context: Cont
         },
     )
 
-    print(response.raise_for_status(), response.status_code)
-
     if response.status_code == 200:
-        print(f"Upload successful: {file_name} ")
+        context.log(f"Upload successful: {file_name} ")
     else:
-        print(f"Upload failed: {response.text}")
+        context.log(f"Upload failed: {response.text}")
         raise UploadError(
             f"Failed to upload binary file '{file_name}': {response.status_code} - {response.text}"
         )
