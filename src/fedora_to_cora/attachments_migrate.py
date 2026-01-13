@@ -4,6 +4,7 @@ import copy
 
 from classic.download_attachment import download_attachment
 from cora.context import Context
+from fedora_to_cora.binary_migrate import migrate_binary, UploadError
 from fedora_to_cora.transform.get_validation_type import (
     get_validation_type_from_fedora_record,
 )
@@ -12,7 +13,6 @@ from fedora_to_cora.transform.binary.binary_record_transform import (
 )
 from cora.create import create_record, is_success_result
 from cora.update import update_record
-from cora.upload import UploadError, upload_binary
 from cora.delete import delete_record
 from fedora_to_cora.transform.attachment_transform import attachment_transform
 
@@ -97,10 +97,10 @@ def _migrate_attachment(
             return None, str(e)
 
         try:
-            upload_binary(
+            migrate_binary(
                 create_binary_result.response_data,
+                pid=pid,
                 file_name=file_name,
-                data=binary_data,
                 context=context,
             )
         except UploadError as e:

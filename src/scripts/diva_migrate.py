@@ -50,8 +50,8 @@ def main():
                 "help": "Login ID for authentication",
             },
             "--app-token": {
-                "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
                 "help": "Application token for authentication",
+                "required": True,
             },
             "--workers": {
                 "help": "Number of worker threads for processing",
@@ -93,7 +93,7 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
 
         migrate_publishers(args, context)
         migrate_funders(args, context)
-        migrate_journals(args, context)
+        # migrate_journals(args, context)
         # TODO Persons
         # TODO Projects
 
