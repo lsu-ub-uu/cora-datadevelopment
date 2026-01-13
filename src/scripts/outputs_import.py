@@ -27,7 +27,7 @@ def main():
                 "help": "Login ID for authentication",
             },
             "--app-token": {
-                "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
+                "default": "44056388-b865-409d-932d-4bb4970d139a",
                 "help": "Application token for authentication",
             },
             "--workers": {
