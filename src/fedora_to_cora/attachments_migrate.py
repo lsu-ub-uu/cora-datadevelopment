@@ -88,23 +88,14 @@ def _migrate_attachment(
     if is_success_result(create_binary_result):
         created_binary_records.append(create_binary_result.response_data)
         try:
-            binary_data = download_attachment(pid, file_name)
-        except Exception as e:
-            context.log(
-                f"Error downloading file for pid '{pid}' with filename '{file_name}': {e}",
-                level="error",
-            )
-            return None, str(e)
-
-        try:
             migrate_binary(
                 create_binary_result.response_data,
                 pid=pid,
                 file_name=file_name,
                 context=context,
             )
-        except UploadError as e:
-            context.log(f"Error uploading binary: {e}", level="error")
+        except Exception as e:
+            context.log(f"🥵 [PID {pid}] Error migrating binary: {e}", level="error")
             return None, str(e)
 
         validation_type = get_validation_type_from_fedora_record(source_record)
