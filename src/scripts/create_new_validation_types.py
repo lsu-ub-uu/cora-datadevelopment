@@ -1,10 +1,12 @@
 from collections import deque
 from typing import Any
+from xml.etree.ElementTree import Element
 
 from tqdm import tqdm
 
 from common import validation_type_utils as common_utils
 from common.arg_parser import create_argument_parser
+from common.validation_type_utils import RecordNode
 from cora.context import CoraContext, Context
 
 CTX: Context
@@ -34,6 +36,7 @@ EXTENSIVE_LOGGING = True
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
 GLOBAL_RECORD_INFO_CHILDREN = {}
+UPDATED_TEXTS = set()
 RECORD_INFO_GROUPS = set()
 TOTAL_PROCESSED_RECORDS = 0
 TOTAL_UPDATES = 0
@@ -271,6 +274,7 @@ def process_and_possibly_create(node, global_id_mapping):
         common_utils.update_child_references(node.xml_content, global_id_mapping)
         return False
 
+    possibly_create_new_texts_for_updated_records(node)
     new_id = common_utils.create_new_id_and_update_mapping(global_id_mapping, node)
     common_utils.update_record_id_in_xml(node.xml_content, new_id)
     common_utils.update_child_references(node.xml_content, global_id_mapping)
@@ -280,6 +284,81 @@ def process_and_possibly_create(node, global_id_mapping):
         CTX.log(f"> Updated data divider of {original_id}")
 
     return prepare_and_try_to_save_record(node)
+
+
+def possibly_create_new_texts_for_updated_records(node):
+    global TOTAL_CREATED
+    name_in_data = node.xml_content.find(".//nameInData")
+    if name_in_data is not None and name_in_data.text.strip() == "output":
+        if create_new_texts_for_updated_records(node, ".//textId", try_to_update_text):
+            TOTAL_CREATED += 1
+
+    if create_new_texts_for_updated_records(node, ".//defTextId", try_to_update_def_text):
+        TOTAL_CREATED += 1
+
+
+def get_text_node(original_text_id: str) -> RecordNode:
+    text_url = CTX.get_base_url() + "text/" + original_text_id
+    text_as_xml = common_utils.fetch_record_as_xml(text_url)
+    return common_utils.parse_record_from_xml(text_as_xml, text_url)
+
+
+def create_new_texts_for_updated_records(node, id_xpath, text_update_helper):
+    text_id = node.xml_content.find(id_xpath)
+    if text_id is None:
+        return False
+
+    linked_record_id = text_id.find("linkedRecordId")
+    if linked_record_id is None or not linked_record_id.text:
+        return False
+
+    original_id = linked_record_id.text.strip()
+    new_id = f"{TYPE_PREFIX}{original_id}"
+
+    if original_id in UPDATED_TEXTS:
+        linked_record_id.text = new_id
+        return False
+
+    text_node = get_text_node(original_id)
+    if not text_update_helper(text_node.xml_content):
+        return False
+
+    linked_record_id.text = new_id
+    UPDATED_TEXTS.add(original_id)
+    common_utils.update_record_id_in_xml(text_node.xml_content, new_id)
+    return prepare_and_try_to_save_record(text_node)
+
+
+def try_to_update_text(xml_content: Element):
+    updated = False
+    text_parts = xml_content.findall(".//text/textPart")
+    for part in text_parts:
+        text_part = part.find("text")
+        if text_part is not None and text_part.text:
+            text_part.text = text_part.text.strip() + " [Classic]"
+            updated = True
+
+    return updated
+
+
+def try_to_update_def_text(xml_content: Element):
+    suffixes = {
+        "sv": " [Detta är en kopia som håller DiVA classics valideringsnivå]",
+        "en": " [This is a copy that retains DiVA classics validation level]",
+        "no": " [Dette er en kopi som beholder DiVA classics valideringsnivå]"
+    }
+
+    updated = False
+    text_parts = xml_content.findall(".//text/textPart")
+    for part in text_parts:
+        lang = part.get("lang")
+        suffix = suffixes.get(lang)
+        text_part = part.find("text")
+        if text_part is not None and text_part.text and suffix:
+            text_part.text = text_part.text.strip() + suffix
+            updated = True
+
+    return updated
 
 
 def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
