@@ -29,7 +29,7 @@ def attachments_migrate(
 
     errors = []
     attachments = source_record.findall("./attachments/attachment")
-    for attachment in attachments:
+    for attachment in _sort_by_order(attachments):
         attachment, error = _migrate_attachment(
             attachment, context, created_binary_records, source_record
         )
@@ -125,3 +125,9 @@ def _migrate_attachment(
             "error",
         )
         return None, create_binary_result.error
+
+
+def _sort_by_order(attachments: list[ET.Element]) -> list[ET.Element]:
+    return sorted(
+        attachments, key=lambda attachment: attachment.findtext("./order") or ""
+    )

@@ -81,7 +81,7 @@ def test_attachments_migrate(monkeypatch):
                     <recordInfo>
                         <id>test-output</id>
                     </recordInfo>
-                    <attachment repeatId="binary:12345">
+                    <attachment repeatId="test.pdf">
                         <attachmentFile>
                             <linkedRecordType>binary</linkedRecordType>
                             <linkedRecordId>binary:12345</linkedRecordId>
@@ -91,7 +91,7 @@ def test_attachments_migrate(monkeypatch):
                             <availability>availableNow</availability>
                         </adminInfo>
                     </attachment>
-                    <attachment repeatId="binary:12345">
+                    <attachment repeatId="test2.pdf">
                         <attachmentFile>
                             <linkedRecordType>binary</linkedRecordType>
                             <linkedRecordId>binary:12345</linkedRecordId>
@@ -498,6 +498,115 @@ def test_file_upload_message(monkeypatch):
     )
 
 
+def test_respects_attachment_order(monkeypatch):
+    create_record_mock = _set_up_create_record_mock(monkeypatch)
+    download_attachment_mock = _set_up_download_attachment_mock(monkeypatch)
+    upload_binary_mock = _set_up_upload_binary_mock(monkeypatch)
+    update_record_mock = _set_up_update_record_mock(monkeypatch)
+    binary_record_transform_mock = _set_up_binary_record_transform_mock(monkeypatch)
+    attachments_transform_mock = _set_up_attachments_transform_mock(monkeypatch)
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+        <publicationType>
+            <publicationTypeCode>report</publicationTypeCode>
+        </publicationType>
+            <pid>pid:123</pid>
+            <attachments>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <order>2</order>
+                    <fileName>test1.pdf</fileName>
+                </attachment>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <order>3</order>
+                    <fileName>test2.pdf</fileName>
+                </attachment>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <order>1</order>
+                    <fileName>test3.pdf</fileName>
+                </attachment>
+            </attachments>
+        </publication>
+        """
+    )
+
+    cora_record = ET.fromstring(
+        """
+        <record>
+            <data>
+                <output> 
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                </output>
+            </data>
+        </record>
+        """
+    )
+
+    attachments_migrate(
+        source_record,
+        cora_record,
+        MockContext(),
+    )
+
+    updated_cora_record = update_record_mock.mock_calls[0].args[0]
+    assert_equal_for_xml_and_xml_string(
+        updated_cora_record,
+        """
+        <record>
+            <data>
+                <output>
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                    <attachment repeatId="test3.pdf">
+                        <attachmentFile>
+                            <linkedRecordType>binary</linkedRecordType>
+                            <linkedRecordId>binary:12345</linkedRecordId>
+                        </attachmentFile>
+                        <type>fullText</type>
+                        <adminInfo>
+                            <availability>availableNow</availability>
+                        </adminInfo>
+                    </attachment>
+                    <attachment repeatId="test1.pdf">
+                        <attachmentFile>
+                            <linkedRecordType>binary</linkedRecordType>
+                            <linkedRecordId>binary:12345</linkedRecordId>
+                        </attachmentFile>
+                        <type>fullText</type>
+                        <adminInfo>
+                            <availability>availableNow</availability>
+                        </adminInfo>
+                    </attachment>
+                    <attachment repeatId="test2.pdf">
+                        <attachmentFile>
+                            <linkedRecordType>binary</linkedRecordType>
+                            <linkedRecordId>binary:12345</linkedRecordId>
+                        </attachmentFile>
+                        <type>fullText</type>
+                        <adminInfo>
+                            <availability>availableNow</availability>
+                        </adminInfo>
+                    </attachment>
+                </output>
+            </data>
+        </record>
+        """,
+    )
+
+
 def _set_up_create_record_mock(monkeypatch, fail=False):
     create_record_mock = MagicMock(
         return_value=(
@@ -565,27 +674,35 @@ def _set_up_binary_record_transform_mock(monkeypatch):
 
 
 def _set_up_attachments_transform_mock(monkeypatch):
-    mock_attachment = ET.fromstring(
-        """
-        <attachment repeatId="binary:12345">
-            <attachmentFile>
-              <linkedRecordType>binary</linkedRecordType>
-              <linkedRecordId>binary:12345</linkedRecordId>
-            </attachmentFile>
-            <type>fullText</type>
-            <adminInfo>
-                <availability>availableNow</availability>
-            </adminInfo>
-        </attachment>
-        """
-    )
 
-    attachments_transform_mock = MagicMock(return_value=mock_attachment)
+    def _attachment_transform(
+        source_attachment,
+        validation_type,
+        binary_record_id,
+        file_upload_message=None,
+    ):
+        file_name = source_attachment.findtext("./fileName")
+        return ET.fromstring(
+            f"""
+                <attachment repeatId=\"{file_name}\">
+                    <attachmentFile>
+                    <linkedRecordType>binary</linkedRecordType>
+                    <linkedRecordId>binary:12345</linkedRecordId>
+                    </attachmentFile>
+                    <type>fullText</type>
+                    <adminInfo>
+                        <availability>availableNow</availability>
+                    </adminInfo>
+                </attachment>
+            """
+        )
+
+    attachment_transform_mock = MagicMock(side_effect=_attachment_transform)
     monkeypatch.setattr(
         "fedora_to_cora.attachments_migrate.attachment_transform",
-        attachments_transform_mock,
+        attachment_transform_mock,
     )
-    return attachments_transform_mock
+    return attachment_transform_mock
 
 
 def _set_up_delete_record_mock(monkeypatch):
