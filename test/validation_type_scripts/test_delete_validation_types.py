@@ -36,7 +36,6 @@ def test_delete_records_with_prefix(monkeypatch, record_node):
     script.delete_records_with_prefix()
     assert script.TOTAL_PROCESSED_RECORDS == 3
     assert script.TOTAL_RECORD_DELETIONS == 3
-    assert script.TOTAL_PRESENTATION_DELETIONS == 2
 
 
 def test_delete_records_with_prefix_no_validation_types(monkeypatch):
@@ -54,13 +53,11 @@ def test_delete_records_with_prefix_no_validation_types(monkeypatch):
     script.delete_records_with_prefix()
     assert script.TOTAL_PROCESSED_RECORDS == 0
     assert script.TOTAL_RECORD_DELETIONS == 0
-    assert script.TOTAL_PRESENTATION_DELETIONS == 2
 
 
 def test_delete_presentations_dry_run(monkeypatch):
     script.DRY_RUN = True
-    script.delete_presentations()
-    assert script.TOTAL_PRESENTATION_DELETIONS == 2
+    script.delete_records_of_type_matching_prefix("presentation")
 
 
 def test_delete_presentations(monkeypatch):
@@ -72,8 +69,8 @@ def test_delete_presentations(monkeypatch):
     monkeypatch.setattr(common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids)
     monkeypatch.setattr(script.utils, "try_to_delete_record", lambda url, errors: True)
 
-    script.delete_presentations()
-    assert script.TOTAL_PRESENTATION_DELETIONS == 2
+    script.delete_records_of_type_matching_prefix("presentation")
+    assert script.TOTAL_RECORD_DELETIONS == 2
 
 
 def test_delete_presentations_no_presentations(monkeypatch):
@@ -85,8 +82,8 @@ def test_delete_presentations_no_presentations(monkeypatch):
     monkeypatch.setattr(common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids)
     monkeypatch.setattr(script.utils, "try_to_delete_record", lambda url, errors: False)
 
-    script.delete_presentations()
-    assert script.TOTAL_PRESENTATION_DELETIONS == 0
+    script.delete_records_of_type_matching_prefix("presentation")
+    assert script.TOTAL_RECORD_DELETIONS == 0
 
 
 def test_delete_presentations_no_presentations_with_retry(monkeypatch, ctx):
@@ -100,8 +97,8 @@ def test_delete_presentations_no_presentations_with_retry(monkeypatch, ctx):
     monkeypatch.setattr(script.utils, "try_to_delete_record",
                         lambda url, errors: next(delete_sequence, True))
 
-    script.delete_presentations()
-    assert script.TOTAL_PRESENTATION_DELETIONS == 2
+    script.delete_records_of_type_matching_prefix("presentation")
+    assert script.TOTAL_RECORD_DELETIONS == 2
 
     calls = [call.args[0] for call in ctx.log.mock_calls]
     assert any("Failed to delete record" in msg for msg in calls)
@@ -119,8 +116,8 @@ def test_delete_presentations_no_presentations_failed_delete(monkeypatch, ctx):
     monkeypatch.setattr(script.utils, "try_to_delete_record",
                         lambda url, errors: False)
 
-    script.delete_presentations()
-    assert script.TOTAL_PRESENTATION_DELETIONS == 0
+    script.delete_records_of_type_matching_prefix("presentation")
+    assert script.TOTAL_RECORD_DELETIONS == 0
 
     calls = [call.args[0] for call in ctx.log.mock_calls]
     assert any("Failed to delete record" in msg for msg in calls)

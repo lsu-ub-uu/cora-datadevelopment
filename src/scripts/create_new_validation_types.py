@@ -288,8 +288,8 @@ def process_and_possibly_create(node, global_id_mapping):
 
 def possibly_create_new_texts_for_updated_records(node):
     global TOTAL_CREATED
-    name_in_data = node.xml_content.find(".//nameInData")
-    if name_in_data is not None and name_in_data.text.strip() == "output":
+    name_in_data = node.xml_content.find(".//validatesRecordType/linkedRecordId")
+    if name_in_data is not None and name_in_data.text.strip() == "diva-output":
         if create_new_texts_for_updated_records(node, ".//textId", try_to_update_text):
             TOTAL_CREATED += 1
 
@@ -344,8 +344,8 @@ def get_text_node(original_text_id: str) -> RecordNode:
 def try_to_update_def_text(xml_content: Element):
     suffixes = {
         "sv": " [Detta är en kopia som håller DiVA classics valideringsnivå]",
-        "en": " [This is a copy that retains DiVA classics validation level]",
-        "no": " [Dette er en kopi som beholder DiVA classics valideringsnivå]"
+        "en": " [This is a copy that meets the DiVA classic validation level.]",
+        "no": " [Dette er en kopi som oppfyller DiVAs klassiske valideringsnivå.]"
     }
 
     updated = False
