@@ -68,7 +68,7 @@ def start_delete_script_printout(system: str):  # pragma: no cover
 
 
 def delete_records_with_prefix():
-    utils.log("=== Deleting all presentations ===")
+    utils.log("=== Deleting presentations ===")
     delete_presentations()
 
     utils.log("=== Building node map ===")

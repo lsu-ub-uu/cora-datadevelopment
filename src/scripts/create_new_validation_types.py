@@ -103,8 +103,8 @@ def create_new_validation_types_for_record_type():
 
 def build_node_map():
     global TOTAL_FETCHED
-    validation_types = get_validation_types_to_process()
 
+    validation_types = get_validation_types_to_process()
     root_urls = common_utils.get_root_urls_for_validation_types(validation_types)
     for root_url in root_urls:
         common_utils.build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
@@ -297,12 +297,6 @@ def possibly_create_new_texts_for_updated_records(node):
         TOTAL_CREATED += 1
 
 
-def get_text_node(original_text_id: str) -> RecordNode:
-    text_url = CTX.get_base_url() + "text/" + original_text_id
-    text_as_xml = common_utils.fetch_record_as_xml(text_url)
-    return common_utils.parse_record_from_xml(text_as_xml, text_url)
-
-
 def create_new_texts_for_updated_records(node, id_xpath, text_update_helper):
     text_id = node.xml_content.find(id_xpath)
     if text_id is None:
@@ -339,6 +333,12 @@ def try_to_update_text(xml_content: Element):
             updated = True
 
     return updated
+
+
+def get_text_node(original_text_id: str) -> RecordNode:
+    text_url = CTX.get_base_url() + "text/" + original_text_id
+    text_as_xml = common_utils.fetch_record_as_xml(text_url)
+    return common_utils.parse_record_from_xml(text_as_xml, text_url)
 
 
 def try_to_update_def_text(xml_content: Element):
@@ -379,7 +379,6 @@ def prepare_and_try_to_save_record(node):
         return True
 
     content_root = common_utils.unwrap_and_clean_xml_for_create(node.xml_content)
-
     return common_utils.try_to_create_record(node, content_root, TOTAL_ERRORS)
 
 
