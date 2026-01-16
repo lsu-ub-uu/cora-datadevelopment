@@ -21,11 +21,11 @@ DRY_RUN = True
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
 GLOBAL_RECORD_INFO_CHILDREN = {}
+VALIDATION_TYPE_TEXTS = set()
 TOTAL_PREFIX_MATCHES = 0
 TOTAL_PROCESSED_RECORDS = 0
 TOTAL_RECORD_DELETIONS = 0
 TOTAL_RECORD_UPDATES = 0
-TOTAL_PRESENTATION_DELETIONS = 0
 TOTAL_ERRORS = []
 
 
@@ -68,14 +68,15 @@ def start_delete_script_printout(system: str):  # pragma: no cover
 
 
 def delete_records_with_prefix():
-    utils.log("=== Deleting all presentations ===")
-    delete_presentations()
+    utils.log("=== Deleting presentations ===")
+    delete_records_of_type_matching_prefix("presentation")
 
     utils.log("=== Building node map ===")
     build_node_map()
 
     utils.log("=== Deleting records ===")
     delete_records()
+    delete_records_of_type_matching_prefix("text")
 
     utils.log("=== Script finished ===")
     log_results()
@@ -83,29 +84,28 @@ def delete_records_with_prefix():
     print(f"\n=== Processing completed. Output logged to {CTX.get_log_file_path()} ===")
 
 
-def delete_presentations():
-    global TOTAL_PRESENTATION_DELETIONS
-
-    presentation_ids = utils.get_ids_for_record_type_matching_prefix("presentation")
-    delete_urls = deque(construct_delete_urls_from_ids(presentation_ids))
+def delete_records_of_type_matching_prefix(type: str):
+    global TOTAL_RECORD_DELETIONS
+    record_ids = utils.get_ids_for_record_type_matching_prefix(type)
+    delete_urls = deque(construct_delete_urls_from_ids(record_ids, type))
 
     if not delete_urls:
-        utils.log("No presentations found to delete...")
+        utils.log("No " + type + "s found to delete...")
         return
 
     total = len(delete_urls)
     retries: dict[str, int] = {}
-    progress = tqdm(total=total, desc="Deleting presentations", bar_format="{l_bar}{bar:30}{r_bar}")
+    progress = tqdm(total=total, desc="Deleting " + type + "s", bar_format="{l_bar}{bar:30}{r_bar}")
     while delete_urls:
         url = delete_urls.popleft()
+
         if DRY_RUN:
-            TOTAL_PRESENTATION_DELETIONS += 1
             progress.update(1)
         else:
             deleted = utils.try_to_delete_record(url, TOTAL_ERRORS)
             if deleted:
-                TOTAL_PRESENTATION_DELETIONS += 1
                 progress.update(1)
+                TOTAL_RECORD_DELETIONS += 1
             else:
                 if retries.get(url, 0) >= 5:
                     TOTAL_ERRORS.append("Failed to delete " + url + " after 5 retries!")
@@ -118,11 +118,13 @@ def delete_presentations():
     progress.close()
 
 
-def construct_delete_urls_from_ids(ids: list) -> set[str]:
+def construct_delete_urls_from_ids(ids: list, type: str) -> set[str]:
     delete_urls = set()
     for record_id in ids:
+        if record_id in VALIDATION_TYPE_TEXTS:
+            continue
         if TYPE_PREFIX in record_id:
-            delete_urls.add(CTX.get_base_url() + "presentation/" + record_id)
+            delete_urls.add(CTX.get_base_url() + type + "/" + record_id)
     return delete_urls
 
 
@@ -193,6 +195,12 @@ def process_record(progress, node):
     global TOTAL_RECORD_DELETIONS, TOTAL_RECORD_UPDATES
     if node.record_type == "validationType":
         CTX.log(f"ValidationType '{node.record_id}' was updated to original metadata new/update groups and not deleted")
+        text_id_elem = node.xml_content.find(".//textId/linkedRecordId")
+        def_text_id_elem = node.xml_content.find(".//defTextId/linkedRecordId")
+        if text_id_elem is not None and text_id_elem.text:
+            VALIDATION_TYPE_TEXTS.add(text_id_elem.text.strip())
+        if def_text_id_elem is not None and def_text_id_elem.text:
+            VALIDATION_TYPE_TEXTS.add(def_text_id_elem.text.strip())
         utils.break_dependency_to_top_groups(node.xml_content)
         utils.remove_action_links(node.xml_content)
         if update_record(node):
@@ -233,13 +241,9 @@ def prepare_url_and_possibly_delete(node):
 def log_results():  # pragma: no cover
     if DRY_RUN:
         utils.log("[ Script ran in dry run mode ]")
-    total_changed_or_updated = TOTAL_RECORD_UPDATES + TOTAL_RECORD_DELETIONS
 
-    utils.log(f"  Total presentations deleted: {TOTAL_PRESENTATION_DELETIONS}")
     utils.log(f"  Total records updated: {TOTAL_RECORD_UPDATES}")
-    utils.log(f"  Total records deleted: {TOTAL_RECORD_DELETIONS}")
-    utils.log(
-        f"  Total updated or deleted records out of matching prefixes: {total_changed_or_updated} / {TOTAL_PREFIX_MATCHES}")
+    utils.log(f"  Total records and presentations deleted: {TOTAL_RECORD_DELETIONS}")
 
     if TOTAL_PROCESSED_RECORDS != len(GLOBAL_NODE_MAP):
         utils.log(f"\n   Warning: The number of successfully processed records ({TOTAL_PROCESSED_RECORDS})"
