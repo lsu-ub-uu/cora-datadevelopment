@@ -16,8 +16,8 @@ def binary_record_transform(attachment: ET.Element) -> ET.Element:
     )
 
     append_if_value(binary_record, _create_original_file_name(attachment))
-  #  append_if_value(binary_record, _create_expected_file_size(attachment))
-  #  append_if_value(binary_record, _create_expected_checksum(attachment))
+    append_if_value(binary_record, _create_expected_file_size(attachment))
+    append_if_value(binary_record, _create_expected_checksum(attachment))
 
     return binary_record
 
@@ -36,6 +36,7 @@ def _create_expected_file_size(source_record: ET.Element) -> ET.Element:
     if file_size is not None:
         expected_file_size.text = file_size
     return expected_file_size
+
 
 def _create_expected_checksum(source_record: ET.Element) -> ET.Element:
     expected_checksum = ET.Element("expectedChecksum")
