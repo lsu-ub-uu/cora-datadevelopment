@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 import pytest
 import requests_mock
 import xml.etree.ElementTree as ET
-from cora.upload import UploadError, migrate_binary
+from cora.upload import UploadError, upload_binary
 from cora.context import MockContext
 
 
@@ -16,7 +16,7 @@ def test_upload_url_action_link_not_found(monkeypatch):
     with pytest.raises(
         AssertionError, match="Upload action link not found in binary record"
     ):
-        migrate_binary(
+        upload_binary(
             binary_record,
             file_name="test_file.txt",
             data=MagicMock(),
@@ -62,7 +62,7 @@ def test_error_uploading_file(monkeypatch):
     with pytest.raises(
         UploadError, match="Failed to upload binary file 'test_file.txt'"
     ):
-        migrate_binary(
+        upload_binary(
             binary_record,
             file_name="test_file.txt",
             data=MagicMock(),
@@ -88,7 +88,7 @@ def test_successful_upload():
     with requests_mock.Mocker() as mocker:
         mocker.post("http://example.com/upload", text="OK", status_code=200)
 
-        migrate_binary(
+        upload_binary(
             binary_record,
             file_name="test_file.txt",
             data=test_data,

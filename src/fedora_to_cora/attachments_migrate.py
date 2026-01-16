@@ -2,9 +2,8 @@ from typing import Tuple
 import xml.etree.ElementTree as ET
 import copy
 
-from classic.download_attachment import download_attachment
 from cora.context import Context
-from fedora_to_cora.binary_migrate import migrate_binary, UploadError
+from fedora_to_cora.binary_migrate import migrate_binary
 from fedora_to_cora.transform.get_validation_type import (
     get_validation_type_from_fedora_record,
 )

@@ -47,11 +47,10 @@ def main():
             },
             "--login-id": {
                 "default": "divaAdmin@cora.epc.ub.uu.se",
-                "help": "Login ID for authentication",
+                "help": "Login ID for authentication.",
             },
             "--app-token": {
-                "help": "Application token for authentication",
-                "required": True,
+                "help": "Application token for authentication. If not provided, the script will look for an example user configured with this id",
             },
             "--workers": {
                 "help": "Number of worker threads for processing",
