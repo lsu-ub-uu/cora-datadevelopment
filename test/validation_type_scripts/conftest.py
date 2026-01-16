@@ -25,7 +25,7 @@ def init_utils(ctx):
 @pytest.fixture(autouse=True)
 def reset_global_data():
     common_utils._ctx = None
-    common_utils._type_prefix = "__test_prefix"
+    common_utils._type_prefix = "__test_prefix_"
     common_utils._record_type = ""
     common_utils._black_list = []
 
@@ -125,6 +125,12 @@ def validation_type_search_result_xml():
     </record>
 </recordList>
 """
+
+
+@pytest.fixture
+def sample_text():
+    return ET.fromstring(
+        """<text><recordInfo><validationType><linkedRecordType>validationType</linkedRecordType><linkedRecordId>divaText</linkedRecordId><actionLinks><read><requestMethod>GET</requestMethod><rel>read</rel><url>http://192.168.49.2:30982/rest/record/validationType/divaText</url><accept>application/vnd.cora.record+xml</accept></read></actionLinks></validationType><dataDivider><linkedRecordType>system</linkedRecordType><linkedRecordId>diva</linkedRecordId><actionLinks><read><requestMethod>GET</requestMethod><rel>read</rel><url>http://192.168.49.2:30982/rest/record/system/diva</url><accept>application/vnd.cora.record+xml</accept></read></actionLinks></dataDivider><id>dataQualityCollectionVarDefText</id><type><linkedRecordType>recordType</linkedRecordType><linkedRecordId>text</linkedRecordId><actionLinks><read><requestMethod>GET</requestMethod><rel>read</rel><url>http://192.168.49.2:30982/rest/record/recordType/text</url><accept>application/vnd.cora.record+xml</accept></read></actionLinks></type><createdBy><linkedRecordType>user</linkedRecordType><linkedRecordId>161616</linkedRecordId><actionLinks><read><requestMethod>GET</requestMethod><rel>read</rel><url>http://192.168.49.2:30982/rest/record/user/161616</url><accept>application/vnd.cora.record+xml</accept></read></actionLinks></createdBy><tsCreated>2025-10-16T12:13:52.899295Z</tsCreated><updated repeatId="0"><tsUpdated>2025-10-29T09:37:38.534791Z</tsUpdated><updatedBy><linkedRecordType>user</linkedRecordType><linkedRecordId>161616</linkedRecordId><actionLinks><read><requestMethod>GET</requestMethod><rel>read</rel><url>http://192.168.49.2:30982/rest/record/user/161616</url><accept>application/vnd.cora.record+xml</accept></read></actionLinks></updatedBy></updated></recordInfo><textPart lang="sv" type="default"><text>svensk text</text></textPart><textPart lang="en" type="alternative"><text>engelsk text</text></textPart><textPart lang="no" type="alternative"><text>norsk text</text></textPart></text>""")
 
 
 @pytest.fixture(scope="function")

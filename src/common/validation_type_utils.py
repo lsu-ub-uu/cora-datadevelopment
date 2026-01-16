@@ -34,7 +34,6 @@ create_validation_type_args: dict[str, ArgumentConfig] = {
         "help": "Login ID for authentication",
     },
     "--app-token": {
-        "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
         "help": "Application token for authentication",
     },
     "--apply": {
@@ -74,7 +73,6 @@ delete_validation_type_args: dict[str, ArgumentConfig] = {
         "help": "Login ID for authentication",
     },
     "--app-token": {
-        "default": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
         "help": "Application token for authentication",
     },
     "--apply": {

@@ -288,13 +288,17 @@ def process_and_possibly_create(node, global_id_mapping):
 
 def possibly_create_new_texts_for_updated_records(node):
     global TOTAL_CREATED
-    name_in_data = node.xml_content.find(".//validatesRecordType/linkedRecordId")
-    if name_in_data is not None and name_in_data.text.strip() == "diva-output":
+    if validation_type_validates_target_record_type(node):
         if create_new_texts_for_updated_records(node, ".//textId", try_to_update_text):
             TOTAL_CREATED += 1
 
     if create_new_texts_for_updated_records(node, ".//defTextId", try_to_update_def_text):
         TOTAL_CREATED += 1
+
+
+def validation_type_validates_target_record_type(node) -> bool:
+    validates_record_type = node.xml_content.find(".//validatesRecordType/linkedRecordId")
+    return validates_record_type is not None and validates_record_type.text.strip() == RECORD_TYPE
 
 
 def create_new_texts_for_updated_records(node, id_xpath, text_update_helper):
@@ -303,7 +307,7 @@ def create_new_texts_for_updated_records(node, id_xpath, text_update_helper):
         return False
 
     linked_record_id = text_id.find("linkedRecordId")
-    if linked_record_id is None or not linked_record_id.text:
+    if not_a_valid_linked_record_id(linked_record_id):
         return False
 
     original_id = linked_record_id.text.strip()
@@ -323,9 +327,13 @@ def create_new_texts_for_updated_records(node, id_xpath, text_update_helper):
     return prepare_and_try_to_save_record(text_node)
 
 
+def not_a_valid_linked_record_id(linked_record_id) -> bool | Any:
+    return linked_record_id is None or not linked_record_id.text or linked_record_id.text.startswith(TYPE_PREFIX)
+
+
 def try_to_update_text(xml_content: Element):
     updated = False
-    text_parts = xml_content.findall(".//text/textPart")
+    text_parts = xml_content.findall(".//textPart")
     for part in text_parts:
         text_part = part.find("text")
         if text_part is not None and text_part.text:
@@ -335,21 +343,15 @@ def try_to_update_text(xml_content: Element):
     return updated
 
 
-def get_text_node(original_text_id: str) -> RecordNode:
-    text_url = CTX.get_base_url() + "text/" + original_text_id
-    text_as_xml = common_utils.fetch_record_as_xml(text_url)
-    return common_utils.parse_record_from_xml(text_as_xml, text_url)
-
-
 def try_to_update_def_text(xml_content: Element):
     suffixes = {
         "sv": " [Detta är en kopia som håller DiVA classics valideringsnivå]",
-        "en": " [This is a copy that meets the DiVA classic validation level.]",
-        "no": " [Dette er en kopi som oppfyller DiVAs klassiske valideringsnivå.]"
+        "en": " [This is a copy that meets DiVA classics validation level.]",
+        "no": " [Dette er en kopi som oppfyller DiVA classics valideringsnivå.]"
     }
 
     updated = False
-    text_parts = xml_content.findall(".//text/textPart")
+    text_parts = xml_content.findall(".//textPart")
     for part in text_parts:
         lang = part.get("lang")
         suffix = suffixes.get(lang)
@@ -359,6 +361,12 @@ def try_to_update_def_text(xml_content: Element):
             updated = True
 
     return updated
+
+
+def get_text_node(original_text_id: str) -> RecordNode:
+    text_url = CTX.get_base_url() + "text/" + original_text_id
+    text_as_xml = common_utils.fetch_record_as_xml(text_url)
+    return common_utils.parse_record_from_xml(text_as_xml, text_url)
 
 
 def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
