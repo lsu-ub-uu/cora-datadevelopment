@@ -9,6 +9,7 @@ from common.run_rotating_logger import RunRotatingLogger
 import sys
 import os
 from unittest.mock import MagicMock
+from cora.get_deployment_info import get_deployment_info
 
 main_script = os.path.basename(sys.argv[0])
 
@@ -26,7 +27,9 @@ class Context(Protocol):
 
 
 class CoraContext(Context):
-    def __init__(self, system: str, login_id: str, app_token: str, workers: int = 16):
+    def __init__(
+        self, system: str, login_id: str, app_token: str | None, workers: int = 16
+    ):
         self.system = system
         self._logger = RunRotatingLogger("data", f"logs/{main_script}.log").get()
         self.app_token_client = AppTokenClient(
@@ -36,6 +39,9 @@ class CoraContext(Context):
                 "threading": threading,
             }
         )
+        if app_token is None:
+            app_token = _get_app_token_from_example_user(system, login_id)
+
         self.app_token_client.login(
             {
                 "login_url": constants.LOGIN_URLS[self.system],
@@ -147,3 +153,14 @@ class MockContext(Context):
 
     def get_system(self) -> str:
         return "mock_system"
+
+
+def _get_app_token_from_example_user(system: str, login_id: str) -> str:
+    deployment_info = get_deployment_info(system)
+    example_users = deployment_info.get("exampleUsers", [])
+    for user in example_users:
+        if user.get("type") == "appTokenLogin" and user.get("loginId") == login_id:
+            return user["appToken"]
+    raise ValueError(
+        f"No example user found with login ID '{login_id}' for app token login."
+    )
