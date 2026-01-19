@@ -7,6 +7,7 @@ from fedora_to_cora.process_fedora_publication_files import (
 )
 from scripts.util.analyze_errors import analyze_and_print_report
 from classic.config import SSH_HOST, SSH_PORT, SSH_USER
+import time
 
 
 def main():
@@ -27,7 +28,6 @@ def main():
                 "help": "Login ID for authentication",
             },
             "--app-token": {
-                "default": "44056388-b865-409d-932d-4bb4970d139a",
                 "help": "Application token for authentication",
             },
             "--workers": {
@@ -83,6 +83,8 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
 """
     )
 
+    start_time = time.perf_counter()
+
     with SSHTunnel(SSH_HOST, SSH_PORT, SSH_USER, LOCAL_PORT, REMOTE_HOST, REMOTE_PORT):
         process_fedora_publication_files(
             xml_dir=args.xml_dir,
@@ -91,6 +93,9 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
             limit=args.limit,
             binaries=args.binaries,
         )
+
+    end_time = time.perf_counter()
+    print(f"Processing completed in {end_time - start_time:.2f} seconds.")
 
     analyze_and_print_report("logs/outputs-import.log")
 

@@ -5,18 +5,20 @@ from cora.context import Context
 import time
 
 
-def migrate_binary(binary_record: ET.Element, pid: str, file_name: str, context: Context):
+def migrate_binary(
+    binary_record: ET.Element, pid: str, file_name: str, context: Context
+):
     download_url = f"http://localhost:8088/fedora/get/{pid}/{file_name}"
     start_migrate = time.perf_counter()
     context.log(f"[PID {pid}] ⏳ Starting migrate file from Fedora: {download_url}")
-    
+
     start_download = time.perf_counter()
     download_response = requests.get(download_url)
     download_response.raise_for_status()
     binary_data = download_response.content
     end_download = time.perf_counter()
     download_time = end_download - start_download
-    
+
     multipart_data = MultipartEncoder(
         fields={
             "file": (
@@ -26,7 +28,6 @@ def migrate_binary(binary_record: ET.Element, pid: str, file_name: str, context:
             )
         }
     )
-
 
     upload_url = _get_upload_url(binary_record)
 
@@ -41,18 +42,19 @@ def migrate_binary(binary_record: ET.Element, pid: str, file_name: str, context:
     )
     end_upload = time.perf_counter()
     upload_time = end_upload - start_upload
-        
+
     if upload_response.status_code != 200:
         context.log(f"[PID {pid}] Upload failed: {upload_response.text}")
         raise UploadError(
             f"Failed to upload binary file '{file_name}': {upload_response.status_code} - {upload_response.text}"
         )
-        
 
     end_migrate = time.perf_counter()
     migrate_time = end_migrate - start_migrate
-    context.log(f"[PID {pid}] 🥳 Migrated binary file '{file_name}' from Fedora in {migrate_time:.2f}s (⬇️{download_time:.2f}s, ⬆️{upload_time:.2f}s) ")
-
+    file_size_mb = len(binary_data) / (1024 * 1024)
+    context.log(
+        f"[PID {pid}] 🥳 Migrated binary file '{download_url}' from Fedora in {migrate_time:.2f}s (⬇️{download_time:.2f}s, ⬆️{upload_time:.2f}s, 📦{file_size_mb:.2f}MB) "
+    )
 
 
 def _get_upload_url(binary_record: ET.Element) -> str:

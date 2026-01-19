@@ -87,7 +87,7 @@ def _migrate_records(
     run_with_threads(
         source_records,
         process_file,
-        workers=8,
+        workers=context.get_workers(),
         desc="Processing publication files",
     )
 
