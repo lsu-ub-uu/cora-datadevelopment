@@ -194,16 +194,12 @@ def get_total_matching_prefixed_records() -> int:
 def process_record(progress, node):
     global TOTAL_RECORD_DELETIONS, TOTAL_RECORD_UPDATES
     if node.record_type == "validationType":
-        CTX.log(f"ValidationType '{node.record_id}' was updated to original metadata new/update groups and not deleted")
-        text_id_elem = node.xml_content.find(".//textId/linkedRecordId")
-        def_text_id_elem = node.xml_content.find(".//defTextId/linkedRecordId")
-        if text_id_elem is not None and text_id_elem.text:
-            VALIDATION_TYPE_TEXTS.add(text_id_elem.text.strip())
-        if def_text_id_elem is not None and def_text_id_elem.text:
-            VALIDATION_TYPE_TEXTS.add(def_text_id_elem.text.strip())
+        collect_text_ids(node)
         utils.break_dependency_to_top_groups(node.xml_content)
         utils.remove_action_links(node.xml_content)
         if update_record(node):
+            CTX.log(
+                f"ValidationType '{node.record_id}' was updated to original metadata new/update groups and not deleted")
             TOTAL_RECORD_UPDATES += 1
             progress.update(1)
 
@@ -211,6 +207,15 @@ def process_record(progress, node):
         if prepare_url_and_possibly_delete(node):
             TOTAL_RECORD_DELETIONS += 1
             progress.update(1)
+
+
+def collect_text_ids(node):
+    text_id = node.xml_content.find(".//textId/linkedRecordId")
+    if text_id is not None and text_id.text:
+        VALIDATION_TYPE_TEXTS.add(text_id.text.strip())
+    def_text_id = node.xml_content.find(".//defTextId/linkedRecordId")
+    if def_text_id is not None and def_text_id.text:
+        VALIDATION_TYPE_TEXTS.add(def_text_id.text.strip())
 
 
 def check_for_unprocessed_nodes(global_node_map, processed: set[str]):

@@ -153,6 +153,14 @@ def test_process_node_map_and_delete_records(create_node_tree, monkeypatch):
     assert set(processed_order) == {"E", "D", "C", "B", "A"}
 
 
+def test_collect_text_ids(monkeypatch, record_node):
+    expected_ids = {"divaTextNewGroupText", "divaTextNewGroupDefText"}
+
+    script.collect_text_ids(record_node)
+    assert script.VALIDATION_TYPE_TEXTS is not None
+    assert all(record_id in script.VALIDATION_TYPE_TEXTS for record_id in expected_ids)
+
+
 def test_check_for_unprocessed_nodes(monkeypatch, record_node):
     global_node_map = {"some_url": record_node}
     processed = {"other_url"}
