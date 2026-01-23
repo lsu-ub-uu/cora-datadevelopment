@@ -1,6 +1,6 @@
 from common.common_data import read_source_xml
 import os
-from common.threads import run_with_threads
+from common.threads import run_with_multiprocessing
 from cora.context import Context
 from fedora_to_cora.output_migrate import output_migrate
 from common.xml_validate import validate_xml, XMLValidationError
@@ -42,7 +42,7 @@ def _read_source_records(xml_dir: str, limit: int | None = None) -> list[ET.Elem
     return records
 
 
-def _validate_source_records(source_records, context: Context) -> bool:
+def _validate_source_records(source_records) -> bool:
     validation_errors = []
     for source_record in source_records:
         try:
@@ -51,11 +51,11 @@ def _validate_source_records(source_records, context: Context) -> bool:
             pid = source_record.findtext("pid")
             validation_errors.append(f"{pid} - XML Validation Error: {str(e)}")
     if len(validation_errors) > 0:
-        context.log(
-            "==== Skipped migration due to XML Validation Error in source data ==== "
-        )
-        for error in validation_errors:
-            context.log(f"❌ {error}")
+        # context.log(
+        #     "==== Skipped migration due to XML Validation Error in source data ==== "
+        # )
+        # for error in validation_errors:
+        #     context.log(f"❌ {error}")
         return False
     return True
 
@@ -83,13 +83,16 @@ def _migrate_records(
                 failed_migrations.append(f"{pid} - Errors: [{error_str}]")
         except Exception as e:
             failed_migrations.append(f"{pid} - Exception: {str(e)}")
+    
+   
 
-    run_with_threads(
-        source_records,
-        process_file,
-        workers=context.get_workers(),
-        desc="Processing publication files",
-    )
+
+    # run_with_threads(
+    #     source_records,
+    #     process_file,
+    #     workers=context.get_workers(),
+    #     desc="Processing publication files",
+    # )
 
     context.log("==== Processing complete ====")
 
