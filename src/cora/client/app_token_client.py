@@ -34,7 +34,6 @@ class AppTokenClient:
     def login_using_spec(self, login_spec):
         combined = self.create_combined_login_id_app_token(login_spec)
         login_url = login_spec["login_url"]
-        print('sending http post to login url:', login_url)
         return self.requests.post(
             login_url, data=combined, headers=AppTokenClient.LOGIN_HEADERS
         )

@@ -51,7 +51,6 @@ class CoraContext(Context):
                 "app_token": app_token,
             }
         )
-        print(f"Successfully logged in to Cora API. ")
         self._workers = workers
 
     def get_system(self) -> str:
