@@ -74,7 +74,7 @@ def test_collect_record_info_children(create_node_tree):
     script.collect_record_info_children()
 
     expected_children = {"urlC", "urlD", "urlE"}
-    assert expected_children <= script.GLOBAL_RECORD_INFO_CHILDREN.keys()
+    assert expected_children <= script.GLOBAL_INFO_CHILDREN.keys()
 
 
 def test_process_node_create(record_node):
@@ -153,7 +153,7 @@ def test_process_and_possibly_create_with_updated_final_value(record_node, monke
 def test_process_and_possibly_create_fail_because_record_info_child(record_node, monkeypatch):
     script.DRY_RUN = False
 
-    monkeypatch.setattr(common_utils, "record_is_a_child_of_record_info", lambda node, mapping=None: True)
+    monkeypatch.setattr(common_utils, "record_is_a_child_of_info_group", lambda node, mapping=None: True)
 
     assert not script.process_and_possibly_create(record_node, {"a": "b"})
 
@@ -165,6 +165,25 @@ def test_unprocessed_nodes(monkeypatch):
     script.check_for_unprocessed_nodes(global_node_map, processed)
 
     assert "Warning: Record: urlA was never processed" in script.TOTAL_ERRORS
+
+
+def test_collect_possible_final_value_node_doesnt_exist(record_node):
+    script.collect_possible_final_value_node(record_node)
+    assert len(script.FINAL_VALUE_NODES) == 0
+
+
+def test_collect_possible_final_value_node_exist(record_node):
+    metadata = record_node.xml_content.find("metadata")
+    if metadata is None:
+        metadata = ET.SubElement(record_node.xml_content, "metadata")
+        final_value = ET.Element("finalValue")
+        final_value.text = "some final value"
+        metadata.append(final_value)
+
+    script.collect_possible_final_value_node(record_node)
+
+    assert script.FINAL_VALUE_NODES == {"divaTextNewGroup"}
+    assert len(script.FINAL_VALUE_NODES) == 1
 
 
 def test_process_node_map_bottom_up_and_store(create_node_tree, monkeypatch):

@@ -150,12 +150,12 @@ def link_parent_child_relationship(global_node_map: dict[Any, Any]):
                 global_node_map[child_url].parents.append(node)
 
 
-def record_info_group(xml_content):
+def info_groups(xml_content):
     name_in_data = xml_content.findtext(".//metadata[@type='group']/nameInData")
-    return name_in_data is not None and name_in_data == "recordInfo"
+    return name_in_data is not None and name_in_data in ("recordInfo", "adminInfo")
 
 
-def record_is_a_child_of_record_info(node, global_record_info_children: dict[str, Any]) -> bool:
+def record_is_a_child_of_info_group(node, global_record_info_children: dict[str, Any]) -> bool:
     return node.url in global_record_info_children
 
 
@@ -170,8 +170,9 @@ def update_final_value_of_validation_type(xml_content):
     return False
 
 
-def possibly_update_data_of_non_record_info_child(node, record_info_groups: set, updated: bool) -> bool:
+def possibly_update_data_of_non_info_group_child(node, info_groupz: set, final_value_nodes: set, updated: bool) -> bool:
     if set_data_quality_to_classic(node.xml_content):
+        final_value_nodes.add(node.record_id)
         _ctx.log(f"> Set data quality to classic in {node.record_id}")
         updated = True
 
@@ -179,16 +180,17 @@ def possibly_update_data_of_non_record_info_child(node, record_info_groups: set,
         _ctx.log(f"> Normalized regex pattern(s) to '.+' in {node.record_id}")
         updated = True
 
-    if normalize_child_reference_repeat(node.xml_content, record_info_groups):
+    excluded_record_ids = info_groupz.union(final_value_nodes)
+    if normalize_child_reference_repeat(node.xml_content, excluded_record_ids):
         _ctx.log(f"> Normalized childReference(s) Min Max to '0-X' in {node.record_id}")
         updated = True
     return updated
 
 
-def is_record_info_child_ref(child_reference: Element, record_info_groups: set) -> bool:
+def is_excluded_record_id_ref(child_reference: Element, excluded_record_ids: set) -> bool:
     linked_record_id = child_reference.find(".//ref/linkedRecordId")
-    if linked_record_id is not None and linked_record_id.text in record_info_groups:
-        _ctx.log(f"Skipped normalizing '{linked_record_id.text}' due to being a record info group")
+    if linked_record_id is not None and linked_record_id.text in excluded_record_ids:
+        _ctx.log(f"Skipped normalizing '{linked_record_id.text}' due to being an excluded record id")
         return True
     return False
 
@@ -204,7 +206,7 @@ def set_data_quality_to_classic(xml_content: Element):
 
 def normalize_regex_patterns(xml_root):
     updated = False
-    if not record_info_group(xml_root):
+    if not info_groups(xml_root):
         for tag in ("regex", "regEx"):
             for element in xml_root.findall(f".//{tag}"):
                 regex = element.text
@@ -215,11 +217,11 @@ def normalize_regex_patterns(xml_root):
     return updated
 
 
-def normalize_child_reference_repeat(xml_root: Element, record_info_groups: set):
+def normalize_child_reference_repeat(xml_root: Element, excluded_record_ids: set):
     updated = False
-    if not record_info_group(xml_root):
+    if not info_groups(xml_root):
         for child_reference in xml_root.findall(".//childReferences/childReference"):
-            if is_record_info_child_ref(child_reference, record_info_groups):
+            if is_excluded_record_id_ref(child_reference, excluded_record_ids):
                 continue
 
             repeat_min_element = child_reference.find("repeatMin")

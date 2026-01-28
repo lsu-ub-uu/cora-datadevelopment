@@ -35,9 +35,10 @@ EXTENSIVE_LOGGING = True
 # Global state
 GLOBAL_NODE_MAP = {}
 GLOBAL_ID_MAPPING = {}
-GLOBAL_RECORD_INFO_CHILDREN = {}
+GLOBAL_INFO_CHILDREN = {}
 UPDATED_TEXTS = set()
-RECORD_INFO_GROUPS = set()
+INFO_GROUPS = set()
+FINAL_VALUE_NODES = set()
 TOTAL_PROCESSED_RECORDS = 0
 TOTAL_UPDATES = 0
 TOTAL_CREATED = 0
@@ -129,11 +130,11 @@ def get_validation_types_to_process() -> list[Any]:
 
 def collect_record_info_children():
     processed = set()
-    record_info_roots = find_record_info_roots(GLOBAL_NODE_MAP)
-    for node in record_info_roots:
-        RECORD_INFO_GROUPS.add(node.record_id)
+    info_roots = find_info_roots(GLOBAL_NODE_MAP)
+    for node in info_roots:
+        INFO_GROUPS.add(node.record_id)
 
-    queue = deque(record_info_roots)
+    queue = deque(info_roots)
 
     while queue:
         parent = queue.popleft()
@@ -141,8 +142,8 @@ def collect_record_info_children():
             continue
         processed.add(parent.url)
 
-        if parent.url not in {root.url for root in record_info_roots}:
-            GLOBAL_RECORD_INFO_CHILDREN[parent.url] = parent
+        if parent.url not in {root.url for root in info_roots}:
+            GLOBAL_INFO_CHILDREN[parent.url] = parent
 
         for child in parent.children:
             if child.url not in processed:
@@ -150,12 +151,12 @@ def collect_record_info_children():
     print()
 
 
-def find_record_info_roots(global_node_map) -> list[Any]:
-    record_info_roots = [
+def find_info_roots(global_node_map) -> list[Any]:
+    info_roots = [
         node for node in global_node_map.values()
-        if common_utils.record_info_group(node.xml_content)
+        if common_utils.info_groups(node.xml_content)
     ]
-    return record_info_roots
+    return info_roots
 
 
 def process_node_map_bottom_up_and_store():
@@ -257,16 +258,19 @@ def process_and_possibly_create(node, global_id_mapping):
     updated = False
     common_utils.possibly_set_to_not_create_presentations(node)
 
+    collect_possible_final_value_node(node)
+
     if common_utils.update_final_value_of_validation_type(node.xml_content):
         CTX.log(f"> Updated finalValue for {original_id} (validationType)")
         updated = True
 
-    elif common_utils.record_is_a_child_of_record_info(node, GLOBAL_RECORD_INFO_CHILDREN):
-        CTX.log(f"> Skipping {original_id} (record info child)")
+    elif common_utils.record_is_a_child_of_info_group(node, GLOBAL_INFO_CHILDREN):
+        CTX.log(f"> Skipping {original_id} (info group child)")
         return False
 
     else:
-        updated = common_utils.possibly_update_data_of_non_record_info_child(node, RECORD_INFO_GROUPS, updated)
+        updated = common_utils.possibly_update_data_of_non_info_group_child(node, INFO_GROUPS, FINAL_VALUE_NODES,
+                                                                            updated)
 
     child_renamed = any(child.record_id in global_id_mapping for child in node.children)
 
@@ -284,6 +288,11 @@ def process_and_possibly_create(node, global_id_mapping):
         CTX.log(f"> Updated data divider of {original_id}")
 
     return prepare_and_try_to_save_record(node)
+
+
+def collect_possible_final_value_node(node):
+    if node.xml_content.find(".//metadata/finalValue") is not None:
+        FINAL_VALUE_NODES.add(node.record_id)
 
 
 def possibly_create_new_texts_for_updated_records(node):
