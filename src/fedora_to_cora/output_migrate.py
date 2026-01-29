@@ -13,14 +13,17 @@ from fedora_to_cora.transform.transform_output_to_classic_quality import (
 
 
 class OutputMigrationResult:
+    pid: str
     status: Literal["SUCCESS", "CLASSIC_QUALITY", "FAILED"]
     errors: list[str] | None
 
     def __init__(
         self,
+        pid: str,
         status: Literal["SUCCESS", "CLASSIC_QUALITY", "FAILED"],
         errors: list[str] | None = None,
     ):
+        self.pid = pid
         self.status = status
         self.errors = errors
 
@@ -34,6 +37,8 @@ def output_migrate(
     """
     Migrates a Fedora XML publication record and its attached binaries to Cora.
     """
+
+    pid = source_record.findtext("./pid")
 
     cora_output = transform_to_cora_output(source_record, context)
 
@@ -57,9 +62,10 @@ def output_migrate(
             context=context,
         )
         if is_success_result(create_result):
-            return OutputMigrationResult(status="CLASSIC_QUALITY", errors=errors)
+            return OutputMigrationResult(pid, status="CLASSIC_QUALITY", errors=errors)
         else:
             return OutputMigrationResult(
+                pid,
                 status="FAILED",
                 errors=(errors or [])
                 + ([create_result.error] if create_result.error is not None else []),
@@ -74,6 +80,7 @@ def output_migrate(
 
         if not is_success_result(create_record_result):
             return OutputMigrationResult(
+                pid,
                 status="FAILED",
                 errors=(
                     [create_record_result.error] if create_record_result.error else []
@@ -93,8 +100,9 @@ def output_migrate(
                 )
                 delete_record(create_record_result.response_data, context)
                 return OutputMigrationResult(
+                    pid,
                     status="FAILED",
                     errors=errors,
                 )
 
-    return OutputMigrationResult(status="SUCCESS")
+    return OutputMigrationResult(pid, status="SUCCESS")

@@ -73,6 +73,7 @@ def analyze_error_log(
 
     if last_processing_complete_index == -1:
         # No "Processing complete" found, return empty results
+        print("❌ No 'Processing complete' marker found in the log file.")
         return (
             dict(error_counts),
             dict(error_examples),
@@ -140,38 +141,41 @@ def generate_report(
     """Generate and print the error analysis report."""
 
     print("=" * 80)
-    print("ERROR ANALYSIS REPORT")
+    print("LOG ANALYSIS REPORT")
     print("=" * 80)
     print()
 
     print(f"📊 SUMMARY:")
-    print(f"   ✅ Successful transformations: {total_successful:,}")
-    print(f"   ☣️ Classic quality transformations: {total_classic:,}")
-    print(f"   ❌ Failed transformations: {total_failed:,}")
+    print(f"   ✅ Successful migrations: {total_successful:,}")
+    print(f"   ☣️ Classic quality migrations: {total_classic:,}")
+    print(f"   ❌ Failed migrations: {total_failed:,}")
     print(
         f"   📈 Success rate: {total_successful/(total_successful+total_classic+total_failed)*100:.1f}%"
     )
     print()
 
-    print(f"🔍 ERROR BREAKDOWN:")
-    print(f"   Total unique error types: {len(error_counts)}")
-    print()
+    if(len(error_counts) > 0):
+        print(f"🔍 ERROR BREAKDOWN:")
+        print(f"   Total unique error types: {len(error_counts)}")
+        print()
 
-    # Sort errors by frequency (descending)
-    sorted_errors = sorted(error_counts.items(), key=lambda x: x[1], reverse=True)
+        # Sort errors by frequency (descending)
+        sorted_errors = sorted(error_counts.items(), key=lambda x: x[1], reverse=True)
 
-    print("📋 ERRORS BY FREQUENCY:")
-    print("-" * 80)
+        print("📋 ERRORS BY FREQUENCY:")
+        print("-" * 80)
 
-    for i, (error_msg, count) in enumerate(sorted_errors, 1):
-        percentage = (count / (total_failed + total_classic)) * 100
-        examples = error_examples.get(error_msg, [])
-        examples_str = ", ".join(examples) if examples else "no examples"
-        print(f"\n{i}. Error: {error_msg}")
-        print(f"   Count: {count:,} records ({percentage:.1f}% of all failures)")
-        print(f"   Examples: {examples_str}")
+        
 
-    print()
+        for i, (error_msg, count) in enumerate(sorted_errors, 1):
+            percentage = (count / (total_failed + total_classic)) * 100
+            examples = error_examples.get(error_msg, [])
+            examples_str = ", ".join(examples) if examples else "no examples"
+            print(f"\n{i}. Error: {error_msg}")
+            print(f"   Count: {count:,} records ({percentage:.1f}% of all failures)")
+            print(f"   Examples: {examples_str}")
+
+        print()
     print("=" * 80)
 
 
@@ -182,10 +186,6 @@ def analyze_and_print_report(log_file_path: str):
         error_counts, error_examples, total_failed, total_classic, total_successful = (
             analyze_error_log(log_file_path)
         )
-
-        if not error_counts:
-            print("❌ No error records found in the log file.")
-            sys.exit(1)
 
         generate_report(
             error_counts, error_examples, total_failed, total_classic, total_successful

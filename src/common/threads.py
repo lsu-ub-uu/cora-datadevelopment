@@ -1,4 +1,7 @@
 from multiprocessing.pool import ThreadPool
+from multiprocessing import Pool,Process
+from typing import Iterable
+
 from tqdm import tqdm
 
 DEFAULT_WORKERS = 16
@@ -16,3 +19,18 @@ def run_with_threads(
             )
         )
     return results
+
+
+def run_with_multiprocessing(
+    iterable, worker, processes, initializer, initargs, desc="Processing", 
+) -> list:
+    with Pool(processes, initializer, initargs) as pool:
+        return list(
+                tqdm(
+                    pool.imap_unordered(worker, iterable),
+                    total=len(iterable),
+                    desc=desc,
+                )
+            )
+
+

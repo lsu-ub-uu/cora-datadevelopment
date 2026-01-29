@@ -13,11 +13,13 @@ def migrate_binary(
     context.log(f"[PID {pid}] ⏳ Starting migrate file from Fedora: {download_url}")
 
     start_download = time.perf_counter()
-    download_response = requests.get(download_url)
-    download_response.raise_for_status()
-    binary_data = download_response.content
+    with requests.get(download_url) as download_response:
+        download_response.raise_for_status()
+        binary_data = download_response.content
     end_download = time.perf_counter()
     download_time = end_download - start_download
+    file_size_mb = len(binary_data) / (1024 * 1024)
+
 
     multipart_data = MultipartEncoder(
         fields={
@@ -32,26 +34,30 @@ def migrate_binary(
     upload_url = _get_upload_url(binary_record)
 
     start_upload = time.perf_counter()
-    upload_response = requests.post(
+    with requests.post(
         upload_url,
         data=multipart_data,
         headers={
             "Authtoken": context.get_auth_token(),
             "Content-Type": multipart_data.content_type,
         },
-    )
-    end_upload = time.perf_counter()
-    upload_time = end_upload - start_upload
+    ) as upload_response:
+        end_upload = time.perf_counter()
+        upload_time = end_upload - start_upload
 
-    if upload_response.status_code != 200:
-        context.log(f"[PID {pid}] Upload failed: {upload_response.text}")
-        raise UploadError(
-            f"Failed to upload binary file '{file_name}': {upload_response.status_code} - {upload_response.text}"
-        )
+        
+
+        if upload_response.status_code != 200:
+            context.log(f"[PID {pid}] Upload failed: {upload_response.text}")
+            raise UploadError(
+                f"Failed to upload binary file '{file_name}': {upload_response.status_code} - {upload_response.text}"
+            )
+        
+    del multipart_data
+    del binary_data
 
     end_migrate = time.perf_counter()
     migrate_time = end_migrate - start_migrate
-    file_size_mb = len(binary_data) / (1024 * 1024)
     context.log(
         f"[PID {pid}] 🥳 Migrated binary file '{download_url}' from Fedora in {migrate_time:.2f}s (⬇️{download_time:.2f}s, ⬆️{upload_time:.2f}s, 📦{file_size_mb:.2f}MB) "
     )
