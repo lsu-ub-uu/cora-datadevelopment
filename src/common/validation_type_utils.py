@@ -230,7 +230,8 @@ def normalize_child_reference_repeat(xml_root: Element, excluded_record_ids: set
             if repeat_min_element is not None and repeat_min_element.text != "0":
                 repeat_min_element.text = "0"
                 updated = True
-            if repeat_max_element is not None and repeat_max_element.text != "X":
+
+            if repeat_max_element is not None and repeat_max_element.text != "X" and repeat_max_element.text != "1":
                 repeat_max_element.text = "X"
                 updated = True
     return updated

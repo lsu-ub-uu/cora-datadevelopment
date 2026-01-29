@@ -40,7 +40,6 @@ class CoraContext(Context):
             }
         )
         if app_token is None:
-            print(f"No app token provided, fetching from example users for login ID '{login_id}'")
             app_token = _get_app_token_from_example_user(system, login_id)
             
 
