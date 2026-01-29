@@ -257,7 +257,7 @@ def test_normalize_child_reference_repeat(monkeypatch, record_node):
     assert common_utils.normalize_child_reference_repeat(record_node.xml_content, {"some_record_info_group"})
     child = record_node.xml_content.find(".//childReference")
     assert child.find("repeatMin").text == "0"
-    assert child.find("repeatMax").text == "X"
+    assert child.find("repeatMax").text == "1"
 
 
 def test_normalize_child_reference_repeat_record_info_child(monkeypatch, record_node):

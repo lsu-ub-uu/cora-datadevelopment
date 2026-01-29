@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.create import CreateRecordFailureResult, CreateRecordSuccessResult
 from fedora_to_cora.output_migrate import output_migrate
@@ -291,9 +291,9 @@ def test_migrate_with_classic_quality(mock_pretty_print, mock_create, mock_trans
                     <linkedRecordId>classic_publication_report</linkedRecordId>
                 </validationType>
             </recordInfo>
-            <dataQuality repeatId="1">classic</dataQuality>
-            <adminInfo repeatId="2">
-                <note repeatId="0" type="internal">Some internal note.Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic. Validation errors:- Missing required field- Invalid format</note>
+            <dataQuality>classic</dataQuality>
+            <adminInfo>
+                <note type="internal">Some internal note.Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic. Validation errors:- Missing required field- Invalid format</note>
             </adminInfo>
         </record>
         """,
