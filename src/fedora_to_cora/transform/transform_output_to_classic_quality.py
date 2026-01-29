@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as ET
 
 VALIDATION_TYPE_PREFIX = "classic_"
-TAGS_WITHOUT_REPEAT_ID = {"recordInfo", "dataQuality", "adminInfo"}
 
 
 def transform_output_to_classic_quality(
@@ -28,19 +27,6 @@ def _update_data_quality(classic_quality_output: ET.Element):
     data_quality = classic_quality_output.find("./dataQuality")
     assert data_quality is not None
     data_quality.text = "classic"
-
-
-def _add_repeat_ids_recursive(element: ET.Element, repeat_id: int = 0):
-    if element.tag in TAGS_WITHOUT_REPEAT_ID:
-        return
-
-    if element.get("repeatId") is None:
-        element.set("repeatId", str(repeat_id))
-
-    if len(element) > 0:
-        for index, child in enumerate(element):
-            _add_repeat_ids_recursive(child, index)
-
 
 def _add_validation_errors_to_internal_note(
     classic_quality_output: ET.Element, validation_errors: list[str] | None
