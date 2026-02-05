@@ -83,7 +83,7 @@ def transform_record_list(
 
     return results
 
-def transform_text_element(source_element: ET.Element, new_tag_name: str) -> Optional[ET.Element]:
+def transform_text_element(source_element: ET.Element | None, new_tag_name: str) -> Optional[ET.Element]:
     if source_element is None:
         return None
     
