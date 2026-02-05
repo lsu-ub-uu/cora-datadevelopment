@@ -79,26 +79,28 @@ def test_attachments_migrate(monkeypatch):
                     <recordInfo>
                         <id>test-output</id>
                     </recordInfo>
-                    <attachment repeatId="test.pdf">
-                        <attachmentFile>
-                            <linkedRecordType>binary</linkedRecordType>
-                            <linkedRecordId>binary:12345</linkedRecordId>
-                        </attachmentFile>
-                        <type>fullText</type>
-                        <adminInfo>
-                            <availability>availableNow</availability>
-                        </adminInfo>
-                    </attachment>
-                    <attachment repeatId="test2.pdf">
-                        <attachmentFile>
-                            <linkedRecordType>binary</linkedRecordType>
-                            <linkedRecordId>binary:12345</linkedRecordId>
-                        </attachmentFile>
-                        <type>fullText</type>
-                        <adminInfo>
-                            <availability>availableNow</availability>
-                        </adminInfo>
-                    </attachment>
+                    <attachments>
+                        <attachment repeatId="test.pdf">
+                            <attachmentFile>
+                                <linkedRecordType>binary</linkedRecordType>
+                                <linkedRecordId>binary:12345</linkedRecordId>
+                            </attachmentFile>
+                            <type>fullText</type>
+                            <adminInfo>
+                                <availability>availableNow</availability>
+                            </adminInfo>
+                        </attachment>
+                        <attachment repeatId="test2.pdf">
+                            <attachmentFile>
+                                <linkedRecordType>binary</linkedRecordType>
+                                <linkedRecordId>binary:12345</linkedRecordId>
+                            </attachmentFile>
+                            <type>fullText</type>
+                            <adminInfo>
+                                <availability>availableNow</availability>
+                            </adminInfo>
+                        </attachment>
+                    </attachments>
                 </output>
             </data>
         </record>
@@ -496,36 +498,133 @@ def test_respects_attachment_order(monkeypatch):
                     <recordInfo>
                         <id>test-output</id>
                     </recordInfo>
-                    <attachment repeatId="test3.pdf">
-                        <attachmentFile>
-                            <linkedRecordType>binary</linkedRecordType>
-                            <linkedRecordId>binary:12345</linkedRecordId>
-                        </attachmentFile>
-                        <type>fullText</type>
-                        <adminInfo>
-                            <availability>availableNow</availability>
-                        </adminInfo>
-                    </attachment>
-                    <attachment repeatId="test1.pdf">
-                        <attachmentFile>
-                            <linkedRecordType>binary</linkedRecordType>
-                            <linkedRecordId>binary:12345</linkedRecordId>
-                        </attachmentFile>
-                        <type>fullText</type>
-                        <adminInfo>
-                            <availability>availableNow</availability>
-                        </adminInfo>
-                    </attachment>
-                    <attachment repeatId="test2.pdf">
-                        <attachmentFile>
-                            <linkedRecordType>binary</linkedRecordType>
-                            <linkedRecordId>binary:12345</linkedRecordId>
-                        </attachmentFile>
-                        <type>fullText</type>
-                        <adminInfo>
-                            <availability>availableNow</availability>
-                        </adminInfo>
-                    </attachment>
+                    <attachments>
+                        <attachment repeatId="test3.pdf">
+                            <attachmentFile>
+                                <linkedRecordType>binary</linkedRecordType>
+                                <linkedRecordId>binary:12345</linkedRecordId>
+                            </attachmentFile>
+                            <type>fullText</type>
+                            <adminInfo>
+                                <availability>availableNow</availability>
+                            </adminInfo>
+                        </attachment>
+                        <attachment repeatId="test1.pdf">
+                            <attachmentFile>
+                                <linkedRecordType>binary</linkedRecordType>
+                                <linkedRecordId>binary:12345</linkedRecordId>
+                            </attachmentFile>
+                            <type>fullText</type>
+                            <adminInfo>
+                                <availability>availableNow</availability>
+                            </adminInfo>
+                        </attachment>
+                        <attachment repeatId="test2.pdf">
+                            <attachmentFile>
+                                <linkedRecordType>binary</linkedRecordType>
+                                <linkedRecordId>binary:12345</linkedRecordId>
+                            </attachmentFile>
+                            <type>fullText</type>
+                            <adminInfo>
+                                <availability>availableNow</availability>
+                            </adminInfo>
+                        </attachment>
+                    </attachments>
+                </output>
+            </data>
+        </record>
+        """,
+    )
+
+def test_attachments_note(monkeypatch):
+    create_record_mock = _set_up_create_record_mock(monkeypatch)
+    migrate_binary_mock = _set_up_migrate_binary_mock(monkeypatch)
+    update_record_mock = _set_up_update_record_mock(monkeypatch)
+    binary_record_transform_mock = _set_up_binary_record_transform_mock(monkeypatch)
+    attachments_transform_mock = _set_up_attachments_transform_mock(monkeypatch)
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
+            <pid>pid:123</pid>
+            <attachments>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    
+                    <fileName>test.pdf</fileName>
+                </attachment>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <fileName>test2.pdf</fileName>
+                </attachment>
+            </attachments>
+            <administrativeInfo>
+                <fileUploadMessage>Some note about the attachments</fileUploadMessage>
+            </administrativeInfo>
+        </publication>
+        """
+    )
+
+    cora_record = ET.fromstring(
+        """
+        <record>
+            <data>
+                <output> 
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                </output>
+            </data>
+        </record>
+        """
+    )
+
+    attachments_migrate(
+        source_record,
+        cora_record,
+        MockContext(),
+    )
+
+    updated_cora_record = update_record_mock.mock_calls[0].args[0]
+    assert_equal_for_xml_and_xml_string(
+        updated_cora_record,
+        """
+        <record>
+            <data>
+                <output>
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                    <attachments>
+                        <note>Some note about the attachments</note>
+                        <attachment repeatId="test.pdf">
+                            <attachmentFile>
+                                <linkedRecordType>binary</linkedRecordType>
+                                <linkedRecordId>binary:12345</linkedRecordId>
+                            </attachmentFile>
+                            <type>fullText</type>
+                            <adminInfo>
+                                <availability>availableNow</availability>
+                            </adminInfo>
+                        </attachment>
+                        <attachment repeatId="test2.pdf">
+                            <attachmentFile>
+                                <linkedRecordType>binary</linkedRecordType>
+                                <linkedRecordId>binary:12345</linkedRecordId>
+                            </attachmentFile>
+                            <type>fullText</type>
+                            <adminInfo>
+                                <availability>availableNow</availability>
+                            </adminInfo>
+                        </attachment>
+                    </attachments>
                 </output>
             </data>
         </record>
@@ -647,3 +746,4 @@ def _set_up_delete_record_mock(monkeypatch):
         "fedora_to_cora.attachments_migrate.delete_record", delete_record_mock
     )
     return delete_record_mock
+

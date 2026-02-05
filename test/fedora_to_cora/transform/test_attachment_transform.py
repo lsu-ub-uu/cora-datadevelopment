@@ -5,13 +5,7 @@ from fedora_to_cora.transform.attachment_transform import attachment_transform
 import pytest
 
 
-def test_attachment_transform(monkeypatch):
-    get_attachment_type_mock = MagicMock(return_value="fullText")
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.attachment_transform.get_attachment_type",
-        get_attachment_type_mock,
-    )
-
+def test_attachment_transform():
     source_attachment = ET.fromstring(
         """
             <attachment>
@@ -34,14 +28,46 @@ def test_attachment_transform(monkeypatch):
         attachment,
         """
         <attachment repeatId="binary:12345">
-            <attachmentFile>
+            <file>
               <linkedRecordType>binary</linkedRecordType>
               <linkedRecordId>binary:12345</linkedRecordId>
-            </attachmentFile>
-            <type>fullText</type>
-            <adminInfo>
-                <availability>availableNow</availability>
-            </adminInfo>
+            </file>
+            <label>fullText</label>
+            <availability>unavailable</availability>
+        </attachment>
+        """,
+    )
+
+
+def test_label():
+    source_attachment = ET.fromstring(
+        """
+            <attachment>
+                <fileLabel>
+                    <fileLabelId>50</fileLabelId>
+                </fileLabel>
+                <path>test.pdf</path>
+            </attachment>
+        """
+    )
+    binary_record_id = "binary:12345"
+
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type="publication_report",
+        binary_record_id=binary_record_id,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        attachment,
+        """
+        <attachment repeatId="binary:12345">
+            <file>
+              <linkedRecordType>binary</linkedRecordType>
+              <linkedRecordId>binary:12345</linkedRecordId>
+            </file>
+            <label>fullText</label>
+            <availability>unavailable</availability>
         </attachment>
         """,
     )
@@ -94,6 +120,7 @@ def test_includes_attachment_version_depending_on_validation_type(
                 </fileLabel>
                 <path>test.pdf</path>
                 <prePrint>true</prePrint>
+                <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
             </attachment>
         """
     )
@@ -128,6 +155,7 @@ def test_attachment_version_submitted_when_preprint(
                     <fileLabelId>50</fileLabelId>
                 </fileLabel>
                 <path>test.pdf</path>
+                <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
                 <{tagName}>true</{tagName}>
             </attachment>
         """
@@ -231,6 +259,7 @@ def test_note_type_attachment():
             </fileLabel>
             <path>test.pdf</path>
             <note>Some note about the attachment</note>
+            <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
         </attachment>
         """
     )
@@ -247,4 +276,192 @@ def test_note_type_attachment():
     assert (
         attachment.findtext("./adminInfo/note[@type='attachment']")
         == """**The following note was migrated from a DiVA Classic file upload message, and may not refer to this attachment**:\n\nSome note about the attachment"""
+    )
+
+
+def test_display_label():
+    source_attachment = ET.fromstring(
+        """
+        <attachment>
+            <fileLabel>
+                <fileLabelId>50</fileLabelId>
+            </fileLabel>
+            <selectedFileName>test.pdf</selectedFileName>
+        </attachment>
+        """
+    )
+
+    binary_record_id = "binary:12345"
+
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type="publication_report",
+        binary_record_id=binary_record_id,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        attachment,
+        """
+        <attachment repeatId="binary:12345">
+            <file>
+              <linkedRecordType>binary</linkedRecordType>
+              <linkedRecordId>binary:12345</linkedRecordId>
+            </file>
+            <label>fullText</label>
+            <displayLabel>test.pdf</displayLabel>
+            <availability>unavailable</availability>
+        </attachment>                                             
+    """,
+    )
+
+
+def test_digitized():
+    source_attachment = ET.fromstring(
+        """
+        <attachment>
+            <fileLabel>
+                <fileLabelId>50</fileLabelId>
+            </fileLabel>
+            <digitized>true</digitized>
+        </attachment>
+        """
+    )
+
+    binary_record_id = "binary:12345"
+
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type="publication_report",
+        binary_record_id=binary_record_id,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        attachment,
+        """
+        <attachment repeatId="binary:12345">
+            <file>
+              <linkedRecordType>binary</linkedRecordType>
+              <linkedRecordId>binary:12345</linkedRecordId>
+            </file>
+            <label>fullText</label>
+            <availability>unavailable</availability>
+            <digitized>true</digitized>
+        </attachment>                                             
+    """,
+    )
+
+
+def test_print_ready_file():
+    source_attachment = ET.fromstring(
+        """
+        <attachment>
+            <fileLabel>
+                <fileLabelId>50</fileLabelId>
+            </fileLabel>
+            <printOnDemand>true</printOnDemand>
+        </attachment>
+        """
+    )
+
+    binary_record_id = "binary:12345"
+
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type="publication_report",
+        binary_record_id=binary_record_id,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        attachment,
+        """
+        <attachment repeatId="binary:12345">
+            <file>
+              <linkedRecordType>binary</linkedRecordType>
+              <linkedRecordId>binary:12345</linkedRecordId>
+            </file>
+            <label>fullText</label>
+            <availability>unavailable</availability>
+            <printReadyFile>true</printReadyFile>
+        </attachment>                                             
+    """,
+    )
+
+
+def test_date_to_be_published():
+    source_attachment = ET.fromstring(
+        """
+        <attachment>
+            <fileLabel>
+                <fileLabelId>50</fileLabelId>
+            </fileLabel>
+            <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
+        </attachment>
+        """
+    )
+
+    binary_record_id = "binary:12345"
+
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type="publication_report",
+        binary_record_id=binary_record_id,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        attachment,
+        """
+        <attachment repeatId="binary:12345">
+            <file>
+              <linkedRecordType>binary</linkedRecordType>
+              <linkedRecordId>binary:12345</linkedRecordId>
+            </file>
+            <label>fullText</label>
+            <availability>available</availability>
+            <dateToBePublished>
+                <year>2020</year>
+                <month>01</month>
+                <day>01</day>
+            </dateToBePublished>
+        </attachment>                                             
+    """,
+    )
+
+
+def test_date_to_be_unpublished():
+    source_attachment = ET.fromstring(
+        """
+        <attachment>
+            <fileLabel>
+                <fileLabelId>50</fileLabelId>
+            </fileLabel>
+            <availableUntil>2020-01-01T00:00:00+00:00</availableUntil>
+        </attachment>
+        """
+    )
+
+    binary_record_id = "binary:12345"
+
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type="publication_report",
+        binary_record_id=binary_record_id,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        attachment,
+        """
+        <attachment repeatId="binary:12345">
+            <file>
+              <linkedRecordType>binary</linkedRecordType>
+              <linkedRecordId>binary:12345</linkedRecordId>
+            </file>
+            <label>fullText</label>
+            <availability>unavailable</availability>
+            <dateToBeUnpublished>
+                <year>2020</year>
+                <month>01</month>
+                <day>01</day>
+            </dateToBeUnpublished>
+        </attachment>                                             
+    """,
     )

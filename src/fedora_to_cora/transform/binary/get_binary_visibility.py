@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
-
 def get_binary_visibility(fedora_attachment: ET.Element) -> str:
     today = _get_today()
     deleted = fedora_attachment.findtext("./deleted")
@@ -11,6 +10,8 @@ def get_binary_visibility(fedora_attachment: ET.Element) -> str:
     to_be_published = fedora_attachment.findtext("./toBePublished")
     available_from = _parse_date(fedora_attachment.findtext("./availableFrom"))
     available_until = _parse_date(fedora_attachment.findtext("./availableUntil"))
+    print_on_demand = fedora_attachment.findtext("./printOnDemand")
+
 
     if deleted == "true":
         return "unpublished"
@@ -25,6 +26,9 @@ def get_binary_visibility(fedora_attachment: ET.Element) -> str:
         return "unpublished"
 
     if to_be_published == "true":
+        return "unpublished"
+    
+    if print_on_demand == "true":
         return "unpublished"
 
     if available_from is not None and available_from < today:

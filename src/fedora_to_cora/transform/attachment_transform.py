@@ -1,8 +1,10 @@
 from typing import Optional
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, transform_text_element
 from fedora_to_cora.transform.binary.get_attachment_type import get_attachment_type
+from fedora_to_cora.transform.binary.get_availability import get_availablity
+from fedora_to_cora.transform.create_date import create_date
 
 
 def attachment_transform(
@@ -14,13 +16,13 @@ def attachment_transform(
     attachment = ET.Element("attachment", repeatId=binary_record_id)
     attachment.append(
         create_record_link_using_name_type_id(
-            name_in_data="attachmentFile",
+            name_in_data="file",
             record_type="binary",
             record_id=binary_record_id,
         )
     )
 
-    ET.SubElement(attachment, "type").text = get_attachment_type(source_attachment)
+    ET.SubElement(attachment, "label").text = get_attachment_type(source_attachment)
 
     if should_have_attachment_version(validation_type):
         append_if_value(
@@ -30,6 +32,36 @@ def attachment_transform(
 
     append_if_value(
         attachment, _create_admin_info(source_attachment, file_upload_message)
+    )
+    append_if_value(
+        attachment,
+        transform_text_element(
+            source_attachment.find("./selectedFileName"), "displayLabel"
+        ),
+    )
+    append_if_value(
+        attachment,
+        _create_availability(source_attachment),
+    )
+    append_if_value(
+        attachment,
+        transform_text_element(source_attachment.find("./digitized"), "digitized"),
+    )
+    append_if_value(
+        attachment,
+        transform_text_element(
+            source_attachment.find("./printOnDemand"), "printReadyFile"
+        ),
+    )
+    append_if_value(
+        attachment,
+        create_date(source_attachment.findtext("./availableFrom"), "dateToBePublished"),
+    )
+    append_if_value(
+        attachment,
+        create_date(
+            source_attachment.findtext("./availableUntil"), "dateToBeUnpublished"
+        ),
     )
 
     return attachment
@@ -45,6 +77,12 @@ def should_have_attachment_version(validation_type: str) -> bool:
         "publication_editorial-letter",
     }
     return validation_type in validation_types_with_attachment_version
+
+
+def _create_availability(source_attachment: ET.Element) -> ET.Element:
+    availability = ET.Element("availability")
+    availability.text = get_availablity(source_attachment)
+    return availability
 
 
 def _create_attachment_version(source_attachment: ET.Element) -> Optional[ET.Element]:
@@ -80,8 +118,6 @@ def _create_admin_info(
     source_attachment: ET.Element, file_upload_message: Optional[str]
 ) -> ET.Element:
     admin_info = ET.Element("adminInfo")
-    ET.SubElement(admin_info, "availability").text = "availableNow"
-
     if source_attachment.findtext("secrecyInfo/secrecy") == "true":
         ET.SubElement(admin_info, "secrecy").text = "true"
 
@@ -96,3 +132,11 @@ def _create_admin_info(
             f"""**The following note was migrated from a DiVA Classic file upload message, and may not refer to this attachment**:\n\n{file_upload_message}"""
         )
     return admin_info
+
+
+def _create_display_label(source_attachment: ET.Element) -> Optional[ET.Element]:
+    selected_file_name = source_attachment.findtext("./selectedFileName")
+    if selected_file_name is not None and selected_file_name.strip() != "":
+        display_label = ET.Element("displayLabel")
+        display_label.text = selected_file_name
+        return display_label

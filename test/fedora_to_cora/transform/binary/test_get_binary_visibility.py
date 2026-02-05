@@ -160,3 +160,15 @@ def test_returns_unpublished_when_to_be_published():
     )
 
     assert get_binary_visibility(source_record) == "unpublished"
+
+def test_returns_unpublished_when_print_on_demand():
+    source_record = ET.fromstring(
+        """
+        <attachment>
+            <availableFrom>2022-12-27T13:23:13.908+01:00</availableFrom>
+            <printOnDemand>true</printOnDemand>
+        </attachment>
+        """
+    )
+
+    assert get_binary_visibility(source_record) == "unpublished"

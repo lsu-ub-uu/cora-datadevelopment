@@ -14,6 +14,7 @@ from cora.create import create_record, is_success_result
 from cora.update import update_record
 from cora.delete import delete_record
 from fedora_to_cora.transform.attachment_transform import attachment_transform
+from common.xml_utils import append_if_value
 
 
 def attachments_migrate(
@@ -28,36 +29,39 @@ def attachments_migrate(
 
     errors = []
     attachments = source_record.findall("./attachments/attachment")
-    for attachment in _sort_by_order(attachments):
-        attachment, error = _migrate_attachment(
-            attachment, context, created_binary_records, source_record
-        )
-        if attachment is not None:
-            output.append(attachment)
-        if error is not None:
-            errors.append(error)
-
-    if not errors:
-        update_result = update_record(record_to_update, context)
-        if update_result.success:
-            context.log(
-                f"✅ Successfully migrated {len(attachments)} attachments for record with old id {source_record.findtext('.//pid')}"
+    if (len(attachments) > 0):
+        attachments_group = ET.SubElement(output, "attachments")
+        append_if_value(attachments_group, _create_note(source_record))
+        for attachment in _sort_by_order(attachments):
+            attachment, error = _migrate_attachment(
+                attachment, context, created_binary_records, source_record
             )
+            if attachment is not None:
+                attachments_group.append(attachment)
+            if error is not None:
+                errors.append(error)
+
+        if not errors:
+            update_result = update_record(record_to_update, context)
+            if update_result.success:
+                context.log(
+                    f"✅ Successfully migrated {len(attachments)} attachments for record with old id {source_record.findtext('.//pid')}"
+                )
+            else:
+                context.log(
+                    f"❌ Failed to update record with attachments for record with old id {source_record.findtext('.//pid')}: {update_result.error}",
+                    level="error",
+                )
+                errors.append(update_result.error)
+                _roll_back_binary_records(created_binary_records, context)
         else:
             context.log(
-                f"❌ Failed to update record with attachments for record with old id {source_record.findtext('.//pid')}: {update_result.error}",
+                "❌ Errors occurred during attachment migration, rolling back created binary records.",
                 level="error",
             )
-            errors.append(update_result.error)
             _roll_back_binary_records(created_binary_records, context)
-    else:
-        context.log(
-            "❌ Errors occurred during attachment migration, rolling back created binary records.",
-            level="error",
-        )
-        _roll_back_binary_records(created_binary_records, context)
 
-    return len(errors) == 0, errors if errors else None
+        return len(errors) == 0, errors if errors else None
 
 
 def _roll_back_binary_records(
@@ -121,3 +125,10 @@ def _sort_by_order(attachments: list[ET.Element]) -> list[ET.Element]:
     return sorted(
         attachments, key=lambda attachment: attachment.findtext("./order") or ""
     )
+
+def _create_note(source_record: ET.Element) -> ET.Element | None:
+    file_upload_message = source_record.findtext("./administrativeInfo/fileUploadMessage")
+    if file_upload_message is not None and file_upload_message.strip() != "":
+        note = ET.Element("note")
+        note.text = file_upload_message
+        return note

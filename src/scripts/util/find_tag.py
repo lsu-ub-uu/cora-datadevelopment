@@ -2,8 +2,8 @@ import os
 import xml.etree.ElementTree as ET
 from common.common_data import read_source_xml
 
-xml_dir = "data/fedora_xml/nordiskamuseet/2025-11-05T14:03:38.126503"
-path_to_look_for = ".//person/localId"
+xml_dir = "data/fedora_xml/uu/2025-08-28T10:08:51.918238"
+path_to_look_for = "./administrativeInfo/fileUploadMessage"
 
 
 def main():

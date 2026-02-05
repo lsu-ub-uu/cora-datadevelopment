@@ -82,3 +82,14 @@ def transform_record_list(
         raise Exception("One or more records failed to transform.")
 
     return results
+
+def transform_text_element(source_element: ET.Element, new_tag_name: str) -> Optional[ET.Element]:
+    if source_element is None:
+        return None
+    
+    text_value = source_element.text
+    if text_value is not None and text_value.strip() != "":
+        new_element = ET.Element(new_tag_name)
+        new_element.text = text_value
+        return new_element
+    return None

@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, transform_text_element
 
 
 def test_append_if_value_appends_element_with_child_node():
@@ -62,3 +62,33 @@ def test_append_if_value_with_list_of_elements():
     assert len(parent) == 2
     assert parent[0] == child1
     assert parent[1] == child2
+
+
+def test_transform_text_element_with_text():
+    source = ET.Element("source")
+    source.text = "Hello World"
+    new_tag = "greeting"
+    result = transform_text_element(source, new_tag)
+    assert result is not None
+    assert result.tag == new_tag
+    assert result.text == "Hello World"
+
+
+def test_transform_text_element_with_empty_text():
+    source = ET.Element("source")
+    source.text = "   "
+    new_tag = "empty"
+    result = transform_text_element(source, new_tag)
+    assert result is None
+
+
+def test_transform_text_element_with_no_text():
+    source = ET.Element("source")
+    new_tag = "empty"
+    result = transform_text_element(source, new_tag)
+    assert result is None
+
+
+def test_transform_text_element_with_none_element():
+    result = transform_text_element(None, "any")
+    assert result is None
