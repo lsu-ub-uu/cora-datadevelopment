@@ -29,7 +29,7 @@ def attachments_migrate(
 
     errors = []
     attachments = source_record.findall("./attachments/attachment")
-    if (len(attachments) > 0):
+    if len(attachments) > 0:
         attachments_group = ET.SubElement(output, "attachments")
         append_if_value(attachments_group, _create_note(source_record))
         for attachment in _sort_by_order(attachments):
@@ -61,7 +61,7 @@ def attachments_migrate(
             )
             _roll_back_binary_records(created_binary_records, context)
 
-        return len(errors) == 0, errors if errors else None
+    return len(errors) == 0, errors if errors else None
 
 
 def _roll_back_binary_records(
@@ -126,8 +126,11 @@ def _sort_by_order(attachments: list[ET.Element]) -> list[ET.Element]:
         attachments, key=lambda attachment: attachment.findtext("./order") or ""
     )
 
+
 def _create_note(source_record: ET.Element) -> ET.Element | None:
-    file_upload_message = source_record.findtext("./administrativeInfo/fileUploadMessage")
+    file_upload_message = source_record.findtext(
+        "./administrativeInfo/fileUploadMessage"
+    )
     if file_upload_message is not None and file_upload_message.strip() != "":
         note = ET.Element("note")
         note.text = file_upload_message
