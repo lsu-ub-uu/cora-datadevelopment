@@ -5,6 +5,7 @@ from common.xml_utils import append_if_value, transform_text_element
 from fedora_to_cora.transform.binary.get_attachment_type import get_attachment_type
 from fedora_to_cora.transform.binary.get_availability import get_availablity
 from fedora_to_cora.transform.create_date import create_date
+from datetime import datetime, timezone
 
 
 def attachment_transform(
@@ -53,10 +54,14 @@ def attachment_transform(
             source_attachment.find("./printOnDemand"), "printReadyFile"
         ),
     )
-    append_if_value(
-        attachment,
-        create_date(source_attachment.findtext("./availableFrom"), "dateToBePublished"),
-    )
+
+    available_from = source_attachment.findtext("./availableFrom")
+    if available_from is not None and available_from > _get_now():
+        append_if_value(
+            attachment,
+            create_date(available_from, "dateToBePublished"),
+        )
+
     append_if_value(
         attachment,
         create_date(
@@ -147,3 +152,7 @@ def _create_display_label(source_attachment: ET.Element) -> Optional[ET.Element]
         display_label = ET.Element("displayLabel")
         display_label.text = selected_file_name
         return display_label
+
+
+def _get_now() -> str:
+    return datetime.now(timezone.utc).isoformat()
