@@ -1,6 +1,6 @@
 from xml.etree import ElementTree as ET
 
-def create_date(date_source: str, tag_name: str, **attribs) -> ET.Element:
+def create_date(date_source: str | None, tag_name: str, **attribs) -> ET.Element | None:
     if (date_source is None) or (date_source.strip() == ""):
         return None
     

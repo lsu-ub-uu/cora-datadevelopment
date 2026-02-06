@@ -60,8 +60,11 @@ def attachments_migrate(
                 level="error",
             )
             _roll_back_binary_records(created_binary_records, context)
-
-        return len(errors) == 0, errors if errors else None
+            
+    success = len(errors) == 0
+    errors = errors if errors else None
+    
+    return success, errors
 
 
 def _roll_back_binary_records(

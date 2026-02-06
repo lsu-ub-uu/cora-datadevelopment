@@ -39,6 +39,7 @@ def output_migrate(
     """
 
     pid = source_record.findtext("./pid")
+    assert pid is not None
 
     cora_output = transform_to_cora_output(source_record, context)
 
