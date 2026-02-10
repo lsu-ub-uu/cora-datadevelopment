@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Union, Dict, List, TypedDict, Optional
+from typing import Callable
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
 
@@ -83,10 +83,13 @@ def transform_record_list(
 
     return results
 
-def transform_text_element(source_element: ET.Element | None, new_tag_name: str) -> Optional[ET.Element]:
+
+def transform_text_element(
+    source_element: ET.Element | None, new_tag_name: str
+) -> ET.Element | None:
     if source_element is None:
         return None
-    
+
     text_value = source_element.text
     if text_value is not None and text_value.strip() != "":
         new_element = ET.Element(new_tag_name)
