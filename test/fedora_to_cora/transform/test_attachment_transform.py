@@ -33,7 +33,7 @@ def test_attachment_transform():
               <linkedRecordId>binary:12345</linkedRecordId>
             </file>
             <label>fullText</label>
-            <availability>unavailable</availability>
+            <requestedVisibility>unpublished</requestedVisibility>
         </attachment>
         """,
     )
@@ -67,7 +67,7 @@ def test_label():
               <linkedRecordId>binary:12345</linkedRecordId>
             </file>
             <label>fullText</label>
-            <availability>unavailable</availability>
+            <requestedVisibility>unpublished</requestedVisibility>
         </attachment>
         """,
     )
@@ -309,7 +309,7 @@ def test_display_label():
             </file>
             <label>fullText</label>
             <displayLabel>test.pdf</displayLabel>
-            <availability>unavailable</availability>
+            <requestedVisibility>unpublished</requestedVisibility>
         </attachment>                                             
     """,
     )
@@ -344,7 +344,7 @@ def test_digitized():
               <linkedRecordId>binary:12345</linkedRecordId>
             </file>
             <label>fullText</label>
-            <availability>unavailable</availability>
+            <requestedVisibility>unpublished</requestedVisibility>
             <digitized>true</digitized>
         </attachment>                                             
     """,
@@ -380,7 +380,7 @@ def test_print_ready_file():
               <linkedRecordId>binary:12345</linkedRecordId>
             </file>
             <label>fullText</label>
-            <availability>unavailable</availability>
+            <requestedVisibility>unpublished</requestedVisibility>
             <printReadyFile>true</printReadyFile>
         </attachment>                                             
     """,
@@ -416,7 +416,7 @@ def test_date_to_be_published():
               <linkedRecordId>binary:12345</linkedRecordId>
             </file>
             <label>fullText</label>
-            <availability>available</availability>
+            <requestedVisibility>published</requestedVisibility>
             <dateToBePublished>
                 <year>2020</year>
                 <month>01</month>
@@ -456,7 +456,7 @@ def test_date_to_be_unpublished():
               <linkedRecordId>binary:12345</linkedRecordId>
             </file>
             <label>fullText</label>
-            <availability>unavailable</availability>
+            <requestedVisibility>unpublished</requestedVisibility>
             <dateToBeUnpublished>
                 <year>2020</year>
                 <month>01</month>

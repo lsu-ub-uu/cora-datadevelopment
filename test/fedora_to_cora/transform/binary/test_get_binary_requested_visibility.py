@@ -1,9 +1,10 @@
 import xml.etree.ElementTree as ET
-
-import pytest
 from unittest.mock import patch
 
-from fedora_to_cora.transform.binary.get_availability import get_availablity
+from fedora_to_cora.transform.binary.get_binary_requested_visibility import (
+    get_binary_requested_visibility,
+)
+
 
 def test_returns_unavaiable_when_no_flag_is_true():
     source_attachment = ET.fromstring(
@@ -18,8 +19,9 @@ def test_returns_unavaiable_when_no_flag_is_true():
         """
     )
 
-    availability = get_availablity(source_attachment)
-    assert availability == "unavailable"
+    availability = get_binary_requested_visibility(source_attachment)
+    assert availability == "unpublished"
+
 
 def test_returns_available_when_to_be_published_is_true():
     source_attachment = ET.fromstring(
@@ -34,10 +36,11 @@ def test_returns_available_when_to_be_published_is_true():
         """
     )
 
-    availability = get_availablity(source_attachment)
-    assert availability == "available"
+    availability = get_binary_requested_visibility(source_attachment)
+    assert availability == "published"
 
-def test_returns_unavaible_when_to_be_archived_is_true():
+
+def test_returns_unpublished_when_to_be_archived_is_true():
     source_attachment = ET.fromstring(
         """
         <attachment>
@@ -50,10 +53,11 @@ def test_returns_unavaible_when_to_be_archived_is_true():
         """
     )
 
-    availability = get_availablity(source_attachment)
-    assert availability == "unavailable"
+    availability = get_binary_requested_visibility(source_attachment)
+    assert availability == "unpublished"
 
-def test_returns_secrecy_when_secrecy_is_true():
+
+def test_returns_confidential_when_secrecy_is_true():
     source_attachment = ET.fromstring(
         """
         <attachment>
@@ -66,8 +70,9 @@ def test_returns_secrecy_when_secrecy_is_true():
         """
     )
 
-    availability = get_availablity(source_attachment)
-    assert availability == "secrecy"
+    availability = get_binary_requested_visibility(source_attachment)
+    assert availability == "confidential"
+
 
 def test_returns_secrecy_when_all_flags_are_true():
     source_attachment = ET.fromstring(
@@ -82,10 +87,11 @@ def test_returns_secrecy_when_all_flags_are_true():
         """
     )
 
-    availability = get_availablity(source_attachment)
-    assert availability == "secrecy"
+    availability = get_binary_requested_visibility(source_attachment)
+    assert availability == "confidential"
 
-def test_returns_unavaible_when_to_be_archived_and_to_be_published_are_true():
+
+def test_returns_unpublished_when_to_be_archived_and_to_be_published_are_true():
     source_attachment = ET.fromstring(
         """
         <attachment>
@@ -98,10 +104,11 @@ def test_returns_unavaible_when_to_be_archived_and_to_be_published_are_true():
         """
     )
 
-    availability = get_availablity(source_attachment)
-    assert availability == "unavailable"
-    
-def test_returns_secrecy_when_secrecy_and_to_be_published_are_true():
+    availability = get_binary_requested_visibility(source_attachment)
+    assert availability == "unpublished"
+
+
+def test_returns_confidential_when_secrecy_and_to_be_published_are_true():
     source_attachment = ET.fromstring(
         """
         <attachment>
@@ -114,9 +121,9 @@ def test_returns_secrecy_when_secrecy_and_to_be_published_are_true():
         """
     )
 
-    availability = get_availablity(source_attachment)
-    assert availability == "secrecy"
-    
+    availability = get_binary_requested_visibility(source_attachment)
+    assert availability == "confidential"
+
 
 def test_returns_secrecy_when_secrecy_and_to_be_archived_are_true():
     source_attachment = ET.fromstring(
@@ -131,8 +138,9 @@ def test_returns_secrecy_when_secrecy_and_to_be_archived_are_true():
         """
     )
 
-    availability = get_availablity(source_attachment)
-    assert availability == "secrecy"
+    availability = get_binary_requested_visibility(source_attachment)
+    assert availability == "confidential"
+
 
 def test_handles_missing_secrecy_info():
     source_attachment = ET.fromstring(
@@ -144,10 +152,11 @@ def test_handles_missing_secrecy_info():
         """
     )
 
-    availability = get_availablity(source_attachment)
-    assert availability == "available"
+    availability = get_binary_requested_visibility(source_attachment)
+    assert availability == "published"
 
-def test_returns_available_when_no_secrecy_and_binary_visibility_is_published():
+
+def test_returns_published_when_no_secrecy_and_binary_visibility_is_published():
     source_attachment = ET.fromstring(
         """
         <attachment>
@@ -161,5 +170,5 @@ def test_returns_available_when_no_secrecy_and_binary_visibility_is_published():
         """
     )
 
-    availability = get_availablity(source_attachment)
-    assert availability == "available"
+    availability = get_binary_requested_visibility(source_attachment)
+    assert availability == "published"

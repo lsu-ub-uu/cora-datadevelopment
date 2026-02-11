@@ -29,8 +29,9 @@ def attachments_migrate(
 
     errors = []
     attachments = source_record.findall("./attachments/attachment")
-    if (len(attachments) > 0):
+    if len(attachments) > 0:
         attachments_group = ET.SubElement(output, "attachments")
+        append_if_value(attachments_group, _create_reviewed(source_record))
         append_if_value(attachments_group, _create_note(source_record))
         for attachment in _sort_by_order(attachments):
             attachment, error = _migrate_attachment(
@@ -60,10 +61,10 @@ def attachments_migrate(
                 level="error",
             )
             _roll_back_binary_records(created_binary_records, context)
-            
+
     success = len(errors) == 0
     errors = errors if errors else None
-    
+
     return success, errors
 
 
@@ -129,9 +130,32 @@ def _sort_by_order(attachments: list[ET.Element]) -> list[ET.Element]:
         attachments, key=lambda attachment: attachment.findtext("./order") or ""
     )
 
+
 def _create_note(source_record: ET.Element) -> ET.Element | None:
-    file_upload_message = source_record.findtext("./administrativeInfo/fileUploadMessage")
+    file_upload_message = source_record.findtext(
+        "./administrativeInfo/fileUploadMessage"
+    )
     if file_upload_message is not None and file_upload_message.strip() != "":
         note = ET.Element("note")
         note.text = file_upload_message
         return note
+
+
+def _create_reviewed(source_record: ET.Element) -> ET.Element | None:
+    attachments = source_record.findall("./attachments/attachment")
+
+    reviewed = ET.Element("reviewed")
+    if all(_is_attachment_reviewed(attachment) for attachment in attachments):
+        reviewed.text = "true"
+    else:
+        reviewed.text = "false"
+
+    return reviewed
+
+
+def _is_attachment_reviewed(attachment: ET.Element) -> bool:
+    return (
+        attachment.findtext("./toBePublished") == "false"
+        or attachment.findtext("./toBeArchived") == "false"
+        or attachment.findtext("./tempAvailableFrom") is None
+    )

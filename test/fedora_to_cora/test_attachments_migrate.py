@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import xml.etree.ElementTree as ET
 from unittest.mock import MagicMock
 
@@ -80,6 +81,7 @@ def test_attachments_migrate(monkeypatch):
                         <id>test-output</id>
                     </recordInfo>
                     <attachments>
+                        <reviewed>true</reviewed>
                         <attachment repeatId="test.pdf">
                             <attachmentFile>
                                 <linkedRecordType>binary</linkedRecordType>
@@ -499,6 +501,7 @@ def test_respects_attachment_order(monkeypatch):
                         <id>test-output</id>
                     </recordInfo>
                     <attachments>
+                        <reviewed>true</reviewed>
                         <attachment repeatId="test3.pdf">
                             <attachmentFile>
                                 <linkedRecordType>binary</linkedRecordType>
@@ -535,6 +538,7 @@ def test_respects_attachment_order(monkeypatch):
         </record>
         """,
     )
+
 
 def test_attachments_note(monkeypatch):
     create_record_mock = _set_up_create_record_mock(monkeypatch)
@@ -603,6 +607,7 @@ def test_attachments_note(monkeypatch):
                         <id>test-output</id>
                     </recordInfo>
                     <attachments>
+                        <reviewed>true</reviewed>
                         <note>Some note about the attachments</note>
                         <attachment repeatId="test.pdf">
                             <attachmentFile>
@@ -629,6 +634,264 @@ def test_attachments_note(monkeypatch):
             </data>
         </record>
         """,
+    )
+
+
+def test_migrate_attachment_waiting_to_be_published(monkeypatch):
+    create_record_mock = _set_up_create_record_mock(monkeypatch)
+    _set_up_migrate_binary_mock(monkeypatch)
+    update_record_mock = _set_up_update_record_mock(monkeypatch)
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
+            <pid>pid:123</pid>
+            <attachments>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <order>2</order>
+                    <fileName>test1.pdf</fileName>
+                    <toBePublished>true</toBePublished>
+                    <toBeArchived>false</toBeArchived>
+                </attachment>
+            </attachments>
+        </publication>
+        """
+    )
+
+    cora_record = ET.fromstring(
+        """
+        <record>
+            <data>
+                <output> 
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                </output>
+            </data>
+        </record>
+        """
+    )
+
+    attachments_migrate(source_record, cora_record, MockContext())
+
+    created_binary_record = create_record_mock.call_args.args[0]
+    updated_output_record = update_record_mock.call_args.args[0]
+
+    assert created_binary_record.findtext("./recordInfo/visibility") == "unpublished"
+
+    assert (
+        updated_output_record.findtext("./data/output/attachments/reviewed") == "false"
+    )
+
+    assert (
+        len(updated_output_record.findall("./data/output/attachments/attachment")) == 1
+    )
+    assert (
+        updated_output_record.findtext(
+            "./data/output/attachments/attachment/requestedVisibility"
+        )
+        == "published"
+    )
+
+
+def test_migrate_attachment_published(monkeypatch):
+    create_record_mock = _set_up_create_record_mock(monkeypatch)
+    _set_up_migrate_binary_mock(monkeypatch)
+    update_record_mock = _set_up_update_record_mock(monkeypatch)
+
+    _mock_now(monkeypatch, "2023-01-02T12:00:00+00:00")
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
+            <pid>pid:123</pid>
+            <attachments>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <order>2</order>
+                    <fileName>test1.pdf</fileName>
+                    <toBePublished>false</toBePublished>
+                    <toBeArchived>false</toBeArchived>
+                    <availableFrom>2023-01-01T12:00:00+00:00</availableFrom>
+                </attachment>
+            </attachments>
+        </publication>
+        """
+    )
+
+    cora_record = ET.fromstring(
+        """
+        <record>
+            <data>
+                <output> 
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                </output>
+            </data>
+        </record>
+        """
+    )
+
+    attachments_migrate(source_record, cora_record, MockContext())
+
+    created_binary_record = create_record_mock.call_args.args[0]
+    updated_output_record = update_record_mock.call_args.args[0]
+
+    assert created_binary_record.findtext("./recordInfo/visibility") == "published"
+
+    assert (
+        updated_output_record.findtext("./data/output/attachments/reviewed") == "false"
+    )
+
+    assert (
+        len(updated_output_record.findall("./data/output/attachments/attachment")) == 1
+    )
+    assert (
+        updated_output_record.findtext(
+            "./data/output/attachments/attachment/requestedVisibility"
+        )
+        == "published"
+    )
+
+
+def test_migrate_attachment_waiting_to_be_archived(monkeypatch):
+    create_record_mock = _set_up_create_record_mock(monkeypatch)
+    _set_up_migrate_binary_mock(monkeypatch)
+    update_record_mock = _set_up_update_record_mock(monkeypatch)
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
+            <pid>pid:123</pid>
+            <attachments>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <order>2</order>
+                    <fileName>test1.pdf</fileName>
+                    <toBePublished>false</toBePublished>
+                    <toBeArchived>true</toBeArchived>
+                </attachment>
+            </attachments>
+        </publication>
+        """
+    )
+
+    cora_record = ET.fromstring(
+        """
+        <record>
+            <data>
+                <output>
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                </output>
+            </data>
+        </record>
+        """
+    )
+
+    attachments_migrate(source_record, cora_record, MockContext())
+
+    created_binary_record = create_record_mock.call_args.args[0]
+    updated_output_record = update_record_mock.call_args.args[0]
+
+    assert created_binary_record.findtext("./recordInfo/visibility") == "unpublished"
+
+    assert (
+        updated_output_record.findtext("./data/output/attachments/reviewed") == "false"
+    )
+
+    assert (
+        len(updated_output_record.findall("./data/output/attachments/attachment")) == 1
+    )
+    assert (
+        updated_output_record.findtext(
+            "./data/output/attachments/attachment/requestedVisibility"
+        )
+        == "unpublished"
+    )
+
+
+def test_migrate_attachment_archived(monkeypatch):
+    create_record_mock = _set_up_create_record_mock(monkeypatch)
+    _set_up_migrate_binary_mock(monkeypatch)
+    update_record_mock = _set_up_update_record_mock(monkeypatch)
+
+    _mock_now(monkeypatch, "2023-01-02T12:00:00+00:00")
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
+            <pid>pid:123</pid>
+            <attachments>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <order>2</order>
+                    <fileName>test1.pdf</fileName>
+                    <toBePublished>false</toBePublished>
+                    <toBeArchived>false</toBeArchived>
+                    <archiveOnly>true</archiveOnly>
+                </attachment>
+            </attachments>
+        </publication>
+        """
+    )
+
+    cora_record = ET.fromstring(
+        """
+        <record>
+            <data>
+                <output> 
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                </output>
+            </data>
+        </record>
+        """
+    )
+
+    attachments_migrate(source_record, cora_record, MockContext())
+
+    created_binary_record = create_record_mock.call_args.args[0]
+    updated_output_record = update_record_mock.call_args.args[0]
+
+    assert created_binary_record.findtext("./recordInfo/visibility") == "published"
+
+    assert (
+        updated_output_record.findtext("./data/output/attachments/reviewed") == "true"
+    )
+
+    assert (
+        len(updated_output_record.findall("./data/output/attachments/attachment")) == 1
+    )
+    assert (
+        updated_output_record.findtext(
+            "./data/output/attachments/attachment/requestedVisibility"
+        )
+        == "unpublished"
     )
 
 
@@ -747,3 +1010,11 @@ def _set_up_delete_record_mock(monkeypatch):
     )
     return delete_record_mock
 
+
+def _mock_now(monkeypatch, iso_datetime_str):
+    class FixedDatetime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return datetime.fromisoformat(iso_datetime_str)
+
+    monkeypatch.setattr("datetime.datetime", FixedDatetime)

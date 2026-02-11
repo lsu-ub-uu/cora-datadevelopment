@@ -3,7 +3,9 @@ import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
 from common.xml_utils import append_if_value, transform_text_element
 from fedora_to_cora.transform.binary.get_attachment_type import get_attachment_type
-from fedora_to_cora.transform.binary.get_availability import get_availablity
+from fedora_to_cora.transform.binary.get_binary_requested_visibility import (
+    get_binary_requested_visibility,
+)
 from fedora_to_cora.transform.create_date import create_date
 
 
@@ -41,7 +43,7 @@ def attachment_transform(
     )
     append_if_value(
         attachment,
-        _create_availability(source_attachment),
+        _create_requested_visibility(source_attachment),
     )
     append_if_value(
         attachment,
@@ -79,15 +81,15 @@ def should_have_attachment_version(validation_type: str) -> bool:
         "publication_book-review",
         "conference_other",
         "conference_poster",
-        "conference_paper",
+        "conference_proceeding",
     }
     return validation_type in validation_types_with_attachment_version
 
 
-def _create_availability(source_attachment: ET.Element) -> ET.Element:
-    availability = ET.Element("availability")
-    availability.text = get_availablity(source_attachment)
-    return availability
+def _create_requested_visibility(source_attachment: ET.Element) -> ET.Element:
+    requested_visibility = ET.Element("requestedVisibility")
+    requested_visibility.text = get_binary_requested_visibility(source_attachment)
+    return requested_visibility
 
 
 def _create_attachment_version(source_attachment: ET.Element) -> Optional[ET.Element]:
