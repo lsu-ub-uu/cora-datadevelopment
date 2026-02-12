@@ -1,17 +1,16 @@
 import xml.etree.ElementTree as ET
-from datetime import datetime
+from common.date_utils import is_before_now
+
 
 def get_binary_visibility(fedora_attachment: ET.Element) -> str:
-    today = _get_today()
     deleted = fedora_attachment.findtext("./deleted")
     on_hold = fedora_attachment.findtext("./onHold")
     archive_only = fedora_attachment.findtext("./archiveOnly")
     to_be_archived = fedora_attachment.findtext("./toBeArchived")
     to_be_published = fedora_attachment.findtext("./toBePublished")
-    available_from = _parse_date(fedora_attachment.findtext("./availableFrom"))
-    available_until = _parse_date(fedora_attachment.findtext("./availableUntil"))
+    available_from = fedora_attachment.findtext("./availableFrom")
+    available_until = fedora_attachment.findtext("./availableUntil")
     print_on_demand = fedora_attachment.findtext("./printOnDemand")
-
 
     if deleted == "true":
         return "unpublished"
@@ -27,27 +26,13 @@ def get_binary_visibility(fedora_attachment: ET.Element) -> str:
 
     if to_be_published == "true":
         return "unpublished"
-    
+
     if print_on_demand == "true":
         return "unpublished"
 
-    if available_from is not None and available_from < today:
-        if available_until is not None and available_until < today:
+    if available_from is not None and is_before_now(available_from):
+        if available_until is not None and is_before_now(available_until):
             return "unpublished"
         return "published"
 
     return "unpublished"
-
-
-def _get_today() -> datetime:
-    return datetime.now().astimezone()
-
-
-def _parse_date(date_string: str | None) -> datetime | None:
-    if date_string is None:
-        return None
-
-    try:
-        return datetime.fromisoformat(date_string)
-    except ValueError:
-        return None

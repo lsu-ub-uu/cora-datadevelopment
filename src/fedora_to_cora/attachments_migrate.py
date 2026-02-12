@@ -145,23 +145,21 @@ def _create_reviewed(source_record: ET.Element) -> ET.Element | None:
     attachments = source_record.findall("./attachments/attachment")
 
     reviewed = ET.Element("reviewed")
-    if all(_is_attachment_reviewed(attachment) for attachment in attachments):
-        reviewed.text = "true"
-    else:
+    if any(_is_attachment_waiting_for_review(attachment) for attachment in attachments):
         reviewed.text = "false"
+    else:
+        reviewed.text = "true"
 
     return reviewed
 
 
-def _is_attachment_reviewed(attachment: ET.Element) -> bool:
-
+def _is_attachment_waiting_for_review(attachment: ET.Element) -> bool:
     to_be_published = attachment.findtext("./toBePublished")
     to_be_archived = attachment.findtext("./toBeArchived")
     temp_available_from = attachment.findtext("./tempAvailableFrom")
-    archive_only = attachment.findtext("./archiveOnly")
 
     return (
-        to_be_published == "false"
-        and to_be_archived == "false"
-        and temp_available_from is not None
-    ) or archive_only == "true"
+        to_be_published == "true"
+        or to_be_archived == "true"
+        or temp_available_from is not None
+    )

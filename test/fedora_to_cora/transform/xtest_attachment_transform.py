@@ -390,11 +390,7 @@ def test_print_ready_file():
     )
 
 
-@patch(
-    "fedora_to_cora.transform.attachment_transform._get_now",
-    return_value="2026-01-01T00:00:00+00:00",
-)
-def test_sets_date_to_be_published_when_available_from_is_in_the_future(_get_now_mock):
+def test_sets_date_to_be_published_when_available_from_is_in_the_future():
     source_attachment = ET.fromstring(
         """
         <attachment>
