@@ -1,9 +1,10 @@
 from xml.etree import ElementTree as ET
 
+
 def create_date(date_source: str | None, tag_name: str, **attribs) -> ET.Element | None:
     if (date_source is None) or (date_source.strip() == ""):
         return None
-    
+
     date_element = ET.Element(tag_name, attrib=attribs)
 
     date_part = date_source.split("T")[0]

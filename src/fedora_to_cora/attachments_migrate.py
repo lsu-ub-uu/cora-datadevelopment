@@ -159,7 +159,7 @@ def _is_attachment_reviewed(attachment: ET.Element) -> bool:
     to_be_archived = attachment.findtext("./toBeArchived")
     temp_available_from = attachment.findtext("./tempAvailableFrom")
     archive_only = attachment.findtext("./archiveOnly")
-    
+
     return (
         to_be_published == "false"
         and to_be_archived == "false"

@@ -7,6 +7,7 @@ from fedora_to_cora.transform.binary.get_binary_requested_visibility import (
     get_binary_requested_visibility,
 )
 from fedora_to_cora.transform.create_date import create_date
+from datetime import datetime, timezone
 
 
 def attachment_transform(
@@ -55,10 +56,14 @@ def attachment_transform(
             source_attachment.find("./printOnDemand"), "printReadyFile"
         ),
     )
-    append_if_value(
-        attachment,
-        create_date(source_attachment.findtext("./availableFrom"), "dateToBePublished"),
-    )
+
+    available_from = source_attachment.findtext("./availableFrom")
+    if available_from is not None and available_from > _get_now():
+        append_if_value(
+            attachment,
+            create_date(available_from, "dateToBePublished"),
+        )
+
     append_if_value(
         attachment,
         create_date(
@@ -71,13 +76,10 @@ def attachment_transform(
 
 def should_have_attachment_version(validation_type: str) -> bool:
     validation_types_with_attachment_version = {
-        "publication_book-chapter",
-        "publication_book",
-        "publication_journal-article",
-        "publication_magazine-article",
-        "publication_editorial-letter",
+        "publication_encyclopedia-entry",
+        "conference_poster",
         "publication_newspaper-article",
-        "publication_review-article",
+        "conference_paper",
         "publication_book-review",
         "conference_other",
         "conference_poster",
@@ -147,3 +149,7 @@ def _create_display_label(source_attachment: ET.Element) -> Optional[ET.Element]
         display_label = ET.Element("displayLabel")
         display_label.text = selected_file_name
         return display_label
+
+
+def _get_now() -> str:
+    return datetime.now(timezone.utc).isoformat()

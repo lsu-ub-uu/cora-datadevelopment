@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import xml.etree.ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from fedora_to_cora.transform.attachment_transform import attachment_transform
@@ -83,8 +83,10 @@ def test_label():
         ("publication_edited-book", False),
         ("publication_licentiate-thesis-compilation", False),
         ("publication_journal-issue", False),
+        ("publication_newspaper-article", True),
         ("artistic-work_artistic-thesis", False),
-        ("conference_paper", False),
+        ("conference_paper", True),
+        ("publication_book-review", True),
         ("publication_critical-edition", False),
         ("conference_other", True),
         ("publication_report", False),
@@ -95,17 +97,13 @@ def test_label():
         ("publication_licentiate-thesis-monograph", False),
         ("publication_other", False),
         ("artistic-work_original-creative-work", False),
+        ("publication_review-article", True),
         ("publication_working-paper", False),
-        ("publication_report-chapter", False),
+        ("publication_report-chapter", True),
         ("diva_degree-project", False),
-        ("publication_foreword-afterword", False),
+        ("publication_foreword-afterword", True),
         ("publication_doctoral-thesis-monograph", False),
         ("publication_doctoral-thesis-compilation", False),
-        ("publication_newspaper-article", True),
-        ("publication_book-review", True),
-        ("publication_magazine-article", True),
-        ("publication_journal-article", True),
-        ("publication_review-article", True),
         ("publication_editorial-letter", True),
     ],
 )
@@ -387,14 +385,18 @@ def test_print_ready_file():
     )
 
 
-def test_date_to_be_published():
+@patch(
+    "fedora_to_cora.transform.attachment_transform._get_now",
+    return_value="2026-01-01T00:00:00+00:00",
+)
+def test_sets_date_to_be_published_when_available_from_is_in_the_future(_get_now_mock):
     source_attachment = ET.fromstring(
         """
         <attachment>
             <fileLabel>
                 <fileLabelId>50</fileLabelId>
             </fileLabel>
-            <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
+            <availableFrom>2026-02-01T00:00:00+00:00</availableFrom>
         </attachment>
         """
     )
@@ -418,10 +420,51 @@ def test_date_to_be_published():
             <label>fullText</label>
             <requestedVisibility>published</requestedVisibility>
             <dateToBePublished>
-                <year>2020</year>
-                <month>01</month>
+                <year>2026</year>
+                <month>02</month>
                 <day>01</day>
             </dateToBePublished>
+        </attachment>                                             
+    """,
+    )
+
+
+@patch(
+    "fedora_to_cora.transform.attachment_transform._get_now",
+    return_value="2026-01-01T00:00:00+00:00",
+)
+def test_does_not_set_date_to_be_published_when_available_from_is_in_the_past(
+    _get_now_mock,
+):
+    source_attachment = ET.fromstring(
+        """
+        <attachment>
+            <fileLabel>
+                <fileLabelId>50</fileLabelId>
+            </fileLabel>
+            <availableFrom>2025-12-31T00:00:00+00:00</availableFrom>
+        </attachment>
+        """
+    )
+
+    binary_record_id = "binary:12345"
+
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type="publication_report",
+        binary_record_id=binary_record_id,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        attachment,
+        """
+        <attachment repeatId="binary:12345">
+            <file>
+              <linkedRecordType>binary</linkedRecordType>
+              <linkedRecordId>binary:12345</linkedRecordId>
+            </file>
+            <label>fullText</label>
+            <availability>available</availability>
         </attachment>                                             
     """,
     )
