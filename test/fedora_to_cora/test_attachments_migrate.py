@@ -81,7 +81,7 @@ def test_attachments_migrate(monkeypatch):
                         <id>test-output</id>
                     </recordInfo>
                     <attachments>
-                        <reviewed>true</reviewed>
+                        <reviewed>false</reviewed>
                         <attachment repeatId="test.pdf">
                             <attachmentFile>
                                 <linkedRecordType>binary</linkedRecordType>
@@ -502,7 +502,7 @@ def test_respects_attachment_order(monkeypatch):
                         <id>test-output</id>
                     </recordInfo>
                     <attachments>
-                        <reviewed>true</reviewed>
+                        <reviewed>false</reviewed>
                         <attachment repeatId="test3.pdf">
                             <attachmentFile>
                                 <linkedRecordType>binary</linkedRecordType>
@@ -706,6 +706,7 @@ def test_migrate_attachment_waiting_to_be_published(monkeypatch):
         == "published"
     )
 
+
 def test_migrate_attachment_published(monkeypatch):
     create_record_mock = _set_up_create_record_mock(monkeypatch)
     _set_up_migrate_binary_mock(monkeypatch)
@@ -771,6 +772,7 @@ def test_migrate_attachment_published(monkeypatch):
         == "published"
     )
 
+
 def test_migrate_attachment_waiting_to_be_archived(monkeypatch):
     create_record_mock = _set_up_create_record_mock(monkeypatch)
     _set_up_migrate_binary_mock(monkeypatch)
@@ -832,6 +834,7 @@ def test_migrate_attachment_waiting_to_be_archived(monkeypatch):
         )
         == "unpublished"
     )
+
 
 def test_migrate_attachment_archived(monkeypatch):
     create_record_mock = _set_up_create_record_mock(monkeypatch)
@@ -898,6 +901,7 @@ def test_migrate_attachment_archived(monkeypatch):
         == "unpublished"
     )
 
+
 def test_migrate_attachment_waiting_for_future_available_until(monkeypatch):
     create_record_mock = _set_up_create_record_mock(monkeypatch)
     _set_up_migrate_binary_mock(monkeypatch)
@@ -954,18 +958,29 @@ def test_migrate_attachment_waiting_for_future_available_until(monkeypatch):
     assert (
         len(updated_output_record.findall("./data/output/attachments/attachment")) == 1
     )
-    assert (
-        updated_output_record.findtext(
-            "./data/output/attachments/attachment/dateToBeUnpublished"
-        )
-        == "2024-01-01"
+
+    date_to_be_unpublished = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBeUnpublished"
     )
+
+    assert_equal_for_xml_and_xml_string(
+        date_to_be_unpublished,
+        """
+       <dateToBeUnpublished>
+            <year>2024</year>
+            <month>01</month>
+            <day>01</day>
+        </dateToBeUnpublished>                                 
+    """,
+    )
+
     assert (
         updated_output_record.findtext(
             "./data/output/attachments/attachment/requestedVisibility"
         )
         == "published"
     )
+
 
 def _set_up_create_record_mock(monkeypatch, fail=False):
     create_record_mock = MagicMock(

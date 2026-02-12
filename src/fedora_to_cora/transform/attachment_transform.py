@@ -76,14 +76,19 @@ def attachment_transform(
 
 def should_have_attachment_version(validation_type: str) -> bool:
     validation_types_with_attachment_version = {
-        "publication_encyclopedia-entry",
-        "conference_poster",
-        "publication_newspaper-article",
+        "publication_book-chapter",
         "conference_paper",
-        "publication_book-review",
-        "conference_other",
+        "publication_newspaper-article",
         "conference_poster",
-        "conference_proceeding",
+        "publication_encyclopedia-entry",
+        "publication_foreword-afterword",
+        "publication_review-article",
+        "publication_journal-article",
+        "publication_editorial-letter",
+        "publication_report-chapter",
+        "publication_book-review",
+        "publication_magazine-article",
+        "conference_other",
     }
     return validation_type in validation_types_with_attachment_version
 
