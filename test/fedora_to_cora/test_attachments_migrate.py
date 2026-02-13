@@ -1277,7 +1277,6 @@ def test_migrate_attachment_future_unpublish_date_has_passed(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    # should availableFrom be set here?
     source_record = ET.fromstring(
         """
         <publication>
@@ -1294,6 +1293,7 @@ def test_migrate_attachment_future_unpublish_date_has_passed(monkeypatch):
                     <fileName>test1.pdf</fileName>
                     <toBePublished>false</toBePublished>
                     <toBeArchived>false</toBeArchived>
+                    <availableFrom>2023-01-01T12:00:00+00:00</availableFrom>
                     <availableUntil>2023-02-01T12:00:00+00:00</availableUntil>
                 </attachment>
             </attachments>
@@ -1686,6 +1686,146 @@ def test_migrate_attachment_past_publish_and_unpublish(monkeypatch):
         </dateToBeUnpublished>
     """,
     )
+
+
+def test_secrecy(monkeypatch):
+    create_record_mock = _set_up_create_record_mock(monkeypatch)
+    _set_up_migrate_binary_mock(monkeypatch)
+    update_record_mock = _set_up_update_record_mock(monkeypatch)
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
+            <pid>pid:123</pid>
+            <attachments>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <order>2</order>
+                    <fileName>test1.pdf</fileName>
+                    <toBePublished>false</toBePublished>
+                    <toBeArchived>false</toBeArchived>
+                    <secrecyInfo>
+                        <secrecy>true</secrecy>
+                    </secrecyInfo>
+                </attachment>
+            </attachments>
+        </publication>
+        """
+    )
+
+    cora_record = ET.fromstring(
+        """
+        <record>
+            <data>
+                <output> 
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                </output>
+            </data>
+        </record>
+        """
+    )
+
+    attachments_migrate(source_record, cora_record, MockContext())
+
+    created_binary_record = create_record_mock.call_args.args[0]
+    updated_output_record = update_record_mock.call_args.args[0]
+
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
+    actual_reviewed = updated_output_record.findtext(
+        "./data/output/attachments/reviewed"
+    )
+    actual_requested_visibility = updated_output_record.findtext(
+        "./data/output/attachments/attachment/requestedVisibility"
+    )
+    actual_date_to_be_unpublished = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBeUnpublished"
+    )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
+
+    assert actual_visibility == "unpublished"
+    assert actual_reviewed == "true"
+    assert actual_requested_visibility == "confidential"
+    assert actual_date_to_be_unpublished is None
+    assert actual_date_to_be_published is None
+
+
+def test_secrecy_with_to_be_published(monkeypatch):
+    create_record_mock = _set_up_create_record_mock(monkeypatch)
+    _set_up_migrate_binary_mock(monkeypatch)
+    update_record_mock = _set_up_update_record_mock(monkeypatch)
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
+            <pid>pid:123</pid>
+            <attachments>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <order>2</order>
+                    <fileName>test1.pdf</fileName>
+                    <toBePublished>true</toBePublished>
+                    <toBeArchived>false</toBeArchived>
+                    <secrecyInfo>
+                        <secrecy>true</secrecy>
+                    </secrecyInfo>
+                </attachment>
+            </attachments>
+        </publication>
+        """
+    )
+
+    cora_record = ET.fromstring(
+        """
+        <record>
+            <data>
+                <output> 
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                </output>
+            </data>
+        </record>
+        """
+    )
+
+    attachments_migrate(source_record, cora_record, MockContext())
+
+    created_binary_record = create_record_mock.call_args.args[0]
+    updated_output_record = update_record_mock.call_args.args[0]
+
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
+    actual_reviewed = updated_output_record.findtext(
+        "./data/output/attachments/reviewed"
+    )
+    actual_requested_visibility = updated_output_record.findtext(
+        "./data/output/attachments/attachment/requestedVisibility"
+    )
+    actual_date_to_be_unpublished = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBeUnpublished"
+    )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
+
+    assert actual_visibility == "unpublished"
+    assert actual_reviewed == "false"
+    assert actual_requested_visibility == "confidential"
+    assert actual_date_to_be_unpublished is None
+    assert actual_date_to_be_published is None
 
 
 def _set_up_create_record_mock(monkeypatch, fail=False):
