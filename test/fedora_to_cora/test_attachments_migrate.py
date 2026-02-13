@@ -658,21 +658,25 @@ def test_migrate_attachment_waiting_to_be_published(monkeypatch):
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
 
-    assert created_binary_record.findtext("./recordInfo/visibility") == "unpublished"
-
-    assert (
-        updated_output_record.findtext("./data/output/attachments/reviewed") == "false"
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
+    actual_reviewed = updated_output_record.findtext(
+        "./data/output/attachments/reviewed"
+    )
+    actual_requested_visibility = updated_output_record.findtext(
+        "./data/output/attachments/attachment/requestedVisibility"
+    )
+    actual_date_to_be_unpublished = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBeUnpublished"
+    )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
     )
 
-    assert (
-        len(updated_output_record.findall("./data/output/attachments/attachment")) == 1
-    )
-    assert (
-        updated_output_record.findtext(
-            "./data/output/attachments/attachment/requestedVisibility"
-        )
-        == "published"
-    )
+    assert actual_visibility == "unpublished"
+    assert actual_reviewed == "false"
+    assert actual_requested_visibility == "published"
+    assert actual_date_to_be_unpublished is None
+    assert actual_date_to_be_published is None
 
 
 # 1.2
@@ -724,22 +728,25 @@ def test_migrate_attachment_published(monkeypatch):
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
 
-    assert (
-        len(updated_output_record.findall("./data/output/attachments/attachment")) == 1
-    )
-    actual_binary_record_visibility = created_binary_record.findtext(
-        "./recordInfo/visibility"
-    )
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
     actual_reviewed = updated_output_record.findtext(
         "./data/output/attachments/reviewed"
     )
     actual_requested_visibility = updated_output_record.findtext(
         "./data/output/attachments/attachment/requestedVisibility"
     )
+    actual_date_to_be_unpublished = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBeUnpublished"
+    )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
 
-    assert actual_binary_record_visibility == "published"
+    assert actual_visibility == "published"
     assert actual_reviewed == "true"
     assert actual_requested_visibility == "published"
+    assert actual_date_to_be_published is None
+    assert actual_date_to_be_unpublished is None
 
 
 # 2.1
@@ -790,24 +797,25 @@ def test_migrate_attachment_future_publish_date(monkeypatch):
 
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
-
-    assert created_binary_record.findtext("./recordInfo/visibility") == "unpublished"
-
-    assert (
-        updated_output_record.findtext("./data/output/attachments/reviewed") == "false"
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
+    actual_reviewed = updated_output_record.findtext(
+        "./data/output/attachments/reviewed"
+    )
+    actual_requested_visibility = updated_output_record.findtext(
+        "./data/output/attachments/attachment/requestedVisibility"
+    )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
+    actual_date_to_be_unpublished = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBeUnpublished"
     )
 
-    assert (
-        updated_output_record.findtext(
-            "./data/output/attachments/attachment/requestedVisibility"
-        )
-        == "published"
-    )
-
+    assert actual_visibility == "unpublished"
+    assert actual_reviewed == "false"
+    assert actual_requested_visibility == "published" == "published"
     assert_equal_for_xml_and_xml_string(
-        updated_output_record.find(
-            "./data/output/attachments/attachment/dateToBePublished"
-        ),
+        actual_date_to_be_published,
         """
        <dateToBePublished>
             <year>2023</year>
@@ -816,6 +824,7 @@ def test_migrate_attachment_future_publish_date(monkeypatch):
         </dateToBePublished>                                 
     """,
     )
+    assert actual_date_to_be_unpublished is None
 
 
 # 2.2
@@ -866,24 +875,25 @@ def test_migrate_attachment_future_publish_date_approved_by_admin(monkeypatch):
 
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
-
-    assert created_binary_record.findtext("./recordInfo/visibility") == "unpublished"
-
-    assert (
-        updated_output_record.findtext("./data/output/attachments/reviewed") == "true"
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
+    actual_reviewed = updated_output_record.findtext(
+        "./data/output/attachments/reviewed"
+    )
+    actual_requested_visibility = updated_output_record.findtext(
+        "./data/output/attachments/attachment/requestedVisibility"
+    )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
+    actual_date_to_be_unpublished = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBeUnpublished"
     )
 
-    assert (
-        updated_output_record.findtext(
-            "./data/output/attachments/attachment/requestedVisibility"
-        )
-        == "published"
-    )
-
+    assert actual_visibility == "unpublished"
+    assert actual_reviewed == "true"
+    assert actual_requested_visibility == "published"
     assert_equal_for_xml_and_xml_string(
-        updated_output_record.find(
-            "./data/output/attachments/attachment/dateToBePublished"
-        ),
+        actual_date_to_be_published,
         """
        <dateToBePublished>
             <year>2023</year>
@@ -892,6 +902,7 @@ def test_migrate_attachment_future_publish_date_approved_by_admin(monkeypatch):
         </dateToBePublished>                                 
     """,
     )
+    assert actual_date_to_be_unpublished is None
 
 
 # 2.3
@@ -943,9 +954,7 @@ def test_migrate_attachment_future_publish_date_has_passed(monkeypatch):
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
 
-    actual_binary_record_visibility = created_binary_record.findtext(
-        "./recordInfo/visibility"
-    )
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
     actual_reviewed = updated_output_record.findtext(
         "./data/output/attachments/reviewed"
     )
@@ -955,11 +964,18 @@ def test_migrate_attachment_future_publish_date_has_passed(monkeypatch):
     actual_date_to_be_published = updated_output_record.find(
         "./data/output/attachments/attachment/dateToBePublished"
     )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
+    actual_date_to_be_unpublished = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBeUnpublished"
+    )
 
-    assert actual_binary_record_visibility == "published"
+    assert actual_visibility == "published"
     assert actual_reviewed == "true"
     assert actual_requested_visibility == "published"
     assert actual_date_to_be_published is None
+    assert actual_date_to_be_unpublished is None
 
 
 # 3.1
@@ -1008,22 +1024,25 @@ def test_migrate_attachment_waiting_to_be_archived(monkeypatch):
 
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
-
-    assert created_binary_record.findtext("./recordInfo/visibility") == "unpublished"
-
-    assert (
-        updated_output_record.findtext("./data/output/attachments/reviewed") == "false"
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
+    actual_reviewed = updated_output_record.findtext(
+        "./data/output/attachments/reviewed"
+    )
+    actual_requested_visibility = updated_output_record.findtext(
+        "./data/output/attachments/attachment/requestedVisibility"
+    )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
+    actual_date_to_be_unpublished = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBeUnpublished"
     )
 
-    assert (
-        len(updated_output_record.findall("./data/output/attachments/attachment")) == 1
-    )
-    assert (
-        updated_output_record.findtext(
-            "./data/output/attachments/attachment/requestedVisibility"
-        )
-        == "unpublished"
-    )
+    assert actual_visibility == "unpublished"
+    assert actual_reviewed == "false"
+    assert actual_requested_visibility == "unpublished"
+    assert actual_date_to_be_published is None
+    assert actual_date_to_be_unpublished is None
 
 
 # 3.2
@@ -1074,22 +1093,25 @@ def test_migrate_attachment_archived(monkeypatch):
 
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
-
-    assert created_binary_record.findtext("./recordInfo/visibility") == "unpublished"
-
-    assert (
-        updated_output_record.findtext("./data/output/attachments/reviewed") == "true"
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
+    actual_reviewed = updated_output_record.findtext(
+        "./data/output/attachments/reviewed"
+    )
+    actual_requested_visibility = updated_output_record.findtext(
+        "./data/output/attachments/attachment/requestedVisibility"
+    )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
+    actual_date_to_be_unpublished = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBeUnpublished"
     )
 
-    assert (
-        len(updated_output_record.findall("./data/output/attachments/attachment")) == 1
-    )
-    assert (
-        updated_output_record.findtext(
-            "./data/output/attachments/attachment/requestedVisibility"
-        )
-        == "unpublished"
-    )
+    assert actual_visibility == "unpublished"
+    assert actual_reviewed == "true"
+    assert actual_requested_visibility == "unpublished"
+    assert actual_date_to_be_published is None
+    assert actual_date_to_be_unpublished is None
 
 
 # 4.1
@@ -1139,23 +1161,26 @@ def test_migrate_attachment_waiting_for_future_available_until(monkeypatch):
 
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
-
-    assert created_binary_record.findtext("./recordInfo/visibility") == "unpublished"
-
-    assert (
-        updated_output_record.findtext("./data/output/attachments/reviewed") == "false"
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
+    actual_reviewed = updated_output_record.findtext(
+        "./data/output/attachments/reviewed"
     )
-
-    assert (
-        len(updated_output_record.findall("./data/output/attachments/attachment")) == 1
+    actual_requested_visibility = updated_output_record.findtext(
+        "./data/output/attachments/attachment/requestedVisibility"
     )
-
-    date_to_be_unpublished = updated_output_record.find(
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
+    actual_date_to_be_unpublished = updated_output_record.find(
         "./data/output/attachments/attachment/dateToBeUnpublished"
     )
 
+    assert actual_visibility == "unpublished"
+    assert actual_reviewed == "false"
+    assert actual_requested_visibility == "published"
+    assert actual_date_to_be_published is None
     assert_equal_for_xml_and_xml_string(
-        date_to_be_unpublished,
+        actual_date_to_be_unpublished,
         """
        <dateToBeUnpublished>
             <year>2024</year>
@@ -1165,17 +1190,10 @@ def test_migrate_attachment_waiting_for_future_available_until(monkeypatch):
     """,
     )
 
-    assert (
-        updated_output_record.findtext(
-            "./data/output/attachments/attachment/requestedVisibility"
-        )
-        == "published"
-    )
-
 
 # 4.2
 @freeze_time("2023-02-02T12:00:00+00:00")
-def test_migrate_attachment_future_unpublish_date_has_passed(monkeypatch):
+def test_migrate_attachment_future_unpublish_date_approved_by_admin(monkeypatch):
     create_record_mock = _set_up_create_record_mock(monkeypatch)
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
@@ -1222,25 +1240,25 @@ def test_migrate_attachment_future_unpublish_date_has_passed(monkeypatch):
 
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
-
-    actual_binary_record_visibility = created_binary_record.findtext(
-        "./recordInfo/visibility"
-    )
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
     actual_reviewed = updated_output_record.findtext(
         "./data/output/attachments/reviewed"
     )
     actual_requested_visibility = updated_output_record.findtext(
         "./data/output/attachments/attachment/requestedVisibility"
     )
-    actual_date_to_be_published = updated_output_record.find(
+    actual_date_to_be_unpublished = updated_output_record.find(
         "./data/output/attachments/attachment/dateToBeUnpublished"
     )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
 
-    assert actual_binary_record_visibility == "published"
+    assert actual_visibility == "published"
     assert actual_reviewed == "true"
     assert actual_requested_visibility == "published"
     assert_equal_for_xml_and_xml_string(
-        actual_date_to_be_published,
+        actual_date_to_be_unpublished,
         """
        <dateToBeUnpublished>
             <year>2023</year>
@@ -1249,15 +1267,17 @@ def test_migrate_attachment_future_unpublish_date_has_passed(monkeypatch):
         </dateToBeUnpublished>                                 
     """,
     )
+    assert actual_date_to_be_published is None
 
 
 # 4.3
 @freeze_time("2023-03-01T12:00:00+00:00")
-def test_migrate_attachment_unpublish_date_has_passed(monkeypatch):
+def test_migrate_attachment_future_unpublish_date_has_passed(monkeypatch):
     create_record_mock = _set_up_create_record_mock(monkeypatch)
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
+    # should availableFrom be set here?
     source_record = ET.fromstring(
         """
         <publication>
@@ -1300,24 +1320,25 @@ def test_migrate_attachment_unpublish_date_has_passed(monkeypatch):
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
 
-    actual_binary_record_visibility = created_binary_record.findtext(
-        "./recordInfo/visibility"
-    )
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
     actual_reviewed = updated_output_record.findtext(
         "./data/output/attachments/reviewed"
     )
     actual_requested_visibility = updated_output_record.findtext(
         "./data/output/attachments/attachment/requestedVisibility"
     )
-    actual_date_to_be_published = updated_output_record.find(
+    actual_date_to_be_unpublished = updated_output_record.find(
         "./data/output/attachments/attachment/dateToBeUnpublished"
     )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
 
-    assert actual_binary_record_visibility == "unpublished"
+    assert actual_visibility == "unpublished"
     assert actual_reviewed == "true"
     assert actual_requested_visibility == "published"
     assert_equal_for_xml_and_xml_string(
-        actual_date_to_be_published,
+        actual_date_to_be_unpublished,
         """
        <dateToBeUnpublished>
             <year>2023</year>
@@ -1326,10 +1347,11 @@ def test_migrate_attachment_unpublish_date_has_passed(monkeypatch):
         </dateToBeUnpublished>                                 
     """,
     )
+    assert actual_date_to_be_published is None
 
 
 # 5.1
-@freeze_time("2023-03-01T12:00:00+00:00")
+@freeze_time("2023-01-01T12:00:00+00:00")
 def test_migrate_attachment_future_wished_publish_and_unpublish(monkeypatch):
     create_record_mock = _set_up_create_record_mock(monkeypatch)
     _set_up_migrate_binary_mock(monkeypatch)
@@ -1351,8 +1373,8 @@ def test_migrate_attachment_future_wished_publish_and_unpublish(monkeypatch):
                     <fileName>test1.pdf</fileName>
                     <toBePublished>false</toBePublished>
                     <toBeArchived>false</toBeArchived>
-                    <tempAvailableFrom>2023-01-01T12:00:00+00:00</tempAvailableFrom>
-                    <availableUntil>2023-02-01T12:00:00+00:00</availableUntil>
+                    <tempAvailableFrom>2023-02-02T12:00:00+00:00</tempAvailableFrom>
+                    <availableUntil>2023-03-03T12:00:00+00:00</availableUntil>
                 </attachment>
             </attachments>
         </publication>
@@ -1378,29 +1400,40 @@ def test_migrate_attachment_future_wished_publish_and_unpublish(monkeypatch):
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
 
-    actual_binary_record_visibility = created_binary_record.findtext(
-        "./recordInfo/visibility"
-    )
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
     actual_reviewed = updated_output_record.findtext(
         "./data/output/attachments/reviewed"
     )
     actual_requested_visibility = updated_output_record.findtext(
         "./data/output/attachments/attachment/requestedVisibility"
     )
-    actual_date_to_be_published = updated_output_record.find(
+    actual_date_to_be_unpublished = updated_output_record.find(
         "./data/output/attachments/attachment/dateToBeUnpublished"
     )
+    actual_date_to_be_published = updated_output_record.find(
+        "./data/output/attachments/attachment/dateToBePublished"
+    )
 
-    assert actual_binary_record_visibility == "unpublished"
+    assert actual_visibility == "unpublished"
     assert actual_reviewed == "false"
     assert actual_requested_visibility == "published"
     assert_equal_for_xml_and_xml_string(
         actual_date_to_be_published,
         """
-       <dateToBeUnpublished>
+       <dateToBePublished>
             <year>2023</year>
             <month>02</month>
-            <day>01</day>
+            <day>02</day>
+        </dateToBePublished>                                 
+    """,
+    )
+    assert_equal_for_xml_and_xml_string(
+        actual_date_to_be_unpublished,
+        """
+       <dateToBeUnpublished>
+            <year>2023</year>
+            <month>03</month>
+            <day>03</day>
         </dateToBeUnpublished>                                 
     """,
     )
@@ -1408,7 +1441,7 @@ def test_migrate_attachment_future_wished_publish_and_unpublish(monkeypatch):
 
 # 5.2
 @freeze_time("2023-01-01T12:00:00+00:00")
-def test_migrate_attachment_future_publish_and_unpublish(monkeypatch):
+def test_migrate_attachment_future_publish_and_unpublish_approved_by_admin(monkeypatch):
     create_record_mock = _set_up_create_record_mock(monkeypatch)
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
@@ -1456,9 +1489,7 @@ def test_migrate_attachment_future_publish_and_unpublish(monkeypatch):
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
 
-    actual_binary_record_visibility = created_binary_record.findtext(
-        "./recordInfo/visibility"
-    )
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
     actual_reviewed = updated_output_record.findtext(
         "./data/output/attachments/reviewed"
     )
@@ -1472,7 +1503,7 @@ def test_migrate_attachment_future_publish_and_unpublish(monkeypatch):
         "./data/output/attachments/attachment/dateToBeUnpublished"
     )
 
-    assert actual_binary_record_visibility == "unpublished"
+    assert actual_visibility == "unpublished"
     assert actual_reviewed == "true"
     assert actual_requested_visibility == "published"
     assert_equal_for_xml_and_xml_string(
@@ -1547,9 +1578,7 @@ def test_migrate_attachment_past_publish_and_future_unpublish(monkeypatch):
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
 
-    actual_binary_record_visibility = created_binary_record.findtext(
-        "./recordInfo/visibility"
-    )
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
     actual_reviewed = updated_output_record.findtext(
         "./data/output/attachments/reviewed"
     )
@@ -1563,7 +1592,7 @@ def test_migrate_attachment_past_publish_and_future_unpublish(monkeypatch):
         "./data/output/attachments/attachment/dateToBeUnpublished"
     )
 
-    assert actual_binary_record_visibility == "published"
+    assert actual_visibility == "published"
     assert actual_reviewed == "true"
     assert actual_requested_visibility == "published"
     assert actual_date_to_be_published is None
@@ -1629,9 +1658,7 @@ def test_migrate_attachment_past_publish_and_unpublish(monkeypatch):
     created_binary_record = create_record_mock.call_args.args[0]
     updated_output_record = update_record_mock.call_args.args[0]
 
-    actual_binary_record_visibility = created_binary_record.findtext(
-        "./recordInfo/visibility"
-    )
+    actual_visibility = created_binary_record.findtext("./recordInfo/visibility")
     actual_reviewed = updated_output_record.findtext(
         "./data/output/attachments/reviewed"
     )
@@ -1645,7 +1672,7 @@ def test_migrate_attachment_past_publish_and_unpublish(monkeypatch):
         "./data/output/attachments/attachment/dateToBeUnpublished"
     )
 
-    assert actual_binary_record_visibility == "unpublished"
+    assert actual_visibility == "unpublished"
     assert actual_reviewed == "true"
     assert actual_requested_visibility == "published"
     assert actual_date_to_be_published is None
