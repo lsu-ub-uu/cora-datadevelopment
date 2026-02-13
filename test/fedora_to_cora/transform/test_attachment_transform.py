@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from fedora_to_cora.transform.attachment_transform import attachment_transform
 import pytest
+from freezegun import freeze_time
 
 
 def test_attachment_transform():
@@ -33,7 +34,7 @@ def test_attachment_transform():
               <linkedRecordId>binary:12345</linkedRecordId>
             </file>
             <label>fullText</label>
-            <requestedVisibility>unpublished</requestedVisibility>
+            <requestedVisibility>published</requestedVisibility>
         </attachment>
         """,
     )
@@ -67,7 +68,7 @@ def test_label():
               <linkedRecordId>binary:12345</linkedRecordId>
             </file>
             <label>fullText</label>
-            <requestedVisibility>unpublished</requestedVisibility>
+            <requestedVisibility>published</requestedVisibility>
         </attachment>
         """,
     )
@@ -312,7 +313,7 @@ def test_display_label():
             </file>
             <label>fullText</label>
             <displayLabel>test.pdf</displayLabel>
-            <requestedVisibility>unpublished</requestedVisibility>
+            <requestedVisibility>published</requestedVisibility>
         </attachment>                                             
     """,
     )
@@ -347,7 +348,7 @@ def test_digitized():
               <linkedRecordId>binary:12345</linkedRecordId>
             </file>
             <label>fullText</label>
-            <requestedVisibility>unpublished</requestedVisibility>
+            <requestedVisibility>published</requestedVisibility>
             <digitized>true</digitized>
         </attachment>                                             
     """,
@@ -383,13 +384,14 @@ def test_print_ready_file():
               <linkedRecordId>binary:12345</linkedRecordId>
             </file>
             <label>fullText</label>
-            <requestedVisibility>unpublished</requestedVisibility>
+            <requestedVisibility>published</requestedVisibility>
             <printReadyFile>true</printReadyFile>
         </attachment>                                             
     """,
     )
 
 
+@freeze_time("2025-01-01T00:00.000+01:00")
 def test_sets_date_to_be_published_when_available_from_is_in_the_future():
     source_attachment = ET.fromstring(
         """
@@ -459,7 +461,7 @@ def test_date_to_be_unpublished():
               <linkedRecordId>binary:12345</linkedRecordId>
             </file>
             <label>fullText</label>
-            <requestedVisibility>unpublished</requestedVisibility>
+            <requestedVisibility>published</requestedVisibility>
             <dateToBeUnpublished>
                 <year>2020</year>
                 <month>01</month>

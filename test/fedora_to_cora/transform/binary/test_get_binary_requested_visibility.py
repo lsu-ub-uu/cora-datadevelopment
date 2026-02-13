@@ -6,7 +6,7 @@ from fedora_to_cora.transform.binary.get_binary_requested_visibility import (
 )
 
 
-def test_returns_unavaiable_when_no_flag_is_true():
+def test_returns_published_when_no_flag_is_true():
     source_attachment = ET.fromstring(
         """
         <attachment>
@@ -20,10 +20,10 @@ def test_returns_unavaiable_when_no_flag_is_true():
     )
 
     availability = get_binary_requested_visibility(source_attachment)
-    assert availability == "unpublished"
+    assert availability == "published"
 
 
-def test_returns_available_when_to_be_published_is_true():
+def test_returns_published_when_to_be_published_is_true():
     source_attachment = ET.fromstring(
         """
         <attachment>
