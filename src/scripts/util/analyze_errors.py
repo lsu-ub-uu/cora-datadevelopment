@@ -44,7 +44,7 @@ def extract_error_messages(line: str) -> List[str]:
 
 def analyze_error_log(
     file_path: str,
-) -> Tuple[Dict[str, int], Dict[str, List[str]], int, int, int]:
+) -> Tuple[Dict[str, int], Dict[str, List[str]], int, int, int, int]:
     """
     Analyze the error log file and return error counts.
     Only analyzes entries after the LAST occurrence of "==== Processing complete ====".
@@ -60,6 +60,7 @@ def analyze_error_log(
     total_failed = 0
     total_classic = 0
     total_successful = 0
+    total_skipped = 0
 
     # Read all lines first to find the last occurrence of "Processing complete"
     with open(file_path, "r", encoding="utf-8") as f:
@@ -80,7 +81,20 @@ def analyze_error_log(
             total_failed,
             total_classic,
             total_successful,
+            total_skipped,
         )
+
+    def _append_error(line: str):
+        # Extract record ID from the line (format: "☣️ diva2:1234567 - ...")
+        record_id_match = re.search(r"(diva2:\d+)", line)
+        record_id = record_id_match.group(1) if record_id_match else "unknown"
+
+        error_messages = extract_error_messages(line)
+        for error_msg in error_messages:
+            error_counts[error_msg] += 1
+            # Keep up to 3 examples per error type
+            if len(error_examples[error_msg]) < 3:
+                error_examples[error_msg].append(record_id)
 
     # Process only lines after the last "Processing complete"
     for line in all_lines[last_processing_complete_index + 1 :]:
@@ -94,33 +108,19 @@ def analyze_error_log(
         # Count classic quality transformations
         if "☣️" in line:
             total_classic += 1
+            _append_error(line)
+            continue
 
-            # Extract record ID from the line (format: "☣️ diva2:1234567 - ...")
-            record_id_match = re.search(r"☣️\s+(diva2:\d+)", line)
-            record_id = record_id_match.group(1) if record_id_match else "unknown"
-
-            error_messages = extract_error_messages(line)
-            for error_msg in error_messages:
-                error_counts[error_msg] += 1
-                # Keep up to 3 examples per error type
-                if len(error_examples[error_msg]) < 3:
-                    error_examples[error_msg].append(record_id)
+        # Count skipped transformations
+        if "⏭️" in line:
+            total_skipped += 1
+            _append_error(line)
             continue
 
         # Process failed transformations
         if "❌" in line and ("Errors:" in line or "Exception:" in line):
             total_failed += 1
-
-            # Extract record ID from the line (format: "❌ diva2:1234567 - ...")
-            record_id_match = re.search(r"❌\s+(diva2:\d+)", line)
-            record_id = record_id_match.group(1) if record_id_match else "unknown"
-
-            error_messages = extract_error_messages(line)
-            for error_msg in error_messages:
-                error_counts[error_msg] += 1
-                # Keep up to 3 examples per error type
-                if len(error_examples[error_msg]) < 3:
-                    error_examples[error_msg].append(record_id)
+            _append_error(line)
 
     return (
         dict(error_counts),
@@ -128,6 +128,7 @@ def analyze_error_log(
         total_failed,
         total_classic,
         total_successful,
+        total_skipped,
     )
 
 
@@ -137,6 +138,7 @@ def generate_report(
     total_failed: int,
     total_classic: int,
     total_successful: int,
+    total_skipped: int = 0,
 ):
     """Generate and print the error analysis report."""
 
@@ -149,12 +151,13 @@ def generate_report(
     print(f"   ✅ Successful migrations: {total_successful:,}")
     print(f"   ☣️ Classic quality migrations: {total_classic:,}")
     print(f"   ❌ Failed migrations: {total_failed:,}")
+    print(f"   ⏭️ Skipped migrations: {total_skipped:,}")
     print(
-        f"   📈 Success rate: {total_successful/(total_successful+total_classic+total_failed)*100:.1f}%"
+        f"   📈 Success rate: {total_successful/(total_successful+total_classic+total_failed+total_skipped)*100:.1f}%"
     )
     print()
 
-    if(len(error_counts) > 0):
+    if len(error_counts) > 0:
         print(f"🔍 ERROR BREAKDOWN:")
         print(f"   Total unique error types: {len(error_counts)}")
         print()
@@ -164,8 +167,6 @@ def generate_report(
 
         print("📋 ERRORS BY FREQUENCY:")
         print("-" * 80)
-
-        
 
         for i, (error_msg, count) in enumerate(sorted_errors, 1):
             percentage = (count / (total_failed + total_classic)) * 100
@@ -183,12 +184,22 @@ def analyze_and_print_report(log_file_path: str):
     try:
         print(f"🔍 Analyzing error log: {log_file_path}")
 
-        error_counts, error_examples, total_failed, total_classic, total_successful = (
-            analyze_error_log(log_file_path)
-        )
+        (
+            error_counts,
+            error_examples,
+            total_failed,
+            total_classic,
+            total_successful,
+            total_skipped,
+        ) = analyze_error_log(log_file_path)
 
         generate_report(
-            error_counts, error_examples, total_failed, total_classic, total_successful
+            error_counts,
+            error_examples,
+            total_failed,
+            total_classic,
+            total_successful,
+            total_skipped,
         )
 
     except FileNotFoundError:

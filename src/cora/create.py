@@ -115,17 +115,6 @@ def create_record(
                     record_id=record_id, response_data=response_data
                 )
 
-            if response.status_code == 409 and attempt < max_retries:
-                delay = initial_delay * (2**attempt)
-                context.log(
-                    f"⚠️ Conflict (409) for {record_type} with oldId {old_id_text}. Retrying in {delay}s (attempt {attempt + 1}/{max_retries + 1})",
-                    "warning",
-                )
-                context.log(response.text)
-                context.log(request_body)
-                time.sleep(delay)
-                continue
-
             context.log(
                 f"❌ Failed to create record for {record_type} with oldId {old_id_text}. \n\nStatus: {response.status_code}\n{response.text}\n",
                 "error",

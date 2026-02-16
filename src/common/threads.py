@@ -1,5 +1,5 @@
 from multiprocessing.pool import ThreadPool
-from multiprocessing import Pool,Process
+from multiprocessing import Pool, Process
 from typing import Iterable
 
 from tqdm import tqdm
@@ -22,15 +22,14 @@ def run_with_threads(
 
 
 def run_with_multiprocessing(
-    iterable, worker, processes, initializer, initargs, desc="Processing", 
+    iterable, worker, processes, initializer, initargs, desc="Processing", postfix=None
 ) -> list:
     with Pool(processes, initializer, initargs) as pool:
         return list(
-                tqdm(
-                    pool.imap_unordered(worker, iterable),
-                    total=len(iterable),
-                    desc=desc,
-                )
+            tqdm(
+                pool.imap_unordered(worker, iterable),
+                total=len(iterable),
+                desc=desc,
+                postfix=postfix,
             )
-
-
+        )

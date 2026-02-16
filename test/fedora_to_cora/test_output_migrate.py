@@ -372,3 +372,61 @@ def test_migrate_with_classic_quality_failure(
     )
 
     assert mock_create.call_count == 1
+
+
+@patch("fedora_to_cora.output_migrate.validate_record")
+@patch("fedora_to_cora.output_migrate.transform_to_cora_output")
+@patch("fedora_to_cora.output_migrate.create_record")
+@patch("fedora_to_cora.output_migrate.pretty_print_xml")
+def test_migrate_skip_due_to_duplicate(
+    mock_pretty_print, mock_create, mock_transform, mock_validate
+):
+    mock_context = MockContext()
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <pid>12345</pid>
+            <title>Test Publication</title>
+        </publication>
+        """
+    )
+
+    mock_cora_output = ET.fromstring(
+        """
+        <record>
+            <recordInfo>
+                <id>test-id</id>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>publication_report</linkedRecordId>
+                </validationType>
+            </recordInfo>
+            <dataQuality>2026</dataQuality>
+            <adminInfo>
+                <note type="internal">Some internal note.</note>
+            </adminInfo>
+        </record>
+        """
+    )
+
+    mock_transform.return_value = mock_cora_output
+
+    expected_errors = [
+        "A record matching the unique rule with [key: oldId, value: 12345] already exists in the system"
+    ]
+    mock_validate.return_value = (False, expected_errors)
+    result = output_migrate(source_record, mock_context, apply=False)
+
+    assert result.status == "DUPLICATE"
+    assert result.errors == expected_errors
+
+    mock_transform.assert_called_once_with(source_record, mock_context)
+
+    mock_validate.assert_called_once_with(
+        mock_cora_output,
+        record_type="diva-output",
+        context=mock_context,
+    )
+
+    assert mock_create.call_count == 0

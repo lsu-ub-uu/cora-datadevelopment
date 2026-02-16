@@ -1876,15 +1876,22 @@ def test_skips_deleted_attachment(monkeypatch):
 
 
 def _set_up_create_record_mock(monkeypatch, fail=False):
-    create_record_mock = MagicMock(
-        return_value=(
-            CreateRecordSuccessResult(
+    if not fail:
+        create_record_mock = MagicMock(
+            return_value=CreateRecordSuccessResult(
                 record_id="binary:12345", response_data=ET.Element("response")
             )
-            if not fail
-            else CreateRecordFailureResult(error="Failed to create binary record")
         )
-    )
+    else:
+        monkeypatch.setattr(
+            "fedora_to_cora.attachments_migrate.binary_record_transform",
+            lambda _: ET.Element("binaryRecord"),
+        )
+        create_record_mock = MagicMock(
+            return_value=CreateRecordFailureResult(
+                error="Failed to create binary record"
+            )
+        )
     monkeypatch.setattr(
         "fedora_to_cora.attachments_migrate.create_record", create_record_mock
     )
@@ -1942,8 +1949,7 @@ def _set_up_update_record_mock(monkeypatch, fail=False):
 
 
 def _set_up_binary_record_transform_mock(monkeypatch):
-    binary_record_mock = MagicMock()
-    binary_record_transform_mock = MagicMock(return_value=binary_record_mock)
+    binary_record_transform_mock = MagicMock(return_value=ET.Element("binaryRecord"))
     monkeypatch.setattr(
         "fedora_to_cora.attachments_migrate.binary_record_transform",
         binary_record_transform_mock,
