@@ -14,13 +14,13 @@ from fedora_to_cora.transform.transform_output_to_classic_quality import (
 
 class OutputMigrationResult:
     pid: str
-    status: Literal["SUCCESS", "CLASSIC_QUALITY", "FAILED"]
+    status: Literal["SUCCESS", "CLASSIC_QUALITY", "FAILED", "DUPLICATE"]
     errors: list[str] | None
 
     def __init__(
         self,
         pid: str,
-        status: Literal["SUCCESS", "CLASSIC_QUALITY", "FAILED"],
+        status: Literal["SUCCESS", "CLASSIC_QUALITY", "FAILED", "DUPLICATE"],
         errors: list[str] | None = None,
     ):
         self.pid = pid
@@ -50,6 +50,9 @@ def output_migrate(
     )
 
     if not valid:
+        if _has_duplicate_old_id(errors, pid):
+            return OutputMigrationResult(pid, status="DUPLICATE", errors=errors)
+
         classic_quality_record = transform_output_to_classic_quality(
             cora_output, errors
         )
@@ -65,11 +68,14 @@ def output_migrate(
         if is_success_result(create_result):
             return OutputMigrationResult(pid, status="CLASSIC_QUALITY", errors=errors)
         else:
+            create_errors = (errors or []) + (
+                [create_result.error] if create_result.error is not None else []
+            )
+
             return OutputMigrationResult(
                 pid,
                 status="FAILED",
-                errors=(errors or [])
-                + ([create_result.error] if create_result.error is not None else []),
+                errors=create_errors,
             )
 
     if apply:
@@ -107,3 +113,11 @@ def output_migrate(
                 )
 
     return OutputMigrationResult(pid, status="SUCCESS")
+
+
+def _has_duplicate_old_id(errors: list[str] | None, old_id: str) -> bool:
+    return errors is not None and any(
+        error
+        == f"A record matching the unique rule with [key: oldId, value: {old_id}] already exists in the system"
+        for error in errors
+    )

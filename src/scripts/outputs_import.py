@@ -12,33 +12,70 @@ from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
 from common.common_data import read_source_xml
 from common.print_logo import print_logo
 from common.threads import run_with_multiprocessing
+from multiprocessing import Pool
+from tqdm import tqdm
 
 context = None
 with_binaries = False
 apply = False
 
+
 def main():
     """Main entry point for the outputs import script."""
-    
+
     print_logo()
 
     args = _parse_args()
+    outputs_import(
+        xml_dir=args.xml_dir,
+        system=args.system,
+        login_id=args.login_id,
+        app_token=args.app_token,
+        processes=args.processes,
+        apply=args.apply,
+        limit=args.limit,
+        binaries=args.binaries,
+    )
+
+
+def outputs_import(
+    xml_dir: str,
+    system: str,
+    login_id: str,
+    app_token: str,
+    processes: int,
+    apply: bool,
+    limit: int | None = None,
+    binaries: bool = False,
+):
     start_time = time.perf_counter()
 
-    source_records = _read_source_records(args.xml_dir, args.limit)
-    
+    source_records = _read_source_records(xml_dir, limit)
+
     if not _validate_source_records(source_records):
         print("Source records validation failed. Exiting.")
         return
-    
-    results = run_with_multiprocessing(
-        iterable=source_records,
-        worker=_migrate_record,
-        processes=args.processes,
-        initializer=_init_context,
-        initargs=(args.system, args.login_id, args.app_token, args.apply, args.binaries),
-        desc="Processing source records",
-    )
+    print(f"Starting migration of {len(source_records)} records to {system} system...")
+    counts = {"SUCCESS": 0, "CLASSIC_QUALITY": 0, "FAILED": 0, "DUPLICATE": 0}
+    results = []
+    with Pool(
+        processes,
+        _init_context,
+        initargs=(
+            system,
+            login_id,
+            app_token,
+            apply,
+            binaries,
+        ),
+    ) as pool, tqdm(total=len(source_records), desc="Migrating records") as progress:
+        for result in pool.imap_unordered(_migrate_record, source_records):
+            counts[result.status] += 1
+            results.append(result)
+            progress.set_postfix_str(
+                f"✅ {counts['SUCCESS']} | ☣️ {counts['CLASSIC_QUALITY']} | ❌ {counts['FAILED']} | ⏭️ {counts['DUPLICATE']}"
+            )
+            progress.update(1)
 
     _log_results(results)
 
@@ -46,6 +83,7 @@ def main():
     print(f"Processing completed in {end_time - start_time:.2f} seconds.")
 
     analyze_and_print_report("logs/outputs-import.log")
+
 
 def _parse_args():
     parser = create_argument_parser(
@@ -90,17 +128,18 @@ def _parse_args():
 
     return parser.parse_args()
 
+
 def _init_context(system, login_id, app_token, apply_flag, binaries_flag):
     global context, apply, with_binaries
     context = CoraContext(system=system, login_id=login_id, app_token=app_token)
     apply = apply_flag
     with_binaries = binaries_flag
 
+
 def _migrate_record(source_record):
-    return output_migrate(
-        source_record, context, apply, with_binaries=with_binaries
-    )
-   
+    assert context is not None, "Context must be initialized before migrating records"
+    return output_migrate(source_record, context, apply, with_binaries=with_binaries)
+
 
 def _read_source_records(xml_dir: str, limit: int | None = None) -> list[ET.Element]:
     records = [
@@ -113,7 +152,6 @@ def _read_source_records(xml_dir: str, limit: int | None = None) -> list[ET.Elem
     return records
 
 
-
 def _validate_source_records(source_records) -> bool:
     validation_errors = []
     for source_record in source_records:
@@ -123,13 +161,12 @@ def _validate_source_records(source_records) -> bool:
             pid = source_record.findtext("pid")
             validation_errors.append(f"{pid} - XML Validation Error: {str(e)}")
     if len(validation_errors) > 0:
-        print(
-            "==== Skipped migration due to XML Validation Error in source data ==== "
-        )
+        print("==== Skipped migration due to XML Validation Error in source data ==== ")
         for error in validation_errors:
             print(f"❌ {error}")
         return False
     return True
+
 
 def _log_results(results: list[OutputMigrationResult]):
     main_script = os.path.basename(sys.argv[0])
@@ -137,17 +174,22 @@ def _log_results(results: list[OutputMigrationResult]):
     successful_migrations = []
     classic_quality_migrations = []
     failed_migrations = []
+    skipped_migrations = []
     for result in results:
         error_str = ", ".join(result.errors) if result.errors else ""
         if result.status == "SUCCESS":
             successful_migrations.append(result.pid)
         elif result.status == "CLASSIC_QUALITY":
             classic_quality_migrations.append(f"{result.pid} - Errors: [{error_str}]")
+        elif result.status == "DUPLICATE":
+            skipped_migrations.append(
+                f"{result.pid} - Skipped due to duplicate record with oldId alread in Cora"
+            )
         else:
             failed_migrations.append(f"{result.pid} - Errors: [{error_str}]")
-            
+
     logger = RunRotatingLogger("data", f"logs/{main_script}.log").get()
-    
+
     logger.info("==== Processing complete ====")
 
     logger.info(f"{len(successful_migrations)} Records successfully imported:")
@@ -159,7 +201,9 @@ def _log_results(results: list[OutputMigrationResult]):
     )
     for pid in classic_quality_migrations:
         logger.info(f"☣️ {pid}")
-
+    logger.info(f"{len(skipped_migrations)} Records skipped due to duplicates:")
+    for pid in skipped_migrations:
+        logger.info(f"⏭️ {pid}")
     logger.info(f"{len(failed_migrations)} Records failed to import:")
     for error in failed_migrations:
         logger.info(f"❌ {error}")
