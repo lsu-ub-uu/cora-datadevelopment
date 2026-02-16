@@ -50,34 +50,7 @@ def output_migrate(
     )
 
     if not valid:
-        if _has_duplicate_old_id(errors, pid):
-            return OutputMigrationResult(pid, status="DUPLICATE", errors=errors)
-
-        classic_quality_record = transform_output_to_classic_quality(
-            cora_output, errors
-        )
-        context.log(
-            f"Creating classic quality record for old id {source_record.findtext('.//pid')}:\n{pretty_print_xml(classic_quality_record)}",
-            level="warning",
-        )
-        create_result = create_record(
-            classic_quality_record,
-            record_type="diva-output",
-            context=context,
-        )
-        if is_success_result(create_result):
-            return OutputMigrationResult(pid, status="CLASSIC_QUALITY", errors=errors)
-        else:
-            create_errors = (errors or []) + (
-                [create_result.error] if create_result.error is not None else []
-            )
-
-            return OutputMigrationResult(
-                pid,
-                status="FAILED",
-                errors=create_errors,
-            )
-
+        return _handle_invalid_record()
     if apply:
         create_record_result = create_record(
             cora_output,
@@ -113,6 +86,37 @@ def output_migrate(
                 )
 
     return OutputMigrationResult(pid, status="SUCCESS")
+
+
+def _handle_invalid_record(
+    errors: list[str] | None, pid: str, cora_output: ET.Element, context: Context
+) -> OutputMigrationResult:
+    if _has_duplicate_old_id(errors, pid):
+        return OutputMigrationResult(pid, status="DUPLICATE", errors=errors)
+
+    classic_quality_record = transform_output_to_classic_quality(cora_output, errors)
+    context.log(
+        f"Creating classic quality record for old id {pid}:\n{pretty_print_xml(classic_quality_record)}",
+        level="warning",
+    )
+    create_result = create_record(
+        classic_quality_record,
+        record_type="diva-output",
+        context=context,
+    )
+    if is_success_result(create_result):
+        return OutputMigrationResult(pid, status="CLASSIC_QUALITY", errors=errors)
+    else:
+        context.log(
+            f"❌ Failed to create classic quality record for old id {pid}. {create_result.error}",
+            level="error",
+        )
+
+        return OutputMigrationResult(
+            pid,
+            status="FAILED",
+            errors=[create_result.error] if create_result.error is not None else [],
+        )
 
 
 def _has_duplicate_old_id(errors: list[str] | None, old_id: str) -> bool:

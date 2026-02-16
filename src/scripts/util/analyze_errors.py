@@ -92,8 +92,8 @@ def analyze_error_log(
         error_messages = extract_error_messages(line)
         for error_msg in error_messages:
             error_counts[error_msg] += 1
-            # Keep up to 3 examples per error type
-            if len(error_examples[error_msg]) < 3:
+            # Keep up to 8 examples per error type
+            if len(error_examples[error_msg]) < 8:
                 error_examples[error_msg].append(record_id)
 
     # Process only lines after the last "Processing complete"

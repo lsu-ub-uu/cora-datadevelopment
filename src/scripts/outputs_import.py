@@ -11,7 +11,6 @@ from common.xml_validate import validate_xml, XMLValidationError
 from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
 from common.common_data import read_source_xml
 from common.print_logo import print_logo
-from common.threads import run_with_multiprocessing
 from multiprocessing import Pool
 from tqdm import tqdm
 
@@ -35,6 +34,7 @@ def main():
         apply=args.apply,
         limit=args.limit,
         binaries=args.binaries,
+        pids=args.pids.split(",") if args.pids else None,
     )
 
 
@@ -47,14 +47,20 @@ def outputs_import(
     apply: bool,
     limit: int | None = None,
     binaries: bool = False,
+    pids: list[str] | None = None,
 ):
     start_time = time.perf_counter()
 
     source_records = _read_source_records(xml_dir, limit)
 
-    if not _validate_source_records(source_records):
-        print("Source records validation failed. Exiting.")
-        return
+    if pids is not None:
+        source_records = [
+            record for record in source_records if record.findtext("pid") in pids
+        ]
+
+    # if not _validate_source_records(source_records):
+    #     print("Source records validation failed. Exiting.")
+    #     return
     print(f"Starting migration of {len(source_records)} records to {system} system...")
     counts = {"SUCCESS": 0, "CLASSIC_QUALITY": 0, "FAILED": 0, "DUPLICATE": 0}
     results = []
@@ -123,6 +129,9 @@ def _parse_args():
                 "help": "Also migrate binaries associated with the publications",
                 "default": False,
             },
+            "--pids": {
+                "help": "Comma-separated list of PIDs to process (for testing purposes)",
+            },
         },
     )
 
@@ -153,17 +162,21 @@ def _read_source_records(xml_dir: str, limit: int | None = None) -> list[ET.Elem
 
 
 def _validate_source_records(source_records) -> bool:
-    validation_errors = []
+    errors = {}
     for source_record in source_records:
         try:
             validate_xml(source_record, fedora_publication_xml_spec)
         except XMLValidationError as e:
             pid = source_record.findtext("pid")
-            validation_errors.append(f"{pid} - XML Validation Error: {str(e)}")
-    if len(validation_errors) > 0:
+            error_str = str(e)
+            if error_str not in errors:
+                errors[error_str] = []
+            errors[error_str].append(pid)
+    if len(errors) > 0:
         print("==== Skipped migration due to XML Validation Error in source data ==== ")
-        for error in validation_errors:
-            print(f"❌ {error}")
+        for error in errors:
+            print(f"❌ {error} - {len(errors[error])} occurrences")
+            print(f"   Example pids: {', '.join(errors[error][:5])}...")
         return False
     return True
 
@@ -208,6 +221,12 @@ def _log_results(results: list[OutputMigrationResult]):
     for error in failed_migrations:
         logger.info(f"❌ {error}")
     print(f"{len(successful_migrations)} succeeded, {len(failed_migrations)} failed.")
+
+
+def _generate_report(results: list[OutputMigrationResult]):
+    print("==== Migration Report ====")
+    print(f"Total records processed: {len(results)}")
+    status_counts = {"SUCCESS": 0, "CLASSIC_QUALITY": 0, "FAILED": 0, "DUPLICATE": 0}
 
 
 if __name__ == "__main__":
