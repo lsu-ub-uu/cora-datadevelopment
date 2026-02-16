@@ -10,7 +10,8 @@ dependencies = [
     "pytest-cov",
     "pytest-watcher",
     "fabric",
-    "psycopg2-binary"
+    "psycopg2-binary",
+    "freezegun"
 ]
 license = "GPL-3.0"
 

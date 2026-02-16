@@ -14,7 +14,7 @@ from cora.create import create_record, is_success_result
 from cora.update import update_record
 from cora.delete import delete_record
 from fedora_to_cora.transform.attachment_transform import attachment_transform
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, pretty_print_xml
 
 
 def attachments_migrate(
@@ -31,8 +31,15 @@ def attachments_migrate(
     attachments = source_record.findall("./attachments/attachment")
     if len(attachments) > 0:
         attachments_group = ET.SubElement(output, "attachments")
+        append_if_value(attachments_group, _create_reviewed(source_record))
         append_if_value(attachments_group, _create_note(source_record))
         for attachment in _sort_by_order(attachments):
+            if attachment.findtext("./deleted") == "true":
+                context.log(
+                    f"🗑️ Skipping deleted attachment {attachment.findtext('./fileName')} for record with old id {source_record.findtext('.//pid')}"
+                )
+                continue
+
             attachment, error = _migrate_attachment(
                 attachment, context, created_binary_records, source_record
             )
@@ -41,15 +48,15 @@ def attachments_migrate(
             if error is not None:
                 errors.append(error)
 
-        if not errors:
+        if not errors and len(attachments_group.findall("./attachment")) > 0:
             update_result = update_record(record_to_update, context)
             if update_result.success:
                 context.log(
-                    f"✅ Successfully migrated {len(attachments)} attachments for record with old id {source_record.findtext('.//pid')}"
+                    f"✅ Successfully migrated {len(attachments_group.findall('./attachment'))} attachments for record with old id {source_record.findtext('.//pid')}"
                 )
             else:
                 context.log(
-                    f"❌ Failed to update record with attachments for record with old id {source_record.findtext('.//pid')}: {update_result.error}",
+                    f"❌ Failed to update record with attachments for record with old id {source_record.findtext('.//pid')}: {update_result.error}\nUpdate request body:\n{pretty_print_xml(record_to_update)}",
                     level="error",
                 )
                 errors.append(update_result.error)
@@ -61,7 +68,10 @@ def attachments_migrate(
             )
             _roll_back_binary_records(created_binary_records, context)
 
-    return len(errors) == 0, errors if errors else None
+    success = len(errors) == 0
+    errors = errors if errors else None
+
+    return success, errors
 
 
 def _roll_back_binary_records(
@@ -115,7 +125,7 @@ def _migrate_attachment(
         return cora_attachment, None
     else:
         context.log(
-            f"❌ Failed to create binary record for attachment {attachment.findtext('./name')}: {create_binary_result.error}",
+            f"❌ Failed to create binary record for attachment {attachment.findtext('./name')}: {create_binary_result.error}\nCreate request body:\n{pretty_print_xml(binary_record)}",
             "error",
         )
         return None, create_binary_result.error
@@ -135,3 +145,27 @@ def _create_note(source_record: ET.Element) -> ET.Element | None:
         note = ET.Element("note")
         note.text = file_upload_message
         return note
+
+
+def _create_reviewed(source_record: ET.Element) -> ET.Element | None:
+    attachments = source_record.findall("./attachments/attachment")
+
+    reviewed = ET.Element("reviewed")
+    if any(_is_attachment_waiting_for_review(attachment) for attachment in attachments):
+        reviewed.text = "false"
+    else:
+        reviewed.text = "true"
+
+    return reviewed
+
+
+def _is_attachment_waiting_for_review(attachment: ET.Element) -> bool:
+    to_be_published = attachment.findtext("./toBePublished")
+    to_be_archived = attachment.findtext("./toBeArchived")
+    temp_available_from = attachment.findtext("./tempAvailableFrom")
+
+    return (
+        to_be_published == "true"
+        or to_be_archived == "true"
+        or temp_available_from is not None
+    )

@@ -15,6 +15,7 @@ def test_migrate_with_apply_false(mock_create, mock_validate, mock_transform):
     source_record = ET.fromstring(
         """
         <publication>
+            <pid>diva2:12345</pid>
             <title>Test Publication</title>
         </publication>
         """
@@ -61,6 +62,7 @@ def test_success_migrate_with_apply_true_and_with_binaries_true(
     source_record = ET.fromstring(
         """
         <publication>
+            <pid>diva2:12345</pid>
             <title>Test Publication</title>
         </publication>
         """
@@ -123,6 +125,7 @@ def test_success_migrate_with_apply_true_and_with_binaries_false(
     source_record = ET.fromstring(
         """
         <publication>
+            <pid>diva2:12345</pid>
             <title>Test Publication</title>
         </publication>
         """
@@ -190,6 +193,7 @@ def test_rollback_when_failed_to_migrate_attachment(
     source_record = ET.fromstring(
         """
         <publication>
+            <pid>diva2:12345</pid>
             <title>Test Publication</title>
         </publication>
         """
@@ -226,7 +230,9 @@ def test_rollback_when_failed_to_migrate_attachment(
 @patch("fedora_to_cora.output_migrate.transform_to_cora_output")
 @patch("fedora_to_cora.output_migrate.create_record")
 @patch("fedora_to_cora.output_migrate.pretty_print_xml")
-def test_migrate_with_classic_quality(mock_pretty_print, mock_create, mock_transform, mock_validate):
+def test_migrate_with_classic_quality(
+    mock_pretty_print, mock_create, mock_transform, mock_validate
+):
     mock_context = MockContext()
 
     source_record = ET.fromstring(

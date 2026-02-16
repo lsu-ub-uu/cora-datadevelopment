@@ -1,11 +1,15 @@
 from typing import Optional
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
+from common.date_utils import is_after_now
 from common.xml_utils import append_if_value, transform_text_element
 from fedora_to_cora.transform.binary.get_attachment_type import get_attachment_type
-from fedora_to_cora.transform.binary.get_availability import get_availablity
+from fedora_to_cora.transform.binary.get_binary_requested_visibility import (
+    get_binary_requested_visibility,
+)
+from fedora_to_cora.transform.binary.get_binary_visibility import get_binary_visibility
 from fedora_to_cora.transform.create_date import create_date
-from datetime import datetime, timezone
+from datetime import datetime
 
 
 def attachment_transform(
@@ -25,7 +29,7 @@ def attachment_transform(
 
     ET.SubElement(attachment, "label").text = get_attachment_type(source_attachment)
 
-    if should_have_attachment_version(validation_type):
+    if _should_have_attachment_version(validation_type):
         append_if_value(
             attachment,
             _create_attachment_version(source_attachment),
@@ -42,7 +46,7 @@ def attachment_transform(
     )
     append_if_value(
         attachment,
-        _create_availability(source_attachment),
+        _create_requested_visibility(source_attachment),
     )
     append_if_value(
         attachment,
@@ -55,12 +59,10 @@ def attachment_transform(
         ),
     )
 
-    available_from = source_attachment.findtext("./availableFrom")
-    if available_from is not None and available_from > _get_now():
-        append_if_value(
-            attachment,
-            create_date(available_from, "dateToBePublished"),
-        )
+    append_if_value(
+        attachment,
+        _create_date_to_be_published(source_attachment),
+    )
 
     append_if_value(
         attachment,
@@ -72,29 +74,42 @@ def attachment_transform(
     return attachment
 
 
-def should_have_attachment_version(validation_type: str) -> bool:
+def _create_date_to_be_published(source_attachment: ET.Element) -> Optional[ET.Element]:
+    temp_available_from = source_attachment.findtext("./tempAvailableFrom")
+    available_from = source_attachment.findtext("./availableFrom")
+
+    if temp_available_from is not None:
+        return create_date(temp_available_from, "dateToBePublished")
+
+    if available_from is not None and is_after_now(available_from):
+        return create_date(available_from, "dateToBePublished")
+
+    return None
+
+
+def _should_have_attachment_version(validation_type: str) -> bool:
     validation_types_with_attachment_version = {
-        "publication_encyclopedia-entry",
-        "conference_poster",
-        "publication_newspaper-article",
-        "conference_paper",
-        "publication_book-review",
-        "conference_other",
-        "publication_magazine-article",
         "publication_book-chapter",
-        "publication_journal-article",
-        "publication_review-article",
-        "publication_report-chapter",
+        "conference_paper",
+        "publication_newspaper-article",
+        "conference_poster",
+        "publication_encyclopedia-entry",
         "publication_foreword-afterword",
+        "publication_review-article",
+        "publication_journal-article",
         "publication_editorial-letter",
+        "publication_report-chapter",
+        "publication_book-review",
+        "publication_magazine-article",
+        "conference_other",
     }
     return validation_type in validation_types_with_attachment_version
 
 
-def _create_availability(source_attachment: ET.Element) -> ET.Element:
-    availability = ET.Element("availability")
-    availability.text = get_availablity(source_attachment)
-    return availability
+def _create_requested_visibility(source_attachment: ET.Element) -> ET.Element:
+    requested_visibility = ET.Element("requestedVisibility")
+    requested_visibility.text = get_binary_requested_visibility(source_attachment)
+    return requested_visibility
 
 
 def _create_attachment_version(source_attachment: ET.Element) -> Optional[ET.Element]:
@@ -146,13 +161,5 @@ def _create_admin_info(
     return admin_info
 
 
-def _create_display_label(source_attachment: ET.Element) -> Optional[ET.Element]:
-    selected_file_name = source_attachment.findtext("./selectedFileName")
-    if selected_file_name is not None and selected_file_name.strip() != "":
-        display_label = ET.Element("displayLabel")
-        display_label.text = selected_file_name
-        return display_label
-
-
-def _get_now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+def _get_today() -> datetime:
+    return datetime.now().astimezone()

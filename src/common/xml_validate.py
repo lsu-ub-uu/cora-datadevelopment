@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from typing import Union, Literal
 
 XMLSpec = dict[str, "ChildSpec"]
-ChildSpec = Union[Literal["text"], Literal["ignore"], XMLSpec]
+ChildSpec = Union[str, XMLSpec]
 
 
 class XMLValidationError(Exception):
@@ -54,7 +54,20 @@ def validate_xml(element: ET.Element, spec: XMLSpec) -> None:
                 )
                 continue
 
-            if child_spec != "text":
+            if child_spec != "text" and isinstance(child_spec, str):
+                # Child is specific text node
+                if len(child):
+                    errors.append(
+                        f"Expected text content '{child_spec}' in <{child.tag}>, but found child elements"
+                    )
+                    continue
+
+                if child.text != child_spec:
+                    errors.append(
+                        f"Expected text content '{child_spec}' in <{child.tag}>, but found '{child.text}'"
+                    )
+
+            if isinstance(child_spec, dict):
                 # Child is a group
                 if len(child) == 0 and child.text is not None:
                     errors.append(

@@ -368,12 +368,12 @@ fedora_attachment_spec: XMLSpec = {
     },
     "order": "text",
     "uploadDate": "text",
-    "asyncUpload": "text",
+    "asyncUpload": "false",  # Value should always be false
     "availableUntil": "text",
     "availableFrom": "text",
     "tempAvailableFrom": "text",
     "deleteDate": "text",
-    "onHold": "text",
+    "onHold": "false",  # Value should always be false
     "deleted": "text",
     "prePrint": "text",
     "postPrint": "text",

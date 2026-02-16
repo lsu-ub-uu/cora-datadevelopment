@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from fedora_to_cora.transform.binary.get_binary_visibility import get_binary_visibility
 from datetime import datetime
+from freezegun import freeze_time
 
 
 def test_returns_unpublished_when_deleted():
@@ -16,11 +17,8 @@ def test_returns_unpublished_when_deleted():
     assert get_binary_visibility(source_record) == "unpublished"
 
 
-def test_returns_published_when_available_from_in_the_past(monkeypatch):
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.binary.get_binary_visibility._get_today",
-        lambda: datetime(2025, 1, 1).astimezone(),
-    )
+@freeze_time("2025-01-01T00:00.000+01:00")
+def test_returns_published_when_available_from_in_the_past():
     source_record = ET.fromstring(
         """
         <attachment>
@@ -33,11 +31,8 @@ def test_returns_published_when_available_from_in_the_past(monkeypatch):
     assert get_binary_visibility(source_record) == "published"
 
 
-def test_returns_unpublished_when_available_from_in_the_future(monkeypatch):
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.binary.get_binary_visibility._get_today",
-        lambda: datetime(2025, 1, 1).astimezone(),
-    )
+@freeze_time("2025-01-01T00:00.000+01:00")
+def test_returns_unpublished_when_available_from_in_the_future():
     source_record = ET.fromstring(
         """
         <attachment>
@@ -62,13 +57,8 @@ def test_returns_unpublished_when_no_available_from():
     assert get_binary_visibility(source_record) == "unpublished"
 
 
-def test_returns_published_when_available_from_in_the_past_and_available_until_is_in_the_future(
-    monkeypatch,
-):
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.binary.get_binary_visibility._get_today",
-        lambda: datetime(2025, 1, 1).astimezone(),
-    )
+@freeze_time("2025-01-01T00:00.000+01:00")
+def test_returns_published_when_available_from_in_the_past_and_available_until_is_in_the_future():
     source_record = ET.fromstring(
         """
         <attachment>
@@ -82,13 +72,9 @@ def test_returns_published_when_available_from_in_the_past_and_available_until_i
     assert get_binary_visibility(source_record) == "published"
 
 
-def test_returns_unpublished_when_available_until_is_in_the_past(
-    monkeypatch,
-):
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.binary.get_binary_visibility._get_today",
-        lambda: datetime(2027, 1, 1).astimezone(),
-    )
+@freeze_time("2027-01-01T00:00.000+01:00")
+def test_returns_unpublished_when_available_until_is_in_the_past():
+
     source_record = ET.fromstring(
         """
         <attachment>
@@ -102,11 +88,8 @@ def test_returns_unpublished_when_available_until_is_in_the_past(
     assert get_binary_visibility(source_record) == "unpublished"
 
 
-def test_returns_unpublished_when_on_hold(monkeypatch):
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.binary.get_binary_visibility._get_today",
-        lambda: datetime(2025, 1, 1).astimezone(),
-    )
+@freeze_time("2025-01-01T00:00.000+01:00")
+def test_returns_unpublished_when_on_hold():
     source_record = ET.fromstring(
         """
         <attachment>
@@ -160,6 +143,7 @@ def test_returns_unpublished_when_to_be_published():
     )
 
     assert get_binary_visibility(source_record) == "unpublished"
+
 
 def test_returns_unpublished_when_print_on_demand():
     source_record = ET.fromstring(

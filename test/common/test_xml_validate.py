@@ -260,3 +260,65 @@ def test_error_can_contain_multiple_validation_errors():
         match="Unknown child element <unknown1> found in <source>\nUnknown child element <unknown2> found in <child>",
     ):
         validate_xml(source, spec)
+
+
+def test_specific_text_value_is_valid():
+    spec: XMLSpec = {"child1": "someSpecificValue"}
+
+    source = ET.fromstring(
+        """
+            <source>
+                <child1>someSpecificValue</child1>
+            </source>
+        """
+    )
+
+    validate_xml(source, spec)
+
+
+def test_specific_text_value_raises_error_when_other_text():
+    spec: XMLSpec = {"child1": "someSpecificValue"}
+
+    source = ET.fromstring(
+        """
+            <source>
+                <child1>someOtherSpecificValue</child1>
+            </source>
+        """
+    )
+    with pytest.raises(
+        XMLValidationError,
+        match="Expected text content 'someSpecificValue' in <child1>, but found 'someOtherSpecificValue'",
+    ):
+        validate_xml(source, spec)
+
+
+def test_specific_text_value_raises_error_when_object_instead_of_text():
+    spec: XMLSpec = {"child1": "someSpecificValue"}
+
+    source = ET.fromstring(
+        """
+            <source>
+                <child1>
+                    <subchild>value</subchild>
+                </child1>
+            </source>
+        """
+    )
+    with pytest.raises(
+        XMLValidationError,
+        match="Expected text content 'someSpecificValue' in <child1>, but found child elements",
+    ):
+        validate_xml(source, spec)
+
+
+def test_specific_text_value_valid_when_element_missing():
+    spec: XMLSpec = {"child1": "someSpecificValue"}
+
+    source = ET.fromstring(
+        """
+            <source>
+            </source>
+        """
+    )
+    validate_xml(source, spec)
