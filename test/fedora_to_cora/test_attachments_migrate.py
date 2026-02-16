@@ -1828,6 +1828,53 @@ def test_secrecy_with_to_be_published(monkeypatch):
     assert actual_date_to_be_published is None
 
 
+def test_skips_deleted_attachment(monkeypatch):
+    create_record_mock = _set_up_create_record_mock(monkeypatch)
+    migrate_attachment_mock = _set_up_migrate_binary_mock(monkeypatch)
+    update_record_mock = _set_up_update_record_mock(monkeypatch)
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
+            <pid>pid:123</pid>
+            <attachments>
+                <attachment>
+                    <fileLabel>
+                        <fileLabelId>50</fileLabelId>
+                    </fileLabel>
+                    <order>2</order>
+                    <fileName>test1.pdf</fileName>
+                    <deleted>true</deleted>
+                </attachment>
+            </attachments>
+        </publication>
+        """
+    )
+
+    cora_record = ET.fromstring(
+        """
+        <record>
+            <data>
+                <output> 
+                    <recordInfo>
+                        <id>test-output</id>
+                    </recordInfo>
+                </output>
+            </data>
+        </record>
+        """
+    )
+
+    attachments_migrate(source_record, cora_record, MockContext())
+
+    create_record_mock.assert_not_called()
+    migrate_attachment_mock.assert_not_called()
+    update_record_mock.assert_not_called()
+
+
 def _set_up_create_record_mock(monkeypatch, fail=False):
     create_record_mock = MagicMock(
         return_value=(

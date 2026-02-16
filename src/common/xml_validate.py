@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from typing import Union, Literal
 
 XMLSpec = dict[str, "ChildSpec"]
-ChildSpec = Union[Literal["text"], Literal["ignore"], XMLSpec]
+ChildSpec = Union[str, XMLSpec]
 
 
 class XMLValidationError(Exception):

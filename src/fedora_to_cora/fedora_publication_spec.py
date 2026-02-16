@@ -373,8 +373,8 @@ fedora_attachment_spec: XMLSpec = {
     "availableFrom": "text",
     "tempAvailableFrom": "text",
     "deleteDate": "text",
-    "onHold": "false",
-    "deleted": "false",
+    "onHold": "false",  # Value should always be false
+    "deleted": "text",
     "prePrint": "text",
     "postPrint": "text",
     "print": "text",

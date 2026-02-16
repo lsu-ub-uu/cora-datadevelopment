@@ -34,6 +34,12 @@ def attachments_migrate(
         append_if_value(attachments_group, _create_reviewed(source_record))
         append_if_value(attachments_group, _create_note(source_record))
         for attachment in _sort_by_order(attachments):
+            if attachment.findtext("./deleted") == "true":
+                context.log(
+                    f"🗑️ Skipping deleted attachment {attachment.findtext('./fileName')} for record with old id {source_record.findtext('.//pid')}"
+                )
+                continue
+
             attachment, error = _migrate_attachment(
                 attachment, context, created_binary_records, source_record
             )
@@ -42,11 +48,11 @@ def attachments_migrate(
             if error is not None:
                 errors.append(error)
 
-        if not errors:
+        if not errors and len(attachments_group.findall("./attachment")) > 0:
             update_result = update_record(record_to_update, context)
             if update_result.success:
                 context.log(
-                    f"✅ Successfully migrated {len(attachments)} attachments for record with old id {source_record.findtext('.//pid')}"
+                    f"✅ Successfully migrated {len(attachments_group.findall('./attachment'))} attachments for record with old id {source_record.findtext('.//pid')}"
                 )
             else:
                 context.log(
