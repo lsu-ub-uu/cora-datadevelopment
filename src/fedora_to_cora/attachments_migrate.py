@@ -14,7 +14,7 @@ from cora.create import create_record, is_success_result
 from cora.update import update_record
 from cora.delete import delete_record
 from fedora_to_cora.transform.attachment_transform import attachment_transform
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, pretty_print_xml
 
 
 def attachments_migrate(
@@ -56,7 +56,7 @@ def attachments_migrate(
                 )
             else:
                 context.log(
-                    f"❌ Failed to update record with attachments for record with old id {source_record.findtext('.//pid')}: {update_result.error}",
+                    f"❌ Failed to update record with attachments for record with old id {source_record.findtext('.//pid')}: {update_result.error}\nUpdate request body:\n{pretty_print_xml(record_to_update)}",
                     level="error",
                 )
                 errors.append(update_result.error)
@@ -125,7 +125,7 @@ def _migrate_attachment(
         return cora_attachment, None
     else:
         context.log(
-            f"❌ Failed to create binary record for attachment {attachment.findtext('./name')}: {create_binary_result.error}",
+            f"❌ Failed to create binary record for attachment {attachment.findtext('./name')}: {create_binary_result.error}\nCreate request body:\n{pretty_print_xml(binary_record)}",
             "error",
         )
         return None, create_binary_result.error
