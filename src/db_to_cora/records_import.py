@@ -51,6 +51,16 @@ def apply_import(
         if is_success_result(result):
             return source_record, result.response_data
         else:
+            old_id = source_record.findtext("./old_id")
+            if result.error and (
+                f"A record matching the unique rule with [key: oldId, value: {old_id}] already exists in the system"
+                in result.error
+            ):
+                context.log(
+                    f"Record with old id {old_id} already exists. Skipping creation.",
+                    level="warning",
+                )
+                return source_record, None
             context.log(f"Failed to create record: {result.error}", level="error")
             raise Exception(f"Record creation failed: {result.error}")
 

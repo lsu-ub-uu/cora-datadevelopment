@@ -16,7 +16,7 @@ class RelationMapping:
 
 
 def update_relations(
-    record_mapping: list[tuple[ET.Element, ET.Element]],
+    record_mapping: list[tuple[ET.Element, ET.Element | None]],
     relation_mappings: list[RelationMapping],
     record_type: str,
     context: Context,
@@ -37,7 +37,7 @@ def update_relations(
 
 
 def _update_relations_for_single_record(
-    record_pair: tuple[ET.Element, ET.Element],
+    record_pair: tuple[ET.Element, ET.Element | None],
     old_id_to_new_id_map: dict[str, str],
     relation_mappings: list[RelationMapping],
     record_type: str,
@@ -45,6 +45,8 @@ def _update_relations_for_single_record(
 ):
     modified = False
     old_record, new_record = record_pair
+    if new_record is None:
+        return
     new_record_data = new_record.find(f"./data/*")
     old_id = new_record.findtext("./oldId")
     assert new_record_data is not None
@@ -103,10 +105,12 @@ def _create_related_item(
 
 
 def _create_old_id_to_new_id_map(
-    old_and_new_org_pairs: list[tuple[ET.Element, ET.Element]],
+    old_and_new_org_pairs: list[tuple[ET.Element, ET.Element | None]],
 ) -> dict[str, str]:
     old_id_to_new_id_map: dict[str, str] = {}
     for _, new_org in old_and_new_org_pairs:
+        if new_org is None:
+            continue
         id = new_org.findtext(".//recordInfo/id")
         old_id = new_org.findtext(".//recordInfo/oldId")
         if id is not None and old_id is not None:
