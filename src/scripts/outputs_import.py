@@ -1,3 +1,5 @@
+from rich.console import Console
+from rich.table import Table
 import os
 import sys
 import time
@@ -13,10 +15,21 @@ from common.common_data import read_source_xml
 from common.print_logo import print_logo
 from multiprocessing import Pool
 from tqdm import tqdm
+import datetime
+import re
+
 
 context = None
 with_binaries = False
 apply = False
+
+status_labels = {
+    "SUCCESS": "✅ Successful imports",
+    "CLASSIC_QUALITY": "☣️ Imported as classic quality",
+    "FAILED": "❌ Failed to import",
+    "SKIPPED": "➡️ Skipped records",
+    "INPUT_VALIDATION_FAILED": "⚠️ Input validation failed",
+}
 
 
 def main():
@@ -58,11 +71,14 @@ def outputs_import(
             record for record in source_records if record.findtext("pid") in pids
         ]
 
-    # if not _validate_source_records(source_records):
-    #     print("Source records validation failed. Exiting.")
-    #     return
     print(f"Starting migration of {len(source_records)} records to {system} system...")
-    counts = {"SUCCESS": 0, "CLASSIC_QUALITY": 0, "FAILED": 0, "DUPLICATE": 0}
+    counts = {
+        "SUCCESS": 0,
+        "CLASSIC_QUALITY": 0,
+        "FAILED": 0,
+        "SKIPPED": 0,
+        "INPUT_VALIDATION_FAILED": 0,
+    }
     results = []
     with Pool(
         processes,
@@ -74,21 +90,70 @@ def outputs_import(
             apply,
             binaries,
         ),
-    ) as pool, tqdm(total=len(source_records), desc="Migrating records") as progress:
+    ) as pool, tqdm(total=len(source_records), desc="Importing records") as progress:
         for result in pool.imap_unordered(_migrate_record, source_records):
             counts[result.status] += 1
             results.append(result)
             progress.set_postfix_str(
-                f"✅ {counts['SUCCESS']} | ☣️ {counts['CLASSIC_QUALITY']} | ❌ {counts['FAILED']} | ⏭️ {counts['DUPLICATE']}"
+                f"✅ {counts['SUCCESS']} | ☣️ {counts['CLASSIC_QUALITY']} | ❌ {counts['FAILED']} | ➡️ {counts['SKIPPED']} | ⚠️ {counts['INPUT_VALIDATION_FAILED']}"
             )
             progress.update(1)
 
-    _log_results(results)
-
     end_time = time.perf_counter()
-    print(f"Processing completed in {end_time - start_time:.2f} seconds.")
+    elapsed_time = end_time - start_time
+    print(f"Migration completed in {elapsed_time:.2f} seconds.")
 
-    analyze_and_print_report("logs/outputs-import.log")
+    _save_html_report(results, xml_dir=xml_dir, system=system, output_dir="reports")
+    _save_markdown_report(results, xml_dir=xml_dir, system=system, output_dir="reports")
+    _print_rich_report(results)
+
+
+def _save_markdown_report(
+    results: list[OutputMigrationResult],
+    xml_dir: str,
+    system: str,
+    output_dir: str = ".",
+):
+    status_counts, errors = _generate_report(results)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+    filename = f"outputs-import-{timestamp}.md"
+    filepath = os.path.join(output_dir, filename)
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    lines = []
+    lines.append(f"# Migration Report ({timestamp})\n")
+    lines.append(f"**Total records processed:** {sum(status_counts.values())}")
+    lines.append("")
+    lines.append(f"**Source XML Directory:** `{xml_dir}`  ")
+    lines.append(f"**Target System:** `{system}`  ")
+    lines.append("")
+
+    # Status counts table
+    lines.append("## Status Counts\n")
+    lines.append("| Status | Count |")
+    lines.append("|--------|-------|")
+    for status, count in status_counts.items():
+        lines.append(f"| {status_labels[status]} | {count} |")
+    lines.append("")
+
+    # Errors by category
+    for category in ["INPUT_VALIDATION_FAILED", "FAILED", "CLASSIC_QUALITY", "SKIPPED"]:
+        error_dict = errors.get(category, {})
+        if error_dict:
+            lines.append(f"## {status_labels[category]}\n")
+            lines.append("| Error Message | Occurrences | PIDs |")
+            lines.append("|--------------|-------------|------|")
+            for error_msg, pids in error_dict.items():
+                pid_str = ", ".join(pids)
+                lines.append(
+                    f"| {error_msg.replace('|', ' ').replace(chr(10), ' ')} | {len(pids)} | {pid_str} |"
+                )
+            lines.append("")
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    print(f"Markdown report saved to {filepath}")
 
 
 def _parse_args():
@@ -161,8 +226,9 @@ def _read_source_records(xml_dir: str, limit: int | None = None) -> list[ET.Elem
     return records
 
 
-def _validate_source_records(source_records) -> bool:
+def _validate_source_records(source_records):
     errors = {}
+    pids_failed = []
     for source_record in source_records:
         try:
             validate_xml(source_record, fedora_publication_xml_spec)
@@ -172,61 +238,154 @@ def _validate_source_records(source_records) -> bool:
             if error_str not in errors:
                 errors[error_str] = []
             errors[error_str].append(pid)
-    if len(errors) > 0:
-        print("==== Skipped migration due to XML Validation Error in source data ==== ")
-        for error in errors:
-            print(f"❌ {error} - {len(errors[error])} occurrences")
-            print(f"   Example pids: {', '.join(errors[error][:5])}...")
-        return False
-    return True
+            pids_failed.append(pid)
 
-
-def _log_results(results: list[OutputMigrationResult]):
-    main_script = os.path.basename(sys.argv[0])
-
-    successful_migrations = []
-    classic_quality_migrations = []
-    failed_migrations = []
-    skipped_migrations = []
-    for result in results:
-        error_str = ", ".join(result.errors) if result.errors else ""
-        if result.status == "SUCCESS":
-            successful_migrations.append(result.pid)
-        elif result.status == "CLASSIC_QUALITY":
-            classic_quality_migrations.append(f"{result.pid} - Errors: [{error_str}]")
-        elif result.status == "DUPLICATE":
-            skipped_migrations.append(
-                f"{result.pid} - Skipped due to duplicate record with oldId alread in Cora"
-            )
-        else:
-            failed_migrations.append(f"{result.pid} - Errors: [{error_str}]")
-
-    logger = RunRotatingLogger("data", f"logs/{main_script}.log").get()
-
-    logger.info("==== Processing complete ====")
-
-    logger.info(f"{len(successful_migrations)} Records successfully imported:")
-    for pid in successful_migrations:
-        logger.info(f"✅ {pid}")
-
-    logger.info(
-        f"{len(classic_quality_migrations)} Records imported with classic quality:"
-    )
-    for pid in classic_quality_migrations:
-        logger.info(f"☣️ {pid}")
-    logger.info(f"{len(skipped_migrations)} Records skipped due to duplicates:")
-    for pid in skipped_migrations:
-        logger.info(f"⏭️ {pid}")
-    logger.info(f"{len(failed_migrations)} Records failed to import:")
-    for error in failed_migrations:
-        logger.info(f"❌ {error}")
-    print(f"{len(successful_migrations)} succeeded, {len(failed_migrations)} failed.")
+    return errors, pids_failed
 
 
 def _generate_report(results: list[OutputMigrationResult]):
     print("==== Migration Report ====")
     print(f"Total records processed: {len(results)}")
-    status_counts = {"SUCCESS": 0, "CLASSIC_QUALITY": 0, "FAILED": 0, "DUPLICATE": 0}
+    status_counts = {
+        "SUCCESS": 0,
+        "CLASSIC_QUALITY": 0,
+        "FAILED": 0,
+        "SKIPPED": 0,
+        "INPUT_VALIDATION_FAILED": 0,
+    }
+    error_categories = {
+        "FAILED": {},
+        "CLASSIC_QUALITY": {},
+        "SKIPPED": {},
+        "INPUT_VALIDATION_FAILED": {},
+    }
+
+    for result in results:
+        status_counts[result.status] += 1
+        if result.errors is not None:
+            for error in result.errors:
+                if error not in error_categories[result.status]:
+                    error_categories[result.status][error] = []
+
+                error_categories[result.status][error].append(result.pid)
+
+    for category in error_categories:
+        for error in error_categories[category]:
+            error_categories[category][error] = sorted(
+                error_categories[category][error]
+            )
+
+        sorted_items = sorted(
+            error_categories[category].items(),
+            key=lambda item: len(item[1]),
+            reverse=True,
+        )
+        error_categories[category] = dict(sorted_items)
+
+    return (status_counts, error_categories)
+
+
+def _print_rich_report(results: list[OutputMigrationResult]):
+    """Prints the output of _generate_report using a table from the rich library."""
+    console = Console()
+    status_counts, errors = _generate_report(results)
+
+    # Print status counts table
+    table = Table(title="Migration Status Counts")
+    table.add_column("Status", style="bold")
+    table.add_column("Count", justify="right")
+    for status, count in status_counts.items():
+        table.add_row(status, str(count))
+    console.print(table)
+
+    # Print errors by category
+    for category in ["INPUT_VALIDATION_FAILED", "FAILED", "CLASSIC_QUALITY", "SKIPPED"]:
+        if errors.get(category):
+            error_dict = errors[category]
+            if error_dict:
+                error_table = Table(title=f"{category} Errors", show_lines=True)
+                error_table.add_column("Error Message", style="red")
+                error_table.add_column("Occurrences", justify="right")
+                error_table.add_column("PIDs", style="cyan")
+                for error_msg, pids in error_dict.items():
+                    error_table.add_row(error_msg, str(len(pids)), ", ".join(pids))
+                console.print(error_table)
+
+
+def _save_html_report(
+    results: list[OutputMigrationResult],
+    xml_dir: str,
+    system: str,
+    output_dir: str = ".",
+):
+    domain_match = re.search(r"fedora_xml/(.+)/.+", xml_dir)
+    domain = domain_match.group(1) if domain_match else "unknown"
+    status_counts, errors = _generate_report(results)
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+    filename = f"outputs-import-{domain}-{timestamp}.html"
+    filepath = os.path.join(output_dir, filename)
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Build HTML using ElementTree
+    html = ET.Element("html")
+    head = ET.SubElement(html, "head")
+    title = ET.SubElement(head, "title")
+    title.text = f"Migration Report ({timestamp})"
+    ET.SubElement(head, "meta", attrib={"charset": "utf-8"})
+    style = ET.SubElement(head, "style")
+    style.text = "body{font-family:sans-serif;}table{border-collapse:collapse;margin-bottom:2em;}th,td{border:1px solid #ccc;padding:6px;vertical-align:text-top;}th{background:#75598e;color:#fff;}"
+
+    body = ET.SubElement(html, "body")
+    h1 = ET.SubElement(body, "h1")
+    h1.text = f"Migration Report ({timestamp})"
+    p = ET.SubElement(body, "p")
+    p.text = f"Total records processed: {sum(status_counts.values())}"
+
+    p2 = ET.SubElement(body, "p")
+    p2.text = f"Domain: {domain} | Target System: {system}"
+
+    # Status counts table
+    h2_counts = ET.SubElement(body, "h2")
+    h2_counts.text = "Status Counts"
+    table_counts = ET.SubElement(body, "table")
+    tr_head = ET.SubElement(table_counts, "tr")
+    for col in ["Status", "Count"]:
+        th = ET.SubElement(tr_head, "th")
+        th.text = col
+    for status, count in status_counts.items():
+        tr = ET.SubElement(table_counts, "tr")
+        td1 = ET.SubElement(tr, "td")
+        td1.text = status_labels[status]
+        td2 = ET.SubElement(tr, "td")
+        td2.text = str(count)
+
+    # Errors by category
+    for category in ["INPUT_VALIDATION_FAILED", "FAILED", "CLASSIC_QUALITY", "SKIPPED"]:
+        error_dict = errors.get(category, {})
+        if error_dict:
+            h2 = ET.SubElement(body, "h2")
+            h2.text = f"{status_labels[category]}"
+            table = ET.SubElement(body, "table")
+            tr_head = ET.SubElement(table, "tr")
+            for col in ["Error Message", "Occurrences", "PIDs"]:
+                th = ET.SubElement(tr_head, "th")
+                th.text = col
+            for error_msg, pids in error_dict.items():
+                tr = ET.SubElement(table, "tr")
+                td1 = ET.SubElement(tr, "td")
+                td1.text = error_msg.replace("|", " ").replace("\n", " ")
+                td2 = ET.SubElement(tr, "td")
+                td2.text = str(len(pids))
+                td3 = ET.SubElement(tr, "td")
+                td3.text = ", ".join(pids)
+
+    # Write HTML to file (with doctype)
+    html_str = ET.tostring(html, encoding="unicode", method="html")
+    doctype = "<!DOCTYPE html>\n"
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(doctype + html_str)
+    print(f"HTML report saved to {filepath}")
 
 
 if __name__ == "__main__":

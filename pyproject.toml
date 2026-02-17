@@ -11,7 +11,8 @@ dependencies = [
     "pytest-watcher",
     "fabric",
     "psycopg2-binary",
-    "freezegun"
+    "freezegun",
+    "rich"
 ]
 license = "GPL-3.0"
 

@@ -112,7 +112,7 @@ def analyze_error_log(
             continue
 
         # Count skipped transformations
-        if "⏭️" in line:
+        if "➡️" in line:
             total_skipped += 1
             _append_error(line)
             continue
@@ -151,7 +151,7 @@ def generate_report(
     print(f"   ✅ Successful migrations: {total_successful:,}")
     print(f"   ☣️ Classic quality migrations: {total_classic:,}")
     print(f"   ❌ Failed migrations: {total_failed:,}")
-    print(f"   ⏭️ Skipped migrations: {total_skipped:,}")
+    print(f"   ➡️ Skipped migrations: {total_skipped:,}")
     print(
         f"   📈 Success rate: {total_successful/(total_successful+total_classic+total_failed+total_skipped)*100:.1f}%"
     )
