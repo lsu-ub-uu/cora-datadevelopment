@@ -7,7 +7,6 @@ from xml.etree import ElementTree as ET
 from common.arg_parser import create_argument_parser
 from common.run_rotating_logger import RunRotatingLogger
 from cora.context import CoraContext
-from scripts.util.analyze_errors import analyze_and_print_report
 from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
 from common.xml_validate import validate_xml, XMLValidationError
 from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
@@ -103,57 +102,20 @@ def outputs_import(
     elapsed_time = end_time - start_time
     print(f"Migration completed in {elapsed_time:.2f} seconds.")
 
-    _save_html_report(results, xml_dir=xml_dir, system=system, output_dir="reports")
-    _save_markdown_report(results, xml_dir=xml_dir, system=system, output_dir="reports")
-    _print_rich_report(results)
+    _save_reports(results, xml_dir=xml_dir, system=system, output_dir="reports")
 
 
-def _save_markdown_report(
+def _save_reports(
     results: list[OutputMigrationResult],
     xml_dir: str,
     system: str,
     output_dir: str = ".",
 ):
-    status_counts, errors = _generate_report(results)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-    filename = f"outputs-import-{timestamp}.md"
-    filepath = os.path.join(output_dir, filename)
-
-    os.makedirs(output_dir, exist_ok=True)
-
-    lines = []
-    lines.append(f"# Migration Report ({timestamp})\n")
-    lines.append(f"**Total records processed:** {sum(status_counts.values())}")
-    lines.append("")
-    lines.append(f"**Source XML Directory:** `{xml_dir}`  ")
-    lines.append(f"**Target System:** `{system}`  ")
-    lines.append("")
-
-    # Status counts table
-    lines.append("## Status Counts\n")
-    lines.append("| Status | Count |")
-    lines.append("|--------|-------|")
-    for status, count in status_counts.items():
-        lines.append(f"| {status_labels[status]} | {count} |")
-    lines.append("")
-
-    # Errors by category
-    for category in ["INPUT_VALIDATION_FAILED", "FAILED", "CLASSIC_QUALITY", "SKIPPED"]:
-        error_dict = errors.get(category, {})
-        if error_dict:
-            lines.append(f"## {status_labels[category]}\n")
-            lines.append("| Error Message | Occurrences | PIDs |")
-            lines.append("|--------------|-------------|------|")
-            for error_msg, pids in error_dict.items():
-                pid_str = ", ".join(pids)
-                lines.append(
-                    f"| {error_msg.replace('|', ' ').replace(chr(10), ' ')} | {len(pids)} | {pid_str} |"
-                )
-            lines.append("")
-
-    with open(filepath, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
-    print(f"Markdown report saved to {filepath}")
+    _save_html_report(results, xml_dir=xml_dir, system=system, output_dir=output_dir)
+    _save_markdown_report(
+        results, xml_dir=xml_dir, system=system, output_dir=output_dir
+    )
+    _print_rich_report(results)
 
 
 def _parse_args():
@@ -226,23 +188,6 @@ def _read_source_records(xml_dir: str, limit: int | None = None) -> list[ET.Elem
     return records
 
 
-def _validate_source_records(source_records):
-    errors = {}
-    pids_failed = []
-    for source_record in source_records:
-        try:
-            validate_xml(source_record, fedora_publication_xml_spec)
-        except XMLValidationError as e:
-            pid = source_record.findtext("pid")
-            error_str = str(e)
-            if error_str not in errors:
-                errors[error_str] = []
-            errors[error_str].append(pid)
-            pids_failed.append(pid)
-
-    return errors, pids_failed
-
-
 def _generate_report(results: list[OutputMigrationResult]):
     print("==== Migration Report ====")
     print(f"Total records processed: {len(results)}")
@@ -312,18 +257,73 @@ def _print_rich_report(results: list[OutputMigrationResult]):
                 console.print(error_table)
 
 
+def _generate_setup_for_report(
+    xml_dir: str, output_dir: str = ".", filetype: str = "md"
+):
+    domain_match = re.search(r"fedora_xml/(.+)/.+", xml_dir)
+    domain = domain_match.group(1) if domain_match else "unknown"
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
+    filename = f"outputs-import-{domain}-{timestamp}.{filetype}"
+    filepath = os.path.join(output_dir, filename)
+    return (domain, timestamp, filepath)
+
+
+def _save_markdown_report(
+    results: list[OutputMigrationResult],
+    xml_dir: str,
+    system: str,
+    output_dir: str = ".",
+):
+    status_counts, errors = _generate_report(results)
+    domain, timestamp, filepath = _generate_setup_for_report(xml_dir, output_dir, "md")
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    lines = []
+    lines.append(f"# Migration Report ({timestamp})\n")
+    lines.append(f"**Total records processed:** {sum(status_counts.values())}")
+    lines.append("")
+    lines.append(f"**Source XML Directory:** `{xml_dir}`  ")
+    lines.append(f"**Domain: {domain} | Target System:** `{system}`  ")
+    lines.append("")
+
+    # Status counts table
+    lines.append("## Status Counts\n")
+    lines.append("| Status | Count |")
+    lines.append("|--------|-------|")
+    for status, count in status_counts.items():
+        lines.append(f"| {status_labels[status]} | {count} |")
+    lines.append("")
+
+    # Errors by category
+    for category in ["INPUT_VALIDATION_FAILED", "FAILED", "CLASSIC_QUALITY", "SKIPPED"]:
+        error_dict = errors.get(category, {})
+        if error_dict:
+            lines.append(f"## {status_labels[category]}\n")
+            lines.append("| Error Message | Occurrences | PIDs |")
+            lines.append("|--------------|-------------|------|")
+            for error_msg, pids in error_dict.items():
+                pid_str = ", ".join(pids)
+                lines.append(
+                    f"| {error_msg.replace('|', ' ').replace(chr(10), ' ')} | {len(pids)} | {pid_str} |"
+                )
+            lines.append("")
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    print(f"Markdown report saved to {filepath}")
+
+
 def _save_html_report(
     results: list[OutputMigrationResult],
     xml_dir: str,
     system: str,
     output_dir: str = ".",
 ):
-    domain_match = re.search(r"fedora_xml/(.+)/.+", xml_dir)
-    domain = domain_match.group(1) if domain_match else "unknown"
     status_counts, errors = _generate_report(results)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-    filename = f"outputs-import-{domain}-{timestamp}.html"
-    filepath = os.path.join(output_dir, filename)
+    domain, timestamp, filepath = _generate_setup_for_report(
+        xml_dir, output_dir, "html"
+    )
 
     os.makedirs(output_dir, exist_ok=True)
 
