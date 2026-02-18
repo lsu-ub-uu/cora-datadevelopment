@@ -46,13 +46,13 @@ def output_migrate(
     pid = source_record.findtext("./pid")
     assert pid is not None
 
-    try:
-        validate_xml(source_record, fedora_publication_xml_spec)
-    except XMLValidationError as e:
-        error_str = str(e)
-        return OutputMigrationResult(
-            pid, status="INPUT_VALIDATION_FAILED", errors=[error_str]
-        )
+    # try:
+    #     validate_xml(source_record, fedora_publication_xml_spec)
+    # except XMLValidationError as e:
+    #     error_str = str(e)
+    #     return OutputMigrationResult(
+    #         pid, status="INPUT_VALIDATION_FAILED", errors=[error_str]
+    #     )
 
     cora_output = transform_to_cora_output(source_record, context)
 

@@ -1,7 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
 import time
-from typing import Literal, Tuple, List, Optional, TypeGuard
+from typing import TypeGuard
 from cora.context import Context
 from common.threads import run_with_threads
 from common.xml_utils import pretty_print_xml
@@ -116,7 +116,7 @@ def create_record(
                 )
 
             context.log(
-                f"❌ Failed to create record for {record_type} with oldId {old_id_text}. \n\nStatus: {response.status_code}\n{response.text}\n",
+                f"❌ Failed to create record for {record_type} with oldId {old_id_text}. \n\nStatus: {response.status_code}\n{response.text}\nRequest body:\n{pretty_print_xml(ET.fromstring(request_body))}",
                 "error",
             )
             return CreateRecordFailureResult(
