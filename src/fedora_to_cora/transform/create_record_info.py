@@ -27,6 +27,7 @@ from common.record_info_create import record_info_create
 
 def create_record_info(source_record: ET.Element) -> ET.Element:
     validation_type = get_validation_type_from_fedora_record(source_record)
+    assert validation_type is not None, "validation type could not be determined from source record"
 
     permission_unit = _create_permission_unit(source_record)
 
