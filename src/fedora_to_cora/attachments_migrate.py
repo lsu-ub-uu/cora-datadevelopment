@@ -95,7 +95,7 @@ def _migrate_attachment(
     pid = source_record.findtext("./pid")
     file_name = attachment.findtext("./fileName")
     assert pid is not None and file_name is not None
-    print('_migrate_attachment', ET.tostring(host_record))
+
     binary_record = binary_record_transform(attachment, host_record)
     create_binary_result = create_record(
         binary_record,
@@ -143,8 +143,7 @@ def _sort_by_order(attachments: list[ET.Element]) -> list[ET.Element]:
 
 def _create_host_record(source_record: ET.Element, cora_record_id: str) -> ET.Element:
     host_record = ET.Element("hostRecord")
-    linked_record_type = get_validation_type_from_fedora_record(source_record)
-    assert linked_record_type is not None, "Validation type could not be determined for source record"
+    linked_record_type = 'diva-output'
 
     linked_record_id = source_record.findtext("./pid")
     assert linked_record_id is not None, "PID is missing in source record"
