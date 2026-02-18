@@ -85,7 +85,7 @@ def analyze_error_log(
         )
 
     def _append_error(line: str):
-        # Extract record ID from the line (format: "☣️ diva2:1234567 - ...")
+        # Extract record ID from the line (format: "⚠️ diva2:1234567 - ...")
         record_id_match = re.search(r"(diva2:\d+)", line)
         record_id = record_id_match.group(1) if record_id_match else "unknown"
 
@@ -106,7 +106,7 @@ def analyze_error_log(
             continue
 
         # Count classic quality transformations
-        if "☣️" in line:
+        if "⚠️" in line:
             total_classic += 1
             _append_error(line)
             continue
@@ -149,7 +149,7 @@ def generate_report(
 
     print(f"📊 SUMMARY:")
     print(f"   ✅ Successful migrations: {total_successful:,}")
-    print(f"   ☣️ Classic quality migrations: {total_classic:,}")
+    print(f"   ⚠️ Classic quality migrations: {total_classic:,}")
     print(f"   ❌ Failed migrations: {total_failed:,}")
     print(f"   ➡️ Skipped migrations: {total_skipped:,}")
     print(

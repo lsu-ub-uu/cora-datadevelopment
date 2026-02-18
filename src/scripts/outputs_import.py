@@ -23,11 +23,11 @@ with_binaries = False
 apply = False
 
 status_labels = {
-    "SUCCESS": "✅ Successful imports",
-    "CLASSIC_QUALITY": "☣️ Imported as classic quality",
+    "SUCCESS": "✅ Successfully imported as data quality DiVA 2026",
+    "CLASSIC_QUALITY": "⚠️ Validation errors (imported as classic data quality)",
     "FAILED": "❌ Failed to import",
-    "SKIPPED": "➡️ Skipped records",
-    "INPUT_VALIDATION_FAILED": "⚠️ Input validation failed",
+    "SKIPPED": "➡️ Skipped",
+    "INPUT_VALIDATION_FAILED": "⛔ Source XML validation failed",
 }
 
 
@@ -94,7 +94,7 @@ def outputs_import(
             counts[result.status] += 1
             results.append(result)
             progress.set_postfix_str(
-                f"✅ {counts['SUCCESS']} | ☣️ {counts['CLASSIC_QUALITY']} | ❌ {counts['FAILED']} | ➡️ {counts['SKIPPED']} | ⚠️ {counts['INPUT_VALIDATION_FAILED']}"
+                f"✅ {counts['SUCCESS']} | ⚠️ {counts['CLASSIC_QUALITY']} | ❌ {counts['FAILED']} | ➡️ {counts['SKIPPED']} | ⛔{counts['INPUT_VALIDATION_FAILED']}"
             )
             progress.update(1)
 
@@ -287,7 +287,6 @@ def _save_markdown_report(
     lines.append(f"**Domain: {domain} | Target System:** `{system}`  ")
     lines.append("")
 
-    # Status counts table
     lines.append("## Status Counts\n")
     lines.append("| Status | Count |")
     lines.append("|--------|-------|")
@@ -295,7 +294,6 @@ def _save_markdown_report(
         lines.append(f"| {status_labels[status]} | {count} |")
     lines.append("")
 
-    # Errors by category
     for category in ["INPUT_VALIDATION_FAILED", "FAILED", "CLASSIC_QUALITY", "SKIPPED"]:
         error_dict = errors.get(category, {})
         if error_dict:
@@ -327,7 +325,6 @@ def _save_html_report(
 
     os.makedirs(output_dir, exist_ok=True)
 
-    # Build HTML using ElementTree
     html = ET.Element("html")
     head = ET.SubElement(html, "head")
     title = ET.SubElement(head, "title")
@@ -345,7 +342,6 @@ def _save_html_report(
     p2 = ET.SubElement(body, "p")
     p2.text = f"Domain: {domain} | Target System: {system}"
 
-    # Status counts table
     h2_counts = ET.SubElement(body, "h2")
     h2_counts.text = "Status Counts"
     table_counts = ET.SubElement(body, "table")
@@ -360,7 +356,6 @@ def _save_html_report(
         td2 = ET.SubElement(tr, "td")
         td2.text = str(count)
 
-    # Errors by category
     for category in ["INPUT_VALIDATION_FAILED", "FAILED", "CLASSIC_QUALITY", "SKIPPED"]:
         error_dict = errors.get(category, {})
         if error_dict:
@@ -380,7 +375,6 @@ def _save_html_report(
                 td3 = ET.SubElement(tr, "td")
                 td3.text = ", ".join(pids)
 
-    # Write HTML to file (with doctype)
     html_str = ET.tostring(html, encoding="unicode", method="html")
     doctype = "<!DOCTYPE html>\n"
     with open(filepath, "w", encoding="utf-8") as f:
