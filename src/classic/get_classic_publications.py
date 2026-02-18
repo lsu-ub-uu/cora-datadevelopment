@@ -31,13 +31,12 @@ REMOTE_PORT = 8088
 def get_classic_publications(
     pids: list[str], workers: int, on_success: Callable, on_error: Callable
 ):
-    with SSHTunnel(SSH_HOST, SSH_PORT, SSH_USER, LOCAL_PORT, REMOTE_HOST, REMOTE_PORT):
-        run_with_threads(
-            pids,
-            lambda pid: _get_record_by_pid(pid, on_success, on_error),
-            workers=workers,
-            desc="Importing publications from Classic Fedora",
-        )
+    run_with_threads(
+        pids,
+        lambda pid: _get_record_by_pid(pid, on_success, on_error),
+        workers=workers,
+        desc="Importing publications from Classic Fedora",
+    )
 
 
 def _get_record_by_pid(

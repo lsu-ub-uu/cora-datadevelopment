@@ -14,7 +14,7 @@ sql_script/
 /.pytest_cache/
 /data/fedora_xml/
 /data/db_xml/
- 
+/reports
 /build/
 /out/
 /.idea/
