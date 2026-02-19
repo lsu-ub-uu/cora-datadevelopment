@@ -18,7 +18,11 @@ def attachment_transform(
     binary_record_id: str,
     file_upload_message: Optional[str] = None,
 ) -> ET.Element:
-    attachment = ET.Element("attachment", repeatId=binary_record_id)
+    attachment = ET.Element(
+        "attachment",
+        repeatId=binary_record_id,
+        label=get_attachment_type(source_attachment),
+    )
     attachment.append(
         create_record_link_using_name_type_id(
             name_in_data="file",
@@ -26,8 +30,6 @@ def attachment_transform(
             record_id=binary_record_id,
         )
     )
-
-    ET.SubElement(attachment, "label").text = get_attachment_type(source_attachment)
 
     if _should_have_attachment_version(validation_type):
         append_if_value(
@@ -116,8 +118,6 @@ def _create_attachment_version(source_attachment: ET.Element) -> Optional[ET.Ele
     attachment_version = _get_attachment_version(source_attachment)
     if attachment_version is None:
         return None
-
-    # lägg till check för attachement type
     if get_attachment_type(source_attachment) == "fullText":
         note = ET.Element("note", type="attachmentVersion")
         note.text = attachment_version
