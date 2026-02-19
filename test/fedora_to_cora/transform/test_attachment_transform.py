@@ -40,6 +40,73 @@ def test_attachment_transform():
 
 
 @pytest.mark.parametrize(
+    "validation_type,should_not_have_attachment_version",
+    [
+        ("publication_edited-book", False),
+        ("publication_report", False),
+        ("publication_critical-edition", False),
+        ("publication_journal-issue", False),
+        ("publication_licentiate-thesis-compilation", False),
+        ("conference_proceeding", False),
+        ("intellectual-property_patent", False),
+        (
+            "publication_doctoral-thesis-monograph",
+            False,
+        ),
+        ("publication_doctoral-thesis-compilation", False),
+        ("publication_working-paper", False),
+        ("diva_degree-project", False),
+        ("artistic-work_original-creative-work", False),
+        ("diva_dissertation", False),
+        ("publication_book", False),
+        ("publication_preprint", False),
+        ("publication_licentiate-thesis-monograph", False),
+        ("publication_other", False),
+        ("artistic-work_artistic-thesis", False),
+        ("publication_book-chapter", False),
+        ("conference_paper", False),
+        ("publication_newspaper-article", False),
+        ("conference_poster", False),
+        ("publication_encyclopedia-entry", False),
+        ("publication_foreword-afterword", False),
+        ("publication_review-article", False),
+        ("publication_journal-article", False),
+        ("publication_editorial-letter", False),
+        ("publication_report-chapter", False),
+        ("publication_book-review", False),
+        ("publication_magazine-article", False),
+        ("conference_other", False),
+    ],
+)
+def test_does_not_include_attachment_version_depending_on_validation_type_when_not_full_text(
+    validation_type, should_not_have_attachment_version
+):
+    source_attachment = ET.fromstring(
+        f"""
+            <attachment>
+                <fileLabel>
+                    <fileLabelId>51</fileLabelId>
+                </fileLabel>
+                <path>test.pdf</path>
+                <prePrint>true</prePrint>
+                <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
+            </attachment>
+        """
+    )
+
+    attachment = attachment_transform(
+        source_attachment,
+        validation_type=validation_type,
+        binary_record_id="binary:12345",
+    )
+
+    if not should_not_have_attachment_version:
+        assert attachment.findtext("./note[@type='attachmentVersion']") is None
+    else:
+        assert attachment.findtext("./note[@type='attachmentVersion']") is not None
+
+
+@pytest.mark.parametrize(
     "validation_type,should_have_attachment_version",
     [
         ("publication_edited-book", False),
