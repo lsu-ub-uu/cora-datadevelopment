@@ -27,7 +27,6 @@ def attachments_migrate(
     output = record_to_update.find("./data/output")
     cora_record_id = cora_record.findtext("./data/output/recordInfo/id")
     assert cora_record_id is not None, "CORA record ID not found in output record"
-    print(f"CORA record ID: {cora_record_id}")
     assert output is not None, "Output element not found in created record"
 
     errors = []
@@ -36,7 +35,7 @@ def attachments_migrate(
         attachments_group = ET.SubElement(output, "attachments")
         append_if_value(attachments_group, _create_reviewed(source_record))
         append_if_value(attachments_group, _create_note(source_record))
-        host_record = _create_host_record(source_record, cora_record_id)
+        host_record = _create_host_record(cora_record_id)
         for attachment in _sort_by_order(attachments):
             if attachment.findtext("./deleted") == "true":
                 context.log(
@@ -141,20 +140,18 @@ def _sort_by_order(attachments: list[ET.Element]) -> list[ET.Element]:
         attachments, key=lambda attachment: attachment.findtext("./order") or ""
     )
 
-def _create_host_record(source_record: ET.Element, cora_record_id: str) -> ET.Element:
-    host_record = ET.Element("hostRecord")
-    linked_record_type = 'diva-output'
 
-    linked_record_id = source_record.findtext("./pid")
-    assert linked_record_id is not None, "PID is missing in source record"
+def _create_host_record(cora_record_id: str) -> ET.Element:
+    host_record = ET.Element("hostRecord")
+    linked_record_type = "diva-output"
 
     linked_record_type_element = ET.SubElement(host_record, "linkedRecordType")
     linked_record_type_element.text = linked_record_type
 
     linked_record_id_element = ET.SubElement(host_record, "linkedRecordId")
     linked_record_id_element.text = cora_record_id
-    print('_create_host_record', ET.tostring(host_record))
     return host_record
+
 
 def _create_note(source_record: ET.Element) -> ET.Element | None:
     file_upload_message = source_record.findtext(
