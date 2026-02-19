@@ -117,9 +117,13 @@ def _create_attachment_version(source_attachment: ET.Element) -> Optional[ET.Ele
     if attachment_version is None:
         return None
 
-    note = ET.Element("note", type="attachmentVersion")
-    note.text = attachment_version
-    return note
+    # lägg till check för attachement type
+    if get_attachment_type(source_attachment) == "fullText":
+        note = ET.Element("note", type="attachmentVersion")
+        note.text = attachment_version
+        return note
+
+    return None
 
 
 def _get_attachment_version(source_attachment: ET.Element) -> str | None:
