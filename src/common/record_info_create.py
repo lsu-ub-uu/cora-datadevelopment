@@ -7,6 +7,7 @@ def record_info_create(
     old_id: str | None = None,
     permission_unit_id: str | None = None,
     visibility: str | None = None,
+    host_record_id: ET.Element | None = None,
 ) -> ET.Element:
     record_info = ET.Element("recordInfo")
 
@@ -39,4 +40,6 @@ def record_info_create(
     if old_id is not None:
         ET.SubElement(record_info, "oldId").text = old_id
 
+    if host_record_id is not None:
+        record_info.append(host_record_id)
     return record_info

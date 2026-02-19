@@ -64,8 +64,10 @@ def test_binary_record_transform():
         </attachment>
         """
     )
+    host_record = ET.fromstring("<hostRecord><linkedRecordType>someType</linkedRecordType><linkedRecordId>someId</linkedRecordId></hostRecord>")
 
-    admin = binary_record_transform(source_record)
+
+    admin = binary_record_transform(source_record, host_record)
 
     assert_equal_for_xml_and_xml_string(
         admin,
@@ -81,6 +83,10 @@ def test_binary_record_transform():
                         <linkedRecordId>divaData</linkedRecordId>
                     </dataDivider>
                     <visibility>published</visibility>
+                    <hostRecord>
+                        <linkedRecordType>someType</linkedRecordType>
+                        <linkedRecordId>someId</linkedRecordId>
+                    </hostRecord>
                 </recordInfo>
                 <originalFileName>BMFEA 81_HR + Low (210215).zip</originalFileName>
                 <expectedFileSize>93598848</expectedFileSize>

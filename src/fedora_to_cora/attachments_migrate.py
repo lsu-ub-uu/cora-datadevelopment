@@ -25,6 +25,8 @@ def attachments_migrate(
     created_binary_records = []
     record_to_update = copy.deepcopy(cora_record)
     output = record_to_update.find("./data/output")
+    cora_record_id = cora_record.findtext("./data/output/recordInfo/id")
+    assert cora_record_id is not None, "CORA record ID not found in output record"
     assert output is not None, "Output element not found in created record"
 
     errors = []
@@ -33,6 +35,7 @@ def attachments_migrate(
         attachments_group = ET.SubElement(output, "attachments")
         append_if_value(attachments_group, _create_reviewed(source_record))
         append_if_value(attachments_group, _create_note(source_record))
+        host_record = _create_host_record(cora_record_id)
         for attachment in _sort_by_order(attachments):
             if attachment.findtext("./deleted") == "true":
                 context.log(
@@ -41,7 +44,7 @@ def attachments_migrate(
                 continue
 
             attachment, error = _migrate_attachment(
-                attachment, context, created_binary_records, source_record
+                attachment, context, created_binary_records, source_record, host_record
             )
             if attachment is not None:
                 attachments_group.append(attachment)
@@ -86,12 +89,13 @@ def _migrate_attachment(
     context: Context,
     created_binary_records: list[ET.Element],
     source_record: ET.Element,
+    host_record: ET.Element,
 ) -> Tuple[ET.Element | None, str | None]:
     pid = source_record.findtext("./pid")
     file_name = attachment.findtext("./fileName")
     assert pid is not None and file_name is not None
 
-    binary_record = binary_record_transform(attachment)
+    binary_record = binary_record_transform(attachment, host_record)
     create_binary_result = create_record(
         binary_record,
         record_type="binary",
@@ -135,6 +139,18 @@ def _sort_by_order(attachments: list[ET.Element]) -> list[ET.Element]:
     return sorted(
         attachments, key=lambda attachment: attachment.findtext("./order") or ""
     )
+
+
+def _create_host_record(cora_record_id: str) -> ET.Element:
+    host_record = ET.Element("hostRecord")
+    linked_record_type = "diva-output"
+
+    linked_record_type_element = ET.SubElement(host_record, "linkedRecordType")
+    linked_record_type_element.text = linked_record_type
+
+    linked_record_id_element = ET.SubElement(host_record, "linkedRecordId")
+    linked_record_id_element.text = cora_record_id
+    return host_record
 
 
 def _create_note(source_record: ET.Element) -> ET.Element | None:
