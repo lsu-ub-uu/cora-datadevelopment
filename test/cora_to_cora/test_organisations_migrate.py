@@ -1,6 +1,6 @@
 from cora.context import MockContext
 from common.xml_utils import pretty_print_xml
-from cora_to_cora.organisations_migrate import organisations_migrate
+from cora_to_cora.organisations_migrate import migrate_organisations
 import pytest
 from unittest.mock import patch
 import json
@@ -36,7 +36,7 @@ def test_organisations_migrate_apply_with_zero_results(
         text='{"dataList": {"data":[], "fromNo": "0", "totalNo": "0", "containDataOfType": "mix", "toNo": "0"}}',
     )
 
-    organisations_migrate(mock_context, domain)
+    migrate_organisations(mock_context, domain)
     assert requests_mock.call_count == 1
     mock_context.log.assert_called_with(  # type: ignore
         "No organisations found to migrate from old Cora system."
@@ -59,7 +59,7 @@ def test_get_old_organisations_failed(requests_mock):
         Exception,
         match="Failed to fetch organisations from old Cora: 404 Some Cora Error",
     ):
-        organisations_migrate(mock_context, domain)
+        migrate_organisations(mock_context, domain)
 
 
 @patch("cora_to_cora.organisations_migrate.update_organisation_relations")
@@ -100,7 +100,7 @@ def test_creates_transformed_record_when_apply_and_two_results(
         ),
     ]
 
-    organisations_migrate(mock_context, domain)
+    migrate_organisations(mock_context, domain)
     assert requests_mock.call_count == 1
     mock_context.log.assert_any_call(  # type: ignore
         "Found 2 organisations to migrate from old Cora system."
@@ -162,7 +162,7 @@ def test_aborts_migration_when_any_create_record_fails(
     with pytest.raises(
         Exception, match="Aborting migration due to create record failure."
     ):
-        organisations_migrate(mock_context, domain)
+        migrate_organisations(mock_context, domain)
         assert requests_mock.call_count == 1
         mock_context.log.assert_any_call(  # type: ignore
             "Found 2 organisations to migrate from old Cora system."
@@ -206,7 +206,7 @@ def test_ignores_root_organisation(
 
     transform_organisation_mock.return_value = ET.Element("organisation")
 
-    organisations_migrate(mock_context, domain)
+    migrate_organisations(mock_context, domain)
     assert requests_mock.call_count == 1
     mock_context.log.assert_any_call(  # type: ignore
         "Found 1 organisations to migrate from old Cora system."

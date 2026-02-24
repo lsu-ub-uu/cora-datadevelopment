@@ -53,7 +53,7 @@ def validate_record(
 
         if response.status_code != 200 or not response.text:
             context.log(
-                f"⚠️ Failed to validate {record_type} with oldId {old_id_text}: {response.status_code}.\nRecord XML: \n{pretty_print_xml(record)}",
+                f"☠️ Failed to validate {record_type} with oldId {old_id_text}: {response.status_code}.\nRecord XML: \n{pretty_print_xml(record)}\nRequest Body: \n{pretty_print_xml(ET.fromstring(request_body))}",
                 "error",
             )
             return (False, [f"Validation failed with status {response.status_code}"])
@@ -68,13 +68,13 @@ def validate_record(
             msg.text for msg in response_data.findall(".//errorMessage") if msg.text
         ]
         context.log(
-            f"❌ Validation failed for {record_type} with oldId {old_id_text}.\n\nErrors:\n - {"\n - ".join(errors)}\n\nRecord XML: \n{pretty_print_xml(record)}",
+            f"⚠️ Validation failed for {record_type} with oldId {old_id_text}.\n\nErrors:\n - {"\n - ".join(errors)}\n\nRecord XML: \n{pretty_print_xml(record)}",
             "error",
         )
         return (False, errors)
     except requests.RequestException as e:
         context.log(
-            f"❌ Request failed for {record_type} with oldId {old_id_text}: {e}",
+            f"☠️ Request failed for {record_type} with oldId {old_id_text}: {e}",
             "error",
         )
         return (False, [str(e)])

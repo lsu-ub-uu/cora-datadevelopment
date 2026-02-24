@@ -116,7 +116,7 @@ def create_record(
                 )
 
             context.log(
-                f"❌ Failed to create record for {record_type} with oldId {old_id_text}. \n\nStatus: {response.status_code}\n{response.text}\n",
+                f"❌ Failed to create record for {record_type} with oldId {old_id_text}. \n\nStatus: {response.status_code}\n{response.text}\n\nRequest body:\n{pretty_print_xml(ET.fromstring(request_body))}",
                 "error",
             )
             return CreateRecordFailureResult(

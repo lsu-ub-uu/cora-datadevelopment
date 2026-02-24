@@ -12,16 +12,21 @@ from cora.cora_json_utils import (
 )
 import xml.etree.ElementTree as ET
 from cora.context import Context, CoraContext
+import logging
+
+logger = logging.getLogger("data")
 
 
-def organisations_migrate(context: Context, domain: str):
-    old_organisations = _get_old_cora_organisations(context, domain)
+def migrate_organisations(
+    domain: str, system: str, login_id: str, app_token: str, processes: int
+):
+    old_organisations = _get_old_cora_organisations(domain)
 
     if len(old_organisations) == 0:
-        context.log("No organisations found to migrate from old Cora system.")
+        logger.info("No organisations found to migrate from old Cora system.")
         return
 
-    context.log(
+    logger.info(
         f"Found {len(old_organisations)} organisations to migrate from old Cora system."
     )
 
@@ -33,7 +38,7 @@ def organisations_migrate(context: Context, domain: str):
             new_org, record_type="diva-organisation", context=context
         )
         if not is_success_result(created_org):
-            context.log(
+            logger.info(
                 f"Failed to create organisation for old ID {new_org.findtext('./recordInfo/oldId')}: {created_org.error}"
             )
             raise Exception(
@@ -52,7 +57,7 @@ def organisations_migrate(context: Context, domain: str):
     return len(organisation_migration_pairs)
 
 
-def _get_old_cora_organisations(context, domain):
+def _get_old_cora_organisations(domain):
     response = requests.get(
         f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}},{{"name":"rows","value":"1000"}}]}}',
         headers={"User-Agent": "Mozilla/5.0"},

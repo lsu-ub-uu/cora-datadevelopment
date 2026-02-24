@@ -46,6 +46,8 @@ def main():
         workers=args.workers,
     )
 
+    print(f"Fetching records of type {args.record_type} from Cora...")
+
     response = requests.get(
         f"{context.get_base_url()}/{args.record_type}",
         headers={
@@ -84,6 +86,7 @@ def main():
         )
 
     run_with_threads(record_ids, delete_record, args.workers, "Deleting records")
+
     print(f"Deleted {len(record_ids)} records of type {args.record_type}.")
 
 

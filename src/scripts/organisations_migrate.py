@@ -1,6 +1,6 @@
 from common.arg_parser import create_argument_parser, common_arguments
 from cora.context import CoraContext
-from cora_to_cora.organisations_migrate import organisations_migrate
+from cora_to_cora.organisations_migrate import migrate_organisations
 
 
 def main():
@@ -41,7 +41,7 @@ def main():
         app_token=args.app_token,
         workers=args.workers,
     )
-    organisations_migrate(context, args.domain)
+    migrate_organisations(context, args.domain)
 
 
 if __name__ == "__main__":

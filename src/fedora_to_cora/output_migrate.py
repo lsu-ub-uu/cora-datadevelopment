@@ -49,7 +49,7 @@ def output_migrate(
     try:
         validate_xml(source_record, fedora_publication_xml_spec)
     except XMLValidationError as e:
-        error_str = str(e)
+        error_str = f"XML validation error for record with publication type {source_record.findtext('./publicationType/publicationTypeCode')} and subtype {source_record.findtext('./subtype/publicationSubtypeCode')}: {e}"
         return OutputMigrationResult(
             pid, status="INPUT_VALIDATION_FAILED", errors=[error_str]
         )

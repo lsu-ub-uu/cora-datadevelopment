@@ -1,12 +1,19 @@
+import logging
+import os
+import sys
+
 from common.arg_parser import create_argument_parser
 from classic.get_publishers import get_publishers
 from classic.get_funders import get_funders
+from common.run_rotating_logger import RunRotatingLogger
 from cora.context import Context, CoraContext
 from db_to_cora.funder_transform import transform_funder
+from db_to_cora.funders_migrate import migrate_funders
 from db_to_cora.journal_transform import transform_journal
+from db_to_cora.programmes_migrate import migrate_programmes
 from db_to_cora.publisher_transform import transform_publisher
 from classic.get_journals import get_journals
-from cora_to_cora.organisations_migrate import organisations_migrate
+from cora_to_cora.organisations_migrate import migrate_organisations
 from db_to_cora.series_transform import transform_series
 from db_to_cora.subject_programme_course_transform import (
     transform_subject,
@@ -18,7 +25,10 @@ from classic.get_programmes import get_programmes
 from classic.get_courses import get_courses
 from classic.get_series import get_series
 from db_to_cora.records_import import records_import
+from db_to_cora.subjects_migrate import migrate_subjects
 from db_to_cora.update_relations import RelationMapping, update_relations
+from db_to_cora.journals_migrate import migrate_journals
+from db_to_cora.publishers_migrate import migrate_publishers
 
 
 def main():
@@ -52,10 +62,10 @@ def main():
             "--app-token": {
                 "help": "Application token for authentication. If not provided, the script will look for an example user configured with this id",
             },
-            "--workers": {
-                "help": "Number of worker threads for processing",
+            "--processes": {
+                "help": "Number of processes to use for migration",
                 "type": int,
-                "default": 16,
+                "default": 8,
             },
             "--include-common-data": {
                 "help": "Include common data (publishers, funders, journals) in the migration",
@@ -66,7 +76,7 @@ def main():
     args = argparser.parse_args()
 
     print(
-        """
+        r"""
  _______   __  __     __   ______         __       __  __                                 __       ______            
 /       \ /  |/  |   /  | /      \       /  \     /  |/  |                               /  |     /      \           
 $$$$$$$  |$$/ $$ |   $$ |/$$$$$$  |      $$  \   /$$ |$$/   ______    ______   ______   _$$ |_   /$$$$$$  |  ______  
@@ -82,19 +92,38 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
                                                            
 """
     )
+    logger = RunRotatingLogger(
+        "data", f"logs/{os.path.basename(sys.argv[0])}.log"
+    ).get()
 
-    context = CoraContext(
-        args.system, args.login_id, args.app_token, workers=args.workers
-    )
-    context.log(f"=== Migration started for {args.domain} to {args.system} ===")
+    logger.info(f"=== Migration started for {args.domain} to {args.system} ===")
     if args.include_common_data:
         print(f"=== Start migrating common data to {args.system} ===")
 
-        migrate_publishers(args, context)
-        migrate_funders(args, context)
-        # migrate_journals(args, context)
-        # TODO Persons
-        # TODO Projects
+        migrate_publishers(
+            db_user=args.db_user,
+            db_password=args.db_password,
+            system=args.system,
+            login_id=args.login_id,
+            app_token=args.app_token,
+            processes=args.processes,
+        )
+        migrate_funders(
+            db_user=args.db_user,
+            db_password=args.db_password,
+            system=args.system,
+            login_id=args.login_id,
+            app_token=args.app_token,
+            processes=args.processes,
+        )
+        migrate_journals(
+            db_user=args.db_user,
+            db_password=args.db_password,
+            system=args.system,
+            login_id=args.login_id,
+            app_token=args.app_token,
+            processes=args.processes,
+        )
 
         print("=== Common data migration completed ===")
     else:
@@ -104,127 +133,159 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
 
     print(f"=== Start migrating data for {args.domain} domain to {args.system} ===")
 
-    migrate_organisations(args, context)
-    migrate_subjects(args, context)
-    migrate_series(args, context)
-    migrate_programmes(args, context)
-    migrate_course(args, context)
+    migrate_organisations(
+        domain=args.domain,
+        system=args.system,
+        login_id=args.login_id,
+        app_token=args.app_token,
+        processes=args.processes,
+    )
+
+    migrate_subjects(
+        domain=args.domain,
+        db_user=args.db_user,
+        db_password=args.db_password,
+        system=args.system,
+        login_id=args.login_id,
+        app_token=args.app_token,
+        processes=args.processes,
+    )
+    # migrate_series(args, context)
+    migrate_programmes(
+        domain=args.domain,
+        db_user=args.db_user,
+        db_password=args.db_password,
+        system=args.system,
+        login_id=args.login_id,
+        app_token=args.app_token,
+        processes=args.processes,
+    )
+    # migrate_course(args, context)
     # TODO Outputs
 
     print(f"=== Data migration for {args.domain} domain completed ===")
-    context.log(f"=== Migration completed for {args.domain} to {args.system} ===")
 
 
-def migrate_publishers(args, context: Context):
-    print("--- Start migrating publishers")
-    classic_publishers = get_publishers(
-        db_user=args.db_user, db_password=args.db_password
-    ).findall(".//DATA_RECORD")
+# def migrate_publishers(args, context: Context):
+#     print("--- Start migrating publishers")
+#     classic_publishers = get_publishers(
+#         db_user=args.db_user, db_password=args.db_password
+#     ).findall(".//DATA_RECORD")
 
-    records_import(
-        context,
-        record_type="diva-publisher",
-        source_records=classic_publishers,
-        transform_function=transform_publisher,
-        apply=True,
-    )
-    print(f"--- {len(classic_publishers)} Publishers imported to Cora ---")
-
-
-def migrate_funders(args, context: Context):
-    print("--- Start migrating funders")
-    classic_funders = get_funders(
-        db_user=args.db_user, db_password=args.db_password
-    ).findall(".//DATA_RECORD")
-
-    records_import(
-        context,
-        record_type="diva-funder",
-        source_records=classic_funders,
-        transform_function=transform_funder,
-        apply=True,
-    )
-
-    print(f"--- {len(classic_funders)} Funders imported to Cora ---")
+#     records_import(
+#         system=args.system,
+#         login_id=args.login_id,
+#         app_token=args.app_token,
+#         record_type="diva-publisher",
+#         source_records=classic_publishers,
+#         transform_function=transform_publisher,
+#         apply=True,
+#     )
+#     print(f"--- {len(classic_publishers)} Publishers imported to Cora ---")
 
 
-def migrate_journals(args, context: Context):
-    print("--- Start migrating journals ")
-    classic_journals = get_journals(
-        db_user=args.db_user, db_password=args.db_password
-    ).findall(".//DATA_RECORD")
+# def migrate_funders(args, context: Context):
+#     print("--- Start migrating funders")
+#     classic_funders = get_funders(
+#         db_user=args.db_user, db_password=args.db_password
+#     ).findall(".//DATA_RECORD")
 
-    records_import(
-        context,
-        record_type="diva-journal",
-        source_records=classic_journals,
-        transform_function=transform_journal,
-        apply=True,
-    )
-    print(f"--- {len(classic_journals)} Journals imported to Cora ---")
+#     records_import(
+#         system=args.system,
+#         login_id=args.login_id,
+#         app_token=args.app_token,
+#         record_type="diva-funder",
+#         source_records=classic_funders,
+#         transform_function=transform_funder,
+#         apply=True,
+#     )
 
-
-def migrate_organisations(args, context: Context):
-    print(f"--- Start migrating organisations for {args.domain} ---")
-    num_organisations = organisations_migrate(context, args.domain)
-    print(f"--- {num_organisations} Organisations migrated ---")
+#     print(f"--- {len(classic_funders)} Funders imported to Cora ---")
 
 
-def migrate_subjects(args, context: Context):
-    print(f"--- Start migrating subjects for {args.domain} ---")
-    classic_subjects = get_subjects(
-        db_user=args.db_user, db_password=args.db_password, domain=args.domain
-    ).findall(".//DATA_RECORD")
+# def migrate_journals_old(args, context: Context):
+#     print("--- Start migrating journals ")
+#     classic_journals = get_journals(
+#         db_user=args.db_user, db_password=args.db_password
+#     ).findall(".//DATA_RECORD")
 
-    records_import(
-        context,
-        record_type="diva-subject",
-        source_records=classic_subjects,
-        transform_function=transform_subject,
-        relation_mappings=[
-            RelationMapping(
-                old_relation_tag="broader_id",
-                new_relation_link="topic",
-                new_relation_type="broader",
-            ),
-            RelationMapping(
-                old_relation_tag="earlier_id",
-                new_relation_link="topic",
-                new_relation_type="earlier",
-            ),
-        ],
-        apply=True,
-    )
-
-    print(f"--- {len(classic_subjects)} Subjects imported to Cora ---")
+#     records_import(
+#         system=args.system,
+#         login_id=args.login_id,
+#         app_token=args.app_token,
+#         record_type="diva-journal",
+#         source_records=classic_journals,
+#         transform_function=transform_journal,
+#         apply=True,
+#     )
+#     print(f"--- {len(classic_journals)} Journals imported to Cora ---")
 
 
-def migrate_programmes(args, context: Context):
-    print(f"--- Start migrating programmes for {args.domain} ---")
-    classic_programmes = get_programmes(
-        db_user=args.db_user, db_password=args.db_password, domain=args.domain
-    ).findall(".//DATA_RECORD")
+# def migrate_organisations(args, context: Context):
+#     print(f"--- Start migrating organisations for {args.domain} ---")
+#     num_organisations = organisations_migrate(context, args.domain)
+#     print(f"--- {num_organisations} Organisations migrated ---")
 
-    records_import(
-        context,
-        record_type="diva-programme",
-        source_records=classic_programmes,
-        transform_function=transform_programme,
-        relation_mappings=[
-            RelationMapping(
-                old_relation_tag="broader_id",
-                new_relation_link="programme",
-                new_relation_type="broader",
-            ),
-            RelationMapping(
-                old_relation_tag="earlier_id",
-                new_relation_link="programme",
-                new_relation_type="earlier",
-            ),
-        ],
-        apply=True,
-    )
-    print(f"--- {len(classic_programmes)} Programmes imported to Cora ---")
+
+# def migrate_subjects(args, context: Context):
+#     print(f"--- Start migrating subjects for {args.domain} ---")
+#     classic_subjects = get_subjects(
+#         db_user=args.db_user, db_password=args.db_password, domain=args.domain
+#     ).findall(".//DATA_RECORD")
+
+#     records_import(
+#         system=args.system,
+#         login_id=args.login_id,
+#         app_token=args.app_token,
+#         record_type="diva-subject",
+#         source_records=classic_subjects,
+#         transform_function=transform_subject,
+#         relation_mappings=[
+#             RelationMapping(
+#                 old_relation_tag="broader_id",
+#                 new_relation_link="topic",
+#                 new_relation_type="broader",
+#             ),
+#             RelationMapping(
+#                 old_relation_tag="earlier_id",
+#                 new_relation_link="topic",
+#                 new_relation_type="earlier",
+#             ),
+#         ],
+#         apply=True,
+#     )
+
+#     print(f"--- {len(classic_subjects)} Subjects imported to Cora ---")
+
+
+# def migrate_programmes(args, context: Context):
+#     print(f"--- Start migrating programmes for {args.domain} ---")
+#     classic_programmes = get_programmes(
+#         db_user=args.db_user, db_password=args.db_password, domain=args.domain
+#     ).findall(".//DATA_RECORD")
+
+#     records_import(
+#         system=args.system,
+#         login_id=args.login_id,
+#         app_token=args.app_token,
+#         record_type="diva-programme",
+#         source_records=classic_programmes,
+#         transform_function=transform_programme,
+#         relation_mappings=[
+#             RelationMapping(
+#                 old_relation_tag="broader_id",
+#                 new_relation_link="programme",
+#                 new_relation_type="broader",
+#             ),
+#             RelationMapping(
+#                 old_relation_tag="earlier_id",
+#                 new_relation_link="programme",
+#                 new_relation_type="earlier",
+#             ),
+#         ],
+#         apply=True,
+#     )
+#     print(f"--- {len(classic_programmes)} Programmes imported to Cora ---")
 
 
 def migrate_course(args, context: Context):
@@ -234,7 +295,9 @@ def migrate_course(args, context: Context):
     ).findall(".//DATA_RECORD")
 
     records_import(
-        context,
+        system=args.system,
+        login_id=args.login_id,
+        app_token=args.app_token,
         record_type="diva-course",
         source_records=classic_courses,
         transform_function=transform_course,
@@ -262,7 +325,9 @@ def migrate_series(args, context: Context):
     ).findall(".//DATA_RECORD")
 
     records_import(
-        context,
+        system=args.system,
+        login_id=args.login_id,
+        app_token=args.app_token,
         record_type="diva-series",
         source_records=classic_series,
         transform_function=transform_series,
