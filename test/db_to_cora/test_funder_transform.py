@@ -31,7 +31,7 @@ def test_required_xml():
             </dataDivider>
             <oldId>1234</oldId>
         </recordInfo>
-        <authority lang="swe">
+        <authority lang="swe" repeatId="swe">
             <name type="corporate">
                 <namePart>Ett namn</namePart>
             </name>
@@ -104,7 +104,7 @@ def test_with_with_empty_tag():
             </dataDivider>
             <oldId>65</oldId>
         </recordInfo>
-        <authority lang="swe">
+        <authority lang="swe" repeatId="swe">
             <name type="corporate">
             <namePart>Ecosystem dynamics in the Baltic Sea in a changing climate perspective - ECOCHANGE</namePart>
             </name>
@@ -144,16 +144,16 @@ def test_complete_xml():
             </dataDivider>
             <oldId>1234</oldId>
         </recordInfo>
-        <authority lang="swe">
+        <authority lang="swe" repeatId="swe">
             <name type="corporate">
                 <namePart>Ett namn</namePart>
             </name>
         </authority>
-        <variant lang="eng">
+        <authority lang="eng" repeatId="eng">
             <name type="corporate">
                 <namePart>Some name</namePart>
             </name>
-        </variant>
+        </authority>
         <endDate>
             <year>2025</year>
             <month>05</month>

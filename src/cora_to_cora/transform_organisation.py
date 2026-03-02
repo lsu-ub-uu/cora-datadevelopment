@@ -92,7 +92,7 @@ def _create_name_swedish(old_org_data: dict):
         old_name_group["children"], "name"
     )
 
-    authority = ET.Element("authority", lang="swe")
+    authority = ET.Element("authority", lang="swe", repeatId="swe")
     name = ET.SubElement(authority, "name", type="corporate")
     name_part = ET.SubElement(name, "namePart")
 
@@ -111,7 +111,7 @@ def _create_name_english(old_org_data: dict):
         old_name_group["children"], "name"
     )
 
-    authority = ET.Element("variant", lang="eng")
+    authority = ET.Element("authority", lang="eng", repeatId="eng")
     name = ET.SubElement(authority, "name", type="corporate")
     name_part = ET.SubElement(name, "namePart")
 

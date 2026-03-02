@@ -79,6 +79,13 @@ def test_transform_minimal_organisation():
                         ],
                         "name": "organisationName",
                     },
+                    {
+                        "name": "organisationAlternativeName",
+                        "children": [
+                            {"name": "name", "value": "Some name"},
+                            {"name": "language", "value": "en"},
+                        ],
+                    },
                 ],
                 "name": "organisation",
             },
@@ -106,9 +113,14 @@ def test_transform_minimal_organisation():
                 <oldId>16501</oldId>
             </recordInfo>
             <genre type="organisationType">topOrganisation</genre>
-            <authority lang="swe">
+            <authority lang="swe" repeatId="swe">
                 <name type="corporate">
                     <namePart>Något namn</namePart>
+                </name>
+            </authority>
+            <authority lang="eng" repeatId="eng">
+                <name type="corporate">
+                    <namePart>Some name</namePart>
                 </name>
             </authority>
         </organisation>""",

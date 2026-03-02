@@ -15,16 +15,16 @@
         <oldId>16501</oldId>
     </recordInfo>
     <genre type="organisationType">topOrganisation</genre>
-    <authority lang="swe">
+    <authority lang="swe" repeatId="swe">
         <name type="corporate">
             <namePart>Något namn</namePart>
         </name>
     </authority>
-    <variant lang="eng">
+    <authority lang="eng" repeatId="eng">
         <name type="corporate">
             <namePart>Some name</namePart>
         </name>
-    </variant>
+    </authority>
     <endDate>
         <year>2023</year>
         <month>12</month>

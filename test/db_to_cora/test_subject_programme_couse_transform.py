@@ -40,7 +40,7 @@ def test_create_tag_for_subject():
                 </permissionUnit>
                 <oldId>40102</oldId>
             </recordInfo>
-            <authority lang="swe">
+            <authority lang="swe" repeatId="swe">
                 <topic>En test</topic>
             </authority>
         </subject>
@@ -79,7 +79,7 @@ def test_create_tag_for_programme():
                 </permissionUnit>
                 <oldId>40102</oldId>
             </recordInfo>
-            <authority lang="swe">
+            <authority lang="swe" repeatId="swe">
                 <topic>En test</topic>
             </authority>
         </programme>
@@ -118,7 +118,7 @@ def test_create_tag_for_course():
                 </permissionUnit>
                 <oldId>40102</oldId>
             </recordInfo>
-            <authority lang="swe">
+            <authority lang="swe" repeatId="swe">
                 <topic>En test</topic>
             </authority>
         </course>
@@ -160,12 +160,12 @@ def test_complete_without_links_xml():
                 </permissionUnit>
                 <oldId>40102</oldId>
             </recordInfo>
-            <authority lang="swe">
+            <authority lang="swe" repeatId="swe">
                 <topic>En test</topic>
             </authority>
-            <variant lang="eng">
+            <authority lang="eng" repeatId="eng">
                 <topic>en testpost</topic>
-            </variant>
+            </authority>
             <endDate>
                 <year>2025</year>
                 <month>08</month>
@@ -212,12 +212,12 @@ def test_complete_xml():
                 </permissionUnit>
                 <oldId>40102</oldId>
             </recordInfo>
-            <authority lang="swe">
+            <authority lang="swe" repeatId="swe">
                 <topic>En test</topic>
             </authority>
-            <variant lang="eng">
+            <authority lang="eng" repeatId="eng">
                 <topic>en testpost</topic>
-            </variant>
+            </authority>
             <endDate>
                 <year>2025</year>
                 <month>08</month>

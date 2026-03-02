@@ -63,8 +63,8 @@ def _create_element_with_common_children(
     """
     element = ET.Element(name_in_data)
     element.append(_create_record_info(source_record, name_in_data))
-    append_if_value(element, _create_authority(source_record))
-    append_if_value(element, _create_variant(source_record))
+    append_if_value(element, _create_authority_swe(source_record))
+    append_if_value(element, _create_authority_eng(source_record))
     append_if_value(element, _create_end_date(source_record))
     return element
 
@@ -75,18 +75,18 @@ def _create_end_date(source_record: ET.Element) -> ET.Element | None:
         return create_end_date(end_date)
 
 
-def _create_authority(source_record: ET.Element) -> ET.Element | None:
+def _create_authority_swe(source_record: ET.Element) -> ET.Element | None:
     name = source_record.findtext(f"./name_swe")
     if name:
-        authority = ET.Element("authority", lang="swe")
+        authority = ET.Element("authority", lang="swe", repeatId="swe")
         authority.append(_create_topic(name))
         return authority
 
 
-def _create_variant(source_record: ET.Element) -> ET.Element | None:
+def _create_authority_eng(source_record: ET.Element) -> ET.Element | None:
     name = source_record.findtext(f"./name_eng")
     if name:
-        variant = ET.Element("variant", lang="eng")
+        variant = ET.Element("authority", lang="eng", repeatId="eng")
         variant.append(_create_topic(name))
         return variant
 

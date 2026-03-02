@@ -35,11 +35,11 @@ def transform_funder(source_record: ET.Element) -> ET.Element:
     funder.append(_create_record_info(source_record))
     append_if_value(
         funder,
-        _create_authority(source_record),
+        _create_authority_swe(source_record),
     )
     append_if_value(
         funder,
-        _create_variant(source_record),
+        _create_authority_eng(source_record),
     )
     append_if_value(funder, _create_end_date(source_record))
     append_if_value(
@@ -68,20 +68,20 @@ def _create_record_info(source_record: ET.Element) -> ET.Element:
     )
 
 
-def _create_authority(source_record: ET.Element) -> ET.Element | None:
+def _create_authority_swe(source_record: ET.Element) -> ET.Element | None:
     name = source_record.findtext(f".//name_swe")
     if name:
-        authority = ET.Element("authority", lang="swe")
+        authority = ET.Element("authority", lang="swe", repeatId="swe")
         authority.append(name_type_corporate_create(name))
         return authority
 
 
-def _create_variant(source_record: ET.Element) -> ET.Element | None:
+def _create_authority_eng(source_record: ET.Element) -> ET.Element | None:
     name = source_record.findtext(f".//name_eng")
     if name:
-        variant = ET.Element("variant", lang="eng")
-        variant.append(name_type_corporate_create(name))
-        return variant
+        authority = ET.Element("authority", lang="eng", repeatId="eng")
+        authority.append(name_type_corporate_create(name))
+        return authority
 
 
 def _create_end_date(source_record: ET.Element) -> ET.Element | None:
