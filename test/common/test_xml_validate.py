@@ -7,7 +7,7 @@ from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
 
 
 def test_validate_xml_raises_error_on_unknown_child():
-    spec: XMLSpec = {"known1": "text", "known2": "text"}
+    spec: XMLSpec = {"known1": "$ANY_TEXT$", "known2": "$ANY_TEXT$"}
 
     source = ET.fromstring(
         """
@@ -25,7 +25,7 @@ def test_validate_xml_raises_error_on_unknown_child():
 
 
 def test_validate_xml_does_not_raise_when_child_missing():
-    spec: XMLSpec = {"known1": "text", "known2": "text"}
+    spec: XMLSpec = {"known1": "$ANY_TEXT$", "known2": "$ANY_TEXT$"}
 
     source = ET.fromstring(
         """
@@ -39,7 +39,7 @@ def test_validate_xml_does_not_raise_when_child_missing():
 
 
 def test_validate_xml_raises_error_when_expecting_text_and_got_element():
-    spec: XMLSpec = {"known1": "text", "known2": "text"}
+    spec: XMLSpec = {"known1": "$ANY_TEXT$", "known2": "$ANY_TEXT$"}
 
     source = ET.fromstring(
         """
@@ -61,8 +61,8 @@ def test_validate_xml_raises_error_when_expecting_text_and_got_element():
 
 def test_validate_xml_raises_error_when_expecting_element_and_got_text():
     spec: XMLSpec = {
-        "known1": "text",
-        "known2": {"known2.1": "text", "known2.2": "text"},
+        "known1": "$ANY_TEXT$",
+        "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
     source = ET.fromstring(
         """
@@ -82,8 +82,8 @@ def test_validate_xml_raises_error_when_expecting_element_and_got_text():
 
 def test_validate_xml_does_not_raise_error_when_expecting_element_and_got_empty_tag():
     spec: XMLSpec = {
-        "known1": "text",
-        "known2": {"known2.1": "text", "known2.2": "text"},
+        "known1": "$ANY_TEXT$",
+        "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
     source = ET.fromstring(
         """
@@ -99,15 +99,15 @@ def test_validate_xml_does_not_raise_error_when_expecting_element_and_got_empty_
 
 def test_validate_xml_raises_error_when_child_has_unknown_element():
     spec: XMLSpec = {
-        "known1": "text",
-        "known2": {"known2.1": "text", "known2.2": "text"},
+        "known1": "$ANY_TEXT$",
+        "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
 
     source = ET.fromstring(
         """
             <source>
                 <known1>value1</known1>
-                <known2>{"child": {"subchild": "text", "ignoredchild": "ignore"}}
+                <known2>{"child": {"subchild": "$ANY_TEXT$", "ignoredchild": "ignore"}}
                     <known2.1></known2.1>
                     <unknown></unknown>
                 </known2>
@@ -123,8 +123,8 @@ def test_validate_xml_raises_error_when_child_has_unknown_element():
 
 def test_validate_xml_does_not_raise_error_when_child_is_missing_element():
     spec: XMLSpec = {
-        "known1": "text",
-        "known2": {"known2.1": "text", "known2.2": "text"},
+        "known1": "$ANY_TEXT$",
+        "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
 
     source = ET.fromstring(
@@ -143,8 +143,8 @@ def test_validate_xml_does_not_raise_error_when_child_is_missing_element():
 
 def test_validate_xml_does_not_raise_error_for_empty_element():
     spec: XMLSpec = {
-        "known1": "text",
-        "known2": {"known2.1": "text", "known2.2": "text"},
+        "known1": "$ANY_TEXT$",
+        "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
     source = ET.fromstring("""<source></source>""")
 
@@ -153,8 +153,8 @@ def test_validate_xml_does_not_raise_error_for_empty_element():
 
 def test_validate_xml_does_not_raise_error_for_repeating_element():
     spec: XMLSpec = {
-        "known1": "text",
-        "known2": {"known2.1": "text", "known2.2": "text"},
+        "known1": "$ANY_TEXT$",
+        "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
     source = ET.fromstring(
         """
@@ -175,8 +175,8 @@ def test_validate_xml_does_not_raise_error_for_repeating_element():
 
 def test_validate_xml_raises_error_for_repeating_element():
     spec: XMLSpec = {
-        "known1": "text",
-        "known2": {"known2.1": "text", "known2.2": "text"},
+        "known1": "$ANY_TEXT$",
+        "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
     source = ET.fromstring(
         """
@@ -214,7 +214,7 @@ def test_validates_with_empty_spec():
 
 
 def test_does_not_raise_error_for_ignored_child():
-    spec: XMLSpec = {"child": {"subchild": "text", "ignoredchild": "ignore"}}
+    spec: XMLSpec = {"child": {"subchild": "$ANY_TEXT$", "ignoredchild": "$IGNORE$"}}
 
     source = ET.fromstring(
         """
@@ -241,7 +241,7 @@ def test_does_not_raise_error_for_complete_publication_xml():
 
 
 def test_error_can_contain_multiple_validation_errors():
-    spec: XMLSpec = {"child": {"subchild": "text"}, "child2": "text"}
+    spec: XMLSpec = {"child": {"subchild": "$ANY_TEXT$"}, "child2": "$ANY_TEXT$"}
 
     source = ET.fromstring(
         """
@@ -321,4 +321,66 @@ def test_specific_text_value_valid_when_element_missing():
             </source>
         """
     )
+    validate_xml(source, spec)
+
+
+def test_assert_empty_element_raises_when_child_element():
+    spec: XMLSpec = {"child": "$EMPTY$"}
+
+    source = ET.fromstring(
+        """
+            <source>
+                <child><subchild>value</subchild></child>
+            </source>
+        """
+    )
+    with pytest.raises(
+        XMLValidationError,
+        match="Expected empty element <child>, but found child elements",
+    ):
+        validate_xml(source, spec)
+
+
+def test_assert_empty_element_raises_when_text_content():
+    spec: XMLSpec = {"child": "$EMPTY$"}
+
+    source = ET.fromstring(
+        """
+            <source>
+                <child>someText</child>
+            </source>
+        """
+    )
+    with pytest.raises(
+        XMLValidationError,
+        match="Expected empty element <child>, but found text content: someText",
+    ):
+        validate_xml(source, spec)
+
+
+def test_validate_empty_element_self_closing_tag():
+    spec: XMLSpec = {"child": "$EMPTY$"}
+
+    source = ET.fromstring(
+        """
+            <source>
+                <child/>
+            </source>
+        """
+    )
+
+    validate_xml(source, spec)
+
+
+def test_validate_empty_element_empty_tag():
+    spec: XMLSpec = {"child": "$EMPTY$"}
+
+    source = ET.fromstring(
+        """
+            <source>
+                <child></child>
+            </source>
+        """
+    )
+
     validate_xml(source, spec)

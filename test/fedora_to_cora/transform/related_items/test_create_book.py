@@ -38,6 +38,20 @@ def test_create_no_book():
     assert result is None
 
 
+def test_create_book_with_empty_title():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <bookTitle>
+                <title></title>
+            </bookTitle>
+        </publication>
+        """
+    )
+    result = create_book(source_record, MockContext())
+    assert result is None
+
+
 def test_create_maximal_book(monkeypatch):
 
     get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")

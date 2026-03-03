@@ -21,10 +21,10 @@ def validate_xml(element: ET.Element, spec: XMLSpec) -> None:
     Example spec:
     ```
     {
-        "child1": "text",  # Text node
+        "child1": "$ANY_TEXT$",  # Text node
         "child2": { # Nested element
-            "subchild1": "text",
-            "subchild2": "text"
+            "subchild1": "$ANY_TEXT$",
+            "subchild2": "$ANY_TEXT$"
         }
     }
     ```
@@ -43,18 +43,29 @@ def validate_xml(element: ET.Element, spec: XMLSpec) -> None:
                 )
                 continue
 
-            if child_spec == "ignore":
+            if child_spec == "$IGNORE$":
                 # Child is ignored
                 continue
 
-            if child_spec == "text" and len(child):
+            if child_spec == "$ANY_TEXT$" and len(child):
                 # Child is text node
                 errors.append(
                     f"Expected text content in <{child.tag}>, but found child elements"
                 )
                 continue
 
-            if child_spec != "text" and isinstance(child_spec, str):
+            if child_spec == "$EMPTY$":
+                if len(child) > 0:
+                    errors.append(
+                        f"Expected empty element <{child.tag}>, but found child elements"
+                    )
+                elif child.text is not None and child.text.strip() != "":
+                    errors.append(
+                        f"Expected empty element <{child.tag}>, but found text content: {child.text.strip()}"
+                    )
+                continue
+
+            if child_spec != "$ANY_TEXT$" and isinstance(child_spec, str):
                 # Child is specific text node
                 if len(child):
                     errors.append(

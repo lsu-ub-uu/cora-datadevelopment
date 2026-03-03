@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from cora.context import Context
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, create_group, create_text
 from fedora_to_cora.transform.identifiers.create_doi_se_libr import (
     create_identifier_doi,
     create_identifier_se_libr,
@@ -18,28 +18,36 @@ def create_book(source_record: ET.Element, context: Context) -> ET.Element | Non
     if source_book_title is None or source_book_title.text is None:
         return None
 
-    related_item = ET.Element("relatedItem", type="book", otherType="text")
-    title_info = ET.SubElement(related_item, "titleInfo")
-    title_text = source_book_title.findtext("./title")
-    subtitle_text = source_book_title.findtext("./subTitle")
-    if title_text is not None and len(title_text) > 0:
-        ET.SubElement(title_info, "title").text = clean_rich_text(title_text)
-
-    if subtitle_text is not None and len(subtitle_text) > 0:
-        ET.SubElement(title_info, "subtitle").text = clean_rich_text(subtitle_text)
-
-    append_if_value(related_item, _create_statement_of_responsibility(source_record))
-
-    append_if_value(related_item, create_identifier_type_isbn(source_record))
-    append_if_value(related_item, create_identifier_doi(source_record))
-    append_if_value(related_item, create_identifier_se_libr(source_record))
-
-    append_if_value(related_item, _create_part(source_record))
-    append_if_value(
-        related_item, create_related_item_type_series(source_record, context)
+    related_item = create_group(
+        "relatedItem",
+        [
+            _create_title_info(source_record),
+            _create_statement_of_responsibility(source_record),
+            create_identifier_type_isbn(source_record),
+            create_identifier_doi(source_record),
+            create_identifier_se_libr(source_record),
+            _create_part(source_record),
+            create_related_item_type_series(source_record, context),
+        ],
+        type="book",
+        otherType="text",
     )
-
     return related_item
+
+
+def _create_title_info(source_record: ET.Element) -> ET.Element | None:
+    return create_group(
+        "titleInfo",
+        [
+            create_text(
+                "title", clean_rich_text(source_record.findtext("./bookTitle/title"))
+            ),
+            create_text(
+                "subtitle",
+                clean_rich_text(source_record.findtext("./bookTitle/subTitle")),
+            ),
+        ],
+    )
 
 
 def _create_statement_of_responsibility(source_record: ET.Element) -> ET.Element | None:
@@ -52,19 +60,16 @@ def _create_statement_of_responsibility(source_record: ET.Element) -> ET.Element
     return note
 
 
-def _create_part(source_record: ET.Element) -> ET.Element:
-    part = ET.Element("part")
-
-    extent = ET.Element("extent")
-
-    start_page = source_record.findtext("./startPage")
-    if start_page is not None:
-        ET.SubElement(extent, "start").text = start_page
-
-    end_page = source_record.findtext("./endPage")
-    if end_page is not None:
-        ET.SubElement(extent, "end").text = end_page
-
-    append_if_value(part, extent)
-
-    return part
+def _create_part(source_record: ET.Element) -> ET.Element | None:
+    return create_group(
+        "part",
+        [
+            create_group(
+                "extent",
+                [
+                    create_text("start", source_record.findtext("./startPage")),
+                    create_text("end", source_record.findtext("./endPage")),
+                ],
+            )
+        ],
+    )

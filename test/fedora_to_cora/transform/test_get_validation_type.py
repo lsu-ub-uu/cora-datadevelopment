@@ -1,7 +1,7 @@
 import pytest
 import xml.etree.ElementTree as ET
 from fedora_to_cora.transform.get_validation_type import (
-    get_validation_type,
+    _get_validation_type,
     get_validation_type_from_fedora_record,
 )
 
@@ -56,17 +56,17 @@ from fedora_to_cora.transform.get_validation_type import (
     ],
 )
 def test_known_publication_type_ids(pub_type_code, subtype_code, expected):
-    assert get_validation_type(pub_type_code, subtype_code) == expected
+    assert _get_validation_type(pub_type_code, subtype_code) == expected
 
 
 @pytest.mark.parametrize("invalid_id", ["999", "", None])
 def test_unknown_publication_type_returns_none(invalid_id):
-    validation_type = get_validation_type(invalid_id, subtype_code=None)
+    validation_type = _get_validation_type(invalid_id, subtype_code=None)
     assert validation_type is None
 
 
 def test_known_publication_type_with_unknown_subtype_returns_none():
-    validation_type = get_validation_type("article", "unknownSubtype")
+    validation_type = _get_validation_type("article", "unknownSubtype")
     assert validation_type is None
 
 
@@ -137,3 +137,20 @@ def test_missing_validation_type():
 
     validation_type = get_validation_type_from_fedora_record(source_record)
     assert (validation_type) is None
+
+
+def test_handle_publication_subtype_from_root_element():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>50</publicationTypeId>
+                <publicationTypeCode>article</publicationTypeCode>
+            </publicationType>
+            <publicationSubtype>editorialMaterial</publicationSubtype>
+        </publication>
+        """
+    )
+
+    validation_type = get_validation_type_from_fedora_record(source_record)
+    assert (validation_type) == "publication_editorial-letter"

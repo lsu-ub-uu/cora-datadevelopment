@@ -10,13 +10,13 @@ from common.xml_validate import XMLSpec, validate_xml
 
 nameInData = "journal"
 allowed_children: XMLSpec = {
-    "old_id": "text",
-    "title": "text",
-    "subtitle": "text",
-    "end_date": "text",
-    "identifier_eissn": "text",
-    "identifier_pissn": "text",
-    "url": "text",
+    "old_id": "$ANY_TEXT$",
+    "title": "$ANY_TEXT$",
+    "subtitle": "$ANY_TEXT$",
+    "end_date": "$ANY_TEXT$",
+    "identifier_eissn": "$ANY_TEXT$",
+    "identifier_pissn": "$ANY_TEXT$",
+    "url": "$ANY_TEXT$",
 }
 
 

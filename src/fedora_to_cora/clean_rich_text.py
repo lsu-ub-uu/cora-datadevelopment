@@ -2,7 +2,10 @@ import re
 import html
 
 
-def clean_rich_text(input: str) -> str:
+def clean_rich_text(input: str | None) -> str | None:
+    if input is None:
+        return None
+
     output = html.unescape(input)
 
     output = _remove_empty_elements(output)

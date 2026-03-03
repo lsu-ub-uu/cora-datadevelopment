@@ -78,7 +78,7 @@ validation_type_mapping = {
 }
 
 
-def get_validation_type(
+def _get_validation_type(
     publication_type_code: str | None, subtype_code: str | None
 ) -> str | None:
     if publication_type_code not in validation_type_mapping:
@@ -97,5 +97,9 @@ def get_validation_type_from_fedora_record(source_record: ET.Element) -> str | N
         "./publicationType/publicationTypeCode"
     )
     subtype_code = source_record.findtext("./subtype/publicationSubtypeCode")
+    publication_subtype = source_record.findtext("./publicationSubtype")
 
-    return get_validation_type(publication_type_code, subtype_code)
+    # In some cases, the publication subtype might be stored directly under publicationSubtype instead of subtype/publicationSubtypeCode.
+    resolved_subtype = subtype_code if subtype_code is not None else publication_subtype
+
+    return _get_validation_type(publication_type_code, resolved_subtype)

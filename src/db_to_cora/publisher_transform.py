@@ -5,8 +5,8 @@ from common.xml_validate import XMLSpec, validate_xml
 
 nameInData = "publisher"
 allowed_children: XMLSpec = {
-    "old_id": "text",
-    "name": "text",
+    "old_id": "$ANY_TEXT$",
+    "name": "$ANY_TEXT$",
 }
 
 

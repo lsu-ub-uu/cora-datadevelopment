@@ -1,5 +1,5 @@
 import os
-from typing import Callable
+from typing import Callable, Sequence
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
 
@@ -96,3 +96,48 @@ def transform_text_element(
         new_element.text = text_value
         return new_element
     return None
+
+
+def create_text(
+    tag_name: str,
+    text_value: str | None,
+    preserve_newlines: bool = False,
+    **attributes: str,
+) -> ET.Element | None:
+    if text_value is None or text_value.strip() == "":
+        return None
+
+    element = ET.Element(tag_name, attributes)
+    text = (
+        text_value.strip()
+        if preserve_newlines
+        else text_value.replace("\n", " ").strip()
+    )
+    element.text = text
+    return element
+
+
+def create_group(
+    tag_name: str,
+    children: Sequence[ET.Element | Sequence[ET.Element | None] | None],
+    **attributes: str,
+) -> ET.Element | None:
+    flattened_children = []
+    for child in children:
+        if isinstance(child, list):
+            flattened_children.extend([c for c in child if c is not None])
+        elif child is not None:
+            flattened_children.append(child)
+
+    valid_children = [
+        child
+        for child in flattened_children
+        if child is not None and (len(child) > 0 or child.text)
+    ]
+    if not valid_children:
+        return None
+
+    element = ET.Element(tag_name, attributes)
+    for child in valid_children:
+        element.append(child)
+    return element

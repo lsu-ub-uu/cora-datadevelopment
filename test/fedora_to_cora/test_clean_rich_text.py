@@ -28,6 +28,12 @@ def test_removes_text_formatting_tags(tag):
     assert clean_rich_text(input) == expected
 
 
+def test_returns_none_when_none():
+    input = None
+    expected = None
+    assert clean_rich_text(input) == expected
+
+
 def test_preserves_ul():
     input = "&lt;ul&gt;&lt;li&gt;Item one&lt;/li&gt;&lt;li&gt;Item two&lt;/li&gt;&lt;li&gt;Item three&lt;/li&gt;&lt;/ul&gt;"
     expected = "• Item one\n• Item two\n• Item three"

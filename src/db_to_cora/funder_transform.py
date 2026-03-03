@@ -12,15 +12,15 @@ from common.common_data import create_identifiers_from_source
 nameInData = "funder"
 
 allowed_children: XMLSpec = {
-    "old_id": "text",
-    "name_swe": "text",
-    "name_eng": "text",
-    "end_date": "text",
-    "identifier_organisationNumber": "text",
-    "identifier_doi": "text",
-    "locale_swe": "text",
-    "locale_eng": "text",
-    "funder_name_id": "text",
+    "old_id": "$ANY_TEXT$",
+    "name_swe": "$ANY_TEXT$",
+    "name_eng": "$ANY_TEXT$",
+    "end_date": "$ANY_TEXT$",
+    "identifier_organisationNumber": "$ANY_TEXT$",
+    "identifier_doi": "$ANY_TEXT$",
+    "locale_swe": "$ANY_TEXT$",
+    "locale_eng": "$ANY_TEXT$",
+    "funder_name_id": "$ANY_TEXT$",
 }
 
 

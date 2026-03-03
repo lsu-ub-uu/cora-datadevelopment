@@ -2,97 +2,97 @@ from common.xml_validate import XMLSpec, XMLValidationError, validate_xml
 from common.common_data import read_source_xml
 
 fedora_user_information_spec: XMLSpec = {
-    "userId": "text",
-    "ip": "text",
-    "name": "text",
-    "date": "text",
-    "userType": "text",
-    "userAction": "text",
+    "userId": "$ANY_TEXT$",
+    "ip": "$ANY_TEXT$",
+    "name": "$ANY_TEXT$",
+    "date": "$ANY_TEXT$",
+    "userType": "$ANY_TEXT$",
+    "userAction": "$ANY_TEXT$",
 }
 
 fedora_country_spec: XMLSpec = {
-    "countryCode": "text",
+    "countryCode": "$ANY_TEXT$",
     "countryNames": {
         "countryName": {
-            "countryNameId": "text",
-            "locale": "text",
-            "countryName": "text",
+            "countryNameId": "$ANY_TEXT$",
+            "locale": "$ANY_TEXT$",
+            "countryName": "$ANY_TEXT$",
         },
     },
-    "showsOnList": "text",
+    "showsOnList": "$ANY_TEXT$",
 }
 
 fedora_frida_level_spec: XMLSpec = {
-    "fridaLevelId": "text",
-    "fridaLevelCode": "text",
+    "fridaLevelId": "$ANY_TEXT$",
+    "fridaLevelCode": "$ANY_TEXT$",
     "fridaLevelNames": {
         "fridaLevelName": {
-            "fridaLevelNameId": "text",
-            "locale": "text",
-            "fridaLevelName": "text",
+            "fridaLevelNameId": "$ANY_TEXT$",
+            "locale": "$ANY_TEXT$",
+            "fridaLevelName": "$ANY_TEXT$",
         }
     },
 }
 
 # Base organisation spec without circular references
 fedora_organisation_spec: XMLSpec = {
-    "organisationId": "text",
+    "organisationId": "$ANY_TEXT$",
     "organisationType": {
-        "organisationTypeId": "text",
-        "organisationTypeCode": "text",
+        "organisationTypeId": "$ANY_TEXT$",
+        "organisationTypeCode": "$ANY_TEXT$",
         "organisationTypeNames": {
             "organisationTypeName": {
-                "organisationTypeNameId": "text",
-                "locale": "text",
-                "organisationTypeName": "text",
+                "organisationTypeNameId": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
+                "organisationTypeName": "$ANY_TEXT$",
             }
         },
     },
     "organisationName": {
-        "name": "text",
-        "locale": "text",
+        "name": "$ANY_TEXT$",
+        "locale": "$ANY_TEXT$",
     },
     "organisationContacts": {
-        "organisationContactId": "text",
-        "organisationContactType": "text",
-        "organisationContactText": "text",
+        "organisationContactId": "$ANY_TEXT$",
+        "organisationContactType": "$ANY_TEXT$",
+        "organisationContactText": "$ANY_TEXT$",
     },
-    "organisationCode": "text",
-    "organisationHomepage": "text",
-    "domain": "text",
-    "closedDate": "text",
-    "organisationNumber": "text",
-    "oldDivaDb": "text",
-    "oldDivaId": "text",
-    "oldParentId": "text",
+    "organisationCode": "$ANY_TEXT$",
+    "organisationHomepage": "$ANY_TEXT$",
+    "domain": "$ANY_TEXT$",
+    "closedDate": "$ANY_TEXT$",
+    "organisationNumber": "$ANY_TEXT$",
+    "oldDivaDb": "$ANY_TEXT$",
+    "oldDivaId": "$ANY_TEXT$",
+    "oldParentId": "$ANY_TEXT$",
     "organisationAlternativeNames": {
         "organisationName": {
-            "organisationNameId": "text",
-            "locale": "text",
-            "organisationName": "text",
+            "organisationNameId": "$ANY_TEXT$",
+            "locale": "$ANY_TEXT$",
+            "organisationName": "$ANY_TEXT$",
         }
     },
     "organisationAddress": {
-        "addressId": "text",
-        "postbox": "text",
-        "street": "text",
-        "postnumber": "text",
-        "city": "text",
+        "addressId": "$ANY_TEXT$",
+        "postbox": "$ANY_TEXT$",
+        "street": "$ANY_TEXT$",
+        "postnumber": "$ANY_TEXT$",
+        "city": "$ANY_TEXT$",
         "country": fedora_country_spec,
     },
     "organisationPredecessorDescriptions": {
         "diva2.commons.aura.list.organisation.OrganisationPredecessorDescription": {
-            "organisationPredecessorDescriptionId": "text",
-            "predecessorId": "text",
-            "description": "text",
+            "organisationPredecessorDescriptionId": "$ANY_TEXT$",
+            "predecessorId": "$ANY_TEXT$",
+            "description": "$ANY_TEXT$",
         }
     },
-    "controlled": "text",
-    "notEligible": "text",
-    "showInPortal": "text",
-    "showInDefence": "text",
-    "topLevel": "text",
-    "organisationNameUncontrolled": "text",
+    "controlled": "$ANY_TEXT$",
+    "notEligible": "$ANY_TEXT$",
+    "showInPortal": "$ANY_TEXT$",
+    "showInDefence": "$ANY_TEXT$",
+    "topLevel": "$ANY_TEXT$",
+    "organisationNameUncontrolled": "$ANY_TEXT$",
 }
 
 # Add circular references
@@ -105,125 +105,125 @@ fedora_organisation_spec["organisationPredecessors"] = {
 
 
 fedora_person_spec: XMLSpec = {
-    "firstName": "text",
-    "lastName": "text",
-    "localId": "text",
+    "firstName": "$ANY_TEXT$",
+    "lastName": "$ANY_TEXT$",
+    "localId": "$ANY_TEXT$",
     "organisations": {
         "organisation": fedora_organisation_spec,
     },
-    "email": "text",
-    "birthYear": "text",
-    "deathYear": "text",
-    "title": "text",
-    "researchGroup": "text",
+    "email": "$ANY_TEXT$",
+    "birthYear": "$ANY_TEXT$",
+    "deathYear": "$ANY_TEXT$",
+    "title": "$ANY_TEXT$",
+    "researchGroup": "$ANY_TEXT$",
     "identifiers": {
         "entry": {
-            "personIdentifierType": "text",
+            "personIdentifierType": "$ANY_TEXT$",
             "personIdentifier": {
-                "value": "text",
-                "type": "text",
+                "value": "$ANY_TEXT$",
+                "type": "$ANY_TEXT$",
             },
         }
     },
-    "authorityPid": "text",
+    "authorityPid": "$ANY_TEXT$",
 }
 
 
 fedora_language_spec: XMLSpec = {
-    "languageCode3": "text",
-    "languageCode2": "text",
+    "languageCode3": "$ANY_TEXT$",
+    "languageCode2": "$ANY_TEXT$",
     "languageNames": {
         "languageName": {
-            "languageNameId": "text",
-            "locale": "text",
-            "languageName": "text",
+            "languageNameId": "$ANY_TEXT$",
+            "locale": "$ANY_TEXT$",
+            "languageName": "$ANY_TEXT$",
         }
     },
-    "showsOnList": "text",
+    "showsOnList": "$ANY_TEXT$",
 }
 
 fedora_publication_title_spec: XMLSpec = {
-    "title": "text",
-    "subTitle": "text",
+    "title": "$ANY_TEXT$",
+    "subTitle": "$ANY_TEXT$",
     "language": fedora_language_spec,
 }
 
 fedora_publication_type_spec: XMLSpec = {
-    "publicationTypeId": "text",
-    "publicationTypeCode": "text",
-    "openUrlType": "text",
+    "publicationTypeId": "$ANY_TEXT$",
+    "publicationTypeCode": "$ANY_TEXT$",
+    "openUrlType": "$ANY_TEXT$",
     "publicationTypeNames": {
         "publicationTypeName": {
-            "publicationTypeNameId": "text",
-            "locale": "text",
-            "publicationTypeName": "text",
+            "publicationTypeNameId": "$ANY_TEXT$",
+            "locale": "$ANY_TEXT$",
+            "publicationTypeName": "$ANY_TEXT$",
         }
     },
-    "roles": "text",
-    "comprehensiveSummary": "text",
-    "domainAdminOnly": "text",
-    "contentTypes": "ignore",
+    "roles": "$ANY_TEXT$",
+    "comprehensiveSummary": "$ANY_TEXT$",
+    "domainAdminOnly": "$ANY_TEXT$",
+    "contentTypes": "$IGNORE$",
 }
 
 fedora_content_type_spec: XMLSpec = {
-    "contentTypeId": "text",
-    "contentTypeCode": "text",
+    "contentTypeId": "$ANY_TEXT$",
+    "contentTypeCode": "$ANY_TEXT$",
     "contentTypeNames": {
         "contentTypeName": {
-            "contentTypeNameId": "text",
-            "locale": "text",
-            "contentTypeName": "text",
+            "contentTypeNameId": "$ANY_TEXT$",
+            "locale": "$ANY_TEXT$",
+            "contentTypeName": "$ANY_TEXT$",
         }
     },
-    "sortOrder": "text",
+    "sortOrder": "$ANY_TEXT$",
 }
 
 fedora_title_spec: XMLSpec = {
-    "titleId": "text",
-    "mainTitle": "text",
-    "subTitle": "text",
-    "locale": "text",
+    "titleId": "$ANY_TEXT$",
+    "mainTitle": "$ANY_TEXT$",
+    "subTitle": "$ANY_TEXT$",
+    "locale": "$ANY_TEXT$",
 }
 
 fedora_series_spec: XMLSpec = {
-    "seriesId": "text",
+    "seriesId": "$ANY_TEXT$",
     "seriesTitle": fedora_title_spec,
     "seriesAlternativeTitles": {"seriesAlternativeTitle": fedora_title_spec},
-    "issn": "text",
-    "eissn": "text",
-    "url": "text",
-    "keyTitle": "text",
+    "issn": "$ANY_TEXT$",
+    "eissn": "$ANY_TEXT$",
+    "url": "$ANY_TEXT$",
+    "keyTitle": "$ANY_TEXT$",
     "contentType": fedora_content_type_spec,
     "format": {
-        "formatId": "text",
-        "formatCode": "text",
+        "formatId": "$ANY_TEXT$",
+        "formatCode": "$ANY_TEXT$",
         "formatNames": {
             "formatName": {
-                "formatNameId": "text",
-                "locale": "text",
-                "formatName": "text",
+                "formatNameId": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
+                "formatName": "$ANY_TEXT$",
             }
         },
     },
-    "notes": "text",
-    "subjects": "ignore",
+    "notes": "$ANY_TEXT$",
+    "subjects": "$IGNORE$",
     "publicationType": fedora_publication_type_spec,
     "organisation": fedora_organisation_spec,
-    "domain": "text",
-    "closedDate": "text",
-    "controlled": "text",
+    "domain": "$ANY_TEXT$",
+    "closedDate": "$ANY_TEXT$",
+    "controlled": "$ANY_TEXT$",
 }
 fedora_series_spec["relationships"] = {
     "seriesRelation": {
-        "relationId": "text",
+        "relationId": "$ANY_TEXT$",
         "relationType": {
-            "relationTypeId": "text",
-            "relationTypeCode": "text",
+            "relationTypeId": "$ANY_TEXT$",
+            "relationTypeCode": "$ANY_TEXT$",
             "relationTypeNames": {
                 "relationTypeName": {
-                    "relationTypeNameId": "text",
-                    "locale": "text",
-                    "relationTypeName": "text",
+                    "relationTypeNameId": "$ANY_TEXT$",
+                    "locale": "$ANY_TEXT$",
+                    "relationTypeName": "$ANY_TEXT$",
                 }
             },
         },
@@ -233,316 +233,316 @@ fedora_series_spec["relationships"] = {
 
 
 fedora_subject_spec: XMLSpec = {
-    "subjectId": "text",
+    "subjectId": "$ANY_TEXT$",
     "subjectType": {
-        "subjectTypeId": "text",
-        "subjectTypeCode": "text",
+        "subjectTypeId": "$ANY_TEXT$",
+        "subjectTypeCode": "$ANY_TEXT$",
         "subjectTypeNames": {
             "subjectTypeName": {
-                "subjectTypeNameId": "text",
-                "locale": "text",
-                "subjectTypeName": "text",
+                "subjectTypeNameId": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
+                "subjectTypeName": "$ANY_TEXT$",
             }
         },
     },
     "subjectNames": {
         "subjectName": {
-            "subjectNameId": "text",
-            "locale": "text",
-            "subjectName": "text",
+            "subjectNameId": "$ANY_TEXT$",
+            "locale": "$ANY_TEXT$",
+            "subjectName": "$ANY_TEXT$",
         }
     },
-    "subjectCode": "text",
-    "domain": "text",
-    "notEligible": "text",
-    "oldDivaDb": "text",
-    "oldDivaId": "text",
+    "subjectCode": "$ANY_TEXT$",
+    "domain": "$ANY_TEXT$",
+    "notEligible": "$ANY_TEXT$",
+    "oldDivaDb": "$ANY_TEXT$",
+    "oldDivaId": "$ANY_TEXT$",
     "organisations": {"organisation": fedora_organisation_spec},
 }
 fedora_subject_spec["parents"] = {"subject": fedora_subject_spec}
 fedora_subject_spec["predecessors"] = {"subject": fedora_subject_spec}
 
 fedora_funder_spec: XMLSpec = {
-    "funderId": "text",
-    "funderName": {"name": "text", "locale": "text"},
-    "organisationNumber": "text",
+    "funderId": "$ANY_TEXT$",
+    "funderName": {"name": "$ANY_TEXT$", "locale": "$ANY_TEXT$"},
+    "organisationNumber": "$ANY_TEXT$",
     "funderAlternativeNames": {
         "diva2.commons.aura.list.funder.FunderName": {
-            "funderNameId": "text",
-            "locale": "text",
-            "funderName": "text",
+            "funderNameId": "$ANY_TEXT$",
+            "locale": "$ANY_TEXT$",
+            "funderName": "$ANY_TEXT$",
         }
     },
-    "doi": "text",
+    "doi": "$ANY_TEXT$",
 }
 
 fedora_abstract_spec: XMLSpec = {
     "language": fedora_language_spec,
-    "text": "text",
+    "text": "$ANY_TEXT$",
 }
 
 fedora_entry_spec: XMLSpec = {
     "language": fedora_language_spec,
     "list": {
-        "string": "text",
+        "string": "$ANY_TEXT$",
     },
 }
 
 fedora_student_degree_spec: XMLSpec = {
     "thesisLevel": {
-        "thesisLevelId": "text",
-        "thesisLevelCode": "text",
-        "thesisLevelOldCode": "text",
+        "thesisLevelId": "$ANY_TEXT$",
+        "thesisLevelCode": "$ANY_TEXT$",
+        "thesisLevelOldCode": "$ANY_TEXT$",
         "thesisLevelNames": {
             "thesisLevelName": {
-                "thesisLevelNameId": "text",
-                "locale": "text",
-                "thesisLevelName": "text",
+                "thesisLevelNameId": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
+                "thesisLevelName": "$ANY_TEXT$",
             }
         },
-        "degrees": "ignore",
-        "domain": "text",
+        "degrees": "$IGNORE$",
+        "domain": "$ANY_TEXT$",
     },
     "universityPoints": {
-        "points": "text",
-        "name__sv": "text",
-        "name__en": "text",
-        "name__no": "text",
-        "hp": "text",
+        "points": "$ANY_TEXT$",
+        "name__sv": "$ANY_TEXT$",
+        "name__en": "$ANY_TEXT$",
+        "name__no": "$ANY_TEXT$",
+        "hp": "$ANY_TEXT$",
     },
     "undergraduateSubject": fedora_subject_spec,
 }
 
 fedora_journal_spec: XMLSpec = {
-    "journalId": "text",
-    "nordicListId": "text",
+    "journalId": "$ANY_TEXT$",
+    "nordicListId": "$ANY_TEXT$",
     "journalType": {
-        "journalTypeId": "text",
-        "journalTypeCode": "text",
+        "journalTypeId": "$ANY_TEXT$",
+        "journalTypeCode": "$ANY_TEXT$",
         "journalTypeNames": {
             "journalTypeName": {
-                "journalTypeNameId": "text",
-                "locale": "text",
-                "journalTypeName": "text",
+                "journalTypeNameId": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
+                "journalTypeName": "$ANY_TEXT$",
             }
         },
     },
     "journalTitle": fedora_title_spec,
-    "printedIssn": "text",
-    "electronicIssn": "text",
-    "url": "text",
+    "printedIssn": "$ANY_TEXT$",
+    "electronicIssn": "$ANY_TEXT$",
+    "url": "$ANY_TEXT$",
     "fridaLevel": fedora_frida_level_spec,
-    "controlled": "text",
-    "openAccess": "text",
-    "subjects": "ignore",
-    "relationships": "ignore",
+    "controlled": "$ANY_TEXT$",
+    "openAccess": "$ANY_TEXT$",
+    "subjects": "$IGNORE$",
+    "relationships": "$IGNORE$",
 }
 
 fedora_attachment_spec: XMLSpec = {
     "mimeType": {
-        "mimeTypeId": "text",
-        "mimeTypeName": "text",
-        "fileSuffix": "text",
-        "datasetOnly": "text",
+        "mimeTypeId": "$ANY_TEXT$",
+        "mimeTypeName": "$ANY_TEXT$",
+        "fileSuffix": "$ANY_TEXT$",
+        "datasetOnly": "$ANY_TEXT$",
     },
     "fileLabel": {
-        "fileLabelId": "text",
-        "fileLabelCode": "text",
+        "fileLabelId": "$ANY_TEXT$",
+        "fileLabelCode": "$ANY_TEXT$",
         "fileLabelNames": {
             "fileLabelName": {
-                "fileLabelNameId": "text",
-                "locale": "text",
-                "fileLabelName": "text",
+                "fileLabelNameId": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
+                "fileLabelName": "$ANY_TEXT$",
             }
         },
     },
-    "fileName": "text",
-    "fileSize": "text",
-    "selectedFileName": "text",
-    "path": "text",
+    "fileName": "$ANY_TEXT$",
+    "fileSize": "$ANY_TEXT$",
+    "selectedFileName": "$ANY_TEXT$",
+    "path": "$ANY_TEXT$",
     "checksums": {
         "checksum": {
-            "type": "text",
-            "digest": "text",
+            "type": "$ANY_TEXT$",
+            "digest": "$ANY_TEXT$",
         }
     },
-    "order": "text",
-    "uploadDate": "text",
+    "order": "$ANY_TEXT$",
+    "uploadDate": "$ANY_TEXT$",
     "asyncUpload": "false",  # Value should always be false
-    "availableUntil": "text",
-    "availableFrom": "text",
-    "tempAvailableFrom": "text",
-    "deleteDate": "text",
+    "availableUntil": "$ANY_TEXT$",
+    "availableFrom": "$ANY_TEXT$",
+    "tempAvailableFrom": "$ANY_TEXT$",
+    "deleteDate": "$ANY_TEXT$",
     "onHold": "false",  # Value should always be false
-    "deleted": "text",
-    "prePrint": "text",
-    "postPrint": "text",
-    "print": "text",
-    "archiveOnly": "text",
-    "printOnDemand": "text",
-    "toBePublished": "text",
-    "toBeArchived": "text",
-    "digitized": "text",
-    "hasCoverPage": "text",
-    "coverPageConditions": "text",
-    "description": "text",
+    "deleted": "$ANY_TEXT$",
+    "prePrint": "$ANY_TEXT$",
+    "postPrint": "$ANY_TEXT$",
+    "print": "$ANY_TEXT$",
+    "archiveOnly": "$ANY_TEXT$",
+    "printOnDemand": "$ANY_TEXT$",
+    "toBePublished": "$ANY_TEXT$",
+    "toBeArchived": "$ANY_TEXT$",
+    "digitized": "$ANY_TEXT$",
+    "hasCoverPage": "$ANY_TEXT$",
+    "coverPageConditions": "$ANY_TEXT$",
+    "description": "$ANY_TEXT$",
     "secrecyInfo": {
-        "secrecy": "text",
+        "secrecy": "$ANY_TEXT$",
     },
-    "registrationNumber": "text",
+    "registrationNumber": "$ANY_TEXT$",
 }
 
 
 fedora_publication_xml_spec: XMLSpec = {
     "contentType": fedora_content_type_spec,
     "publicationType": fedora_publication_type_spec,
-    "pid": "text",
+    "pid": "$ANY_TEXT$",
     "administrativeInfo": {
-        "domain": "text",
+        "domain": "$ANY_TEXT$",
         "creatorInfo": fedora_user_information_spec,
         "updaters": {"userInformation": fedora_user_information_spec},
-        "createdDate": "text",
-        "updatedDate": "text",
-        "deletedDate": "text",
+        "createdDate": "$ANY_TEXT$",
+        "updatedDate": "$ANY_TEXT$",
+        "deletedDate": "$ANY_TEXT$",
         "deleterInfo": fedora_user_information_spec,
-        "fileUploadMessage": "text",
-        "importSource": "text",
+        "fileUploadMessage": "$ANY_TEXT$",
+        "importSource": "$ANY_TEXT$",
     },
-    "publicationDate": "text",
+    "publicationDate": "$ANY_TEXT$",
     "authors": {"person": fedora_person_spec},
-    "noOfContributors": "text",
+    "noOfContributors": "$ANY_TEXT$",
     "originalPublicationTitle": fedora_publication_title_spec,
     "alternativePublicationTitles": {"title": fedora_publication_title_spec},
     "seriesInfos": {
-        "seriesInfo": {"series": fedora_series_spec, "numberInSeries": "text"}
+        "seriesInfo": {"series": fedora_series_spec, "numberInSeries": "$ANY_TEXT$"}
     },
     "uncontrolledSeriesInfo": {
         "series": {
             "seriesAlternativeTitles": {},  # Always empty for uncontrolled series
-            "issn": "text",
-            "eissn": "text",
+            "issn": "$ANY_TEXT$",
+            "eissn": "$ANY_TEXT$",
             "subjects": {},  # Always empty for uncontrolled series
             "relationships": {},  # Always empty for uncontrolled series
-            "seriesNameUncontrolled": "text",
-            "controlled": "text",
+            "seriesNameUncontrolled": "$ANY_TEXT$",
+            "controlled": "$ANY_TEXT$",
         },
-        "numberInSeries": "text",
+        "numberInSeries": "$ANY_TEXT$",
     },
-    "dateIssued": "text",
-    "conference": "text",
-    "pages": "text",
-    "edition": "text",
-    "volume": "text",
-    "issueNumber": "text",
-    "startPage": "text",
-    "endPage": "text",
-    "distributor": "ignore",
-    "distributorAsDist": "ignore",
+    "dateIssued": "$ANY_TEXT$",
+    "conference": "$ANY_TEXT$",
+    "pages": "$ANY_TEXT$",
+    "edition": "$ANY_TEXT$",
+    "volume": "$ANY_TEXT$",
+    "issueNumber": "$ANY_TEXT$",
+    "startPage": "$ANY_TEXT$",
+    "endPage": "$ANY_TEXT$",
+    "distributor": "$IGNORE$",
+    "distributorAsDist": "$IGNORE$",
     "publisher": {
-        "city": "text",
-        "publisherName": "text",
+        "city": "$ANY_TEXT$",
+        "publisherName": "$ANY_TEXT$",
         "publishingHouse": {
-            "externalId": "text",
-            "publishingHouseId": "text",
-            "name": "text",
-            "nordicListId": "text",
+            "externalId": "$ANY_TEXT$",
+            "publishingHouseId": "$ANY_TEXT$",
+            "name": "$ANY_TEXT$",
+            "nordicListId": "$ANY_TEXT$",
             "fridaLevel": fedora_frida_level_spec,
         },
     },
     "urls": {
         "url": {
-            "url": "text",
-            "label": "text",
-            "openAccess": "text",
+            "url": "$ANY_TEXT$",
+            "label": "$ANY_TEXT$",
+            "openAccess": "$ANY_TEXT$",
         }
     },
-    "isrn": "text",
-    "localId": "text",
-    "archiveNumber": "text",
-    "pmid": "text",
-    "isi": "text",
-    "scopusId": "text",
-    "nbn": "text",
+    "isrn": "$ANY_TEXT$",
+    "localId": "$ANY_TEXT$",
+    "archiveNumber": "$ANY_TEXT$",
+    "pmid": "$ANY_TEXT$",
+    "isi": "$ANY_TEXT$",
+    "scopusId": "$ANY_TEXT$",
+    "nbn": "$ANY_TEXT$",
     "isbnNumbers": {
         "isbn": {
-            "number": "text",
-            "type": "text",
+            "number": "$ANY_TEXT$",
+            "type": "$ANY_TEXT$",
         },
     },
     "identifiers": {
         "entry": {
-            "publicationIdentifierType": "text",
+            "publicationIdentifierType": "$ANY_TEXT$",
             "publicationIdentifier": {
-                "value": "text",
-                "type": "text",
-                "openAccess": "text",
+                "value": "$ANY_TEXT$",
+                "type": "$ANY_TEXT$",
+                "openAccess": "$ANY_TEXT$",
                 "alternativeValues": {
                     "value": {
-                        "content": "text",
+                        "content": "$ANY_TEXT$",
                     }
                 },
             },
         }
     },
-    "categories": {"subject": "ignore"},  # Old SVEP categories are ignored
+    "categories": {"subject": "$IGNORE$"},  # Old SVEP categories are ignored
     "nationalCategories": {"subject": fedora_subject_spec},
     "researchSubjects": {"subject": fedora_subject_spec},
     "keyWords": {"entry": fedora_entry_spec},
-    "projects": {"project": {"projectName": "text"}},
+    "projects": {"project": {"projectName": "$ANY_TEXT$"}},
     "projectRelations": {
         "projectRelation": {
             "relation": {
-                "relationId": "text",
-                "code": "text",
-                "relationName": "text",
+                "relationId": "$ANY_TEXT$",
+                "code": "$ANY_TEXT$",
+                "relationName": "$ANY_TEXT$",
                 "alternativeNames": {
                     "relationAlternativeName": {
-                        "relationNameId": "text",
-                        "locale": "text",
-                        "relationName": "text",
-                        "helpMessage": "text",
+                        "relationNameId": "$ANY_TEXT$",
+                        "locale": "$ANY_TEXT$",
+                        "relationName": "$ANY_TEXT$",
+                        "helpMessage": "$ANY_TEXT$",
                     }
                 },
             },
-            "pid": "text",
+            "pid": "$ANY_TEXT$",
         }
     },
     "abstracts": {"abstract": fedora_abstract_spec},
     "defence": {
-        "date": "text",
+        "date": "$ANY_TEXT$",
         "language": fedora_language_spec,
         "room": {
-            "name": "text",
-            "street": "text",
-            "city": "text",
+            "name": "$ANY_TEXT$",
+            "street": "$ANY_TEXT$",
+            "city": "$ANY_TEXT$",
         },
         "grantingInstitution": fedora_organisation_spec,
-        "externalGrantingInstitution": "text",
+        "externalGrantingInstitution": "$ANY_TEXT$",
     },
     "degree": {
-        "degreeId": "text",
+        "degreeId": "$ANY_TEXT$",
         "degreeNames": {
             "degreeName": {
-                "degreeNameId": "text",
-                "locale": "text",
-                "degreeName": "text",
+                "degreeNameId": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
+                "degreeName": "$ANY_TEXT$",
             }
         },
         "organisations": {"organisation": fedora_organisation_spec},
-        "oldDivaDb": "text",
-        "oldDivaId": "text",
-        "domain": "text",
-        "active": "text",
+        "oldDivaDb": "$ANY_TEXT$",
+        "oldDivaId": "$ANY_TEXT$",
+        "domain": "$ANY_TEXT$",
+        "active": "$ANY_TEXT$",
     },
-    "note": "text",
-    "internalNote": "text",
+    "note": "$ANY_TEXT$",
+    "internalNote": "$ANY_TEXT$",
     "organisations": {"organisation": fedora_organisation_spec},
-    "articleId": "text",
-    "artisticWork": "text",
-    "oai": "text",
-    "patentDate": "text",
-    "patentNumber": "text",
-    "patentOrganisation": "text",
+    "articleId": "$ANY_TEXT$",
+    "artisticWork": "$ANY_TEXT$",
+    "oai": "$ANY_TEXT$",
+    "patentDate": "$ANY_TEXT$",
+    "patentNumber": "$ANY_TEXT$",
+    "patentOrganisation": "$ANY_TEXT$",
     "patentCountry": fedora_country_spec,
     "examiners": {
         "person": fedora_person_spec,
@@ -558,13 +558,13 @@ fedora_publication_xml_spec: XMLSpec = {
             **fedora_person_spec,
             "roles": {
                 "role": {
-                    "roleId": "text",
-                    "marcCode": "text",
+                    "roleId": "$ANY_TEXT$",
+                    "marcCode": "$ANY_TEXT$",
                     "roleNames": {
                         "roleName": {
-                            "roleNameId": "text",
-                            "locale": "text",
-                            "roleName": "text",
+                            "roleNameId": "$ANY_TEXT$",
+                            "locale": "$ANY_TEXT$",
+                            "roleName": "$ANY_TEXT$",
                         }
                     },
                 }
@@ -572,82 +572,87 @@ fedora_publication_xml_spec: XMLSpec = {
         }
     },
     "editors": {"person": fedora_person_spec},
-    "bookTitle": {"title": "text", "subTitle": "text"},
-    "bookEditor": "text",
-    "proceedingsTitle": {"title": "text", "subTitle": "text"},
-    "proceedingsEditor": "text",
+    "bookTitle": {"title": "$ANY_TEXT$", "subTitle": "$ANY_TEXT$"},
+    "bookEditor": "$ANY_TEXT$",
+    "proceedingsTitle": {
+        "title": "$ANY_TEXT$",
+        "subTitle": "$ANY_TEXT$",
+        # Proceedings title language is sometimes present in source data from imports, but is not used by Classic or Cora
+        "language": "$IGNORE$",
+    },
+    "proceedingsEditor": "$ANY_TEXT$",
     "funderInfos": {
         "funderInfo": {
             "funder": fedora_funder_spec,
-            "projectNumber": "text",
+            "projectNumber": "$ANY_TEXT$",
         }
     },
     "geoData": {
-        "description": "text",
-        "westBoundLongitude": "text",
-        "eastBoundLongitude": "text",
-        "northBoundLatitude": "text",
-        "southBoundLatitude": "text",
-        "startDate": "text",
-        "endDate": "text",
+        "description": "$ANY_TEXT$",
+        "westBoundLongitude": "$ANY_TEXT$",
+        "eastBoundLongitude": "$ANY_TEXT$",
+        "northBoundLatitude": "$ANY_TEXT$",
+        "southBoundLatitude": "$ANY_TEXT$",
+        "startDate": "$ANY_TEXT$",
+        "endDate": "$ANY_TEXT$",
     },
     "externalCooperation": {
-        "external": "text",
+        "external": "$ANY_TEXT$",
         "partners": {
             "partner": {
-                "name": "text",
+                "name": "$ANY_TEXT$",
             }
         },
     },
     "academicTerm": {
-        "year": "text",
-        "term": "text",
+        "year": "$ANY_TEXT$",
+        "term": "$ANY_TEXT$",
     },
     "subtype": {
-        "publicationSubtypeId": "text",
-        "publicationSubtypeCode": "text",
+        "publicationSubtypeId": "$ANY_TEXT$",
+        "publicationSubtypeCode": "$ANY_TEXT$",
         "publicationSubtypeNames": {
             "publicationSubtypeName": {
-                "publicationSubtypeNameId": "text",
-                "locale": "text",
-                "publicationSubtypeName": "text",
+                "publicationSubtypeNameId": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
+                "publicationSubtypeName": "$ANY_TEXT$",
             }
         },
     },
-    "reviewed": "text",
-    "reviewedBefore": "text",
-    "failed": "text",
-    "hidden": "text",
-    "migrated": "text",
-    "version": "text",
-    "agreementAccepted": "text",
-    "importDuplicate": "text",
-    "registratedDuplicate": "text",
+    "reviewed": "$ANY_TEXT$",
+    "reviewedBefore": "$ANY_TEXT$",
+    "failed": "$ANY_TEXT$",
+    "hidden": "$ANY_TEXT$",
+    "migrated": "$ANY_TEXT$",
+    "version": "$ANY_TEXT$",
+    "agreementAccepted": "$ANY_TEXT$",
+    "importDuplicate": "$ANY_TEXT$",
+    "registratedDuplicate": "$ANY_TEXT$",
     "publicationStatus": {
-        "publicationStatusId": "text",
+        "publicationStatusId": "$ANY_TEXT$",
         "publicationStatusNames": {
             "publicationStatusName": {
-                "publicationStatusNameId": "text",
-                "locale": "text",
-                "publicationStatusName": "text",
+                "publicationStatusNameId": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
+                "publicationStatusName": "$ANY_TEXT$",
             }
         },
-        "code": "text",
+        "code": "$ANY_TEXT$",
     },
-    "formatElectronic": "text",
-    "formatPrint": "text",
+    "formatElectronic": "$ANY_TEXT$",
+    "formatPrint": "$ANY_TEXT$",
     "responsibleOrganisations": {"organisation": fedora_organisation_spec},
-    "canOrderOnline": "text",
+    "canOrderOnline": "$ANY_TEXT$",
     "publicationOrder": {
-        "orderProfileId": "text",
-        "orderURL": "text",
-        "orderLink": "text",
-        "validFrom": "text",
+        "orderProfileId": "$ANY_TEXT$",
+        "orderURL": "$ANY_TEXT$",
+        "orderLink": "$ANY_TEXT$",
+        "validFrom": "$ANY_TEXT$",
         "parameters": {
             "parameterEditor": {
-                "paramKey": "text",
-                "paramLabel": "text",
-                "paramValue": "text",
+                "paramKey": "$ANY_TEXT$",
+                "paramLabel": "$ANY_TEXT$",
+                "paramValue": "$ANY_TEXT$",
             }
         },
     },
@@ -659,56 +664,68 @@ fedora_publication_xml_spec: XMLSpec = {
         "types": {"entry": fedora_entry_spec},
         "materials": {"entry": fedora_entry_spec},
         "techniques": {"entry": fedora_entry_spec},
-        "size": "text",
-        "duration": "text",
+        "size": "$ANY_TEXT$",
+        "duration": "$ANY_TEXT$",
     },
-    "publicationChannel": "text",
+    "publicationChannel": "$ANY_TEXT$",
     "studentDegrees": {
         "studentDegree": fedora_student_degree_spec,
     },
-    "uppsokSubject": "ignore",
+    "uppsokSubject": "$IGNORE$",
     "journal": fedora_journal_spec,
     "uncontrolledJournal": {
-        "printedIssn": "text",
-        "electronicIssn": "text",
-        "journalNameUncontrolled": "text",
-        "controlled": "text",
-        "openAccess": "text",
-        "subjects": "ignore",
-        "relationships": "ignore",
+        "printedIssn": "$ANY_TEXT$",
+        "electronicIssn": "$ANY_TEXT$",
+        "journalNameUncontrolled": "$ANY_TEXT$",
+        "controlled": "$ANY_TEXT$",
+        "openAccess": "$ANY_TEXT$",
+        "subjects": "$IGNORE$",
+        "relationships": "$IGNORE$",
     },
     "sustainableDevelopments": {
         "sustainableDevelopment": {
-            "developmentId": "text",
-            "domain": "text",
+            "developmentId": "$ANY_TEXT$",
+            "domain": "$ANY_TEXT$",
             "name": {
-                "name": "text",
-                "locale": "text",
+                "name": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
             },
             "alternativeNames": {
                 "sustainableDevelopmentName": {
-                    "developmentNameId": "text",
+                    "developmentNameId": "$ANY_TEXT$",
                     "name": {
-                        "name": "text",
-                        "locale": "text",
+                        "name": "$ANY_TEXT$",
+                        "locale": "$ANY_TEXT$",
                     },
                 }
             },
         },
     },
     "mediaType": {
-        "autoId": "text",
-        "code": "text",
+        "autoId": "$ANY_TEXT$",
+        "code": "$ANY_TEXT$",
         "names": {
             "mediaTypeName": {
-                "autoId": "text",
-                "locale": "text",
-                "name": "text",
+                "autoId": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
+                "name": "$ANY_TEXT$",
             }
         },
     },
-    "attachments": {"no-comparator": "text", "attachment": fedora_attachment_spec},
+    "attachments": {
+        "no-comparator": "$ANY_TEXT$",
+        "attachment": fedora_attachment_spec,
+    },
+    # Some records have a cooperation element instead of externalCooperation.
+    # If we ever find one with actual data in it, we should add it to the spec and handle it in the transformation.
+    "cooperation": {
+        "external": "false",
+        "partner": "$EMPTY$",
+    },
+    # This is an alternatetive location for subtype/publicationSubtypeCode
+    "publicationSubtype": "$ANY_TEXT$",
 }
+
 # Circular references for publication
 fedora_publication_xml_spec["hostPublications"] = {
     "hostPublication": fedora_publication_xml_spec,
@@ -719,19 +736,19 @@ fedora_publication_xml_spec["partsOfPublication"] = {
 fedora_publication_xml_spec["relations"] = {
     "publicationRelation": {
         "relation": {
-            "relationId": "text",
-            "code": "text",
-            "relationName": "text",
+            "relationId": "$ANY_TEXT$",
+            "code": "$ANY_TEXT$",
+            "relationName": "$ANY_TEXT$",
             "alternativeNames": {
                 "relationAlternativeName": {
-                    "relationNameId": "text",
-                    "locale": "text",
-                    "relationName": "text",
-                    "helpMessage": "text",
+                    "relationNameId": "$ANY_TEXT$",
+                    "locale": "$ANY_TEXT$",
+                    "relationName": "$ANY_TEXT$",
+                    "helpMessage": "$ANY_TEXT$",
                 }
             },
         },
-        "relatedPid": "text",
+        "relatedPid": "$ANY_TEXT$",
         "relatedPublication": fedora_publication_xml_spec,
     }
 }

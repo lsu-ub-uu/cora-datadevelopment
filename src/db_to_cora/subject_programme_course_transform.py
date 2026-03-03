@@ -6,14 +6,14 @@ from common.xml_validate import XMLSpec, validate_xml
 
 
 allowed_children: XMLSpec = {
-    "domain": "text",
-    "old_id": "text",
-    "end_date": "text",
-    "name_swe": "text",
-    "name_eng": "text",
-    "broader_id": "text",
-    "parent_subject_id": "text",
-    "earlier_id": "text",
+    "domain": "$ANY_TEXT$",
+    "old_id": "$ANY_TEXT$",
+    "end_date": "$ANY_TEXT$",
+    "name_swe": "$ANY_TEXT$",
+    "name_eng": "$ANY_TEXT$",
+    "broader_id": "$ANY_TEXT$",
+    "parent_subject_id": "$ANY_TEXT$",
+    "earlier_id": "$ANY_TEXT$",
 }
 
 

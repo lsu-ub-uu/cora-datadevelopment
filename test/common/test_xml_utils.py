@@ -1,5 +1,11 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import append_if_value, transform_text_element
+from common.xml_utils import (
+    append_if_value,
+    create_group,
+    transform_text_element,
+    create_text,
+)
+from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
 def test_append_if_value_appends_element_with_child_node():
@@ -92,3 +98,139 @@ def test_transform_text_element_with_no_text():
 def test_transform_text_element_with_none_element():
     result = transform_text_element(None, "any")
     assert result is None
+
+
+def test_create_text_with_text():
+    result = create_text("greeting", "Hello World")
+    assert result is not None
+    assert result.tag == "greeting"
+    assert result.text == "Hello World"
+    assert_equal_for_xml_and_xml_string(result, "<greeting>Hello World</greeting>")
+
+
+def test_create_text_removes_newline_and_trims():
+    result = create_text("greeting", "  Hello\nWorld  ")
+    assert result is not None
+    assert result.tag == "greeting"
+    assert result.text == "Hello World"
+    assert_equal_for_xml_and_xml_string(result, "<greeting>Hello World</greeting>")
+
+
+def test_create_text_preserve_newlines():
+    result = create_text("greeting", "  Hello\nWorld  ", preserve_newlines=True)
+    assert result is not None
+    assert result.tag == "greeting"
+    assert result.text == "Hello\nWorld"
+    assert_equal_for_xml_and_xml_string(result, "<greeting>Hello\nWorld</greeting>")
+
+
+def test_create_text_with_text_and_attributes():
+    result = create_text("greeting", "Hello World", lang="en", type="formal")
+    assert result is not None
+    assert result.tag == "greeting"
+    assert result.text == "Hello World"
+    assert result.attrib == {"lang": "en", "type": "formal"}
+    assert_equal_for_xml_and_xml_string(
+        result, '<greeting lang="en" type="formal">Hello World</greeting>'
+    )
+
+
+def test_create_text_returns_none_when_text_is_none():
+    result = create_text("greeting", None)
+    assert result is None
+
+
+def test_create_text_returns_none_when_text_is_empty():
+    result = create_text("greeting", "")
+    assert result is None
+
+
+def test_create_group_element_without_elements():
+    result = create_group("group", [])
+    assert result is None
+
+
+def test_create_group_with_elements():
+    result = create_group(
+        "group",
+        [
+            create_text("child1", "Value 1"),
+            create_text("child2", "Value 2"),
+        ],
+    )
+    assert_equal_for_xml_and_xml_string(
+        result, "<group ><child1>Value 1</child1><child2>Value 2</child2></group>"
+    )
+
+
+def test_create_group_with_none():
+    result = create_group(
+        "group",
+        [None],
+    )
+    assert result is None
+
+
+def test_create_group_with_mixed_value_and_none_elements():
+    result = create_group(
+        "group",
+        [
+            create_text("child1", "Value 1"),
+            None,
+        ],
+    )
+    assert_equal_for_xml_and_xml_string(
+        result, "<group ><child1>Value 1</child1></group>"
+    )
+
+
+def test_create_group_with_elements_and_attributes():
+    result = create_group(
+        "group",
+        [
+            create_text("child1", "Value 1"),
+            create_group(
+                "childGroup",
+                [create_text("subChild", "SubValue")],
+                lang="en",
+            ),
+            create_text("child2", "Value 2"),
+        ],
+        lang="en",
+        type="example",
+    )
+    assert_equal_for_xml_and_xml_string(
+        result,
+        """
+        <group lang='en' type='example'>
+            <child1>Value 1</child1>
+            <childGroup lang='en'>
+                <subChild>SubValue</subChild>
+            </childGroup>
+            <child2>Value 2</child2>
+        </group>
+        """,
+    )
+
+
+def test_create_group_flattens_list_children():
+    result = create_group(
+        "group",
+        [
+            create_text("child1", "Value 1"),
+            [
+                create_text("child2", "Value 2"),
+                create_text("child3", "Value 3"),
+            ],
+        ],
+    )
+    assert_equal_for_xml_and_xml_string(
+        result,
+        """
+        <group >
+            <child1>Value 1</child1>
+            <child2>Value 2</child2>
+            <child3>Value 3</child3>
+        </group>
+        """,
+    )
