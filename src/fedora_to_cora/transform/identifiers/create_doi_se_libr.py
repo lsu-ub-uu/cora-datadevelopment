@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 
+from common.xml_utils import create_text
+
 
 def create_identifier_doi(source_record):
     entries = source_record.findall("./identifiers/entry")
@@ -44,12 +46,8 @@ def create_identifier_se_libr(source_record: ET.Element):
 
 def _create_identifier(
     value: str, id_type: str, repeat_id: str | None = None
-) -> ET.Element:
-    identifier = ET.Element("identifier", type=id_type)
-    if repeat_id is not None:
-        identifier.set("repeatId", repeat_id)
-    identifier.text = value
-    return identifier
+) -> ET.Element | None:
+    return create_text("identifier", value, type=id_type, repeatId=repeat_id)
 
 
 def _is_entry_of_type(entry: ET.Element, id_type: str) -> bool:

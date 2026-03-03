@@ -1,22 +1,21 @@
 from xml.etree import ElementTree as ET
 
+from common.xml_utils import create_group, create_text
 
-def create_date(date_source: str | None, tag_name: str, **attribs) -> ET.Element | None:
+
+def create_date(
+    date_source: str | None, tag_name: str, **attribs: str | None
+) -> ET.Element | None:
     if (date_source is None) or (date_source.strip() == ""):
         return None
-
-    date_element = ET.Element(tag_name, attrib=attribs)
-
     date_part = date_source.split("T")[0]
     year, month, day = date_part.split("-")
-
-    year_element = ET.SubElement(date_element, "year")
-    year_element.text = year
-
-    month_element = ET.SubElement(date_element, "month")
-    month_element.text = month
-
-    day_element = ET.SubElement(date_element, "day")
-    day_element.text = day
-
-    return date_element
+    return create_group(
+        tag_name,
+        [
+            create_text("year", year),
+            create_text("month", month),
+            create_text("day", day),
+        ],
+        **attribs,
+    )

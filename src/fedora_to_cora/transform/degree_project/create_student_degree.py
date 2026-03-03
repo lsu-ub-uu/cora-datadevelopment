@@ -2,11 +2,12 @@ import xml.etree.ElementTree as ET
 from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from common.common_data import create_record_link_using_name_type_id
+from common.xml_utils import create_group, create_text
 
 
 def create_student_degrees(
     source_record: ET.Element, context: Context
-) -> list[ET.Element]:
+) -> list[ET.Element | None]:
     """
     Create a student degree element from the source record.
     """
@@ -19,19 +20,28 @@ def create_student_degrees(
 
 def _create_student_degree(
     source_student_degree: ET.Element, repeat_id: int, context: Context
-) -> ET.Element:
-    student_degree = ET.Element("studentDegree", repeatId=str(repeat_id))
+):
+    return create_group(
+        "studentDegree",
+        children=[
+            create_text(
+                "degreeLevel",
+                source_student_degree.findtext("./thesisLevel/thesisLevelCode"),
+            ),
+            create_text(
+                "universityPoints",
+                source_student_degree.findtext("./universityPoints/hp"),
+            ),
+            _create_course(source_student_degree, context),
+            _create_programme(source_student_degree, context),
+        ],
+        repeatId=str(repeat_id),
+    )
 
-    thesis_level = source_student_degree.findtext("./thesisLevel/thesisLevelCode")
-    if thesis_level:
-        degree_level = ET.SubElement(student_degree, "degreeLevel")
-        degree_level.text = thesis_level
 
-    university_points = source_student_degree.findtext("./universityPoints/hp")
-    if university_points:
-        points = ET.SubElement(student_degree, "universityPoints")
-        points.text = university_points
-
+def _create_course(
+    source_student_degree: ET.Element, context: Context
+) -> ET.Element | None:
     course_old_id = source_student_degree.findtext("./undergraduateSubject/subjectId")
     if course_old_id:
         cora_id = get_cora_id_by_old_id(
@@ -39,14 +49,16 @@ def _create_student_degree(
             old_id=course_old_id,
             record_type="diva-course",
         )
-        student_degree.append(
-            create_record_link_using_name_type_id(
-                "course",
-                "diva-course",
-                cora_id,
-            )
+        return create_record_link_using_name_type_id(
+            "course",
+            "diva-course",
+            cora_id,
         )
 
+
+def _create_programme(
+    source_student_degree: ET.Element, context: Context
+) -> ET.Element | None:
     programme_old_id = source_student_degree.findtext(
         "./educationalProgramme/subjectId"
     )
@@ -56,12 +68,8 @@ def _create_student_degree(
             old_id=programme_old_id,
             record_type="diva-programme",
         )
-        student_degree.append(
-            create_record_link_using_name_type_id(
-                "programme",
-                "diva-programme",
-                cora_id,
-            )
+        return create_record_link_using_name_type_id(
+            "programme",
+            "diva-programme",
+            cora_id,
         )
-
-    return student_degree

@@ -1,20 +1,22 @@
 import xml.etree.ElementTree as ET
 
+from common.xml_utils import create_text
+
 
 def create_identifier_type_isbn(source_record: ET.Element) -> list[ET.Element]:
     isbn_elements = source_record.findall("./isbnNumbers/isbn")
     identifiers = []
     for i, isbn in enumerate(isbn_elements):
-        number = isbn.find("number")
-        display_label = isbn.find("type")
-        identifier = ET.Element(
-            "identifier",
-            type="isbn",
-            displayLabel=_get_display_label(display_label),
-            repeatId=str(i),
+        identifiers.append(
+            create_text(
+                "identifier",
+                isbn.findtext("number"),
+                type="isbn",
+                displayLabel=_get_display_label(isbn.find("type")),
+                repeatId=str(i),
+            )
         )
-        identifier.text = number.text if number is not None else None
-        identifiers.append(identifier)
+
     return identifiers
 
 

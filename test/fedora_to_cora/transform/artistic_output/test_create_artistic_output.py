@@ -143,7 +143,7 @@ def test_create_types_without_language():
     assert_equal_for_xml_and_xml_string(
         types[0],
         """
-        <type lang="" repeatId="0">
+        <type repeatId="0">
             Typ01
         </type>
         """,
@@ -351,12 +351,7 @@ def test_create_size_empty_media_information():
 
     size = create_size(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        size,
-        """
-        <size></size>
-        """,
-    )
+    assert size is None
 
 
 def test_create_size_missing_media_information():
@@ -369,12 +364,7 @@ def test_create_size_missing_media_information():
 
     size = create_size(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        size,
-        """
-        <size></size>
-        """,
-    )
+    assert size is None
 
 
 def test_create_duration():
@@ -414,12 +404,7 @@ def test_create_duration_empty_media_information():
 
     duration = create_duration(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        duration,
-        """
-        <duration></duration>
-        """,
-    )
+    assert duration is None
 
 
 def test_create_duration_missing_media_information():
@@ -432,12 +417,7 @@ def test_create_duration_missing_media_information():
 
     duration = create_duration(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        duration,
-        """
-        <duration></duration>
-        """,
-    )
+    assert duration is None
 
 
 def test_create_note_type_context():

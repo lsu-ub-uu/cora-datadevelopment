@@ -1,15 +1,18 @@
 import xml.etree.ElementTree as ET
 
+from common.xml_utils import create_group, create_text
+
 
 def create_patent_holder(source_record: ET.Element) -> ET.Element | None:
     patent_organisation = source_record.findtext("patentOrganisation")
-    if patent_organisation is None or len(patent_organisation) == 0:
+    if patent_organisation is None or patent_organisation.strip() == "":
         return None
-
-    patent_holder = ET.Element("name", type="corporate", otherType="patentHolder")
-    ET.SubElement(patent_holder, "namePart").text = patent_organisation
-
-    role = ET.SubElement(patent_holder, "role")
-    ET.SubElement(role, "roleTerm").text = "pth"
-
-    return patent_holder
+    return create_group(
+        "name",
+        type="corporate",
+        otherType="patentHolder",
+        children=[
+            create_text("namePart", patent_organisation),
+            create_group("role", [create_text("roleTerm", "pth")]),
+        ],
+    )

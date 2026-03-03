@@ -145,6 +145,14 @@ def test_create_text_returns_none_when_text_is_empty():
     assert result is None
 
 
+def test_create_text_does_not_set_empty_attributes():
+    result = create_text("greeting", "Hello World", lang="", foo=None, type="formal")
+
+    assert_equal_for_xml_and_xml_string(
+        result, '<greeting type="formal">Hello World</greeting>'
+    )
+
+
 def test_create_group_element_without_elements():
     result = create_group("group", [])
     assert result is None
@@ -233,4 +241,21 @@ def test_create_group_flattens_list_children():
             <child3>Value 3</child3>
         </group>
         """,
+    )
+
+
+def test_create_group_does_not_set_empty_attributes():
+    result = create_group(
+        "group",
+        [
+            create_text("child1", "Value 1"),
+            create_text("child2", "Value 2"),
+        ],
+        lang="",
+        foo=None,
+        type="formal",
+    )
+    assert_equal_for_xml_and_xml_string(
+        result,
+        '<group type="formal"><child1>Value 1</child1><child2>Value 2</child2></group>',
     )

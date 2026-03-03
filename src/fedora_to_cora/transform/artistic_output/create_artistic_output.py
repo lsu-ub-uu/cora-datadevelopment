@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 
+from common.xml_utils import create_group, create_text
 from fedora_to_cora.clean_rich_text import clean_rich_text
 
 
@@ -43,40 +44,49 @@ def _create_tags(
         language_code = entry.findtext("./language/languageCode3")
         strings = entry.findall("./list/string")
         for string in strings:
-            new_tag = ET.Element(
-                new_tag_name, lang=language_code if language_code else ""
+            new_tag = create_text(
+                new_tag_name,
+                string.text,
+                repeatId=str(repeat_id),
+                lang=language_code if language_code else "",
             )
-            if string is not None and string.text:
-                new_tag.text = string.text
-                new_tag.set("repeatId", str(repeat_id))
+            if new_tag is not None:
                 tags.append(new_tag)
                 repeat_id += 1
 
     return tags
 
 
-def create_size(source_record: ET.Element) -> ET.Element:
-    size = source_record.find("./mediaInformation/size")
-    return size if size is not None else ET.Element("size")
+def create_size(source_record: ET.Element) -> ET.Element | None:
+    return create_text(
+        "size",
+        source_record.findtext("./mediaInformation/size"),
+    )
 
 
-def create_duration(source_record: ET.Element) -> ET.Element:
+def create_duration(source_record: ET.Element) -> ET.Element | None:
     duration_source = source_record.find("./mediaInformation/duration")
-    duration = ET.Element("duration")
+    if duration_source is None or not duration_source.text:
+        return None
 
-    if duration_source is not None and duration_source.text:
-        hh, mm, ss = duration_source.text.split(":")
-
-        hh_element = ET.SubElement(duration, "hh")
-        hh_element.text = hh
-
-        mm_element = ET.SubElement(duration, "mm")
-        mm_element.text = mm
-
-        ss_element = ET.SubElement(duration, "ss")
-        ss_element.text = ss
-
-    return duration
+    hh, mm, ss = duration_source.text.split(":")
+    return create_group(
+        "duration",
+        [
+            create_text(
+                "hh",
+                hh,
+            ),
+            create_text(
+                "mm",
+                mm,
+            ),
+            create_text(
+                "ss",
+                ss,
+            ),
+        ],
+    )
 
 
 def create_note_type_context(source_record: ET.Element) -> list[ET.Element]:
@@ -103,9 +113,9 @@ def _create_note_from_abstract(
     if abstract_text is None or len(abstract_text) == 0:
         return None
 
-    note = ET.Element(
-        "note", type="context", lang=language_code if language_code else ""
+    return create_text(
+        "note",
+        clean_rich_text(abstract_text),
+        type="context",
+        lang=language_code,
     )
-    note.text = clean_rich_text(abstract_text)
-
-    return note

@@ -1,13 +1,13 @@
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, create_group, create_text
 from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 
 
 def create_related_item_type_funder(
     source_record: ET.Element, context: Context
-) -> list[ET.Element]:
+) -> list[ET.Element | None]:
     funder_infos = source_record.findall("./funderInfos/funderInfo")
     if funder_infos is None:
         return []
@@ -20,19 +20,15 @@ def create_related_item_type_funder(
 
 
 def _create_funder_related_item(funder_info: ET.Element, context: Context, index: int):
-    related_item = ET.Element("relatedItem", type="funder", repeatId=str(index))
-
-    append_if_value(
-        related_item,
-        _create_funder_link(funder_info, context),
+    return create_group(
+        "relatedItem",
+        type="funder",
+        repeatId=str(index),
+        children=[
+            _create_funder_link(funder_info, context),
+            _create_project_identifier(funder_info),
+        ],
     )
-
-    append_if_value(
-        related_item,
-        _create_project_identifier(funder_info),
-    )
-
-    return related_item
 
 
 def _create_funder_link(funder_info: ET.Element, context: Context) -> ET.Element | None:
@@ -53,10 +49,6 @@ def _create_funder_link(funder_info: ET.Element, context: Context) -> ET.Element
 
 
 def _create_project_identifier(funder_info: ET.Element) -> ET.Element | None:
-    project_number = funder_info.findtext("./projectNumber")
-    if project_number is None:
-        return None
-
-    identifier = ET.Element("identifier", type="project")
-    identifier.text = project_number
-    return identifier
+    return create_text(
+        "identifier", type="project", text=funder_info.findtext("./projectNumber")
+    )

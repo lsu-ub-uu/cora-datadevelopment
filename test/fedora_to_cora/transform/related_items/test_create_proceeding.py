@@ -7,7 +7,7 @@ from fedora_to_cora.transform.related_items.create_proceeding import (
 from unittest.mock import MagicMock
 
 
-def test_html_title():
+def test_title_only():
     source_record = ET.fromstring(
         """
         <publication>

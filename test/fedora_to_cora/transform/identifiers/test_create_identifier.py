@@ -56,12 +56,7 @@ def test_create_identifier_with_empty_tag():
         source_record, source_selector="./archiveNumber", type="archiveNumber"
     )
 
-    assert_equal_for_xml_and_xml_string(
-        identifier[0],
-        """
-        <identifier type="archiveNumber" />
-        """,
-    )
+    assert identifier[0] is None
 
 
 def test_create_identifier_for_local_id():

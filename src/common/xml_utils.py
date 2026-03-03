@@ -100,19 +100,14 @@ def transform_text_element(
 
 def create_text(
     tag_name: str,
-    text_value: str | None,
+    text: str | None,
     preserve_newlines: bool = False,
-    **attributes: str,
+    **attributes: str | None,
 ) -> ET.Element | None:
-    if text_value is None or text_value.strip() == "":
+    if text is None or text.strip() == "":
         return None
-
-    element = ET.Element(tag_name, attributes)
-    text = (
-        text_value.strip()
-        if preserve_newlines
-        else text_value.replace("\n", " ").strip()
-    )
+    element = ET.Element(tag_name, _clean_attributes(attributes))
+    text = text.strip() if preserve_newlines else text.replace("\n", " ").strip()
     element.text = text
     return element
 
@@ -120,7 +115,7 @@ def create_text(
 def create_group(
     tag_name: str,
     children: Sequence[ET.Element | Sequence[ET.Element | None] | None],
-    **attributes: str,
+    **attributes: str | None,
 ) -> ET.Element | None:
     flattened_children = []
     for child in children:
@@ -137,7 +132,15 @@ def create_group(
     if not valid_children:
         return None
 
-    element = ET.Element(tag_name, attributes)
+    element = ET.Element(tag_name, _clean_attributes(attributes))
     for child in valid_children:
         element.append(child)
     return element
+
+
+def _clean_attributes(attributes: dict[str, str | None]) -> dict[str, str]:
+    return {
+        key: value
+        for key, value in attributes.items()
+        if value is not None and value.strip() != ""
+    }

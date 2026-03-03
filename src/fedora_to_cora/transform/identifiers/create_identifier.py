@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 
+from common.xml_utils import create_text
+
 
 def create_identifier(
     source_record: ET.Element,
@@ -16,17 +18,13 @@ def create_identifier(
     identifiers = []
 
     for i, source_text in enumerate(source_texts):
-        if type == "localId":
-            identifier = ET.Element("identifier", type=type, repeatId=str(i))
-        else:
-            if len(source_texts) > 1:
-                identifier = ET.Element("identifier", type=type, repeatId=str(i))
-            else:
-                identifier = ET.Element("identifier", type=type)
-
-        if source_text is not None and source_text.text:
-            identifier.text = source_text.text
-
-        identifiers.append(identifier)
+        identifiers.append(
+            create_text(
+                "identifier",
+                source_text.text,
+                type=type,
+                repeatId=str(i) if type == "localId" or len(source_texts) > 1 else None,
+            )
+        )
 
     return identifiers

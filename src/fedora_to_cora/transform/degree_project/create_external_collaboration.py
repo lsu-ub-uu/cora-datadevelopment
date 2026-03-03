@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 
+from common.xml_utils import create_group, create_text, create_text
+
 
 def create_external_collaboration(source_record: ET.Element) -> ET.Element | None:
     """
@@ -24,18 +26,18 @@ def create_external_collaboration(source_record: ET.Element) -> ET.Element | Non
 
 def _create_external_collaboration_from_partners(
     partners: list[ET.Element],
-) -> ET.Element:
-    external_collaboration = ET.Element("externalCollaboration")
+):
+    return create_group(
+        "externalCollaboration",
+        children=[
+            create_text("namePart", partner.text, repeatId=str(i))
+            for i, partner in enumerate(partners)
+        ],
+    )
 
-    for i, partner in enumerate(partners):
-        name_part = ET.SubElement(external_collaboration, "namePart", repeatId=str(i))
-        name_part.text = partner.text
 
-    return external_collaboration
-
-
-def _create_external_collaboration_default() -> ET.Element:
-    external_collaboration = ET.Element("externalCollaboration")
-    name_part = ET.SubElement(external_collaboration, "namePart", repeatId="0")
-    name_part.text = "Externt samarbete"
-    return external_collaboration
+def _create_external_collaboration_default() -> ET.Element | None:
+    return create_group(
+        "externalCollaboration",
+        [create_text("namePart", "Externt samarbete", repeatId="0")],
+    )

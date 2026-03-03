@@ -51,13 +51,11 @@ def _create_title_info(source_record: ET.Element) -> ET.Element | None:
 
 
 def _create_statement_of_responsibility(source_record: ET.Element) -> ET.Element | None:
-    editor = source_record.findtext("./bookEditor")
-    if editor is None:
-        return None
-
-    note = ET.Element("note", type="statementOfResponsibility")
-    note.text = editor
-    return note
+    return create_text(
+        "note",
+        clean_rich_text(source_record.findtext("./bookEditor")),
+        type="statementOfResponsibility",
+    )
 
 
 def _create_part(source_record: ET.Element) -> ET.Element | None:
