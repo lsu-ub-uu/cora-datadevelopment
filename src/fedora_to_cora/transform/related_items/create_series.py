@@ -3,7 +3,7 @@ from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from common.common_data import create_record_link_using_name_type_id
 from fedora_to_cora.transform.identifiers.create_identifier import create_identifier
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, create_group, create_text
 
 
 def create_related_item_type_series(
@@ -19,12 +19,12 @@ def create_related_item_type_series(
     )
     uncontrolled_items = _create_related_items_from_uncontrolled_series(source_record)
 
-    return controlled_items + uncontrolled_items
+    return [item for item in controlled_items + uncontrolled_items if item is not None]
 
 
 def _create_related_items_from_controlled_series(
     source_record: ET.Element, context: Context
-) -> list[ET.Element]:
+) -> list[ET.Element | None]:
     controlled_series_infos = source_record.findall("./seriesInfos/seriesInfo")
     return [
         _create_controlled_series(series_info, f"controlled{i}", context)
@@ -35,7 +35,7 @@ def _create_related_items_from_controlled_series(
 
 def _create_controlled_series(
     series_info: ET.Element, repeat_id: str, context: Context
-) -> ET.Element:
+) -> ET.Element | None:
     """
     Create a relatedItem element of type series with a controlled series link.
     """
@@ -46,28 +46,34 @@ def _create_controlled_series(
         series_id, record_type="diva-series", context=context
     )
 
-    related_item = ET.Element(
-        "relatedItem", type="series", otherType="link", repeatId=repeat_id
+    # related_item = ET.Element(
+    #     "relatedItem", type="series", otherType="link", repeatId=repeat_id
+    # )
+    return create_group(
+        "relatedItem",
+        [
+            create_record_link_using_name_type_id(
+                name_in_data="series",
+                record_type="diva-series",
+                record_id=series_cora_id,
+            ),
+            create_text("partNumber", series_info.findtext("numberInSeries")),
+        ],
+        type="series",
+        otherType="link",
+        repeatId=repeat_id,
     )
 
-    related_item.append(
-        create_record_link_using_name_type_id(
-            name_in_data="series",
-            record_type="diva-series",
-            record_id=series_cora_id,
-        )
-    )
+    # number_in_series = series_info.findtext("numberInSeries")
+    # if number_in_series is not None:
+    #     ET.SubElement(related_item, "partNumber").text = number_in_series
 
-    number_in_series = series_info.findtext("numberInSeries")
-    if number_in_series is not None:
-        ET.SubElement(related_item, "partNumber").text = number_in_series
-
-    return related_item
+    # return related_item
 
 
 def _create_related_items_from_uncontrolled_series(
     source_record: ET.Element,
-) -> list[ET.Element]:
+) -> list[ET.Element | None]:
     uncontrolled_series_infos = source_record.findall("./uncontrolledSeriesInfo")
     return [
         _create_uncontrolled_series(series_xml, f"uncontrolled{i}")
@@ -75,46 +81,43 @@ def _create_related_items_from_uncontrolled_series(
     ]
 
 
-def _create_uncontrolled_series(series_xml: ET.Element, repeat_id: str) -> ET.Element:
+def _create_uncontrolled_series(
+    series_xml: ET.Element, repeat_id: str
+) -> ET.Element | None:
     """
     Create a relatedItem element of type series with an uncontrolled series link.
     """
-    related_item = ET.Element(
-        "relatedItem", type="series", otherType="text", repeatId=repeat_id
+    return create_group(
+        "relatedItem",
+        [
+            _create_title_info(series_xml.findtext("./series/seriesNameUncontrolled")),
+            create_identifier(
+                source_record=series_xml,
+                type="issn",
+                source_selector="./series/issn",
+                displayLabel="pissn",
+            ),
+            create_identifier(
+                source_record=series_xml,
+                type="issn",
+                source_selector="./series/eissn",
+                displayLabel="eissn",
+            ),
+            create_text("partNumber", series_xml.findtext("numberInSeries")),
+        ],
+        type="series",
+        otherType="text",
+        repeatId=repeat_id,
     )
 
-    append_if_value(
-        related_item,
-        _create_title_info(series_xml.findtext("./series/seriesNameUncontrolled")),
+
+def _create_title_info(title: str | None) -> ET.Element | None:
+    return create_group(
+        "titleInfo",
+        children=[
+            create_text(
+                "title",
+                title,
+            )
+        ],
     )
-
-    pissn = create_identifier(
-        source_record=series_xml, type="issn", source_selector="./series/issn"
-    )
-    if len(pissn) > 0:
-        pissn[0].set("displayLabel", "pissn")
-        append_if_value(related_item, pissn)
-
-    eissn = create_identifier(
-        source_record=series_xml, type="issn", source_selector="./series/eissn"
-    )
-    if len(eissn) > 0:
-        eissn[0].set("displayLabel", "eissn")
-        append_if_value(related_item, eissn)
-
-    number_in_series = series_xml.findtext("numberInSeries")
-    if number_in_series is not None:
-        ET.SubElement(related_item, "partNumber").text = number_in_series
-
-    return related_item
-
-
-def _create_title_info(title: str | None) -> ET.Element:
-    """
-    Create a titleInfo element with the given title.
-    """
-    title_info = ET.Element("titleInfo")
-    title_element = ET.SubElement(title_info, "title")
-    title_element.text = title
-
-    return title_info

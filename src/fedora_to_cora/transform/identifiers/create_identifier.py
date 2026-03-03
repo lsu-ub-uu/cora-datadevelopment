@@ -1,13 +1,14 @@
 import xml.etree.ElementTree as ET
-
+from typing import Optional, List
 from common.xml_utils import create_text
 
 
 def create_identifier(
     source_record: ET.Element,
     type: str,
-    source_selector: str | None = None,
-) -> list[ET.Element]:
+    source_selector: Optional[str] = None,
+    **attributes: Optional[str],
+) -> List[ET.Element]:
     """
     Create identifier elements for a given type
     """
@@ -24,6 +25,7 @@ def create_identifier(
                 source_text.text,
                 type=type,
                 repeatId=str(i) if type == "localId" or len(source_texts) > 1 else None,
+                **attributes,
             )
         )
 
