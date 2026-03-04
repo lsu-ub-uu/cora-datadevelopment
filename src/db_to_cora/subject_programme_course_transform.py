@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import create_group
+from common.xml_utils import create_group, create_text
 from common.record_info_create import record_info_create
 from common.common_data import create_end_date
 from common.xml_validate import XMLSpec, validate_xml
@@ -83,20 +83,18 @@ def _create_end_date(source_record: ET.Element) -> ET.Element | None:
 def _create_authority_swe(source_record: ET.Element) -> ET.Element | None:
     name = source_record.findtext(f"./name_swe")
     if name:
-        authority = ET.Element("authority", lang="swe", repeatId="swe")
-        authority.append(_create_topic(name))
-        return authority
+        return create_group(
+            "authority", lang="swe", repeatId="swe", children=[_create_topic(name)]
+        )
 
 
 def _create_authority_eng(source_record: ET.Element) -> ET.Element | None:
     name = source_record.findtext(f"./name_eng")
     if name:
-        variant = ET.Element("authority", lang="eng", repeatId="eng")
-        variant.append(_create_topic(name))
-        return variant
+        return create_group(
+            "authority", lang="eng", repeatId="eng", children=[_create_topic(name)]
+        )
 
 
-def _create_topic(name: str) -> ET.Element:
-    topic = ET.Element("topic")
-    topic.text = name
-    return topic
+def _create_topic(name: str):
+    return create_text("topic", value=name)

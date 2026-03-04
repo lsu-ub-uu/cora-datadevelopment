@@ -14,7 +14,12 @@ from cora.create import create_record, is_success_result
 from cora.update import update_record
 from cora.delete import delete_record
 from fedora_to_cora.transform.attachment_transform import attachment_transform
-from common.xml_utils import append_if_value, pretty_print_xml
+from common.xml_utils import (
+    append_if_value,
+    create_group,
+    create_text,
+    pretty_print_xml,
+)
 
 
 def attachments_migrate(
@@ -139,14 +144,14 @@ def _sort_by_order(attachments: list[ET.Element]) -> list[ET.Element]:
 
 
 def _create_host_record(cora_record_id: str) -> ET.Element:
-    host_record = ET.Element("hostRecord")
-    linked_record_type = "diva-output"
-
-    linked_record_type_element = ET.SubElement(host_record, "linkedRecordType")
-    linked_record_type_element.text = linked_record_type
-
-    linked_record_id_element = ET.SubElement(host_record, "linkedRecordId")
-    linked_record_id_element.text = cora_record_id
+    host_record = create_group(
+        "hostRecord",
+        children=[
+            create_text("linkedRecordType", value="diva-output"),
+            create_text("linkedRecordId", value=cora_record_id),
+        ],
+    )
+    assert host_record is not None
     return host_record
 
 
@@ -155,21 +160,17 @@ def _create_note(source_record: ET.Element) -> ET.Element | None:
         "./administrativeInfo/fileUploadMessage"
     )
     if file_upload_message is not None and file_upload_message.strip() != "":
-        note = ET.Element("note")
-        note.text = file_upload_message
-        return note
+        return create_text("note", file_upload_message)
 
 
 def _create_reviewed(source_record: ET.Element) -> ET.Element | None:
     attachments = source_record.findall("./attachments/attachment")
 
-    reviewed = ET.Element("reviewed")
-    if any(_is_attachment_waiting_for_review(attachment) for attachment in attachments):
-        reviewed.text = "false"
-    else:
-        reviewed.text = "true"
+    is_waiting_for_review = any(
+        _is_attachment_waiting_for_review(attachment) for attachment in attachments
+    )
 
-    return reviewed
+    return create_text("reviewed", "false" if is_waiting_for_review else "true")
 
 
 def _is_attachment_waiting_for_review(attachment: ET.Element) -> bool:

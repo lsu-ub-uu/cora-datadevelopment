@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from common.common_data import create_record_link
 from cora.context import Context
-from common.xml_utils import append_if_value, create_group, create_text
+from common.xml_utils import create_group, create_text
 
 
 def create_origin_info(
@@ -11,8 +11,6 @@ def create_origin_info(
     """
     Create an origin_info element
     """
-    origin_info = ET.Element("originInfo")
-
     origin_info = create_group(
         "originInfo",
         [

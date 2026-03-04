@@ -71,7 +71,4 @@ def _create_uncontrolled_degree_granting_institution(
 
 
 def _create_role():
-    role = ET.Element("role")
-    role_term_element = ET.SubElement(role, "roleTerm")
-    role_term_element.text = "dgg"
-    return role
+    return create_group("role", [create_text("roleTerm", "dgg")])

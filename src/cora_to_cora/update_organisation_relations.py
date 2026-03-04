@@ -1,4 +1,4 @@
-from common.xml_utils import append_if_value
+from common.xml_utils import create_group, append_if_value
 from cora.cora_json_utils import (
     find_child_with_name_in_data,
     find_all_children_with_name_in_data,
@@ -116,12 +116,7 @@ def _create_organisation_link(
     old_id_to_new_id_map: dict[str, str],
     type: str,
     repeat_id: Optional[str] = None,
-) -> ET.Element | None:
-    if repeat_id is not None:
-        related = ET.Element("related", type=type, repeatId=repeat_id)
-    else:
-        related = ET.Element("related", type=type)
-
+):
     old_parent_link = find_child_with_name_in_data(
         old_org_parent_organisation["children"],
         "organisationLink",
@@ -143,7 +138,12 @@ def _create_organisation_link(
             f"Warning: No new ID found for old organisation ID {old_parent_id}. Skipping link creation."
         )
         return None
-    related.append(
-        create_record_link("organisation", "diva-organisation", parent_new_id)
+
+    return create_group(
+        "related",
+        type=type,
+        repeatId=repeat_id,
+        children=[
+            create_record_link("organisation", "diva-organisation", parent_new_id)
+        ],
     )
-    return related

@@ -46,9 +46,6 @@ def _create_controlled_series(
         series_id, record_type="diva-series", context=context
     )
 
-    # related_item = ET.Element(
-    #     "relatedItem", type="series", otherType="link", repeatId=repeat_id
-    # )
     return create_group(
         "relatedItem",
         [
@@ -63,12 +60,6 @@ def _create_controlled_series(
         otherType="link",
         repeatId=repeat_id,
     )
-
-    # number_in_series = series_info.findtext("numberInSeries")
-    # if number_in_series is not None:
-    #     ET.SubElement(related_item, "partNumber").text = number_in_series
-
-    # return related_item
 
 
 def _create_related_items_from_uncontrolled_series(

@@ -1,22 +1,21 @@
 import xml.etree.ElementTree as ET
 
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, create_group, create_text
 from fedora_to_cora.transform.get_validation_type import (
     get_validation_type_from_fedora_record,
 )
 
 
-def create_defence_or_presentation(source_record: ET.Element) -> ET.Element:
+def create_defence_or_presentation(source_record: ET.Element) -> ET.Element | None:
     tag_name = "presentation" if _is_degree_project(source_record) else "defence"
-    defence = ET.Element(tag_name)
-
-    append_if_value(defence, _create_language(source_record))
-
-    append_if_value(defence, _create_duration(source_record))
-
-    append_if_value(defence, _create_address(source_record))
-
-    return defence
+    return create_group(
+        tag_name,
+        children=[
+            _create_language(source_record),
+            _create_duration(source_record),
+            _create_address(source_record),
+        ],
+    )
 
 
 def _is_degree_project(source_record: ET.Element) -> bool:
@@ -25,70 +24,50 @@ def _is_degree_project(source_record: ET.Element) -> bool:
     )
 
 
-def _create_address(source_record: ET.Element) -> ET.Element:
-    address = ET.Element("address")
-    append_if_value(address, _create_location(source_record))
-    append_if_value(address, _create_street(source_record))
-    append_if_value(address, _create_city(source_record))
-
-    return address
-
-
-def _create_street(source_record: ET.Element) -> ET.Element:
-    street_text = source_record.findtext("./defence/room/street")
-    street = ET.Element("street")
-    street.text = street_text
-
-    return street
+def _create_address(source_record: ET.Element):
+    return create_group(
+        "address",
+        children=[
+            create_text("location", source_record.findtext("./defence/room/name")),
+            create_text("street", source_record.findtext("./defence/room/street")),
+            create_text("city", source_record.findtext("./defence/room/city")),
+        ],
+    )
 
 
-def _create_city(source_record: ET.Element) -> ET.Element:
-    city = ET.Element("city")
-    city_text = source_record.findtext("./defence/room/city")
-    city.text = city_text
-    return city
+def _create_language(source_record: ET.Element):
+    return create_group(
+        "language",
+        children=[
+            create_text(
+                "languageTerm",
+                type="code",
+                authority="iso639-2b",
+                value=source_record.findtext("./defence/language/languageCode3"),
+            )
+        ],
+    )
 
 
-def _create_location(source_record: ET.Element) -> ET.Element:
-    location = ET.Element("location")
-    room = source_record.findtext("./defence/room/name")
-    location.text = room
-    return location
-
-
-def _create_language(source_record: ET.Element) -> ET.Element:
-    language = ET.Element("language")
-    language_term = ET.Element("languageTerm", type="code", authority="iso639-2b")
-    language_code_3 = source_record.findtext("./defence/language/languageCode3")
-    language_term.text = language_code_3
-
-    append_if_value(language, language_term)
-    return language
-
-
-def _create_duration(source_record: ET.Element) -> ET.Element:
+def _create_duration(source_record: ET.Element):
     duration_source = source_record.findtext("./defence/date")
-    duration = ET.Element("dateOther", type="presentation")
 
-    if duration_source is not None:
-        date_part, time_part = duration_source.split("T")
-        year, month, day = date_part.split("-")
-        time_part = time_part.split("+")[0]  # Remove timezone offset
-        hh, mm, _ = time_part.split(":")
+    if duration_source is None:
+        return None
 
-        year_element = ET.SubElement(duration, "year")
-        year_element.text = year
+    date_part, time_part = duration_source.split("T")
+    year, month, day = date_part.split("-")
+    time_part = time_part.split("+")[0]  # Remove timezone offset
+    hh, mm, _ = time_part.split(":")
 
-        month_element = ET.SubElement(duration, "month")
-        month_element.text = month
-
-        day_element = ET.SubElement(duration, "day")
-        day_element.text = day
-
-        hh_element = ET.SubElement(duration, "hh")
-        hh_element.text = hh
-
-        mm_element = ET.SubElement(duration, "mm")
-        mm_element.text = mm
-
-    return duration
+    return create_group(
+        "dateOther",
+        type="presentation",
+        children=[
+            create_text("year", year),
+            create_text("month", month),
+            create_text("day", day),
+            create_text("hh", hh),
+            create_text("mm", mm),
+        ],
+    )

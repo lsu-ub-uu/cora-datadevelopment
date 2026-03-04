@@ -88,10 +88,10 @@ def _should_have_attachment_version(validation_type: str) -> bool:
     return validation_type in validation_types_with_attachment_version
 
 
-def _create_requested_visibility(source_attachment: ET.Element) -> ET.Element:
-    requested_visibility = ET.Element("requestedVisibility")
-    requested_visibility.text = get_binary_requested_visibility(source_attachment)
-    return requested_visibility
+def _create_requested_visibility(source_attachment: ET.Element):
+    return create_text(
+        "requestedVisibility", get_binary_requested_visibility(source_attachment)
+    )
 
 
 def _create_attachment_version(source_attachment: ET.Element) -> Optional[ET.Element]:
@@ -99,9 +99,7 @@ def _create_attachment_version(source_attachment: ET.Element) -> Optional[ET.Ele
     if attachment_version is None:
         return None
     if get_attachment_type(source_attachment) == "fullText":
-        note = ET.Element("note", type="attachmentVersion")
-        note.text = attachment_version
-        return note
+        return create_text("note", type="attachmentVersion", value=attachment_version)
 
     return None
 

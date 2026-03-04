@@ -3,7 +3,7 @@ from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from common.common_data import create_record_link
 from fedora_to_cora.transform.identifiers.create_identifier import create_identifier
-from common.xml_utils import append_if_value, create_group
+from common.xml_utils import append_if_value, create_group, create_text
 
 
 def create_related_item_type_project(
@@ -87,13 +87,5 @@ def _create_uncontrolled_project(
     )
 
 
-def _create_title_info(title: str | None) -> ET.Element:
-    """
-    Create a titleInfo element with the given title.
-    """
-
-    title_info = ET.Element("titleInfo")
-    title_element = ET.SubElement(title_info, "title")
-    title_element.text = title
-
-    return title_info
+def _create_title_info(title: str | None):
+    return create_group("titleInfo", children=[create_text("title", title)])

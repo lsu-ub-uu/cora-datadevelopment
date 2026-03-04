@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link
-from common.xml_utils import append_if_value
+from common.xml_utils import create_group, create_text
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from cora.context import Context
 from fedora_to_cora.transform.get_validation_type import (
@@ -54,7 +54,7 @@ def create_name_type_personals(
 
 def create_thesis_advisor(
     source_record: ET.Element, context: Context
-) -> list[ET.Element]:
+) -> list[ET.Element | None]:
     supervisors = source_record.findall(".//supervisors/person")
     return [
         create_name_type_personal(
@@ -68,7 +68,9 @@ def create_thesis_advisor(
     ]
 
 
-def create_opponents(source_record: ET.Element, context: Context) -> list[ET.Element]:
+def create_opponents(
+    source_record: ET.Element, context: Context
+) -> list[ET.Element | None]:
     opponents = source_record.findall(".//opponents/person")
     return [
         create_name_type_personal(
@@ -84,7 +86,7 @@ def create_opponents(source_record: ET.Element, context: Context) -> list[ET.Ele
 
 def create_degree_supervisor(
     source_record: ET.Element, context: Context
-) -> list[ET.Element]:
+) -> list[ET.Element | None]:
     examiners = source_record.findall(".//examiners/person")
     return [
         create_name_type_personal(
@@ -105,45 +107,31 @@ def create_name_type_personal(
     context: Context,
     author_only: bool = False,
     otherType: str | None = None,
-) -> ET.Element:
+) -> ET.Element | None:
     """
     Create a cora person element from a classic person element.
     """
-
-    name_type_personal = ET.Element("name", type="personal", repeatId=str(repeatId))
-
-    if otherType is not None:
-        name_type_personal.set("otherType", otherType)
-
     # TODO Handle linked person
 
-    last_name = person.find("./lastName")
-    if last_name is not None and last_name.text:
-        ET.SubElement(name_type_personal, "namePart", type="family").text = (
-            last_name.text
-        )
-
-    first_name = person.find("./firstName")
-    if first_name is not None and first_name.text:
-        ET.SubElement(name_type_personal, "namePart", type="given").text = (
-            first_name.text
-        )
-
-    append_if_value(name_type_personal, _create_date_part(person))
-
-    append_if_value(name_type_personal, _create_role(role_terms, author_only))
-
-    local_id = person.find("./localId")
-    if local_id is not None and local_id.text:
-        name_type_personal.append(_create_name_identifier_local_id(local_id))
-
-    orcid = person.find("./identifiers/entry/personIdentifier/value")
-    if orcid is not None and orcid.text:
-        name_type_personal.append(_create_name_identifier_orcid(orcid))
-
-    append_if_value(name_type_personal, _create_affiliations(person, context))
-
-    return name_type_personal
+    return create_group(
+        "name",
+        type="personal",
+        otherType=otherType,
+        repeatId=str(repeatId),
+        children=[
+            create_text("namePart", type="family", value=person.findtext("./lastName")),
+            create_text("namePart", type="given", value=person.findtext("./firstName")),
+            _create_date_part(person),
+            _create_role(role_terms, author_only),
+            _create_name_identifier_local_id(
+                _create_name_identifier_local_id(person.find("./localId"))
+            ),
+            _create_name_identifier_orcid(
+                person.find("./identifiers/entry/personIdentifier/value")
+            ),
+            _create_affiliations(person, context),
+        ],
+    )
 
 
 def _create_date_part(person: ET.Element) -> ET.Element | None:
@@ -156,26 +144,30 @@ def _create_date_part(person: ET.Element) -> ET.Element | None:
     if not has_birth_year and not has_death_year:
         return None
 
-    date_part = ET.Element("namePart", type="date")
+    date_text = ""
 
     if has_birth_year and not has_death_year:
-        date_part.text = birth_year
+        date_text = birth_year
     elif not has_birth_year and has_death_year:
-        date_part.text = f"-{death_year}"
+        date_text = f"-{death_year}"
     else:
-        date_part.text = f"{birth_year}-{death_year}"
+        date_text = f"{birth_year}-{death_year}"
 
-    return date_part
+    return create_text("namePart", type="date", value=date_text)
 
 
-def _create_role(role_terms: list[str], author_only: bool) -> ET.Element:
-    role = ET.Element("role")
-    for i, role_term in enumerate(role_terms):
-        role_term_el = ET.SubElement(role, "roleTerm")
-        role_term_el.text = role_term
-        if not author_only:
-            role_term_el.set("repeatId", str(i))
-    return role
+def _create_role(role_terms: list[str], author_only: bool) -> ET.Element | None:
+    return create_group(
+        "role",
+        children=[
+            create_text(
+                "roleTerm",
+                value=role_term,
+                repeatId=str(i) if not author_only else None,
+            )
+            for i, role_term in enumerate(role_terms)
+        ],
+    )
 
 
 def _create_affiliations(person: ET.Element, context: Context) -> list[ET.Element]:
@@ -197,7 +189,7 @@ def _create_affiliations(person: ET.Element, context: Context) -> list[ET.Elemen
 
 def create_affiliation(
     organisation: ET.Element, repeat_id: int, context: Context
-) -> ET.Element:
+) -> ET.Element | None:
     controlled = organisation.find("./controlled")
     if controlled is not None and controlled.text == "true":
         return create_affiliation_for_controlled_organisation(
@@ -209,52 +201,61 @@ def create_affiliation(
 
 def create_affiliation_for_controlled_organisation(
     organisation: ET.Element, repeat_id: int, context: Context
-) -> ET.Element:
+) -> ET.Element | None:
     """
     Create an affiliation element for a controlled organisation.
     """
 
-    affiliation = ET.Element("affiliation", repeatId=str(repeat_id))
     organisation_id = organisation.find("./organisationId")
 
     assert organisation_id is not None and organisation_id.text
 
-    cora_id = get_cora_id_by_old_id(
-        organisation_id.text,
-        record_type="diva-organisation",
-        context=context,
+    return create_group(
+        "affiliation",
+        repeatId=str(repeat_id),
+        children=[
+            create_record_link(
+                "organisation",
+                "diva-organisation",
+                get_cora_id_by_old_id(
+                    organisation_id.text,
+                    record_type="diva-organisation",
+                    context=context,
+                ),
+            )
+        ],
     )
-
-    organisation_link = create_record_link("organisation", "diva-organisation", cora_id)
-    affiliation.append(organisation_link)
-
-    return affiliation
 
 
 def create_affiliation_for_uncontrolled_organisation(
     organisation: ET.Element, repeat_id: int
-) -> ET.Element:
+):
     """
     Create an affiliation element for an uncontrolled organisation.
     """
-    affiliation = ET.Element("affiliation", repeatId=str(repeat_id))
-
-    uncontrolled_name = organisation.find("./organisationNameUncontrolled")
-    if uncontrolled_name is not None and uncontrolled_name.text:
-        ET.SubElement(affiliation, "namePart").text = uncontrolled_name.text
-
-    return affiliation
+    return create_group(
+        "affiliation",
+        repeatId=str(repeat_id),
+        children=[
+            create_text(
+                "namePart",
+                value=organisation.findtext("./organisationNameUncontrolled"),
+            )
+        ],
+    )
 
 
 def _create_affiliation_from_research_group(
     research_group: str, repeat_id: int
-) -> ET.Element:
-    affiliation = ET.Element("affiliation", repeatId=str(repeat_id))
-
-    ET.SubElement(affiliation, "namePart").text = research_group
-    ET.SubElement(affiliation, "description").text = "researchGroup"
-
-    return affiliation
+) -> ET.Element | None:
+    return create_group(
+        "affiliation",
+        repeatId=str(repeat_id),
+        children=[
+            create_text("namePart", value=research_group),
+            create_text("description", value="researchGroup"),
+        ],
+    )
 
 
 def _is_author_only_type(source_record: ET.Element) -> bool:
@@ -278,15 +279,14 @@ def _is_author_only_type(source_record: ET.Element) -> bool:
     return validation_type in author_only_validation_types
 
 
-def _create_name_identifier_orcid(orcid: ET.Element) -> ET.Element:
-    identifier = ET.Element("nameIdentifier", type="orcid")
-    if orcid.text:
-        identifier.text = orcid.text
-    return identifier
+def _create_name_identifier_orcid(orcid: ET.Element | None):
+    if orcid is None:
+        return None
+    return create_text("nameIdentifier", type="orcid", value=orcid.text)
 
 
-def _create_name_identifier_local_id(local_id: ET.Element) -> ET.Element:
-    identifier = ET.Element("nameIdentifier", type="localId")
-    if local_id.text:
-        identifier.text = local_id.text
-    return identifier
+def _create_name_identifier_local_id(local_id: ET.Element | None):
+    if local_id is None:
+        return None
+
+    return create_text("nameIdentifier", type="localId", value=local_id.text)

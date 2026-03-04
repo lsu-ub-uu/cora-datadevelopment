@@ -53,20 +53,23 @@ def _create_uncontrolled_journal(uncontrolled_journal: ET.Element) -> ET.Element
     )
 
 
-def _create_controlled_journal(journal_old_id: str, context: Context) -> ET.Element:
-    related_item = ET.Element("relatedItem", type="journal", otherType="link")
-
-    cora_id = get_cora_id_by_old_id(
-        journal_old_id, record_type=DIVA_JOURNAL_RECORD_TYPE, context=context
+def _create_controlled_journal(journal_old_id: str, context: Context):
+    return create_group(
+        "relatedItem",
+        type="journal",
+        otherType="link",
+        children=[
+            create_record_link(
+                name_in_data="journal",
+                record_type=DIVA_JOURNAL_RECORD_TYPE,
+                record_id=get_cora_id_by_old_id(
+                    journal_old_id,
+                    record_type=DIVA_JOURNAL_RECORD_TYPE,
+                    context=context,
+                ),
+            )
+        ],
     )
-    journal = create_record_link(
-        name_in_data="journal",
-        record_type=DIVA_JOURNAL_RECORD_TYPE,
-        record_id=cora_id,
-    )
-    related_item.append(journal)
-
-    return related_item
 
 
 def _create_part(source_record: ET.Element) -> ET.Element | None:

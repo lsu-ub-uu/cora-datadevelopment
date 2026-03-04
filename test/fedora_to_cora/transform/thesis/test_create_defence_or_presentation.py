@@ -23,7 +23,6 @@ def test_create_defence():
                     <street>Slottet</street>
                     <city>Uppsala</city>
                 </room>
-               
             </defence>
         </publication>
 
@@ -78,13 +77,7 @@ def test_create_empty_defence():
 
     admin = create_defence_or_presentation(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        admin,
-        """
-            <defence> 
-            </defence>
-        """,
-    )
+    assert admin is None
 
 
 def test_create_empty_presentation():
@@ -105,13 +98,7 @@ def test_create_empty_presentation():
 
     admin = create_defence_or_presentation(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        admin,
-        """
-            <presentation> 
-            </presentation>
-        """,
-    )
+    assert admin is None
 
 
 def test_create_presentation_if_degree_project():
