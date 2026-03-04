@@ -1,6 +1,6 @@
 from typing import Optional
 import xml.etree.ElementTree as ET
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
 from common.date_utils import is_after_now
 from common.xml_utils import (
     create_group,
@@ -26,7 +26,7 @@ def attachment_transform(
         repeatId=binary_record_id,
         label=get_attachment_type(source_attachment),
         children=[
-            create_record_link_using_name_type_id(
+            create_record_link(
                 name_in_data="file",
                 record_type="binary",
                 record_id=binary_record_id,

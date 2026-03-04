@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
 from common.xml_utils import append_if_value, create_group, create_text
 from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
@@ -41,7 +41,7 @@ def _create_funder_link(funder_info: ET.Element, context: Context) -> ET.Element
         context=context,
         record_type="diva-funder",
     )
-    return create_record_link_using_name_type_id(
+    return create_record_link(
         "funder",
         "diva-funder",
         funder_cora_id,

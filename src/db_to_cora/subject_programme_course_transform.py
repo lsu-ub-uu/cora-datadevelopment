@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import append_if_value
+from common.xml_utils import create_group
 from common.record_info_create import record_info_create
 from common.common_data import create_end_date
 from common.xml_validate import XMLSpec, validate_xml
@@ -61,11 +61,16 @@ def _create_element_with_common_children(
     Create an XML element with common children (_create_record_info, _create_authority,
     _create_variant, _create_end_date).
     """
-    element = ET.Element(name_in_data)
-    element.append(_create_record_info(source_record, name_in_data))
-    append_if_value(element, _create_authority_swe(source_record))
-    append_if_value(element, _create_authority_eng(source_record))
-    append_if_value(element, _create_end_date(source_record))
+    element = create_group(
+        name_in_data,
+        children=[
+            _create_record_info(source_record, name_in_data),
+            _create_authority_swe(source_record),
+            _create_authority_eng(source_record),
+            _create_end_date(source_record),
+        ],
+    )
+    assert element is not None
     return element
 
 

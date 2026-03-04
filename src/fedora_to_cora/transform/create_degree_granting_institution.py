@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
 from common.xml_utils import append_if_value, create_group, create_text
 
 DIVA_ORGANISATION_RECORD_TYPE = "diva-organisation"
@@ -42,7 +42,7 @@ def _create_controlled_degree_granting_institution(
         type="corporate",
         otherType="degreeGrantingInstitution",
         children=[
-            create_record_link_using_name_type_id(
+            create_record_link(
                 name_in_data="organisation",
                 record_type=DIVA_ORGANISATION_RECORD_TYPE,
                 record_id=get_cora_id_by_old_id(

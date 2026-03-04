@@ -115,12 +115,14 @@ def create_group(
         for child in flattened_children
         if child is not None and (len(child) > 0 or child.text)
     ]
+
     if not valid_children:
         return None
 
     element = ET.Element(tag_name, _clean_attributes(attributes))
     for child in valid_children:
         element.append(child)
+
     return element
 
 

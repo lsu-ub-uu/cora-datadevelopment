@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
 from common.xml_utils import append_if_value, create_group
 
 DIVA_SUBJECT_RECORD_TYPE = "diva-subject"
@@ -31,7 +31,7 @@ def _create_topic(subject_id: str, repeat_id: int, context: Context) -> ET.Eleme
         subject_id, record_type=DIVA_SUBJECT_RECORD_TYPE, context=context
     )
 
-    topic = create_record_link_using_name_type_id(
+    topic = create_record_link(
         name_in_data="topic", record_type=DIVA_SUBJECT_RECORD_TYPE, record_id=cora_id
     )
     topic.set("repeatId", str(repeat_id))

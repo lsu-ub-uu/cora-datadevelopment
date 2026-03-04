@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, create_group
 from common.xml_validate import XMLSpec, validate_xml
 from common.record_info_create import record_info_create
 from common.common_data import (
@@ -30,28 +30,20 @@ def transform_funder(source_record: ET.Element) -> ET.Element:
     """
     validate_xml(source_record, allowed_children)
 
-    funder = ET.Element(nameInData)
-
-    funder.append(_create_record_info(source_record))
-    append_if_value(
-        funder,
-        _create_authority_swe(source_record),
+    funder = create_group(
+        "funder",
+        children=[
+            _create_record_info(source_record),
+            _create_authority_swe(source_record),
+            _create_authority_eng(source_record),
+            _create_end_date(source_record),
+            _create_identifiers_from_source(source_record, identifier_type="doi"),
+            _create_identifiers_from_source(
+                source_record, identifier_type="organisationNumber"
+            ),
+        ],
     )
-    append_if_value(
-        funder,
-        _create_authority_eng(source_record),
-    )
-    append_if_value(funder, _create_end_date(source_record))
-    append_if_value(
-        funder, _create_identifiers_from_source(source_record, identifier_type="doi")
-    )
-    append_if_value(
-        funder,
-        _create_identifiers_from_source(
-            source_record, identifier_type="organisationNumber"
-        ),
-    )
-
+    assert funder is not None
     return funder
 
 
@@ -70,18 +62,30 @@ def _create_record_info(source_record: ET.Element) -> ET.Element:
 
 def _create_authority_swe(source_record: ET.Element) -> ET.Element | None:
     name = source_record.findtext(f".//name_swe")
-    if name:
-        authority = ET.Element("authority", lang="swe", repeatId="swe")
-        authority.append(name_type_corporate_create(name))
-        return authority
+    return (
+        create_group(
+            "authority",
+            lang="swe",
+            repeatId="swe",
+            children=[name_type_corporate_create(name)],
+        )
+        if name
+        else None
+    )
 
 
 def _create_authority_eng(source_record: ET.Element) -> ET.Element | None:
     name = source_record.findtext(f".//name_eng")
-    if name:
-        authority = ET.Element("authority", lang="eng", repeatId="eng")
-        authority.append(name_type_corporate_create(name))
-        return authority
+    return (
+        create_group(
+            "authority",
+            lang="eng",
+            repeatId="eng",
+            children=[name_type_corporate_create(name)],
+        )
+        if name
+        else None
+    )
 
 
 def _create_end_date(source_record: ET.Element) -> ET.Element | None:

@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
 from common.xml_utils import create_group, create_text
 
 
@@ -13,16 +13,16 @@ def record_info_create(
     record_info = create_group(
         "recordInfo",
         children=[
-            create_record_link_using_name_type_id(
+            create_record_link(
                 name_in_data="validationType",
                 record_type="validationType",
                 record_id=validation_type_id,
             ),
-            create_record_link_using_name_type_id(
+            create_record_link(
                 name_in_data="dataDivider", record_type="system", record_id="divaData"
             ),
             (
-                create_record_link_using_name_type_id(
+                create_record_link(
                     name_in_data="permissionUnit",
                     record_type="permissionUnit",
                     record_id=permission_unit_id,

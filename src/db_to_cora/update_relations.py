@@ -1,9 +1,9 @@
-from operator import index
 import xml.etree.ElementTree as ET
 from common.threads import run_with_threads
 from cora.context import Context
 from cora.update import update_record
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
+from common.xml_utils import create_group
 
 
 class RelationMapping:
@@ -97,10 +97,13 @@ def _get_old_relation_ids(old_record: ET.Element, old_relation_tag: str) -> list
 def _create_related_item(
     type: str, repeat_id: str, link_name: str, record_type: str, new_relation_id: str
 ) -> ET.Element:
-    related_item_element = ET.Element("related", {"type": type, "repeatId": repeat_id})
-    related_item_element.append(
-        create_record_link_using_name_type_id(link_name, record_type, new_relation_id)
+    related_item_element = create_group(
+        "related",
+        type=type,
+        repeatId=repeat_id,
+        children=[create_record_link(link_name, record_type, new_relation_id)],
     )
+    assert related_item_element is not None
     return related_item_element
 
 

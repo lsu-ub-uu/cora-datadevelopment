@@ -75,7 +75,7 @@ def create_note(note: str, note_type: str) -> ET.Element:
     return note_element
 
 
-def create_record_link_using_name_type_id(
+def create_record_link(
     name_in_data: str, record_type: str, record_id: str
 ) -> ET.Element:
     link = ET.Element(name_in_data)
@@ -195,6 +195,7 @@ def validateRecord_build(record_type, filePath_validateBase, newRecordToCreate):
     record = validationOrder_root.find(".//record")
     record.append(newRecordToCreate)
     return validationOrder_root
+
 
 def record_info_build(recordType, permission_unit, data_record, newRecordElement):
     recordInfo = ET.SubElement(newRecordElement, "recordInfo")
@@ -328,14 +329,12 @@ def endDate_yearMonthDay(year: str, month: str, day: str, rootElement: ET.Elemen
 def create_record_info_for_record_type(record_type: str) -> ET.Element:
     record_info = ET.Element("recordInfo")
 
-    validation_type = create_record_link_using_name_type_id(
+    validation_type = create_record_link(
         "validationType", "validationType", "diva-" + record_type
     )
     record_info.append(validation_type)
 
-    data_divider = create_record_link_using_name_type_id(
-        "dataDivider", "system", "divaData"
-    )
+    data_divider = create_record_link("dataDivider", "system", "divaData")
     record_info.append(data_divider)
 
     #        oldId_fromSource = data_record.find('.//old_id')

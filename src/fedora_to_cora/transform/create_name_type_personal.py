@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
 from common.xml_utils import append_if_value
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from cora.context import Context
@@ -225,9 +225,7 @@ def create_affiliation_for_controlled_organisation(
         context=context,
     )
 
-    organisation_link = create_record_link_using_name_type_id(
-        "organisation", "diva-organisation", cora_id
-    )
+    organisation_link = create_record_link("organisation", "diva-organisation", cora_id)
     affiliation.append(organisation_link)
 
     return affiliation

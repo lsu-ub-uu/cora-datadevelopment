@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, create_group
 from common.record_info_create import record_info_create
 from common.common_data import create_title_info
 from common.common_data import create_origin_info
@@ -8,7 +8,6 @@ from common.common_data import create_location
 from db_to_cora.series_transform import _create_title_info
 from common.xml_validate import XMLSpec, validate_xml
 
-nameInData = "journal"
 allowed_children: XMLSpec = {
     "old_id": "$ANY_TEXT$",
     "title": "$ANY_TEXT$",
@@ -26,27 +25,22 @@ def transform_journal(source_record: ET.Element) -> ET.Element:
     """
     validate_xml(source_record, allowed_children)
 
-    journal = ET.Element(nameInData)
-
-    journal.append(_create_record_info(source_record))
-    append_if_value(journal, _create_title_info(source_record))
-    append_if_value(
-        journal, _create_origin_info(source_record, origin_type="originInfo")
+    journal = create_group(
+        "journal",
+        children=[
+            _create_record_info(source_record),
+            _create_title_info(source_record),
+            _create_origin_info(source_record, origin_type="originInfo"),
+            _create_identifiers_from_source_with_type_issn(
+                source_record, identifier_type="pissn"
+            ),
+            _create_identifiers_from_source_with_type_issn(
+                source_record, identifier_type="eissn"
+            ),
+            _create_location(source_record),
+        ],
     )
-    append_if_value(
-        journal,
-        _create_identifiers_from_source_with_type_issn(
-            source_record, identifier_type="pissn"
-        ),
-    )
-    append_if_value(
-        journal,
-        _create_identifiers_from_source_with_type_issn(
-            source_record, identifier_type="eissn"
-        ),
-    )
-    append_if_value(journal, _create_location(source_record))
-
+    assert journal is not None
     return journal
 
 

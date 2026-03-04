@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
 from common.xml_utils import create_group, create_text
 
 
@@ -49,7 +49,7 @@ def _create_course(
             old_id=course_old_id,
             record_type="diva-course",
         )
-        return create_record_link_using_name_type_id(
+        return create_record_link(
             "course",
             "diva-course",
             cora_id,
@@ -68,7 +68,7 @@ def _create_programme(
             old_id=programme_old_id,
             record_type="diva-programme",
         )
-        return create_record_link_using_name_type_id(
+        return create_record_link(
             "programme",
             "diva-programme",
             cora_id,

@@ -1,6 +1,6 @@
 from cora.context import Context
 from xml.etree import ElementTree as ET
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
 from common.xml_utils import append_if_value
 from cora.cora_json_utils import (
     get_first_atomic_value_with_name_in_data,
@@ -42,15 +42,13 @@ def _create_validation_type(old_record_info: dict):
         old_record_info["children"], "type"
     )
 
-    return create_record_link_using_name_type_id(
+    return create_record_link(
         "validationType", "validationType", _transform_validation_type(old_record_type)
     )
 
 
 def _create_data_divider():
-    data_divider = create_record_link_using_name_type_id(
-        "dataDivider", "system", "divaData"
-    )
+    data_divider = create_record_link("dataDivider", "system", "divaData")
     return data_divider
 
 
@@ -59,7 +57,7 @@ def _create_permission_unit(old_record_info: dict):
         old_record_info["children"], "domain"
     )
     assert domain is not None
-    return create_record_link_using_name_type_id(
+    return create_record_link(
         "permissionUnit", "permissionUnit", domain_to_permission_unit(domain)
     )
 

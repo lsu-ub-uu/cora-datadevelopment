@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
 from cora.context import Context
 from common.xml_utils import append_if_value, create_group, create_text
 
@@ -73,9 +73,7 @@ def _create_agent_from_controlled_publisher(
     return create_group(
         "agent",
         [
-            create_record_link_using_name_type_id(
-                "publisher", "diva-publisher", cora_publisher_id
-            ),
+            create_record_link("publisher", "diva-publisher", cora_publisher_id),
             create_group("role", [create_text("roleTerm", "pbl")]),
         ],
         repeatId="0",

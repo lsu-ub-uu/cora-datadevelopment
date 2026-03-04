@@ -7,7 +7,7 @@ from cora.cora_json_utils import (
 from typing import Optional, Tuple, Any
 import xml.etree.ElementTree as ET
 from cora.update import update_record
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
 from cora.context import Context
 from common.threads import run_with_threads
 
@@ -144,8 +144,6 @@ def _create_organisation_link(
         )
         return None
     related.append(
-        create_record_link_using_name_type_id(
-            "organisation", "diva-organisation", parent_new_id
-        )
+        create_record_link("organisation", "diva-organisation", parent_new_id)
     )
     return related

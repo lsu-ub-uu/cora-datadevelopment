@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
-from common.common_data import create_record_link_using_name_type_id
+from common.common_data import create_record_link
 from fedora_to_cora.transform.identifiers.create_identifier import create_identifier
 from common.xml_utils import append_if_value, create_group, create_text
 
@@ -52,7 +52,7 @@ def _create_controlled_series(
     return create_group(
         "relatedItem",
         [
-            create_record_link_using_name_type_id(
+            create_record_link(
                 name_in_data="series",
                 record_type="diva-series",
                 record_id=series_cora_id,

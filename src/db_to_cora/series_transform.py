@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from common.xml_utils import append_if_value
+from common.xml_utils import create_group
 from common.record_info_create import record_info_create
 from common.common_data import create_title_info
 from common.common_data import create_title_info_type_alternative
@@ -43,30 +43,25 @@ def transform_series(source_record: ET.Element) -> ET.Element:
     """
     validate_xml(source_record, allowed_children)
 
-    series = ET.Element(nameInData)
-
-    series.append(_create_record_info(source_record))
-    append_if_value(series, _create_title_info(source_record))
-    append_if_value(series, _create_title_info_type_alternative(source_record))
-    append_if_value(
-        series, _create_origin_info(source_record, origin_type="originInfo")
+    series = create_group(
+        "series",
+        children=[
+            _create_record_info(source_record),
+            _create_title_info(source_record),
+            _create_title_info_type_alternative(source_record),
+            _create_origin_info(source_record, origin_type="originInfo"),
+            _create_identifiers_from_source_with_type_issn(
+                source_record, identifier_type="pissn"
+            ),
+            _create_identifiers_from_source_with_type_issn(
+                source_record, identifier_type="eissn"
+            ),
+            _create_location(source_record),
+            _create_note(source_record, note_type="internal"),
+            _create_genre(source_record),
+        ],
     )
-    append_if_value(
-        series,
-        _create_identifiers_from_source_with_type_issn(
-            source_record, identifier_type="pissn"
-        ),
-    )
-    append_if_value(
-        series,
-        _create_identifiers_from_source_with_type_issn(
-            source_record, identifier_type="eissn"
-        ),
-    )
-    append_if_value(series, _create_location(source_record))
-    append_if_value(series, _create_note(source_record, note_type="internal"))
-    append_if_value(series, _create_genre(source_record))
-
+    assert series is not None
     return series
 
 
