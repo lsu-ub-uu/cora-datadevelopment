@@ -28,7 +28,7 @@ def organisations_migrate(context: Context, domain: str):
     organisation_migration_pairs: list[Tuple[dict, ET.Element]] = []
 
     def transform_and_create_organisation(old_org: dict):
-        new_org = transform_organisation(old_org, context)
+        new_org = transform_organisation(old_org)
         created_org = create_record(
             new_org, record_type="diva-organisation", context=context
         )

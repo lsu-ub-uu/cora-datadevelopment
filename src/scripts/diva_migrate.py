@@ -92,7 +92,7 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
 
         migrate_publishers(args, context)
         migrate_funders(args, context)
-        # migrate_journals(args, context)
+        migrate_journals(args, context)
         # TODO Persons
         # TODO Projects
 

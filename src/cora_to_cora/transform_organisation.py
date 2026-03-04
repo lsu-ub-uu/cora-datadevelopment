@@ -1,7 +1,7 @@
 from cora.context import Context
 from xml.etree import ElementTree as ET
 from common.common_data import create_record_link
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, create_group, create_text
 from cora.cora_json_utils import (
     get_first_atomic_value_with_name_in_data,
     find_child_with_name_in_data,
@@ -9,31 +9,37 @@ from cora.cora_json_utils import (
 )
 
 
-def transform_organisation(old_org: dict, context: Context) -> ET.Element:
-    # Placeholder for transformation logic
-    organisation = ET.Element(
-        "organisation"
-    )  # Replace with actual transformed XML element
+def transform_organisation(old_org: dict) -> ET.Element:
     old_org_data = old_org["record"]["data"]
     old_record_info = find_child_with_name_in_data(
         old_org_data["children"], "recordInfo"
     )
     assert old_record_info is not None
 
-    record_info = ET.SubElement(organisation, "recordInfo")
-    record_info.append(_create_validation_type(old_record_info))
-    record_info.append(_create_data_divider())
-    record_info.append(_create_permission_unit(old_record_info))
-    record_info.append(_create_old_id(old_record_info))
+    organisation = create_group(
+        "organisation",
+        children=[
+            create_group(
+                "recordInfo",
+                children=[
+                    _create_validation_type(old_record_info),
+                    _create_data_divider(),
+                    _create_permission_unit(old_record_info),
+                    _create_old_id(old_record_info),
+                ],
+            ),
+            _create_genre_type_organisation_type(old_record_info),
+            _create_name_swedish(old_org_data),
+            _create_name_english(old_org_data),
+            _create_end_date(old_org_data),
+            _create_address(old_org_data),
+            _create_local_id(old_org_data),
+            _create_organisation_number(old_org_data),
+            _create_location(old_org_data),
+        ],
+    )
 
-    organisation.append(_create_genre_type_organisation_type(old_record_info))
-    append_if_value(organisation, _create_name_swedish(old_org_data))
-    append_if_value(organisation, _create_name_english(old_org_data))
-    append_if_value(organisation, _create_end_date(old_org_data))
-    append_if_value(organisation, _create_address(old_org_data))
-    append_if_value(organisation, _create_local_id(old_org_data))
-    append_if_value(organisation, _create_organisation_number(old_org_data))
-    append_if_value(organisation, _create_location(old_org_data))
+    assert organisation is not None
     return organisation
 
 
@@ -63,20 +69,24 @@ def _create_permission_unit(old_record_info: dict):
 
 
 def _create_old_id(old_record_info: dict):
-    old_id = get_first_atomic_value_with_name_in_data(old_record_info["children"], "id")
-    old_id_element = ET.Element("oldId")
-    old_id_element.text = old_id
-    return old_id_element
+
+    return create_text(
+        "oldId",
+        get_first_atomic_value_with_name_in_data(old_record_info["children"], "id"),
+    )
 
 
 def _create_genre_type_organisation_type(old_record_info: dict):
+
     old_record_type = get_linked_record_id_with_name_in_data(
         old_record_info["children"], "type"
     )
 
-    genre = ET.Element("genre", type="organisationType")
-    genre.text = _transform_organisation_type(old_record_type)
-    return genre
+    return create_text(
+        "genre",
+        type="organisationType",
+        value=_transform_organisation_type(old_record_type),
+    )
 
 
 def _create_name_swedish(old_org_data: dict):
@@ -90,12 +100,16 @@ def _create_name_swedish(old_org_data: dict):
         old_name_group["children"], "name"
     )
 
-    authority = ET.Element("authority", lang="swe", repeatId="swe")
-    name = ET.SubElement(authority, "name", type="corporate")
-    name_part = ET.SubElement(name, "namePart")
-
-    name_part.text = old_name
-    return authority
+    return create_group(
+        "authority",
+        lang="swe",
+        repeatId="swe",
+        children=[
+            create_group(
+                "name", type="corporate", children=[create_text("namePart", old_name)]
+            )
+        ],
+    )
 
 
 def _create_name_english(old_org_data: dict):
@@ -109,12 +123,16 @@ def _create_name_english(old_org_data: dict):
         old_name_group["children"], "name"
     )
 
-    authority = ET.Element("authority", lang="eng", repeatId="eng")
-    name = ET.SubElement(authority, "name", type="corporate")
-    name_part = ET.SubElement(name, "namePart")
-
-    name_part.text = old_name
-    return authority
+    return create_group(
+        "authority",
+        lang="eng",
+        repeatId="eng",
+        children=[
+            create_group(
+                "name", type="corporate", children=[create_text("namePart", old_name)]
+            )
+        ],
+    )
 
 
 def _create_end_date(old_org_data: dict):
@@ -125,11 +143,15 @@ def _create_end_date(old_org_data: dict):
         return None
 
     year, month, day = closed_date.split("-")
-    end_date_element = ET.Element("endDate")
-    ET.SubElement(end_date_element, "year").text = year
-    ET.SubElement(end_date_element, "month").text = month
-    ET.SubElement(end_date_element, "day").text = day
-    return end_date_element
+
+    return create_group(
+        "endDate",
+        children=[
+            create_text("year", year),
+            create_text("month", month),
+            create_text("day", day),
+        ],
+    )
 
 
 def _create_address(old_org_data: dict):
@@ -152,56 +174,41 @@ def _create_address(old_org_data: dict):
         old_address_group["children"], "country"
     )
 
-    address_element = ET.Element("address")
-    if box:
-        ET.SubElement(address_element, "postOfficeBox").text = box
-    if street:
-        ET.SubElement(address_element, "street").text = street
-    if postal_code:
-        ET.SubElement(address_element, "postcode").text = postal_code
-    if city:
-        ET.SubElement(address_element, "place").text = city
-    if country:
-        ET.SubElement(address_element, "country").text = _transform_country(country)
-
-    return address_element
+    return create_group(
+        "address",
+        children=[
+            create_text("postOfficeBox", box),
+            create_text("street", street),
+            create_text("postcode", postal_code),
+            create_text("place", city),
+            create_text("country", _transform_country(country)),
+        ],
+    )
 
 
 def _create_local_id(old_org_data: dict):
     old_org_code = get_first_atomic_value_with_name_in_data(
         old_org_data["children"], "organisationCode"
     )
-    if old_org_code is None:
-        return None
-
-    local_id_element = ET.Element("identifier", type="localId")
-    local_id_element.text = old_org_code
-    return local_id_element
+    return create_text("identifier", type="localId", value=old_org_code)
 
 
 def _create_organisation_number(old_org_data: dict):
     old_org_number = get_first_atomic_value_with_name_in_data(
         old_org_data["children"], "organisationNumber"
     )
-    if old_org_number is None:
-        return None
-
-    organisation_number_element = ET.Element("identifier", type="organisationNumber")
-    organisation_number_element.text = old_org_number
-    return organisation_number_element
+    return create_text("identifier", type="organisationNumber", value=old_org_number)
 
 
 def _create_location(old_org_data: dict):
     old_location = get_first_atomic_value_with_name_in_data(
         old_org_data["children"], "URL"
     )
-    if old_location is None:
-        return None
 
-    location_element = ET.Element("location")
-    url = ET.SubElement(location_element, "url")
-    url.text = old_location
-    return location_element
+    return create_group(
+        "location",
+        children=[create_text("url", old_location)],
+    )
 
 
 def domain_to_permission_unit(domain: str) -> str:

@@ -4,17 +4,13 @@ import xml.etree.ElementTree as ET
 
 from common.common_data import read_source_xml
 from cora_to_cora.transform_organisation import transform_organisation
-from cora.context import MockContext
 from common.test_helper import assert_equal_for_xml_and_xml_string
-from common.xml_utils import pretty_print_xml
 
 
 def test_transform_top_organisation():
     with open("test/cora_to_cora/data/old_cora_top_organisation.json", "r") as f:
         old_top_organisation = json.load(f)
-    transformed_organisation = transform_organisation(
-        old_top_organisation, MockContext()
-    )
+    transformed_organisation = transform_organisation(old_top_organisation)
 
     expected_xml = read_source_xml(
         os.path.join("test/cora_to_cora/data/new_cora_top_organisation.xml")
@@ -29,9 +25,7 @@ def test_transform_top_organisation():
 def test_transform_sub_organisation():
     with open("test/cora_to_cora/data/old_cora_sub_organisation.json", "r") as f:
         old_sub_organisation = json.load(f)
-    transformed_organisation = transform_organisation(
-        old_sub_organisation, MockContext()
-    )
+    transformed_organisation = transform_organisation(old_sub_organisation)
 
     expected_xml = read_source_xml(
         os.path.join("test/cora_to_cora/data/new_cora_sub_organisation.xml")
@@ -92,7 +86,7 @@ def test_transform_minimal_organisation():
         }
     }
 
-    transformed_organisation = transform_organisation(minimal_old_org, MockContext())
+    transformed_organisation = transform_organisation(minimal_old_org)
 
     assert_equal_for_xml_and_xml_string(
         transformed_organisation,
