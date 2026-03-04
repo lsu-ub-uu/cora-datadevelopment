@@ -127,7 +127,7 @@ def create_name_type_personal(
                 _create_name_identifier_local_id(person.find("./localId"))
             ),
             _create_name_identifier_orcid(
-                person.find("./identifiers/entry/personIdentifier/value")
+                person.findtext("./identifiers/entry/personIdentifier/value")
             ),
             _create_affiliations(person, context),
         ],
@@ -279,10 +279,10 @@ def _is_author_only_type(source_record: ET.Element) -> bool:
     return validation_type in author_only_validation_types
 
 
-def _create_name_identifier_orcid(orcid: ET.Element | None):
+def _create_name_identifier_orcid(orcid: str | None):
     if orcid is None:
         return None
-    return create_text("nameIdentifier", type="orcid", value=orcid.text)
+    return create_text("nameIdentifier", type="orcid", value=orcid.replace("x", "X"))
 
 
 def _create_name_identifier_local_id(local_id: ET.Element | None):

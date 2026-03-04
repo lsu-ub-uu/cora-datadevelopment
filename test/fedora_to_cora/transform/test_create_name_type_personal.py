@@ -620,3 +620,46 @@ def test_creates_affiliation_from_research_group():
         </name>
         """,
     )
+
+
+def test_replaces_lowercase_x_in_orcid():
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <publicationType>
+                <publicationTypeId>63</publicationTypeId>
+                <publicationTypeCode>collection</publicationTypeCode>
+            </publicationType>
+            <authors>
+                <person>
+                    <firstName>Michaela</firstName>
+                    <lastName>Schmanderson</lastName>
+                    <identifiers>
+                        <entry>
+                            <personIdentifierType>orcid</personIdentifierType>
+                            <personIdentifier>
+                                <value>0000-0002-3134-886x</value>
+                                <type>orcid</type>
+                            </personIdentifier>
+                        </entry>
+                    </identifiers>
+                </person>
+            </authors>
+        </publication>
+        """
+    )
+    names = create_name_type_personals(
+        source_record,
+        mock_context,
+    )
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">Schmanderson</namePart>
+            <namePart type="given">Michaela</namePart>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <nameIdentifier type="orcid">0000-0002-3134-886X</nameIdentifier>
+        </name>
+        """,
+    )
