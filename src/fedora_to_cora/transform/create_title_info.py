@@ -1,10 +1,10 @@
 import xml.etree.ElementTree as ET
-
+from common.xml_utils import create_text, create_group
 from fedora_to_cora.clean_rich_text import clean_rich_text
 
 
 def create_title_info(source_record: ET.Element) -> ET.Element | None:
-    originalPublicationTitle = source_record.find(".//originalPublicationTitle")
+    originalPublicationTitle = source_record.find("./originalPublicationTitle")
 
     if originalPublicationTitle is None:
         return None
@@ -15,7 +15,7 @@ def create_title_info(source_record: ET.Element) -> ET.Element | None:
 def create_title_info_type_alternative(
     source_record: ET.Element,
 ) -> list[ET.Element]:
-    source_titles = source_record.findall(".//alternativePublicationTitles/title")
+    source_titles = source_record.findall("./alternativePublicationTitles/title")
 
     title_infos = [
         _create_alternative_title(source_title, repeat_id)
@@ -40,21 +40,18 @@ def _create_alternative_title(
 
 
 def _create_title_info(source_title: ET.Element) -> ET.Element | None:
-    languageCode = source_title.findtext("./language/languageCode3")
-    title = source_title.findtext("./title")
-    sub_title = source_title.findtext("./subTitle")
+    language_code = source_title.findtext("./language/languageCode3")
 
-    if languageCode is None:
+    if language_code is None:
         return None
 
-    if (title is None or title == "") and (sub_title is None or sub_title == ""):
-        return None
-
-    titleInfo = ET.Element("titleInfo", lang=languageCode)
-
-    if title is not None and title != "":
-        ET.SubElement(titleInfo, "title").text = clean_rich_text(title)
-    if sub_title is not None and sub_title != "":
-        ET.SubElement(titleInfo, "subtitle").text = clean_rich_text(sub_title)
-
-    return titleInfo
+    return create_group(
+        "titleInfo",
+        lang=language_code,
+        children=[
+            create_text("title", clean_rich_text(source_title.findtext("./title"))),
+            create_text(
+                "subtitle", clean_rich_text(source_title.findtext("./subTitle"))
+            ),
+        ],
+    )

@@ -353,35 +353,6 @@ def test_registration_number():
     )
 
 
-def test_note_type_attachment():
-    source_attachment = ET.fromstring(
-        """
-        <attachment>
-            <fileLabel>
-                <fileLabelId>50</fileLabelId>
-            </fileLabel>
-            <path>test.pdf</path>
-            <note>Some note about the attachment</note>
-            <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
-        </attachment>
-        """
-    )
-
-    binary_record_id = "binary:12345"
-
-    attachment = attachment_transform(
-        source_attachment,
-        validation_type="publication_report",
-        binary_record_id=binary_record_id,
-        file_upload_message="Some note about the attachment",
-    )
-
-    assert (
-        attachment.findtext("./adminInfo/note[@type='attachment']")
-        == """**The following note was migrated from a DiVA Classic file upload message, and may not refer to this attachment**:\n\nSome note about the attachment"""
-    )
-
-
 def test_display_label():
     source_attachment = ET.fromstring(
         """

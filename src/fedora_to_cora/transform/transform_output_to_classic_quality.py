@@ -28,6 +28,7 @@ def _update_data_quality(classic_quality_output: ET.Element):
     assert data_quality is not None
     data_quality.text = "classic"
 
+
 def _add_validation_errors_to_internal_note(
     classic_quality_output: ET.Element, validation_errors: list[str] | None
 ):

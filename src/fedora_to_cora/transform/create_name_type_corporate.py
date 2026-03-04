@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
+from common.xml_utils import create_group, create_text
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from cora.context import Context
 from fedora_to_cora.transform.get_validation_type import (
@@ -9,7 +10,7 @@ from fedora_to_cora.transform.get_validation_type import (
 
 def create_name_type_corporate(
     source_record: ET.Element, context: Context
-) -> list[ET.Element]:
+) -> list[ET.Element | None]:
     responsible_organisation_ids = source_record.findall(
         "./responsibleOrganisations/organisation/organisationId"
     )
@@ -39,7 +40,35 @@ def _is_author_only_type(source_record: ET.Element) -> bool:
 
 def _create_name_type_corporate_from_organisation_id(
     old_id: str, context: Context, author_only: bool, repeat_id: int = 0
-) -> ET.Element:
+):
+    return create_group(
+        "name",
+        type="corporate",
+        repeatId=str(repeat_id),
+        children=[
+            create_record_link_using_name_type_id(
+                name_in_data="organisation",
+                record_type="diva-organisation",
+                record_id=get_cora_id_by_old_id(
+                    old_id, record_type="diva-organisation", context=context
+                ),
+            ),
+            create_group(
+                "role",
+                [
+                    (
+                        create_text("roleTerm", "aut")
+                        if author_only
+                        else create_text(
+                            "roleTerm",
+                            "cre",
+                            repeatId="0",
+                        )
+                    )
+                ],
+            ),
+        ],
+    )
     name = ET.Element("name", type="corporate", repeatId=str(repeat_id))
 
     old_id = get_cora_id_by_old_id(

@@ -50,7 +50,7 @@ def _create_statement_of_responsibility(source_record: ET.Element) -> ET.Element
     return create_text(
         "note",
         type="statementOfResponsibility",
-        text=source_record.findtext("./proceedingsEditor"),
+        value=source_record.findtext("./proceedingsEditor"),
     )
 
 
@@ -62,28 +62,28 @@ def _create_part(source_record: ET.Element) -> ET.Element | None:
                 "detail",
                 type="volume",
                 children=[
-                    create_text("number", text=source_record.findtext("./volume"))
+                    create_text("number", value=source_record.findtext("./volume"))
                 ],
             ),
             create_group(
                 "detail",
                 type="issue",
                 children=[
-                    create_text("number", text=source_record.findtext("./issueNumber"))
+                    create_text("number", value=source_record.findtext("./issueNumber"))
                 ],
             ),
             create_group(
                 "detail",
                 type="artNo",
                 children=[
-                    create_text("number", text=source_record.findtext("./articleId"))
+                    create_text("number", value=source_record.findtext("./articleId"))
                 ],
             ),
             create_group(
                 "extent",
                 children=[
-                    create_text("start", text=source_record.findtext("./startPage")),
-                    create_text("end", text=source_record.findtext("./endPage")),
+                    create_text("start", value=source_record.findtext("./startPage")),
+                    create_text("end", value=source_record.findtext("./endPage")),
                 ],
             ),
         ],

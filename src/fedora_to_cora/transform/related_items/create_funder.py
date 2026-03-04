@@ -50,5 +50,5 @@ def _create_funder_link(funder_info: ET.Element, context: Context) -> ET.Element
 
 def _create_project_identifier(funder_info: ET.Element) -> ET.Element | None:
     return create_text(
-        "identifier", type="project", text=funder_info.findtext("./projectNumber")
+        "identifier", type="project", value=funder_info.findtext("./projectNumber")
     )

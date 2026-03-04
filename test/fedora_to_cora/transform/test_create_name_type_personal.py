@@ -1,9 +1,9 @@
 from xml.etree import ElementTree as ET
 from fedora_to_cora.transform.create_name_type_personal import (
-    create_examiners,
+    create_degree_supervisor,
     create_name_type_personals,
     create_opponents,
-    create_supervisors,
+    create_thesis_advisor,
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.context import MockContext
@@ -394,7 +394,7 @@ def test_create_supervisors():
         </publication>
         """
     )
-    names = create_supervisors(
+    names = create_thesis_advisor(
         source_record,
         mock_context,
     )
@@ -476,7 +476,7 @@ def test_create_examiners():
         </publication>
         """
     )
-    names = create_examiners(
+    names = create_degree_supervisor(
         source_record,
         mock_context,
     )

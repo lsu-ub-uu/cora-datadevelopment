@@ -2,30 +2,28 @@ import xml.etree.ElementTree as ET
 from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from common.common_data import create_record_link_using_name_type_id
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, create_group
 
 DIVA_SUBJECT_RECORD_TYPE = "diva-subject"
 
 
 def create_subject_authority_diva(
     source_record: ET.Element, context: Context
-) -> ET.Element:
+) -> ET.Element | None:
     """
     Create a subject element with authority "diva" based on the source record.
     """
-    subject = ET.Element("subject", authority="diva")
-
-    topics = [
-        _create_topic(topic.text, i, context)
-        for i, topic in enumerate(
-            source_record.findall("./researchSubjects/subject/subjectId")
-        )
-        if topic.text
-    ]
-
-    append_if_value(subject, topics)
-
-    return subject
+    return create_group(
+        "subject",
+        authority="diva",
+        children=[
+            _create_topic(topic.text, i, context)
+            for i, topic in enumerate(
+                source_record.findall("./researchSubjects/subject/subjectId")
+            )
+            if topic.text
+        ],
+    )
 
 
 def _create_topic(subject_id: str, repeat_id: int, context: Context) -> ET.Element:

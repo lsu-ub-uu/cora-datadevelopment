@@ -13,7 +13,7 @@ def binary_record_transform(
             record_info_create(
                 validation_type_id="genericBinary",
                 visibility=get_binary_visibility(attachment),
-                host_record_id=host_record,
+                host_record_link=host_record,
             ),
             _create_original_file_name(attachment),
             _create_expected_file_size(attachment),

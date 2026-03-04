@@ -122,9 +122,6 @@ def _migrate_attachment(
             attachment,
             validation_type=validation_type,
             binary_record_id=create_binary_result.record_id,
-            file_upload_message=source_record.findtext(
-                "./administrativeInfo/fileUploadMessage"
-            ),
         )
         return cora_attachment, None
     else:

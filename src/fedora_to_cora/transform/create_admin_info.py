@@ -1,25 +1,24 @@
 import xml.etree.ElementTree as ET
 from fedora_to_cora.transform.create_note import create_note
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, create_group, create_text
 
 
-def create_admin_info(source_record: ET.Element) -> ET.Element:
+def create_admin_info(source_record: ET.Element) -> ET.Element | None:
     """
     Create an admin element with internal notes and reviewed status.
     """
-    admin_info = ET.Element("adminInfo")
 
-    append_if_value(
-        admin_info,
-        create_note(source_record, type="internal", source_selector="./internalNote"),
+    failed = source_record.findtext("./failed")
+
+    return create_group(
+        "adminInfo",
+        children=[
+            create_note(
+                source_record,
+                type="internal",
+                source_selector="./internalNote",
+            ),
+            create_text("reviewed", source_record.findtext("./reviewed")),
+            create_text("failed", failed if failed and failed == "true" else None),
+        ],
     )
-
-    reviewed = source_record.find("./reviewed")
-    if reviewed is not None and reviewed.text:
-        ET.SubElement(admin_info, "reviewed").text = reviewed.text
-
-    failed = source_record.find("./failed")
-    if failed is not None and failed.text == "true":
-        ET.SubElement(admin_info, "failed").text = failed.text
-
-    return admin_info

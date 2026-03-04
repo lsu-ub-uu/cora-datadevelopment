@@ -1,12 +1,13 @@
 import xml.etree.ElementTree as ET
+from common.xml_utils import create_group
 from fedora_to_cora.transform.get_sdg import get_sdg
+from common.xml_utils import create_group, create_text
 
 
-def create_subject_authority_sdg(source_record: ET.Element) -> ET.Element:
+def create_subject_authority_sdg(source_record: ET.Element) -> ET.Element | None:
     """
     Create a subject element with authority "sdg" based on the source record.
     """
-    subject = ET.Element("subject", authority="sdg")
 
     development_ids = source_record.findall(
         "./sustainableDevelopments/sustainableDevelopment/developmentId"
@@ -24,10 +25,11 @@ def create_subject_authority_sdg(source_record: ET.Element) -> ET.Element:
             if sdg not in unique_sdgs:
                 unique_sdgs.append(sdg)
 
-    # Create topic elements for each unique SDG
-    for i, sdg_id in enumerate(unique_sdgs):
-        topic = ET.Element("topic", repeatId=str(i))
-        topic.text = sdg_id
-        subject.append(topic)
-
-    return subject
+    return create_group(
+        "subject",
+        authority="sdg",
+        children=[
+            create_text("topic", repeatId=str(i), value=sdg_id)
+            for i, sdg_id in enumerate(unique_sdgs)
+        ],
+    )

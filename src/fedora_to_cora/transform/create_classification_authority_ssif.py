@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 
+from common.xml_utils import create_text
+
 
 def create_classification_authority_ssif(source_record):
     return [
@@ -12,8 +14,9 @@ def create_classification_authority_ssif(source_record):
 
 
 def _create_classification_element(subject_code, repeat_id):
-    classification = ET.Element(
-        "classification", authority="ssif", repeatId=str(repeat_id)
+    return create_text(
+        "classification",
+        authority="ssif",
+        repeatId=str(repeat_id),
+        value=subject_code,
     )
-    classification.text = subject_code
-    return classification

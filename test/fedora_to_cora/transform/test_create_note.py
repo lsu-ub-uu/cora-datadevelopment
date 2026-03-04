@@ -37,12 +37,7 @@ def test_create_note_without_text():
         source_record, type="someType", source_selector="./someSourceTag"
     )
 
-    assert_equal_for_xml_and_xml_string(
-        note,
-        """
-        <note type="someType"></note>
-        """,
-    )
+    assert note is None
 
 
 def test_no_of_contributors_missing():
@@ -57,12 +52,7 @@ def test_no_of_contributors_missing():
         source_record, type="someType", source_selector="./someSourceTag"
     )
 
-    assert_equal_for_xml_and_xml_string(
-        note,
-        """
-        <note type="someType"></note>
-        """,
-    )
+    assert note is None
 
 
 def test_creat_note_with_html():

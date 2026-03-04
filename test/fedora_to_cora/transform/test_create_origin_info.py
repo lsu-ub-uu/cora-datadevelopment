@@ -38,12 +38,7 @@ def test_origin_info_date_issued_missing_year():
 
     origin_info = create_origin_info(source_record, MockContext())
 
-    assert_equal_for_xml_and_xml_string(
-        origin_info,
-        """
-        <originInfo></originInfo>
-        """,
-    )
+    assert origin_info is None
 
 
 def test_create_agent_from_uncontrolled_publisher():

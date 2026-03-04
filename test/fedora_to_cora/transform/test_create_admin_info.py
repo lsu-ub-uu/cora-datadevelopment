@@ -100,13 +100,7 @@ def test_create_admin_info_failed_false():
 
     admin = create_admin_info(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        admin,
-        """
-            <adminInfo>
-            </adminInfo>
-        """,
-    )
+    assert admin is None
 
 
 def test_create_admin_info_when_no_note_and_no_reviewed():
@@ -119,10 +113,4 @@ def test_create_admin_info_when_no_note_and_no_reviewed():
 
     admin = create_admin_info(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        admin,
-        """
-            <adminInfo>
-            </adminInfo>
-        """,
-    )
+    assert admin is None

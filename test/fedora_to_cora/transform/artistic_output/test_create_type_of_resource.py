@@ -51,12 +51,7 @@ def test_missing_media_type():
 
     type_of_resource = create_type_of_resource(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        type_of_resource,
-        f"""
-        <typeOfResource></typeOfResource>
-        """,
-    )
+    assert type_of_resource is None
 
 
 def test_wrong_media_type():

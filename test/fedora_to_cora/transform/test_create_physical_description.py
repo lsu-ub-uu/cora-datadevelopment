@@ -14,10 +14,10 @@ def test_create_physical_description_from_pages():
         """
     )
 
-    origin_info = create_physical_description(source_record)
+    physical_description = create_physical_description(source_record)
 
     assert_equal_for_xml_and_xml_string(
-        origin_info,
+        physical_description,
         """
         <physicalDescription>
             <extent unit="pages">208</extent>
@@ -35,15 +35,9 @@ def test_create_physical_description_empty_pages():
         """
     )
 
-    origin_info = create_physical_description(source_record)
+    physical_description = create_physical_description(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        origin_info,
-        """
-        <physicalDescription>
-        </physicalDescription>
-        """,
-    )
+    assert physical_description is None
 
 
 def test_create_physical_description_empty_data():
@@ -54,15 +48,9 @@ def test_create_physical_description_empty_data():
         """
     )
 
-    origin_info = create_physical_description(source_record)
+    physical_description = create_physical_description(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        origin_info,
-        """
-        <physicalDescription>
-        </physicalDescription>
-        """,
-    )
+    assert physical_description is None
 
 
 def test_create_physical_description_from_media_information():
@@ -169,4 +157,4 @@ def test_create_physical_description_empty_media_information():
 
     description = create_physical_description(source_record)
 
-    assert len(description) == 0
+    assert description is None

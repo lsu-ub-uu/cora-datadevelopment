@@ -44,13 +44,7 @@ def test_create_subject_authority_sdg_none():
 
     subject = create_subject_authority_sdg(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        subject,
-        """
-        <subject authority="sdg">
-        </subject>
-        """,
-    )
+    assert subject is None
 
 
 def test_create_subject_authority_sdg_all():

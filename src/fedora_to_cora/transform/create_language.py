@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 
+from common.xml_utils import create_group, create_text
+
 
 def create_language(source_record: ET.Element) -> ET.Element | None:
     language_code = source_record.find(
@@ -9,10 +11,15 @@ def create_language(source_record: ET.Element) -> ET.Element | None:
     if language_code is None:
         return None
 
-    language = ET.Element("language", repeatId="0")
-    languageTerm = ET.SubElement(language, "languageTerm")
-    languageTerm.attrib["type"] = "code"
-    languageTerm.attrib["authority"] = "iso639-2b"
-    languageTerm.text = language_code.text
-
-    return language
+    return create_group(
+        "language",
+        repeatId="0",
+        children=[
+            create_text(
+                "languageTerm",
+                type="code",
+                authority="iso639-2b",
+                value=language_code.text,
+            )
+        ],
+    )

@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 
+from common.xml_utils import create_text
+
 map_media_type = {
     "1": "stillImage",  # still image
     "2": "artifact",  # three dimensional object
@@ -15,13 +17,15 @@ map_media_type = {
 }
 
 
-def create_type_of_resource(source_record: ET.Element) -> ET.Element:
-    type_of_resource = ET.Element("typeOfResource")
+def create_type_of_resource(source_record: ET.Element) -> ET.Element | None:
     media_type = source_record.findtext("./mediaType/autoId")
-    if media_type is not None:
-        type_of_resource.text = _get_type_of_resource_by_media_type(media_type)
+    if media_type is None:
+        return None
 
-    return type_of_resource
+    return create_text(
+        "typeOfResource",
+        value=_get_type_of_resource_by_media_type(media_type),
+    )
 
 
 def _get_type_of_resource_by_media_type(media_type: str) -> str:

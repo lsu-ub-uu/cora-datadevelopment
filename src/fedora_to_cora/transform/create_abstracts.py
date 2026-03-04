@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 
+from common.xml_utils import create_text
 from fedora_to_cora.clean_rich_text import clean_rich_text
 
 
@@ -38,14 +39,10 @@ def create_abstract(source_abstract: ET.Element, repeat_id: int) -> ET.Element |
         source_language is not None and source_language.text
     ), "Language code must be present in the abstract"
 
-    abstract_element = ET.Element(
-        "abstract", lang=source_language.text, repeatId=str(repeat_id)
+    return create_text(
+        "abstract",
+        lang=source_language.text,
+        repeatId=str(repeat_id),
+        value=clean_rich_text(source_abstract.findtext("./text")),
+        preserve_newlines=True,
     )
-
-    source_text = source_abstract.findtext("./text")
-    if source_text is None:
-        return None
-
-    abstract_element.text = clean_rich_text(source_text)
-
-    return abstract_element

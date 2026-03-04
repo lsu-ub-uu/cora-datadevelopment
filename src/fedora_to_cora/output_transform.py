@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 from cora.context import Context
-from common.xml_utils import append_if_value
+from common.xml_utils import append_if_value, create_group, create_text
 
 from fedora_to_cora.transform.create_name_type_corporate import (
     create_name_type_corporate,
@@ -34,10 +34,10 @@ from fedora_to_cora.transform.create_genre_type_output_type import (
     create_genre_type_output_type,
 )
 from fedora_to_cora.transform.create_name_type_personal import (
-    create_examiners,
+    create_degree_supervisor,
     create_name_type_personals,
     create_opponents,
-    create_supervisors,
+    create_thesis_advisor,
 )
 from fedora_to_cora.transform.create_abstracts import create_abstracts
 
@@ -112,197 +112,107 @@ from fedora_to_cora.transform.artistic_output.create_artistic_output import (
 from fedora_to_cora.transform.related_items.create_publication_channel import (
     create_publication_channel,
 )
-from fedora_to_cora.utils import is_part_of_book, is_part_of_conference
+from fedora_to_cora.utils import (
+    is_not_part_of_book_or_conference,
+    is_part_of_book,
+    is_part_of_conference,
+)
 
 
 def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.Element:
-    target_record = ET.Element("output")
-
-    # create student_degree
-
-    append_if_value(target_record, create_record_info(source_record))
-
-    ET.SubElement(target_record, "dataQuality").text = "2026"
-
-    append_if_value(target_record, create_genre_type_content_type(source_record))
-
-    append_if_value(target_record, create_title_info(source_record))
-
-    append_if_value(target_record, create_subjects(source_record))
-
-    append_if_value(target_record, create_date_other_type_patent(source_record))
-
-    append_if_value(target_record, create_patent_holder(source_record))
-
-    append_if_value(target_record, create_patent_country(source_record))
-
-    append_if_value(target_record, create_origin_info(source_record, context))
-
-    append_if_value(target_record, create_physical_description(source_record))
-
-    append_if_value(target_record, create_classification_authority_ssif(source_record))
-
-    append_if_value(
-        target_record, create_subject_authority_diva(source_record, context)
+    output = create_group(
+        "output",
+        children=[
+            create_record_info(source_record),
+            create_text("dataQuality", "2026"),
+            create_genre_type_output_type(source_record),
+            create_genre_type_subcategory(source_record),
+            create_language(source_record),
+            create_note_type_publication_status(source_record),
+            create_artistic_work(source_record),
+            create_genre_type_content_type(source_record),
+            create_title_info(source_record),
+            create_name_type_personals(source_record, context),
+            create_name_type_corporate(source_record, context),
+            create_note(
+                source_record, type="creatorCount", source_selector="./noOfContributors"
+            ),
+            create_type_of_resource(source_record),
+            create_types(source_record),
+            create_materials(source_record),
+            create_techniques(source_record),
+            create_size(source_record),
+            create_duration(source_record),
+            create_physical_description(source_record),
+            create_note_type_context(source_record),
+            create_abstracts(source_record),
+            create_subjects(source_record),
+            create_date_other_type_patent(source_record),
+            create_patent_holder(source_record),
+            create_patent_country(source_record),
+            create_origin_info(source_record, context),
+            create_classification_authority_ssif(source_record),
+            create_subject_authority_sdg(source_record),
+            create_subject_authority_diva(source_record, context),
+            create_title_info_type_alternative(source_record),
+            (
+                create_identifier_type_isbn(source_record)
+                if is_not_part_of_book_or_conference(source_record)
+                else None
+            ),
+            create_identifier(source_record, type="isrn"),
+            create_identifier(source_record, type="patentNumber"),
+            (
+                create_identifier_doi(source_record)
+                if is_not_part_of_book_or_conference(source_record)
+                else None
+            ),
+            create_identifier(source_record, type="pmid"),
+            create_identifier(source_record, type="wos", source_selector="./isi"),
+            create_identifier(
+                source_record, type="scopus", source_selector="./scopusId"
+            ),
+            (
+                create_identifier_se_libr(source_record)
+                if is_not_part_of_book_or_conference(source_record)
+                else None
+            ),
+            create_identifier(source_record, type="archiveNumber"),
+            create_identifier(source_record, type="localId"),
+            create_locations(source_record),
+            create_location_display_label_order_link(source_record),
+            create_note(source_record, type="external", source_selector="./note"),
+            create_academic_semester(source_record),
+            create_student_degrees(source_record, context),
+            create_external_collaboration(source_record),
+            create_degree_granting_institution(source_record, context),
+            create_thesis_advisor(source_record, context),
+            create_degree_supervisor(source_record, context),
+            create_opponents(source_record, context),
+            create_defence_or_presentation(source_record),
+            create_related_item_type_journal(source_record, context),
+            (
+                create_book(source_record, context)
+                if is_part_of_book(source_record)
+                else None
+            ),
+            (
+                create_related_item_type_proceeding(source_record, context)
+                if is_part_of_conference(source_record)
+                else None
+            ),
+            create_related_item_type_conference(source_record),
+            create_publication_channel(source_record),
+            (
+                create_related_item_type_series(source_record, context)
+                if is_not_part_of_book_or_conference(source_record)
+                else None
+            ),
+            create_related_item_type_project(source_record, context),
+            create_related_item_type_funder(source_record, context),
+            create_admin_info(source_record),
+        ],
     )
 
-    append_if_value(target_record, create_genre_type_output_type(source_record))
-
-    append_if_value(target_record, create_genre_type_subcategory(source_record))
-
-    append_if_value(target_record, create_language(source_record))
-
-    append_if_value(target_record, create_note_type_publication_status(source_record))
-
-    append_if_value(target_record, create_artistic_work(source_record))
-
-    append_if_value(target_record, create_title_info_type_alternative(source_record))
-
-    append_if_value(target_record, create_name_type_personals(source_record, context))
-
-    append_if_value(target_record, create_name_type_corporate(source_record, context))
-
-    append_if_value(
-        target_record,
-        create_note(
-            source_record, type="creatorCount", source_selector="./noOfContributors"
-        ),
-    )
-
-    append_if_value(target_record, create_note_type_context(source_record))
-
-    append_if_value(target_record, create_type_of_resource(source_record))
-
-    append_if_value(target_record, create_types(source_record))
-
-    append_if_value(target_record, create_materials(source_record))
-
-    append_if_value(target_record, create_techniques(source_record))
-
-    append_if_value(target_record, create_size(source_record))
-
-    append_if_value(target_record, create_duration(source_record))
-
-    append_if_value(target_record, create_abstracts(source_record))
-
-    append_if_value(target_record, create_admin_info(source_record))
-
-    append_if_value(
-        target_record,
-        create_subject_authority_sdg(source_record),
-    )
-
-    if not is_part_of_book(source_record) and not is_part_of_conference(source_record):
-        append_if_value(target_record, create_identifier_type_isbn(source_record))
-
-    append_if_value(
-        target_record,
-        create_identifier(source_record, type="isrn"),
-    )
-
-    append_if_value(
-        target_record,
-        create_identifier(source_record, type="archiveNumber"),
-    )
-
-    append_if_value(
-        target_record,
-        create_identifier(source_record, type="localId"),
-    )
-
-    append_if_value(
-        target_record,
-        create_identifier(source_record, type="pmid"),
-    )
-
-    append_if_value(
-        target_record,
-        create_identifier(source_record, type="wos", source_selector="./isi"),
-    )
-
-    append_if_value(
-        target_record,
-        create_identifier(source_record, type="scopus", source_selector="./scopusId"),
-    )
-
-    if not is_part_of_book(source_record) and not is_part_of_conference(source_record):
-        append_if_value(target_record, create_identifier_doi(source_record))
-        append_if_value(target_record, create_identifier_se_libr(source_record))
-
-    append_if_value(
-        target_record,
-        create_identifier(source_record, type="patentNumber"),
-    )
-
-    append_if_value(
-        target_record,
-        create_locations(source_record),
-    )
-
-    append_if_value(
-        target_record,
-        create_location_display_label_order_link(source_record),
-    )
-
-    append_if_value(
-        target_record,
-        create_note(source_record, type="external", source_selector="./note"),
-    )
-
-    append_if_value(target_record, create_publication_channel(source_record))
-
-    if not is_part_of_book(source_record) and not is_part_of_conference(source_record):
-        append_if_value(
-            target_record,
-            create_related_item_type_series(source_record, context),
-        )
-
-    if is_part_of_book(source_record):
-        append_if_value(
-            target_record,
-            create_book(source_record, context),
-        )
-
-    if is_part_of_conference(source_record):
-        append_if_value(
-            target_record,
-            create_related_item_type_proceeding(source_record, context),
-        )
-
-    append_if_value(target_record, create_related_item_type_conference(source_record))
-
-    append_if_value(
-        target_record,
-        create_external_collaboration(source_record),
-    )
-
-    append_if_value(
-        target_record,
-        create_degree_granting_institution(source_record, context),
-    )
-
-    append_if_value(target_record, create_supervisors(source_record, context))
-
-    append_if_value(target_record, create_examiners(source_record, context))
-
-    append_if_value(target_record, create_opponents(source_record, context))
-
-    append_if_value(target_record, create_academic_semester(source_record))
-
-    append_if_value(target_record, create_student_degrees(source_record, context))
-
-    append_if_value(target_record, create_defence_or_presentation(source_record))
-
-    append_if_value(
-        target_record, create_related_item_type_journal(source_record, context)
-    )
-
-    append_if_value(
-        target_record, create_related_item_type_project(source_record, context)
-    )
-
-    append_if_value(
-        target_record, create_related_item_type_funder(source_record, context)
-    )
-
-    return target_record
+    assert output is not None
+    return output

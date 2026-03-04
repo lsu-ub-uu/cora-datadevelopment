@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+from common.xml_utils import create_text
 from fedora_to_cora.transform.get_validation_type import (
     get_validation_type_from_fedora_record,
 )
@@ -10,7 +11,8 @@ def create_genre_type_output_type(source_record: ET.Element) -> ET.Element | Non
     if validation_type is None:
         return None
 
-    genre = ET.Element("genre", type="outputType")
-    genre.text = validation_type
-
-    return genre
+    return create_text(
+        "genre",
+        type="outputType",
+        value=validation_type,
+    )

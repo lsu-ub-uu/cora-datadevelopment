@@ -93,14 +93,17 @@ def test_record_info_create_with_visibility():
 
     assert_equal_for_xml_and_xml_string(record_info, expected_xml)
 
+
 def test_record_info_create_with_host_record():
-    host_record = ET.fromstring("<hostRecord><linkedRecordType>someType</linkedRecordType><linkedRecordId>someId</linkedRecordId></hostRecord>")
+    host_record = ET.fromstring(
+        "<hostRecord><linkedRecordType>someType</linkedRecordType><linkedRecordId>someId</linkedRecordId></hostRecord>"
+    )
 
     record_info = record_info_create(
         validation_type_id="someValidationType",
         old_id="12345",
         permission_unit_id="somePermissionUnit",
-        host_record_id=host_record
+        host_record_link=host_record,
     )
 
     expected_xml = """

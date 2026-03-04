@@ -52,7 +52,9 @@ def create_name_type_personals(
     return name_type_personals
 
 
-def create_supervisors(source_record: ET.Element, context: Context) -> list[ET.Element]:
+def create_thesis_advisor(
+    source_record: ET.Element, context: Context
+) -> list[ET.Element]:
     supervisors = source_record.findall(".//supervisors/person")
     return [
         create_name_type_personal(
@@ -80,7 +82,9 @@ def create_opponents(source_record: ET.Element, context: Context) -> list[ET.Ele
     ]
 
 
-def create_examiners(source_record: ET.Element, context: Context) -> list[ET.Element]:
+def create_degree_supervisor(
+    source_record: ET.Element, context: Context
+) -> list[ET.Element]:
     examiners = source_record.findall(".//examiners/person")
     return [
         create_name_type_personal(
@@ -105,6 +109,7 @@ def create_name_type_personal(
     """
     Create a cora person element from a classic person element.
     """
+
     name_type_personal = ET.Element("name", type="personal", repeatId=str(repeatId))
 
     if otherType is not None:

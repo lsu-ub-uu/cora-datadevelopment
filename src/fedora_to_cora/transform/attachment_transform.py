@@ -2,7 +2,10 @@ from typing import Optional
 import xml.etree.ElementTree as ET
 from common.common_data import create_record_link_using_name_type_id
 from common.date_utils import is_after_now
-from common.xml_utils import append_if_value, transform_text_element
+from common.xml_utils import (
+    create_group,
+    create_text,
+)
 from fedora_to_cora.transform.binary.get_attachment_type import get_attachment_type
 from fedora_to_cora.transform.binary.get_binary_requested_visibility import (
     get_binary_requested_visibility,
@@ -16,63 +19,40 @@ def attachment_transform(
     source_attachment: ET.Element,
     validation_type: str,
     binary_record_id: str,
-    file_upload_message: Optional[str] = None,
 ) -> ET.Element:
-    attachment = ET.Element(
+
+    attachment = create_group(
         "attachment",
         repeatId=binary_record_id,
         label=get_attachment_type(source_attachment),
-    )
-    attachment.append(
-        create_record_link_using_name_type_id(
-            name_in_data="file",
-            record_type="binary",
-            record_id=binary_record_id,
-        )
-    )
-
-    if _should_have_attachment_version(validation_type):
-        append_if_value(
-            attachment,
-            _create_attachment_version(source_attachment),
-        )
-
-    append_if_value(
-        attachment, _create_admin_info(source_attachment, file_upload_message)
-    )
-    append_if_value(
-        attachment,
-        transform_text_element(
-            source_attachment.find("./selectedFileName"), "displayLabel"
-        ),
-    )
-    append_if_value(
-        attachment,
-        _create_requested_visibility(source_attachment),
-    )
-    append_if_value(
-        attachment,
-        transform_text_element(source_attachment.find("./digitized"), "digitized"),
-    )
-    append_if_value(
-        attachment,
-        transform_text_element(
-            source_attachment.find("./printOnDemand"), "printReadyFile"
-        ),
+        children=[
+            create_record_link_using_name_type_id(
+                name_in_data="file",
+                record_type="binary",
+                record_id=binary_record_id,
+            ),
+            (
+                _create_attachment_version(source_attachment)
+                if _should_have_attachment_version(validation_type)
+                else None
+            ),
+            _create_admin_info(source_attachment),
+            create_text(
+                "displayLabel", source_attachment.findtext("./selectedFileName")
+            ),
+            _create_requested_visibility(source_attachment),
+            create_text("digitized", source_attachment.findtext("./digitized")),
+            create_text(
+                "printReadyFile", source_attachment.findtext("./printOnDemand")
+            ),
+            _create_date_to_be_published(source_attachment),
+            create_date(
+                source_attachment.findtext("./availableUntil"), "dateToBeUnpublished"
+            ),
+        ],
     )
 
-    append_if_value(
-        attachment,
-        _create_date_to_be_published(source_attachment),
-    )
-
-    append_if_value(
-        attachment,
-        create_date(
-            source_attachment.findtext("./availableUntil"), "dateToBeUnpublished"
-        ),
-    )
-
+    assert attachment is not None
     return attachment
 
 
@@ -145,25 +125,19 @@ def _get_attachment_version(source_attachment: ET.Element) -> str | None:
     return None
 
 
-def _create_admin_info(
-    source_attachment: ET.Element, file_upload_message: Optional[str]
-) -> ET.Element:
-    admin_info = ET.Element("adminInfo")
-    if source_attachment.findtext("secrecyInfo/secrecy") == "true":
-        ET.SubElement(admin_info, "secrecy").text = "true"
-
-    registration_number = source_attachment.findtext("./registrationNumber")
-    if registration_number is not None:
-        ET.SubElement(admin_info, "identifier", type="registrationNumber").text = (
-            registration_number
-        )
-
-    if file_upload_message is not None:
-        ET.SubElement(admin_info, "note", type="attachment").text = (
-            f"""**The following note was migrated from a DiVA Classic file upload message, and may not refer to this attachment**:\n\n{file_upload_message}"""
-        )
-    return admin_info
-
-
-def _get_today() -> datetime:
-    return datetime.now().astimezone()
+def _create_admin_info(source_attachment: ET.Element):
+    return create_group(
+        "adminInfo",
+        children=[
+            create_text(
+                "secrecy",
+                source_attachment.findtext("secrecyInfo/secrecy"),
+                type="secrecy",
+            ),
+            create_text(
+                "identifier",
+                source_attachment.findtext("./registrationNumber"),
+                type="registrationNumber",
+            ),
+        ],
+    )

@@ -364,71 +364,6 @@ def test_roll_back_binary_records_when_something_fails(monkeypatch):
     assert errors[0] == "UploadError: Failed to upload binary"
 
 
-def test_file_upload_message(monkeypatch):
-    _set_up_create_record_mock(monkeypatch)
-    _set_up_migrate_binary_mock(monkeypatch)
-    _set_up_update_record_mock(monkeypatch)
-    _set_up_binary_record_transform_mock(monkeypatch)
-    attachments_transform_mock = _set_up_attachments_transform_mock(monkeypatch)
-
-    source_record = ET.fromstring(
-        """
-        <publication>
-            <pid>pid:123</pid>
-            <publicationType>
-                <publicationTypeCode>report</publicationTypeCode>
-            </publicationType>
-            <administrativeInfo>
-                <fileUploadMessage>Some note about the attachment</fileUploadMessage>
-            </administrativeInfo>
-            <attachments>
-                <attachment>
-                    <fileLabel>
-                        <fileLabelId>50</fileLabelId>
-                    </fileLabel>
-                    <fileName>test.pdf</fileName>
-                </attachment>
-                 <attachment>
-                    <fileLabel>
-                        <fileLabelId>50</fileLabelId>
-                    </fileLabel>
-                    <fileName>test2.pdf</fileName>
-                </attachment>
-            </attachments>
-        </publication>
-        """
-    )
-
-    cora_record = ET.fromstring(
-        """
-        <record>
-            <data>
-                <output> 
-                    <recordInfo>
-                        <id>test-output</id>
-                    </recordInfo>
-                </output>
-            </data>
-        </record>
-        """
-    )
-
-    attachments_migrate(
-        source_record,
-        cora_record,
-        MockContext(),
-    )
-
-    assert (
-        attachments_transform_mock.mock_calls[0].kwargs["file_upload_message"]
-        == "Some note about the attachment"
-    )
-    assert (
-        attachments_transform_mock.mock_calls[1].kwargs["file_upload_message"]
-        == "Some note about the attachment"
-    )
-
-
 def test_respects_attachment_order(monkeypatch):
     _set_up_create_record_mock(monkeypatch)
     _set_up_migrate_binary_mock(monkeypatch)
@@ -1963,7 +1898,6 @@ def _set_up_attachments_transform_mock(monkeypatch):
         source_attachment,
         validation_type,
         binary_record_id,
-        file_upload_message=None,
     ):
         file_name = source_attachment.findtext("./fileName")
         return ET.fromstring(

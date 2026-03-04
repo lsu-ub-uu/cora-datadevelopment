@@ -84,31 +84,17 @@ def transform_record_list(
     return results
 
 
-def transform_text_element(
-    source_element: ET.Element | None, new_tag_name: str
-) -> ET.Element | None:
-    if source_element is None:
-        return None
-
-    text_value = source_element.text
-    if text_value is not None and text_value.strip() != "":
-        new_element = ET.Element(new_tag_name)
-        new_element.text = text_value
-        return new_element
-    return None
-
-
 def create_text(
     tag_name: str,
-    text: str | None,
+    value: str | None,
     preserve_newlines: bool = False,
     **attributes: str | None,
 ) -> ET.Element | None:
-    if text is None or text.strip() == "":
+    if value is None or value.strip() == "":
         return None
     element = ET.Element(tag_name, _clean_attributes(attributes))
-    text = text.strip() if preserve_newlines else text.replace("\n", " ").strip()
-    element.text = text
+    value = value.strip() if preserve_newlines else value.replace("\n", " ").strip()
+    element.text = value
     return element
 
 
