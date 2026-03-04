@@ -1,4 +1,6 @@
 import xml.etree.ElementTree as ET
+
+import pytest
 from fedora_to_cora.transform.related_items.create_journal import (
     create_related_item_type_journal,
 )
@@ -282,3 +284,59 @@ def test_empty_uncontrolled_journal():
 
     journal = create_related_item_type_journal(source_record, mock_context)
     assert journal is None
+
+
+def test_create_uncontrolled_and_controlled_journal(monkeypatch):
+    journal_old_id = "985"
+    journal_cora_id = "diva-journal:21849327760208536"
+
+    mock_context = MockContext()
+
+    def mock_get_id(old_id, *args, **kwargs):
+        if old_id == journal_old_id:
+            return journal_cora_id
+        else:
+            return None
+
+    monkeypatch.setattr(
+        "fedora_to_cora.transform.related_items.create_journal.get_cora_id_by_old_id",
+        mock_get_id,
+    )
+
+    source_record = ET.fromstring(
+        """
+        <publication>
+            <journal>
+                <journalId>{journal_old_id}</journalId>
+            </journal>
+            <uncontrolledJournal>
+                <printedIssn>1530-1591</printedIssn>
+                <controlled>false</controlled>
+                <openAccess>false</openAccess>
+                <subjects />
+                <relationships />
+            </uncontrolledJournal>
+            <part>
+                <detail type="volume">
+                    <number>2021</number>
+                </detail>
+                <detail type="issue">
+                    <number>4</number>
+                </detail>
+                <detail type="artNo">
+                    <number>123456</number>
+                </detail>
+                <extent>
+                    <start>100</start>
+                    <end>110</end>
+                </extent>
+            </part>
+        </publication>
+        """
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="Record has both controlled and uncontrolled journal.",
+    ):
+        create_related_item_type_journal(source_record, mock_context)

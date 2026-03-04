@@ -34,6 +34,7 @@ def _create_topic(subject_id: str, repeat_id: int, context: Context) -> ET.Eleme
     topic = create_record_link(
         name_in_data="topic", record_type=DIVA_SUBJECT_RECORD_TYPE, record_id=cora_id
     )
+    assert topic is not None
     topic.set("repeatId", str(repeat_id))
 
     return topic

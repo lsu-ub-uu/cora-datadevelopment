@@ -14,11 +14,15 @@ def create_related_item_type_journal(
 
     journal = None
 
-    journal_old_id = source_record.findtext("./journal/journalId")
-    if journal_old_id is not None:
-        journal = _create_controlled_journal(journal_old_id, context)
-
+    controlled_journal_old_id = source_record.findtext("./journal/journalId")
     uncontrolled_journal = source_record.find("./uncontrolledJournal")
+
+    if controlled_journal_old_id is not None and uncontrolled_journal is not None:
+        raise ValueError("Record has both controlled and uncontrolled journal.")
+    
+    if controlled_journal_old_id is not None:
+        journal = _create_controlled_journal(controlled_journal_old_id, context)
+
     if uncontrolled_journal is not None:
         journal = _create_uncontrolled_journal(uncontrolled_journal)
 
