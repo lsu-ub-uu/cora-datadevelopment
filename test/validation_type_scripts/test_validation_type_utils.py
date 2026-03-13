@@ -235,7 +235,7 @@ def test_normalize_regex_patterns(record_node, monkeypatch):
 
 def test_normalize_regex_patterns_ignore_variant(record_node, monkeypatch):
     regex = record_node.xml_content.find(".//regEx")
-    regex.text = "^[\s\S]+$"
+    regex.text = r"^[\s\S]+$"
     monkeypatch.setattr(common_utils, "info_groups", lambda boolean: False)
     updated = common_utils.normalize_regex_patterns(record_node.xml_content)
     regex_text = record_node.xml_content.find(".//regEx").text
