@@ -177,7 +177,7 @@ def possibly_update_data_of_non_info_group_child(node, info_groupz: set, final_v
         updated = True
 
     if normalize_regex_patterns(node.xml_content):
-        _ctx.log(f"> Normalized regex pattern(s) to '.+' in {node.record_id}")
+        _ctx.log(fr"> Normalized regex pattern(s) to '^\S.$' in {node.record_id}")
         updated = True
 
     excluded_record_ids = info_groupz.union(final_value_nodes)
@@ -210,8 +210,8 @@ def normalize_regex_patterns(xml_root):
         for tag in ("regex", "regEx"):
             for element in xml_root.findall(f".//{tag}"):
                 regex = element.text
-                if regex and regex.strip() and regex != ".+" and r"[\s\S]+" not in regex:
-                    element.text = ".+"
+                if regex and regex.strip() and regex != r"^[\s\S]+$" and r"^\S.$" not in regex:
+                    element.text = r"^\S.$"
                     updated = True
 
     return updated

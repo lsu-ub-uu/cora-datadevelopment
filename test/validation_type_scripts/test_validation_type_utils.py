@@ -230,7 +230,7 @@ def test_normalize_regex_patterns(record_node, monkeypatch):
     updated = common_utils.normalize_regex_patterns(record_node.xml_content)
     regex_text = record_node.xml_content.find(".//regEx").text
     assert updated
-    assert regex_text == ".+"
+    assert regex_text == "^\S.$"
 
 
 def test_normalize_regex_patterns_ignore_variant(record_node, monkeypatch):
