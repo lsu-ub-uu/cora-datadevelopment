@@ -50,7 +50,7 @@ def _create_controlled_series(
         "relatedItem",
         [
             create_record_link(
-                name_in_data="topic",
+                name_in_data="series",
                 record_type="diva-series",
                 record_id=series_cora_id,
             ),

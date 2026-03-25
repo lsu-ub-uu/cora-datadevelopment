@@ -52,10 +52,10 @@ def test_create_controlled_series_link(monkeypatch):
         series_items[0],
         f"""
         <relatedItem type="series" otherType="link" repeatId="controlled0">
-            <topic>
+            <series>
                 <linkedRecordType>diva-series</linkedRecordType>
                 <linkedRecordId>{series_cora_id_1}</linkedRecordId>
-            </topic>
+            </series>
         </relatedItem>
         """,
     )
@@ -63,10 +63,10 @@ def test_create_controlled_series_link(monkeypatch):
         series_items[1],
         f"""
         <relatedItem type="series" otherType="link" repeatId="controlled1">
-            <topic>
+            <series>
                 <linkedRecordType>diva-series</linkedRecordType>
                 <linkedRecordId>{series_cora_id_2}</linkedRecordId>
-            </topic>
+            </series>
             <partNumber>66</partNumber>
         </relatedItem>
         """,

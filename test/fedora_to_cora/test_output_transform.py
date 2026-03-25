@@ -177,7 +177,7 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <relatedItem type="journal" otherType="text"><titleInfo><title>Design, Automation and Test in Europe</title></titleInfo><identifier type="issn" displayLabel="pissn">1530-1591</identifier><identifier type="issn" displayLabel="eissn">1558-1101</identifier><part><detail type="volume"><number>15</number></detail><detail type="issue"><number>4</number></detail><detail type="artNo"><number>ART-2022-04</number></detail><extent><start>10</start><end>30</end></extent></part></relatedItem>
         <relatedItem type="conference"><conference>Some conference</conference></relatedItem>
         <relatedItem type="publicationChannel"><publicationChannel>Discovery Channel</publicationChannel></relatedItem>
-        <relatedItem type="series" otherType="link" repeatId="controlled0"><topic><linkedRecordType>diva-series</linkedRecordType><linkedRecordId>{series_id}</linkedRecordId></topic><partNumber>1-75</partNumber></relatedItem>
+        <relatedItem type="series" otherType="link" repeatId="controlled0"><series><linkedRecordType>diva-series</linkedRecordType><linkedRecordId>{series_id}</linkedRecordId></series><partNumber>1-75</partNumber></relatedItem>
         <relatedItem type="project" otherType="text" repeatId="uncontrolled0"><titleInfo><title>Ett annat projekt</title></titleInfo></relatedItem>
         <relatedItem type="project" otherType="text" repeatId="uncontrolled1"><titleInfo><title>Ytterligare ett annat projekt</title></titleInfo></relatedItem>
         <relatedItem repeatId="0" type="funder"><funder><linkedRecordType>diva-funder</linkedRecordType><linkedRecordId>diva-funder:67890</linkedRecordId></funder><identifier type="project">2021-00001</identifier></relatedItem>
@@ -278,10 +278,10 @@ def test_output_transform_book(mock_diva_search_requests):
             <identifier type="isbn" displayLabel="print" repeatId="0">9171084282</identifier>
             <identifier type="localId" repeatId="0">xxxxx</identifier>
             <relatedItem type="series" otherType="link" repeatId="controlled0">
-                <topic>
+                <series>
                     <linkedRecordType>diva-series</linkedRecordType>
                     <linkedRecordId>diva-series:17450</linkedRecordId>
-                </topic>
+                </series>
                 <partNumber>1998</partNumber>
             </relatedItem>
             <adminInfo>
@@ -399,10 +399,10 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                     </extent>
                 </part>
                 <relatedItem type="series" otherType="link" repeatId="controlled0">
-                    <topic>
+                    <series>
                         <linkedRecordType>diva-series</linkedRecordType>
                         <linkedRecordId>diva-series:17450</linkedRecordId>
-                    </topic>
+                    </series>
                     <partNumber>2016</partNumber>
                 </relatedItem>
             </relatedItem>
