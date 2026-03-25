@@ -10,31 +10,30 @@ DIVA_JOURNAL_RECORD_TYPE = "diva-journal"
 
 def create_related_item_type_journal(
     source_record: ET.Element, context: Context
-) -> ET.Element | None:
+) -> list[ET.Element]:
 
-    journal = None
+    journals = []
 
-    controlled_journal_old_id = source_record.findtext("./journal/journalId")
-    uncontrolled_journal = source_record.find("./uncontrolledJournal")
+    controlled_journal = _create_controlled_journal(source_record, context)
+    uncontrolled_journal = _create_uncontrolled_journal(source_record)
 
-    if controlled_journal_old_id is not None and uncontrolled_journal is not None:
-        raise ValueError("Record has both controlled and uncontrolled journal.")
-    
-    if controlled_journal_old_id is not None:
-        journal = _create_controlled_journal(controlled_journal_old_id, context)
+    if controlled_journal is not None:
+        append_if_value(controlled_journal, _create_part(source_record))
+        journals.append(controlled_journal)
 
     if uncontrolled_journal is not None:
-        journal = _create_uncontrolled_journal(uncontrolled_journal)
+        append_if_value(uncontrolled_journal, _create_part(source_record))
+        journals.append(uncontrolled_journal)
 
-    if journal is not None and len(journal) > 0:
-        part = _create_part(source_record)
-        append_if_value(journal, part)
-        return journal
-
-    return None
+    return journals
 
 
-def _create_uncontrolled_journal(uncontrolled_journal: ET.Element) -> ET.Element | None:
+def _create_uncontrolled_journal(source_record: ET.Element) -> ET.Element | None:
+    uncontrolled_journal = source_record.find("./uncontrolledJournal")
+
+    if uncontrolled_journal is None:
+        return None
+
     journal_name_uncontrolled = uncontrolled_journal.findtext(
         "./journalNameUncontrolled"
     )
@@ -57,7 +56,11 @@ def _create_uncontrolled_journal(uncontrolled_journal: ET.Element) -> ET.Element
     )
 
 
-def _create_controlled_journal(journal_old_id: str, context: Context):
+def _create_controlled_journal(source_record: ET.Element, context: Context):
+    journal_old_id = source_record.findtext("./journal/journalId")
+    if journal_old_id is None or journal_old_id.strip() == "":
+        return None
+
     return create_group(
         "relatedItem",
         type="journal",

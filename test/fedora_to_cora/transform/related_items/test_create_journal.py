@@ -24,10 +24,10 @@ def test_create_related_item_type_journal_with_title():
         """
     )
 
-    journal = create_related_item_type_journal(source_record, mock_context)
+    journals = create_related_item_type_journal(source_record, mock_context)
 
     assert_equal_for_xml_and_xml_string(
-        journal,
+        journals[0],
         """
         <relatedItem type="journal" otherType="text">
             <titleInfo>
@@ -53,10 +53,10 @@ def test_create_related_item_type_journal_with_identifiers():
         """
     )
 
-    journal = create_related_item_type_journal(source_record, mock_context)
+    journals = create_related_item_type_journal(source_record, mock_context)
 
     assert_equal_for_xml_and_xml_string(
-        journal,
+        journals[0],
         """
         <relatedItem type="journal" otherType="text">
             <identifier type="issn" displayLabel="pissn">
@@ -90,10 +90,10 @@ def test_create_related_item_type_journal_with_part():
         """
     )
 
-    journal = create_related_item_type_journal(source_record, mock_context)
+    journals = create_related_item_type_journal(source_record, mock_context)
 
     assert_equal_for_xml_and_xml_string(
-        journal,
+        journals[0],
         """
         <relatedItem type="journal" otherType="text">
             <titleInfo>
@@ -137,10 +137,10 @@ def test_create_related_item_type_journal_with_part_without_extent():
         """
     )
 
-    journal = create_related_item_type_journal(source_record, mock_context)
+    journals = create_related_item_type_journal(source_record, mock_context)
 
     assert_equal_for_xml_and_xml_string(
-        journal,
+        journals[0],
         """
         <relatedItem type="journal" otherType="text">
             <titleInfo>
@@ -194,10 +194,10 @@ def test_create_controlled_journal(monkeypatch):
         """
     )
 
-    journal = create_related_item_type_journal(source_record, mock_context)
+    journals = create_related_item_type_journal(source_record, mock_context)
 
     assert_equal_for_xml_and_xml_string(
-        journal,
+        journals[0],
         f"""
         <relatedItem type="journal" otherType="link">
             <journal>
@@ -251,10 +251,10 @@ def test_create_controlled_journal_with_part(monkeypatch):
         """
     )
 
-    journal = create_related_item_type_journal(source_record, mock_context)
+    journals = create_related_item_type_journal(source_record, mock_context)
 
     assert_equal_for_xml_and_xml_string(
-        journal,
+        journals[0],
         f"""
         <relatedItem type="journal" otherType="link">
             <journal>
@@ -282,8 +282,8 @@ def test_empty_uncontrolled_journal():
         """
     )
 
-    journal = create_related_item_type_journal(source_record, mock_context)
-    assert journal is None
+    journals = create_related_item_type_journal(source_record, mock_context)
+    assert len(journals) == 0
 
 
 def test_create_uncontrolled_and_controlled_journal(monkeypatch):
@@ -335,8 +335,6 @@ def test_create_uncontrolled_and_controlled_journal(monkeypatch):
         """
     )
 
-    with pytest.raises(
-        ValueError,
-        match="Record has both controlled and uncontrolled journal.",
-    ):
-        create_related_item_type_journal(source_record, mock_context)
+    journals = create_related_item_type_journal(source_record, mock_context)
+
+    assert len(journals) == 2
