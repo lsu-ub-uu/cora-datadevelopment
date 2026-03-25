@@ -1,24 +1,13 @@
 from common.arg_parser import create_argument_parser
-from classic.get_publishers import get_publishers
-from classic.get_funders import get_funders
-from cora.context import Context, CoraContext
-from db_to_cora.funder_transform import transform_funder
-from db_to_cora.journal_transform import transform_journal
-from db_to_cora.publisher_transform import transform_publisher
-from classic.get_journals import get_journals
+from cora.context import CoraContext
 from cora_to_cora.organisations_migrate import organisations_migrate
-from db_to_cora.series_transform import transform_series
-from db_to_cora.subject_programme_course_transform import (
-    transform_subject,
-    transform_programme,
-    transform_course,
-)
-from classic.get_subjects import get_subjects
-from classic.get_programmes import get_programmes
-from classic.get_courses import get_courses
-from classic.get_series import get_series
-from db_to_cora.records_import import records_import
-from db_to_cora.update_relations import RelationMapping, update_relations
+from db_to_cora.publishers_migrate import publishers_migrate
+from db_to_cora.funders_migrate import funders_migrate
+from db_to_cora.journals_migrate import journals_migrate
+from db_to_cora.subjects_migrate import subjects_migrate
+from db_to_cora.programmes_migrate import programmes_migrate
+from db_to_cora.courses_migrate import courses_migrate
+from db_to_cora.series_migrate import series_migrate
 
 
 def main():
@@ -61,12 +50,32 @@ def main():
                 "help": "Include common data (publishers, funders, journals) in the migration",
                 "action": "store_true",
             },
+            "--record-types": {
+                "help": "Comma-separated list of record types to migrate. Available types: publishers, funders, journals, organisations, subjects, series, programmes, courses. If not specified, all types are migrated.",
+                "type": str,
+                "default": None,
+            },
         },
     )
     args = argparser.parse_args()
 
+    # Parse record types
+    all_common_types = ["publishers", "funders", "journals"]
+    all_domain_types = ["organisations", "subjects", "series", "programmes", "courses"]
+    all_types = all_common_types + all_domain_types
+
+    if args.record_types:
+        selected_types = [t.strip() for t in args.record_types.split(",")]
+        invalid_types = [t for t in selected_types if t not in all_types]
+        if invalid_types:
+            print(f"Error: Invalid record types: {invalid_types}")
+            print(f"Available types: {all_types}")
+            return
+    else:
+        selected_types = all_types
+
     print(
-        """
+        r"""
  _______   __  __     __   ______         __       __  __                                 __       ______            
 /       \ /  |/  |   /  | /      \       /  \     /  |/  |                               /  |     /      \           
 $$$$$$$  |$$/ $$ |   $$ |/$$$$$$  |      $$  \   /$$ |$$/   ______    ______   ______   _$$ |_   /$$$$$$  |  ______  
@@ -87,200 +96,110 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
         args.system, args.login_id, args.app_token, workers=args.workers
     )
     context.log(f"=== Migration started for {args.domain} to {args.system} ===")
-    if args.include_common_data:
-        print(f"=== Start migrating common data to {args.system} ===")
 
-        migrate_publishers(args, context)
-        migrate_funders(args, context)
-        # migrate_journals(args, context)
+    # Determine which common types to migrate
+    common_types_to_migrate = [t for t in all_common_types if t in selected_types]
+    if args.include_common_data and common_types_to_migrate:
+        print(f"=== Start migrating common data to {args.system} ===")
+        print(f"    Record types: {common_types_to_migrate}")
+
+        if "publishers" in selected_types:
+            migrate_publishers(args, context)
+        if "funders" in selected_types:
+            migrate_funders(args, context)
+        if "journals" in selected_types:
+            migrate_journals(args, context)
         # TODO Persons
         # TODO Projects
 
         print("=== Common data migration completed ===")
-    else:
+    elif not args.include_common_data:
         print(
             "Skipping migrating common data, since --include-common-data arg is not set"
         )
 
-    print(f"=== Start migrating data for {args.domain} domain to {args.system} ===")
+    # Determine which domain types to migrate
+    domain_types_to_migrate = [t for t in all_domain_types if t in selected_types]
+    if domain_types_to_migrate:
+        print(f"=== Start migrating data for {args.domain} domain to {args.system} ===")
+        print(f"    Record types: {domain_types_to_migrate}")
 
-    migrate_organisations(args, context)
-    migrate_subjects(args, context)
-    migrate_series(args, context)
-    migrate_programmes(args, context)
-    migrate_course(args, context)
-    # TODO Outputs
+        if "organisations" in selected_types:
+            migrate_organisations(args, context)
+        if "subjects" in selected_types:
+            migrate_subjects(args, context)
+        if "series" in selected_types:
+            migrate_series(args, context)
+        if "programmes" in selected_types:
+            migrate_programmes(args, context)
+        if "courses" in selected_types:
+            migrate_courses(args, context)
+        # TODO Outputs
 
-    print(f"=== Data migration for {args.domain} domain completed ===")
+        print(f"=== Data migration for {args.domain} domain completed ===")
     context.log(f"=== Migration completed for {args.domain} to {args.system} ===")
 
 
-def migrate_publishers(args, context: Context):
+def migrate_publishers(args, context):
     print("--- Start migrating publishers")
-    classic_publishers = get_publishers(
-        db_user=args.db_user, db_password=args.db_password
-    ).findall(".//DATA_RECORD")
-
-    records_import(
-        context,
-        record_type="diva-publisher",
-        source_records=classic_publishers,
-        transform_function=transform_publisher,
-        apply=True,
+    num_publishers = publishers_migrate(
+        context, db_user=args.db_user, db_password=args.db_password
     )
-    print(f"--- {len(classic_publishers)} Publishers imported to Cora ---")
+    print(f"--- {num_publishers} Publishers imported to Cora ---")
 
 
-def migrate_funders(args, context: Context):
+def migrate_funders(args, context):
     print("--- Start migrating funders")
-    classic_funders = get_funders(
-        db_user=args.db_user, db_password=args.db_password
-    ).findall(".//DATA_RECORD")
-
-    records_import(
-        context,
-        record_type="diva-funder",
-        source_records=classic_funders,
-        transform_function=transform_funder,
-        apply=True,
+    num_funders = funders_migrate(
+        context, db_user=args.db_user, db_password=args.db_password
     )
+    print(f"--- {num_funders} Funders imported to Cora ---")
 
-    print(f"--- {len(classic_funders)} Funders imported to Cora ---")
 
-
-def migrate_journals(args, context: Context):
+def migrate_journals(args, context):
     print("--- Start migrating journals ")
-    classic_journals = get_journals(
-        db_user=args.db_user, db_password=args.db_password
-    ).findall(".//DATA_RECORD")
-
-    records_import(
-        context,
-        record_type="diva-journal",
-        source_records=classic_journals,
-        transform_function=transform_journal,
-        apply=True,
+    num_journals = journals_migrate(
+        context, db_user=args.db_user, db_password=args.db_password
     )
-    print(f"--- {len(classic_journals)} Journals imported to Cora ---")
+    print(f"--- {num_journals} Journals imported to Cora ---")
 
 
-def migrate_organisations(args, context: Context):
+def migrate_organisations(args, context):
     print(f"--- Start migrating organisations for {args.domain} ---")
     num_organisations = organisations_migrate(context, args.domain)
     print(f"--- {num_organisations} Organisations migrated ---")
 
 
-def migrate_subjects(args, context: Context):
+def migrate_subjects(args, context):
     print(f"--- Start migrating subjects for {args.domain} ---")
-    classic_subjects = get_subjects(
-        db_user=args.db_user, db_password=args.db_password, domain=args.domain
-    ).findall(".//DATA_RECORD")
-
-    records_import(
-        context,
-        record_type="diva-subject",
-        source_records=classic_subjects,
-        transform_function=transform_subject,
-        relation_mappings=[
-            RelationMapping(
-                old_relation_tag="broader_id",
-                new_relation_link="subject",
-                new_relation_type="broader",
-            ),
-            RelationMapping(
-                old_relation_tag="earlier_id",
-                new_relation_link="subject",
-                new_relation_type="earlier",
-            ),
-        ],
-        apply=True,
+    num_subjects = subjects_migrate(
+        context, db_user=args.db_user, db_password=args.db_password, domain=args.domain
     )
+    print(f"--- {num_subjects} Subjects imported to Cora ---")
 
-    print(f"--- {len(classic_subjects)} Subjects imported to Cora ---")
 
-
-def migrate_programmes(args, context: Context):
+def migrate_programmes(args, context):
     print(f"--- Start migrating programmes for {args.domain} ---")
-    classic_programmes = get_programmes(
-        db_user=args.db_user, db_password=args.db_password, domain=args.domain
-    ).findall(".//DATA_RECORD")
-
-    records_import(
-        context,
-        record_type="diva-programme",
-        source_records=classic_programmes,
-        transform_function=transform_programme,
-        relation_mappings=[
-            RelationMapping(
-                old_relation_tag="broader_id",
-                new_relation_link="programme",
-                new_relation_type="broader",
-            ),
-            RelationMapping(
-                old_relation_tag="earlier_id",
-                new_relation_link="programme",
-                new_relation_type="earlier",
-            ),
-        ],
-        apply=True,
+    num_programmes = programmes_migrate(
+        context, db_user=args.db_user, db_password=args.db_password, domain=args.domain
     )
-    print(f"--- {len(classic_programmes)} Programmes imported to Cora ---")
+    print(f"--- {num_programmes} Programmes imported to Cora ---")
 
 
-def migrate_course(args, context: Context):
+def migrate_courses(args, context):
     print(f"--- Start migrating courses for {args.domain} ---")
-    classic_courses = get_courses(
-        db_user=args.db_user, db_password=args.db_password, domain=args.domain
-    ).findall(".//DATA_RECORD")
-
-    records_import(
-        context,
-        record_type="diva-course",
-        source_records=classic_courses,
-        transform_function=transform_course,
-        relation_mappings=[
-            RelationMapping(
-                old_relation_tag="broader_id",
-                new_relation_link="course",
-                new_relation_type="broader",
-            ),
-            RelationMapping(
-                old_relation_tag="earlier_id",
-                new_relation_link="course",
-                new_relation_type="earlier",
-            ),
-        ],
-        apply=True,
+    num_courses = courses_migrate(
+        context, db_user=args.db_user, db_password=args.db_password, domain=args.domain
     )
-    print(f"--- {len(classic_courses)} Courses imported to Cora ---")
+    print(f"--- {num_courses} Courses imported to Cora ---")
 
 
-def migrate_series(args, context: Context):
+def migrate_series(args, context):
     print(f"--- Start migrating series for {args.domain} ---")
-    classic_series = get_series(
-        db_user=args.db_user, db_password=args.db_password, domain=args.domain
-    ).findall(".//DATA_RECORD")
-
-    records_import(
-        context,
-        record_type="diva-series",
-        source_records=classic_series,
-        transform_function=transform_series,
-        relation_mappings=[
-            RelationMapping(
-                old_relation_tag="relative_id_host",
-                new_relation_link="topic",
-                new_relation_type="host",
-            ),
-            RelationMapping(
-                old_relation_tag="relative_id_preceding",
-                new_relation_link="topic",
-                new_relation_type="preceding",
-            ),
-        ],
-        apply=True,
+    num_series = series_migrate(
+        context, db_user=args.db_user, db_password=args.db_password, domain=args.domain
     )
-    print(f"--- {len(classic_series)} Series imported to Cora ---")
+    print(f"--- {num_series} Series imported to Cora ---")
 
 
 if __name__ == "__main__":
