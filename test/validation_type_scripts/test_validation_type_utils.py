@@ -230,12 +230,22 @@ def test_normalize_regex_patterns(record_node, monkeypatch):
     updated = common_utils.normalize_regex_patterns(record_node.xml_content)
     regex_text = record_node.xml_content.find(".//regEx").text
     assert updated
-    assert regex_text == r"^\S.$"
+    assert regex_text == r"^\S.*$"
 
 
-def test_normalize_regex_patterns_ignore_variant(record_node, monkeypatch):
+def test_normalize_regex_patterns_ignore_anything_but_whitespace_variant(record_node, monkeypatch):
     regex = record_node.xml_content.find(".//regEx")
-    regex.text = "^[\s\S]+$"
+    regex.text = r"^\S.*$"
+    monkeypatch.setattr(common_utils, "info_groups", lambda boolean: False)
+    updated = common_utils.normalize_regex_patterns(record_node.xml_content)
+    regex_text = record_node.xml_content.find(".//regEx").text
+    assert not updated
+    assert regex_text == r"^\S.*$"
+
+
+def test_normalize_regex_patterns_ignore_anything_incl_new_line_variant(record_node, monkeypatch):
+    regex = record_node.xml_content.find(".//regEx")
+    regex.text = r"^[\s\S]+$"
     monkeypatch.setattr(common_utils, "info_groups", lambda boolean: False)
     updated = common_utils.normalize_regex_patterns(record_node.xml_content)
     regex_text = record_node.xml_content.find(".//regEx").text

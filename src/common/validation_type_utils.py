@@ -210,8 +210,8 @@ def normalize_regex_patterns(xml_root):
         for tag in ("regex", "regEx"):
             for element in xml_root.findall(f".//{tag}"):
                 regex = element.text
-                if regex and regex.strip() and regex != r"^[\s\S]+$" and r"^\S.$" not in regex:
-                    element.text = r"^\S.$"
+                if regex and regex.strip() and regex != r"^[\s\S]+$" and r"^\S.*$" not in regex:
+                    element.text = r"^\S.*$"
                     updated = True
 
     return updated
