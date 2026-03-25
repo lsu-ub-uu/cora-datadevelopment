@@ -131,10 +131,10 @@ def test_complete_conference_maximal(monkeypatch):
             <identifier type="isbn" repeatId="2" displayLabel="undefined">978-92-893-7380-7</identifier>
             <identifier type="doi">10.1038/s41698-022-00278-4</identifier>
             <relatedItem type="series" otherType="link" repeatId="controlled0">
-                <series>
+                <topic>
                     <linkedRecordType>diva-series</linkedRecordType>
                     <linkedRecordId>diva-series:12345</linkedRecordId>
-                </series>
+                </topic>
                 <partNumber>66</partNumber>
             </relatedItem>
         </relatedItem>   

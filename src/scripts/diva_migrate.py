@@ -92,7 +92,7 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
 
         migrate_publishers(args, context)
         migrate_funders(args, context)
-        migrate_journals(args, context)
+        # migrate_journals(args, context)
         # TODO Persons
         # TODO Projects
 
@@ -269,12 +269,12 @@ def migrate_series(args, context: Context):
         relation_mappings=[
             RelationMapping(
                 old_relation_tag="relative_id_host",
-                new_relation_link="series",
+                new_relation_link="topic",
                 new_relation_type="host",
             ),
             RelationMapping(
                 old_relation_tag="relative_id_preceding",
-                new_relation_link="series",
+                new_relation_link="topic",
                 new_relation_type="preceding",
             ),
         ],

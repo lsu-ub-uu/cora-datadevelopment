@@ -140,10 +140,10 @@ def test_create_maximal_book(monkeypatch):
                 </extent>
             </part>
             <relatedItem type="series" otherType="link" repeatId="controlled0">
-                <series>
+                <topic>
                     <linkedRecordType>diva-series</linkedRecordType>
                     <linkedRecordId>diva-series:12345</linkedRecordId>
-                </series>
+                </topic>
                 <partNumber>66</partNumber>
             </relatedItem>
         </relatedItem>
