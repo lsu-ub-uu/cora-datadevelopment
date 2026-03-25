@@ -21,7 +21,7 @@ def test_update_relations_update_failed(mock_update_record):
     (old_child, new_child) = _create_mock_record("1", "100", parents=["2"])
     (old_parent, new_parent) = _create_mock_record("2", "200")
 
-    record_mapping = [
+    record_mapping: list[tuple[ET.Element, ET.Element | None]] = [
         (old_child, new_child),
         (old_parent, new_parent),
     ]
@@ -43,7 +43,7 @@ def test_update_relations(mock_update_record):
     (old_child, new_child) = _create_mock_record("1", "100", parents=["2"])
     (old_parent, new_parent) = _create_mock_record("2", "200")
 
-    record_mapping = [
+    record_mapping: list[tuple[ET.Element, ET.Element | None]] = [
         (old_child, new_child),
         (old_parent, new_parent),
     ]
@@ -64,22 +64,18 @@ def test_update_relations(mock_update_record):
     assert_equal_for_xml_and_xml_string(
         updated_record_xml,
         """
-        <record>
-            <data>
-                <foo>
-                    <recordInfo>
-                        <id>100</id>
-                        <oldId>1</oldId>
-                    </recordInfo>
-                    <related type="parent" repeatId="0">
-                        <foo>
-                            <linkedRecordType>diva-foo</linkedRecordType>
-                            <linkedRecordId>200</linkedRecordId>
-                        </foo>
-                    </related>
-                </foo>
-            </data>
-        </record>
+            <foo>
+                <recordInfo>
+                    <id>100</id>
+                    <oldId>1</oldId>
+                </recordInfo>
+                <related type="parent" repeatId="0">
+                    <foo>
+                        <linkedRecordType>diva-foo</linkedRecordType>
+                        <linkedRecordId>200</linkedRecordId>
+                    </foo>
+                </related>
+            </foo>
         """,
     )
 
@@ -93,7 +89,7 @@ def test_update_relations_multiple(mock_update_record):
     (old_earlier2, new_earlier2) = _create_mock_record("4", "400")
     (old_parent, new_parent) = _create_mock_record("2", "200")
 
-    record_mapping = [
+    record_mapping: list[tuple[ET.Element, ET.Element | None]] = [
         (old_child, new_child),
         (old_earlier1, new_earlier1),
         (old_earlier2, new_earlier2),
@@ -121,34 +117,30 @@ def test_update_relations_multiple(mock_update_record):
     assert_equal_for_xml_and_xml_string(
         updated_record_xml,
         """
-        <record>
-            <data>
-                <foo>
-                    <recordInfo>
-                        <id>100</id>
-                        <oldId>1</oldId>
-                    </recordInfo>
-                    <related type="parent" repeatId="0">
-                        <foo>
-                            <linkedRecordType>diva-foo</linkedRecordType>
-                            <linkedRecordId>200</linkedRecordId>
-                        </foo>
-                    </related>
-                    <related type="earlier" repeatId="0">
-                        <foo>
-                            <linkedRecordType>diva-foo</linkedRecordType>
-                            <linkedRecordId>300</linkedRecordId>
-                        </foo>
-                    </related>
-                    <related type="earlier" repeatId="1">
-                        <foo>
-                            <linkedRecordType>diva-foo</linkedRecordType>
-                            <linkedRecordId>400</linkedRecordId>
-                        </foo>
-                    </related>
-                </foo>
-            </data>
-        </record>
+            <foo>
+                <recordInfo>
+                    <id>100</id>
+                    <oldId>1</oldId>
+                </recordInfo>
+                <related type="parent" repeatId="0">
+                    <foo>
+                        <linkedRecordType>diva-foo</linkedRecordType>
+                        <linkedRecordId>200</linkedRecordId>
+                    </foo>
+                </related>
+                <related type="earlier" repeatId="0">
+                    <foo>
+                        <linkedRecordType>diva-foo</linkedRecordType>
+                        <linkedRecordId>300</linkedRecordId>
+                    </foo>
+                </related>
+                <related type="earlier" repeatId="1">
+                    <foo>
+                        <linkedRecordType>diva-foo</linkedRecordType>
+                        <linkedRecordId>400</linkedRecordId>
+                    </foo>
+                </related>
+            </foo>
         """,
     )
 

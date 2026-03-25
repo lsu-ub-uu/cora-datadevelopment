@@ -31,12 +31,12 @@ def subjects_migrate(
         relation_mappings=[
             RelationMapping(
                 old_relation_tag="broader_id",
-                new_relation_link="topic",
+                new_relation_link="subject",
                 new_relation_type="broader",
             ),
             RelationMapping(
                 old_relation_tag="earlier_id",
-                new_relation_link="topic",
+                new_relation_link="subject",
                 new_relation_type="earlier",
             ),
         ],

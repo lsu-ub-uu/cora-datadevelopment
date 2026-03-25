@@ -80,7 +80,7 @@ def _update_relations_for_single_record(
             f"Updating relations for {record_type} record with oldId {new_record.findtext('./oldId')}"
         )
         update_result = update_record(
-            new_record,
+            new_record_data,
             context,
         )
         if not update_result.success:

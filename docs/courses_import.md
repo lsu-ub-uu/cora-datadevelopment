@@ -23,7 +23,6 @@ This script imports courses from XML files exported from Diva Classic database, 
 		<name_swe>Digital humaniora</name_swe>
 		<name_eng>Digital humaniora</name_eng>
 		<broader_id></broader_id>
-		<parent_programme_id></parent_programme_id>
 		<earlier_id></earlier_id>
   	</DATA_RECORD>
 </SELECT>
