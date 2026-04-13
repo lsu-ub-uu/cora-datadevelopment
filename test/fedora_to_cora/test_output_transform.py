@@ -85,6 +85,7 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             </permissionUnit>
             <visibility>published</visibility>
             <oldId>diva2:1681782</oldId>
+            <urn>urn:nbn:se:varldskulturmuseerna:diva-6</urn>
         </recordInfo>
         <dataQuality>2026</dataQuality>
         <genre type="outputType">publication_other</genre>
@@ -216,6 +217,7 @@ def test_output_transform_book(mock_diva_search_requests):
                 </permissionUnit>
                 <visibility>published</visibility>
                 <oldId>diva2:1179703</oldId>
+                <urn>urn:nbn:se:nordiskamuseet:diva-39</urn>
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">publication_book</genre>
@@ -319,6 +321,7 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                 </permissionUnit>
                 <visibility>published</visibility>
                 <oldId>diva2:1365846</oldId>
+                <urn>urn:nbn:se:nordiskamuseet:diva-2126</urn>
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">publication_book-chapter</genre>
@@ -438,6 +441,7 @@ def test_output_transform_student_thesis(mock_diva_search_requests):
                 </permissionUnit>
                 <visibility>published</visibility>
                 <oldId>diva2:1297418</oldId>
+                <urn>urn:nbn:se:nordiskamuseet:diva-1431</urn>
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">diva_degree-project</genre>
@@ -540,6 +544,7 @@ def test_output_transform_conference_paper(mock_diva_search_requests):
                 </permissionUnit>
                 <visibility>published</visibility>
                 <oldId>diva2:807059</oldId>
+                <urn>urn:nbn:se:uu:diva-249061</urn>
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">conference_paper</genre>
@@ -812,6 +817,7 @@ def test_output_transform_with_missing_data():
                 </permissionUnit>
                 <visibility>published</visibility>
                 <oldId>diva2:1270748</oldId>
+                <urn>urn:nbn:se:nordiskamuseet:diva-1029</urn>
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">publication_book-chapter</genre>

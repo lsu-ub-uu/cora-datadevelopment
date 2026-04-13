@@ -9,6 +9,7 @@ def record_info_create(
     permission_unit_id: str | None = None,
     visibility: str | None = None,
     host_record_link: ET.Element | None = None,
+    urn: str | None = None,
 ) -> ET.Element:
     record_info = create_group(
         "recordInfo",
@@ -32,6 +33,7 @@ def record_info_create(
             ),
             create_text("visibility", visibility) if visibility is not None else None,
             create_text("oldId", old_id) if old_id is not None else None,
+            create_text("urn", urn) if urn is not None else None,
             host_record_link,
         ],
     )

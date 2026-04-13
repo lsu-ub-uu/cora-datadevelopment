@@ -41,6 +41,7 @@ def create_record_info(source_record: ET.Element) -> ET.Element:
         old_id=old_id,
         permission_unit_id=permission_unit,
         visibility=visibility,
+        urn=source_record.findtext("./nbn"),
     )
 
 

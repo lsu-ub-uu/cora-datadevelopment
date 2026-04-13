@@ -129,3 +129,33 @@ def test_record_info_create_with_host_record():
     """
 
     assert_equal_for_xml_and_xml_string(record_info, expected_xml)
+
+
+def test_record_info_create_with_urn():
+    record_info = record_info_create(
+        validation_type_id="someValidationType",
+        old_id="12345",
+        permission_unit_id="somePermissionUnit",
+        urn="urn:nbn:se:nordiskamuseet:some-nbn",
+    )
+
+    expected_xml = """
+        <recordInfo>
+            <validationType>
+                <linkedRecordType>validationType</linkedRecordType>
+                <linkedRecordId>someValidationType</linkedRecordId>
+            </validationType>
+            <dataDivider>
+                <linkedRecordType>system</linkedRecordType>
+                <linkedRecordId>divaData</linkedRecordId>
+            </dataDivider>
+            <permissionUnit>
+                <linkedRecordType>permissionUnit</linkedRecordType>
+                <linkedRecordId>somePermissionUnit</linkedRecordId>
+            </permissionUnit>
+            <oldId>12345</oldId>
+            <urn>urn:nbn:se:nordiskamuseet:some-nbn</urn>
+        </recordInfo>
+    """
+
+    assert_equal_for_xml_and_xml_string(record_info, expected_xml)

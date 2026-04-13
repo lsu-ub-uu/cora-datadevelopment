@@ -20,6 +20,7 @@ def test_create_record_info():
             </updaters>
         </administrativeInfo>
         <pid>456</pid>
+        <nbn>urn:nbn:se:nordiskamuseet:some-nbn</nbn>
     </publication>
     """
     )
@@ -44,6 +45,7 @@ def test_create_record_info():
             </permissionUnit>
             <visibility>published</visibility>
             <oldId>456</oldId>
+            <urn>urn:nbn:se:nordiskamuseet:some-nbn</urn>
         </recordInfo>
         """,
     )
