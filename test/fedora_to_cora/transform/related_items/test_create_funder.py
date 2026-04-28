@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from cora.context import MockContext
 from fedora_to_cora.transform.related_items.create_funder import (
-    create_related_item_type_funder,
+    create_name_type_corporate_othertype_funder,
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from unittest.mock import patch
@@ -42,25 +42,27 @@ def test_create_funder_with_project_id(mock_get_cora_id_by_old_id):
         </publication>
         """
     )
-    result = create_related_item_type_funder(source_record, MockContext())
+    result = create_name_type_corporate_othertype_funder(source_record, MockContext())
 
     assert_equal_for_xml_and_xml_string(
         result[0],
         """
-        <relatedItem type="funder" repeatId="0">
+        <name type="corporate" otherType="funder" repeatId="0">
             <funder>
                 <linkedRecordType>diva-funder</linkedRecordType>
                 <linkedRecordId>funder:2</linkedRecordId>
             </funder>
-            <identifier type="project">2021-00001</identifier>
-        </relatedItem>
+            <role>
+                <roleTerm>fnd</roleTerm>
+            </role>
+        </name>
         """,
     )
 
 
 def test_create_no_funder_infos():
     source_record = ET.fromstring("""<publication></publication>""")
-    result = create_related_item_type_funder(source_record, MockContext())
+    result = create_name_type_corporate_othertype_funder(source_record, MockContext())
     assert len(result) == 0
 
 
@@ -68,7 +70,7 @@ def test_create_empty_funder_infos():
     source_record = ET.fromstring(
         """<publication><funderInfos></funderInfos></publication>"""
     )
-    result = create_related_item_type_funder(source_record, MockContext())
+    result = create_name_type_corporate_othertype_funder(source_record, MockContext())
     assert len(result) == 0
 
 
@@ -76,5 +78,5 @@ def test_create_empty_funder_info():
     source_record = ET.fromstring(
         """<publication><funderInfos><funderInfo></funderInfo></funderInfos></publication>"""
     )
-    result = create_related_item_type_funder(source_record, MockContext())
+    result = create_name_type_corporate_othertype_funder(source_record, MockContext())
     assert len(result) == 0

@@ -181,8 +181,22 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <relatedItem type="series" otherType="link" repeatId="controlled0"><series><linkedRecordType>diva-series</linkedRecordType><linkedRecordId>{series_id}</linkedRecordId></series><partNumber>1-75</partNumber></relatedItem>
         <relatedItem type="project" otherType="text" repeatId="uncontrolled0"><titleInfo><title>Ett annat projekt</title></titleInfo></relatedItem>
         <relatedItem type="project" otherType="text" repeatId="uncontrolled1"><titleInfo><title>Ytterligare ett annat projekt</title></titleInfo></relatedItem>
-        <relatedItem repeatId="0" type="funder"><funder><linkedRecordType>diva-funder</linkedRecordType><linkedRecordId>diva-funder:67890</linkedRecordId></funder><identifier type="project">2021-00001</identifier></relatedItem>
-        <relatedItem repeatId="1" type="funder"><funder><linkedRecordType>diva-funder</linkedRecordType><linkedRecordId>diva-funder:67890</linkedRecordId></funder><identifier type="project">2021-00002</identifier></relatedItem>
+        <relatedItem type="project" otherType="text" repeatId="funderProjectId0"><identifier type="project">2021-00001</identifier></relatedItem>
+        <relatedItem type="project" otherType="text" repeatId="funderProjectId1"><identifier type="project">2021-00002</identifier></relatedItem>
+        <name repeatId="0" type="corporate" otherType="funder">
+            <funder>
+                <linkedRecordType>diva-funder</linkedRecordType>
+                <linkedRecordId>diva-funder:67890</linkedRecordId>
+            </funder>
+            <role><roleTerm>fnd</roleTerm></role>
+        </name>
+        <name repeatId="1" type="corporate" otherType="funder">
+            <funder>
+                <linkedRecordType>diva-funder</linkedRecordType>
+                <linkedRecordId>diva-funder:67890</linkedRecordId>
+            </funder>
+            <role><roleTerm>fnd</roleTerm></role>
+        </name>
         <adminInfo><note type="internal">This is an internal note.</note><reviewed>false</reviewed></adminInfo>
     </output>
     """

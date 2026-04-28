@@ -5,7 +5,7 @@ from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 
 
-def create_related_item_type_funder(
+def create_name_type_corporate_othertype_funder(
     source_record: ET.Element, context: Context
 ) -> list[ET.Element | None]:
     funder_infos = source_record.findall("./funderInfos/funderInfo")
@@ -13,20 +13,21 @@ def create_related_item_type_funder(
         return []
 
     return [
-        _create_funder_related_item(funder_info, context, index)
+        _create_funder(funder_info, context, index)
         for index, funder_info in enumerate(funder_infos)
         if funder_info is not None and len(funder_info) > 0
     ]
 
 
-def _create_funder_related_item(funder_info: ET.Element, context: Context, index: int):
+def _create_funder(funder_info: ET.Element, context: Context, index: int):
     return create_group(
-        "relatedItem",
-        type="funder",
+        "name",
+        type="corporate",
+        otherType="funder",
         repeatId=str(index),
         children=[
             _create_funder_link(funder_info, context),
-            _create_project_identifier(funder_info),
+            create_group("role", [create_text("roleTerm", "fnd")]),
         ],
     )
 

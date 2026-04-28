@@ -72,7 +72,7 @@ from fedora_to_cora.transform.create_subject_authority_sdg import (
     create_subject_authority_sdg,
 )
 from fedora_to_cora.transform.related_items.create_funder import (
-    create_related_item_type_funder,
+    create_name_type_corporate_othertype_funder,
 )
 from fedora_to_cora.transform.related_items.create_journal import (
     create_related_item_type_journal,
@@ -209,7 +209,7 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
                 else None
             ),
             create_related_item_type_project(source_record, context),
-            create_related_item_type_funder(source_record, context),
+            create_name_type_corporate_othertype_funder(source_record, context),
             create_admin_info(source_record),
         ],
     )

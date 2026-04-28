@@ -104,3 +104,40 @@ def test_create_uncontrolled_project():
         </relatedItem>
         """,
     )
+
+
+def test_create_projects_from_funder_project_ids():
+    source_record = ET.fromstring(
+        """
+         <publication>
+            <funderInfos>
+                <funderInfo>
+                    <projectNumber>2021-00001</projectNumber>
+                </funderInfo>
+                <funderInfo>
+                    <projectNumber>2021-00002</projectNumber>
+                </funderInfo>
+            </funderInfos>
+        </publication>
+        """
+    )
+
+    projects = create_related_item_type_project(source_record, MockContext())
+
+    assert len(projects) == 2
+    assert_equal_for_xml_and_xml_string(
+        projects[0],
+        """
+        <relatedItem type="project" otherType="text" repeatId="funderProjectId0">
+            <identifier type="project">2021-00001</identifier>
+        </relatedItem>
+        """,
+    )
+    assert_equal_for_xml_and_xml_string(
+        projects[1],
+        """
+        <relatedItem type="project" otherType="text" repeatId="funderProjectId1">
+            <identifier type="project">2021-00002</identifier>
+        </relatedItem>
+        """,
+    )

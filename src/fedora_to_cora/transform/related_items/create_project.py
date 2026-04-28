@@ -18,8 +18,9 @@ def create_related_item_type_project(
         source_record, context
     )
     uncontrolled_items = _create_related_items_from_uncontrolled_projects(source_record)
+    project_id_items = _create_related_items_from_funder_project_ids(source_record)
 
-    return controlled_items + uncontrolled_items
+    return controlled_items + uncontrolled_items + project_id_items
 
 
 def _create_related_items_from_controlled_projects(
@@ -89,3 +90,22 @@ def _create_uncontrolled_project(
 
 def _create_title_info(title: str | None):
     return create_group("titleInfo", children=[create_text("title", title)])
+
+
+def _create_related_items_from_funder_project_ids(source_record):
+    project_ids = source_record.findall("./funderInfos/funderInfo/projectNumber")
+    return [
+        _create_funder_project_id_link(project_id.text, f"funderProjectId{i}")
+        for i, project_id in enumerate(project_ids)
+        if project_id.text
+    ]
+
+
+def _create_funder_project_id_link(project_id: str, repeat_id: str):
+    return create_group(
+        "relatedItem",
+        type="project",
+        otherType="text",
+        repeatId=repeat_id,
+        children=[create_text("identifier", type="project", value=project_id)],
+    )
