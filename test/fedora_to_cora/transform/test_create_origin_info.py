@@ -47,6 +47,7 @@ def test_create_agent_from_uncontrolled_publisher():
         <publication>
             <publisher>
                 <publisherName>Uppsala Läroverk</publisherName>
+                <city>Uppsala</city>
             </publisher>
         </publication>
     """
@@ -58,12 +59,15 @@ def test_create_agent_from_uncontrolled_publisher():
         agent,
         """
         <originInfo>
-            <agent repeatId="0">
-                <namePart>Uppsala Läroverk</namePart>
+            <name type="corporate" otherType="publisher" repeatId="0">
+                <namePart type="publisher">Uppsala Läroverk</namePart>
+                <place>
+                    <placeTerm>Uppsala</placeTerm>
+                </place>
                 <role>
                     <roleTerm>pbl</roleTerm>
                 </role>
-            </agent>
+            </name>
         </originInfo>
         """,
     )
@@ -92,6 +96,7 @@ def test_create_agent_from_controlled_publisher(monkeypatch):
                 <publishingHouse>
                     <publishingHouseId>{mock_old_id}</publishingHouseId>
                 </publishingHouse>
+                <city>Uppsala</city>
             </publisher>
         </publication>
         """
@@ -103,25 +108,34 @@ def test_create_agent_from_controlled_publisher(monkeypatch):
         agent,
         f""" 
         <originInfo>
-            <agent repeatId="0">
+            <name type="corporate" otherType="publisher" repeatId="0">
                 <publisher>
                     <linkedRecordType>diva-publisher</linkedRecordType>
                     <linkedRecordId>{expected_cora_id}</linkedRecordId>
                 </publisher>
+                <place>
+                    <placeTerm>Uppsala</placeTerm>
+                </place>
                 <role>
                     <roleTerm>pbl</roleTerm>
                 </role>
-            </agent>
+            </name>
         </originInfo>
         """,
     )
 
 
-def test_create_place_from_city():
+def test_does_not_include_publisher_if_book_chapter():
     source_record = ET.fromstring(
         """
         <publication>
+            <publicationType>
+                <publicationTypeId>58</publicationTypeId>
+                <publicationTypeCode>chapter</publicationTypeCode>
+            </publicationType>
+            <dateIssued>2022</dateIssued>
             <publisher>
+                <publisherName>Uppsala Läroverk</publisherName>
                 <city>Uppsala</city>
             </publisher>
         </publication>
@@ -134,30 +148,9 @@ def test_create_place_from_city():
         origin_info,
         """
         <originInfo>
-            <place repeatId="0">
-                <placeTerm>Uppsala</placeTerm>
-            </place>
-        </originInfo>
-        """,
-    )
-
-
-def test_create_editon():
-    source_record = ET.fromstring(
-        """
-        <publication>
-            <edition>First Edition</edition>
-        </publication>
-        """
-    )
-
-    origin_info = create_origin_info(source_record, MockContext())
-
-    assert_equal_for_xml_and_xml_string(
-        origin_info,
-        """
-        <originInfo>
-            <edition>First Edition</edition>
+            <dateIssued>
+                <year>2022</year>
+            </dateIssued>
         </originInfo>
         """,
     )

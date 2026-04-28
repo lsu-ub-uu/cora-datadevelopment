@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from cora.context import Context
-from common.xml_utils import append_if_value, create_group, create_text
+from common.xml_utils import create_group, create_text
+from fedora_to_cora.transform.create_origin_info import create_publisher
 from fedora_to_cora.transform.identifiers.create_doi_se_libr import (
     create_identifier_doi,
     create_identifier_se_libr,
@@ -26,8 +27,10 @@ def create_book(source_record: ET.Element, context: Context) -> ET.Element | Non
             create_identifier_type_isbn(source_record),
             create_identifier_doi(source_record),
             create_identifier_se_libr(source_record),
+            _create_edition(source_record),
             _create_part(source_record),
             create_related_item_type_series(source_record, context),
+            create_publisher(source_record, context),
         ],
         type="book",
         otherType="text",
@@ -56,6 +59,13 @@ def _create_statement_of_responsibility(source_record: ET.Element) -> ET.Element
         clean_rich_text(source_record.findtext("./bookEditor")),
         type="statementOfResponsibility",
     )
+
+
+def _create_edition(source_record: ET.Element) -> ET.Element | None:
+    """
+    Create an edition element from publication/edition
+    """
+    return create_text("edition", source_record.findtext("./edition"))
 
 
 def _create_part(source_record: ET.Element) -> ET.Element | None:

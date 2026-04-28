@@ -146,7 +146,20 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <dateOther type="patent"><year>2022</year><month>08</month><day>15</day></dateOther>
         <name type="corporate" otherType="patentHolder"><namePart>Patentorganisation</namePart><role><roleTerm>pth</roleTerm></role></name>
         <patentCountry>au</patentCountry>
-        <originInfo><dateIssued><year>2023</year></dateIssued><agent repeatId="0"><namePart>Uppsala Läroverk</namePart><role><roleTerm>pbl</roleTerm></role></agent><place repeatId="0"><placeTerm>Stockholm</placeTerm></place><edition>3</edition></originInfo>
+        <originInfo>
+            <dateIssued>
+                <year>2023</year>
+            </dateIssued>
+            <name type="corporate" otherType="publisher" repeatId="0">
+                <namePart type="publisher">Uppsala Läroverk</namePart>
+                <place>
+                    <placeTerm>Stockholm</placeTerm>
+                </place>
+                <role>
+                    <roleTerm>pbl</roleTerm>
+                </role>
+            </name>
+        </originInfo>
         <classification authority="ssif" repeatId="0">30224</classification>
         <classification authority="ssif" repeatId="1">60301</classification>
         <subject authority="sdg"><topic repeatId="0">sdg1</topic></subject>
@@ -271,18 +284,18 @@ def test_output_transform_book(mock_diva_search_requests):
                 <dateIssued>
                     <year>1997</year>
                 </dateIssued>
-                <agent repeatId="0">
+                <name type="corporate" otherType="publisher" repeatId="0">
                     <publisher>
                         <linkedRecordType>diva-publisher</linkedRecordType>
                         <linkedRecordId>{publisher_id}</linkedRecordId>
                     </publisher>
+                    <place>
+                        <placeTerm>Stockholm</placeTerm>
+                    </place>
                     <role>
                         <roleTerm>pbl</roleTerm>
                     </role>
-                </agent>
-                <place repeatId="0">
-                    <placeTerm>Stockholm</placeTerm>
-                </place>
+                </name>
             </originInfo>
             <classification authority="ssif" repeatId="0">60503</classification>
             <subject authority="diva">
@@ -372,18 +385,6 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                 <dateIssued>
                     <year>2016</year>
                 </dateIssued>
-                <agent repeatId="0">
-                    <publisher>
-                        <linkedRecordType>diva-publisher</linkedRecordType>
-                        <linkedRecordId>{publisher_id}</linkedRecordId>
-                    </publisher>
-                    <role>
-                        <roleTerm>pbl</roleTerm>
-                    </role>
-                </agent>
-                <place repeatId="0">
-                    <placeTerm>Stockholm</placeTerm>
-                </place>
             </originInfo>
             <classification authority="ssif" repeatId="0">605</classification>
             <subject authority="diva">
@@ -409,6 +410,7 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                 <identifier type="doi">10.1038/s41698-022-00278-4</identifier>
                 <identifier type="se-libr" repeatId="0">0004</identifier>
                 <identifier type="se-libr" repeatId="1">0005</identifier>
+                <edition>3</edition>
                 <part>
                     <extent>
                         <start>122</start>
@@ -422,6 +424,18 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                     </series>
                     <partNumber>2016</partNumber>
                 </relatedItem>
+                <name type="corporate" otherType="publisher" repeatId="0">
+                    <publisher>
+                        <linkedRecordType>diva-publisher</linkedRecordType>
+                        <linkedRecordId>{publisher_id}</linkedRecordId>
+                    </publisher>
+                    <place>
+                        <placeTerm>Stockholm</placeTerm>
+                    </place>
+                    <role>
+                        <roleTerm>pbl</roleTerm>
+                    </role>
+                </name>
             </relatedItem>
             <adminInfo>
                 <reviewed>false</reviewed>
