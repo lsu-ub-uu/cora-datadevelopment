@@ -5,6 +5,8 @@ from common.xml_utils import create_text
 subtype_to_subcategory = {
     "policyDocument": "policyDocument",
     "exhibitionCatalogue": "exhibitionCatalog",
+    "presentation": "oralPresentation",
+    "abstracts": "oralPresentationAbstract",
 }
 
 
