@@ -103,7 +103,6 @@ from fedora_to_cora.transform.thesis.create_defence_or_presentation import (
 from fedora_to_cora.transform.artistic_output.create_artistic_output import (
     create_duration,
     create_note_type_context,
-    create_size,
     create_techniques,
     create_materials,
     create_types,
@@ -141,7 +140,6 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
             create_types(source_record),
             create_materials(source_record),
             create_techniques(source_record),
-            create_size(source_record),
             create_duration(source_record),
             create_physical_description(source_record),
             create_note_type_context(source_record),

@@ -4,7 +4,6 @@ import pytest
 from fedora_to_cora.transform.artistic_output.create_artistic_output import (
     create_duration,
     create_note_type_context,
-    create_size,
     create_techniques,
     create_materials,
     create_types,
@@ -13,8 +12,7 @@ from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
 def test_create_types():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <types class="hashtable">
@@ -30,8 +28,7 @@ def test_create_types():
                 </types>
             </mediaInformation>
         </publication>
-        """
-    )
+        """)
 
     type = create_types(source_record)
 
@@ -54,8 +51,7 @@ def test_create_types():
 
 
 def test_multiple_languages():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <types class="hashtable">
@@ -80,8 +76,7 @@ def test_multiple_languages():
                 </types>
             </mediaInformation>
         </publication>
-        """
-    )
+        """)
 
     types = create_types(source_record)
 
@@ -122,8 +117,7 @@ def test_multiple_languages():
 
 
 def test_create_types_without_language():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <types class="hashtable">
@@ -135,8 +129,7 @@ def test_create_types_without_language():
                 </types>
             </mediaInformation>
         </publication>
-        """
-    )
+        """)
 
     types = create_types(source_record)
 
@@ -151,14 +144,12 @@ def test_create_types_without_language():
 
 
 def test_create_types_empty_media_information():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
             </mediaInformation>
         </publication>
-        """
-    )
+        """)
 
     types = create_types(source_record)
 
@@ -166,12 +157,10 @@ def test_create_types_empty_media_information():
 
 
 def test_create_types_missing_media_information():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
         </publication>
-        """
-    )
+        """)
 
     types = create_types(source_record)
 
@@ -179,8 +168,7 @@ def test_create_types_missing_media_information():
 
 
 def test_create_materials():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <materials class="hashtable">
@@ -196,8 +184,7 @@ def test_create_materials():
                 </materials>
             </mediaInformation>
         </publication>
-        """
-    )
+        """)
 
     material = create_materials(source_record)
 
@@ -220,14 +207,12 @@ def test_create_materials():
 
 
 def test_create_materials_empty_media_information():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
             </mediaInformation>
         </publication>
-        """
-    )
+        """)
 
     materials = create_materials(source_record)
 
@@ -235,12 +220,10 @@ def test_create_materials_empty_media_information():
 
 
 def test_create_materials_missing_media_information():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
         </publication>
-        """
-    )
+        """)
 
     materials = create_materials(source_record)
 
@@ -248,8 +231,7 @@ def test_create_materials_missing_media_information():
 
 
 def test_create_techniques():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <techniques class="hashtable">
@@ -265,8 +247,7 @@ def test_create_techniques():
                 </techniques>
             </mediaInformation>
         </publication>
-        """
-    )
+        """)
 
     technique = create_techniques(source_record)
 
@@ -289,14 +270,12 @@ def test_create_techniques():
 
 
 def test_create_techniques_empty_media_information():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
             </mediaInformation>
         </publication>
-        """
-    )
+        """)
 
     techniques = create_techniques(source_record)
 
@@ -304,79 +283,24 @@ def test_create_techniques_empty_media_information():
 
 
 def test_create_techniques_missing_media_information():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
         </publication>
-        """
-    )
+        """)
 
     techniques = create_techniques(source_record)
 
     assert len(techniques) == 0
 
 
-def test_create_size():
-    source_record = ET.fromstring(
-        """
-        <publication>
-            <mediaInformation>
-                <size>22*32 km2</size>
-            </mediaInformation>
-        </publication>
-        """
-    )
-
-    size = create_size(source_record)
-
-    assert_equal_for_xml_and_xml_string(
-        size,
-        """
-        <size>
-            22*32 km2
-        </size>
-        """,
-    )
-
-
-def test_create_size_empty_media_information():
-    source_record = ET.fromstring(
-        """
-        <publication>
-            <mediaInformation>
-            </mediaInformation>
-        </publication>
-        """
-    )
-
-    size = create_size(source_record)
-
-    assert size is None
-
-
-def test_create_size_missing_media_information():
-    source_record = ET.fromstring(
-        """
-        <publication>
-        </publication>
-        """
-    )
-
-    size = create_size(source_record)
-
-    assert size is None
-
-
 def test_create_duration():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <duration>01:10:00</duration>
             </mediaInformation>
         </publication>
-        """
-    )
+        """)
 
     duration = create_duration(source_record)
 
@@ -393,14 +317,12 @@ def test_create_duration():
 
 
 def test_create_duration_empty_media_information():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
             </mediaInformation>
         </publication>
-        """
-    )
+        """)
 
     duration = create_duration(source_record)
 
@@ -408,12 +330,10 @@ def test_create_duration_empty_media_information():
 
 
 def test_create_duration_missing_media_information():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
         </publication>
-        """
-    )
+        """)
 
     duration = create_duration(source_record)
 
@@ -421,8 +341,7 @@ def test_create_duration_missing_media_information():
 
 
 def test_create_note_type_context():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <descriptions>
                 <abstract>
@@ -439,8 +358,7 @@ def test_create_note_type_context():
                 </abstract>
             </descriptions>
         </publication>
-        """
-    )
+        """)
 
     note = create_note_type_context(source_record)
 
@@ -464,13 +382,11 @@ def test_create_note_type_context():
 
 
 def test_create_note_type_context_empty_descriptions():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <descriptions />
         </publication>
-        """
-    )
+        """)
 
     note = create_note_type_context(source_record)
 

@@ -134,9 +134,11 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <material lang="swe" repeatId="1">Material02</material>
         <technique lang="swe" repeatId="0">Teknik01</technique>
         <technique lang="swe" repeatId="1">Teknik02</technique>
-        <size>22*32 km2</size>
         <duration><hh>01</hh><mm>10</mm><ss>00</ss></duration>
-        <physicalDescription><extent unit="pages">208</extent></physicalDescription>
+        <physicalDescription>
+            <extent unit="pages">208</extent>
+            <extent unit="other">22*32 km2, Som en jättestor basketplan</extent>
+        </physicalDescription>
         <note type="context" lang="swe" repeatId="0">Fritextbeskrivning Fritextbeskrivning</note>
         <abstract lang="swe" repeatId="0">Lorem ipsum dolor sit amet</abstract>
         <subject lang="eng" repeatId="0"><topic>Sinology</topic></subject>
@@ -663,8 +665,7 @@ def test_output_transform_conference_paper(mock_diva_search_requests):
 
 
 def test_output_transform_minimal():
-    fedora_xml = ET.fromstring(
-        """
+    fedora_xml = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>50</publicationTypeId>
@@ -675,8 +676,7 @@ def test_output_transform_minimal():
                 <domain>kth</domain>
             </administrativeInfo>
         </publication>
-        """
-    )
+        """)
 
     result = transform_to_cora_output(
         fedora_xml,
@@ -711,8 +711,7 @@ def test_output_transform_minimal():
 
 
 def test_output_transform_with_missing_data():
-    fedora_xml = ET.fromstring(
-        """
+    fedora_xml = ET.fromstring("""
         <publication>
             <contentType>
                 <contentTypeId>50</contentTypeId>
@@ -818,8 +817,7 @@ def test_output_transform_with_missing_data():
                 </abstract>
             </descriptions>
         </publication>
-        """
-    )
+        """)
 
     result = transform_to_cora_output(
         fedora_xml,

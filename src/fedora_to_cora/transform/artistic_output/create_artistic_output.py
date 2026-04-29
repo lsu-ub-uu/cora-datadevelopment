@@ -57,13 +57,6 @@ def _create_tags(
     return tags
 
 
-def create_size(source_record: ET.Element) -> ET.Element | None:
-    return create_text(
-        "size",
-        source_record.findtext("./mediaInformation/size"),
-    )
-
-
 def create_duration(source_record: ET.Element) -> ET.Element | None:
     duration_source = source_record.find("./mediaInformation/duration")
     if duration_source is None or not duration_source.text:

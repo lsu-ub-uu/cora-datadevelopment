@@ -25,15 +25,24 @@ def _create_extent_pages(
 def _create_extent_other(
     source_record: ET.Element,
 ) -> ET.Element | None:
-    source_texts = source_record.findall(
+    abstracts = source_record.findall(
         "./mediaInformation/physicalDescriptions/abstract/text"
     )
 
-    if source_texts is None or len(source_texts) == 0:
+    size = source_record.findtext("./mediaInformation/size")
+
+    parts = []
+    if size:
+        parts.append(size)
+
+    if abstracts:
+        cleaned_texts = [clean_rich_text(elem.text) for elem in abstracts]
+        parts.extend(text for text in cleaned_texts if text is not None)
+
+    if not parts:
         return None
 
-    cleaned_texts = [clean_rich_text(elem.text) for elem in source_texts]
-    extent_value = ", ".join(text for text in cleaned_texts if text is not None)
+    extent_value = ", ".join(parts)
 
     return create_text(
         "extent",

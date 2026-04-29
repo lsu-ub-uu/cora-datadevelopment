@@ -1089,10 +1089,13 @@
         </list>
       </entry>
     </techniques>
-    <size>
-      22*32 km2
-    </size>
+    <size>22*32 km2</size>
     <duration>01:10:00</duration>
+    <physicalDescriptions>
+      <abstract>
+        <text>&lt;p&gt;Som en jättestor basketplan&lt;/p&gt;</text>
+      </abstract>
+    </physicalDescriptions>
   </mediaInformation>
   <funderInfos>
     <funderInfo>
