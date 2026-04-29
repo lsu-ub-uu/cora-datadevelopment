@@ -88,7 +88,7 @@ from fedora_to_cora.transform.degree_project.create_student_degree import (
     create_student_degrees,
 )
 from fedora_to_cora.transform.degree_project.create_external_collaboration import (
-    create_external_collaboration,
+    create_external_collaborations,
 )
 from fedora_to_cora.transform.create_degree_granting_institution import (
     create_degree_granting_institution,
@@ -182,7 +182,7 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
             create_note(source_record, type="external", source_selector="./note"),
             create_academic_semester(source_record),
             create_student_degrees(source_record, context),
-            create_external_collaboration(source_record),
+            create_external_collaborations(source_record),
             create_degree_granting_institution(source_record, context),
             create_thesis_advisor(source_record, context),
             create_degree_supervisor(source_record, context),

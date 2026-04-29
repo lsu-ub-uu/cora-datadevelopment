@@ -184,7 +184,18 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <note type="external">This is an external note.</note>
         <academicSemester><year>2022</year><academicSemester>ht</academicSemester></academicSemester>
         <studentDegree repeatId="0"><degreeLevel>H2</degreeLevel><universityPoints>20</universityPoints></studentDegree>
-        <externalCollaboration><namePart repeatId="0">En extern partner</namePart><namePart repeatId="1">Ytterligare extern partner</namePart></externalCollaboration>
+        <name type="corporate" otherType="externalCollaboration" repeatId="0">
+            <role>
+                <roleTerm>ctb</roleTerm>
+            </role>
+            <namePart>En extern partner</namePart>
+        </name>
+        <name type="corporate" otherType="externalCollaboration" repeatId="1">
+            <role>
+                <roleTerm>ctb</roleTerm>
+            </role>
+            <namePart>Ytterligare extern partner</namePart>
+        </name>
         <name type="corporate" otherType="degreeGrantingInstitution"><namePart>Uppsala universitet</namePart><role><roleTerm>dgg</roleTerm></role></name>
         <name type="personal" otherType="thesisAdvisor" repeatId="0"><namePart type="family">Handledare</namePart><namePart type="given">Helge</namePart><role><roleTerm repeatId="0">ths</roleTerm></role></name>
         <name type="personal" otherType="degreeSupervisor" repeatId="0"><namePart type="family">Examinator</namePart><namePart type="given">Erik</namePart><role><roleTerm repeatId="0">dgs</roleTerm></role></name>
@@ -523,9 +534,10 @@ def test_output_transform_student_thesis(mock_diva_search_requests):
                 <degreeLevel>H1</degreeLevel>
                 <universityPoints>180</universityPoints>
             </studentDegree>
-            <externalCollaboration>
-                <namePart repeatId="0">Stockholms Universitet, Konstvetenskapliga institutionen</namePart>
-            </externalCollaboration>
+            <name type="corporate" otherType="externalCollaboration" repeatId="0">
+                <role><roleTerm>ctb</roleTerm></role>
+                <namePart>Stockholms Universitet, Konstvetenskapliga institutionen</namePart>
+            </name>
             <name type="personal" otherType="thesisAdvisor" repeatId="0">
             <namePart type="family">Handledare</namePart>
             <namePart type="given">Helge</namePart>
