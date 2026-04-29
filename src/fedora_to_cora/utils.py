@@ -17,4 +17,7 @@ def is_part_of_book(source_record: ET.Element) -> bool:
 
 def is_part_of_conference(source_record: ET.Element) -> bool:
     validation_type = get_validation_type_from_fedora_record(source_record)
-    return validation_type == "conference_paper"
+    return (
+        validation_type == "conference_paper"
+        or validation_type == "publication_editorial-letter"
+    )
