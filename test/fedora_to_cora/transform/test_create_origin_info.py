@@ -5,13 +5,11 @@ from cora.context import MockContext
 
 
 def test_origin_info_date_issued():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <dateIssued>2022</dateIssued>
         </publication>
-        """
-    )
+        """)
 
     origin_info = create_origin_info(source_record, MockContext())
 
@@ -28,13 +26,11 @@ def test_origin_info_date_issued():
 
 
 def test_origin_info_date_issued_missing_year():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <dateIssued></dateIssued>
         </publication>
-        """
-    )
+        """)
 
     origin_info = create_origin_info(source_record, MockContext())
 
@@ -42,16 +38,14 @@ def test_origin_info_date_issued_missing_year():
 
 
 def test_create_agent_from_uncontrolled_publisher():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publisher>
                 <publisherName>Uppsala Läroverk</publisherName>
                 <city>Uppsala</city>
             </publisher>
         </publication>
-    """
-    )
+    """)
 
     agent = create_origin_info(source_record, MockContext())
 
@@ -89,8 +83,7 @@ def test_create_agent_from_controlled_publisher(monkeypatch):
         mock_get_pub,
     )
 
-    source_record = ET.fromstring(
-        f"""
+    source_record = ET.fromstring(f"""
         <publication>
             <publisher>
                 <publishingHouse>
@@ -99,8 +92,7 @@ def test_create_agent_from_controlled_publisher(monkeypatch):
                 <city>Uppsala</city>
             </publisher>
         </publication>
-        """
-    )
+        """)
 
     agent = create_origin_info(source_record, mock_context)
 
@@ -126,8 +118,7 @@ def test_create_agent_from_controlled_publisher(monkeypatch):
 
 
 def test_does_not_include_publisher_if_book_chapter():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>58</publicationTypeId>
@@ -139,8 +130,67 @@ def test_does_not_include_publisher_if_book_chapter():
                 <city>Uppsala</city>
             </publisher>
         </publication>
+        """)
+
+    origin_info = create_origin_info(source_record, MockContext())
+
+    assert_equal_for_xml_and_xml_string(
+        origin_info,
         """
+        <originInfo>
+            <dateIssued>
+                <year>2022</year>
+            </dateIssued>
+        </originInfo>
+        """,
     )
+
+
+def test_does_not_include_publisher_if_conference_paper():
+    source_record = ET.fromstring("""
+        <publication>
+            <publicationType>
+                <publicationTypeId>58</publicationTypeId>
+                <publicationTypeCode>conferencePaper</publicationTypeCode>
+            </publicationType>
+            <dateIssued>2022</dateIssued>
+            <publisher>
+                <publisherName>Uppsala Läroverk</publisherName>
+                <city>Uppsala</city>
+            </publisher>
+        </publication>
+        """)
+
+    origin_info = create_origin_info(source_record, MockContext())
+
+    assert_equal_for_xml_and_xml_string(
+        origin_info,
+        """
+        <originInfo>
+            <dateIssued>
+                <year>2022</year>
+            </dateIssued>
+        </originInfo>
+        """,
+    )
+
+
+def test_does_not_include_publisher_if_editorial_letter():
+    source_record = ET.fromstring("""
+        <publication>
+            <publicationType>
+                <publicationTypeCode>article</publicationTypeCode>
+            </publicationType>
+            <subtype>
+                <publicationSubtypeCode>letter</publicationSubtypeCode>
+            </subtype>
+            <dateIssued>2022</dateIssued>
+            <publisher>
+                <publisherName>Uppsala Läroverk</publisherName>
+                <city>Uppsala</city>
+            </publisher>
+        </publication>
+        """)
 
     origin_info = create_origin_info(source_record, MockContext())
 

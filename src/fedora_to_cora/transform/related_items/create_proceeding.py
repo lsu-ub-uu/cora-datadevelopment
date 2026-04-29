@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 
 from common.xml_utils import append_if_value, create_group, create_text
 from fedora_to_cora.clean_rich_text import clean_rich_text
+from fedora_to_cora.transform.create_origin_info import create_publisher
 from fedora_to_cora.transform.identifiers.create_doi_se_libr import (
     create_identifier_doi,
 )
@@ -26,6 +27,7 @@ def create_related_item_type_proceeding(
             create_identifier_type_isbn(source_record),
             create_identifier_doi(source_record),
             create_related_item_type_series(source_record, context),
+            create_publisher(source_record, context),
         ],
     )
 

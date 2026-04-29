@@ -8,16 +8,14 @@ from unittest.mock import MagicMock
 
 
 def test_title_only():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <proceedingsTitle>
                 <title>Proceedings of the International Conference on Testing</title>
                 <subTitle>Advances in Testing Methodologies</subTitle>
             </proceedingsTitle>
         </publication>
-        """
-    )
+        """)
 
     conference = create_related_item_type_proceeding(source_record, MockContext())
 
@@ -41,8 +39,7 @@ def test_complete_conference_maximal(monkeypatch):
         get_cora_id_by_old_id_mock,
     )
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <conference>En fiktiv konferens</conference>
             <proceedingsTitle>
@@ -102,9 +99,12 @@ def test_complete_conference_maximal(monkeypatch):
                     <numberInSeries>66</numberInSeries>
                 </seriesInfo>
             </seriesInfos>
+            <publisher>
+                <publisherName>Uppsala Läroverk</publisherName>
+                <city>Uppsala</city>
+            </publisher>
         </publication>
-        """
-    )
+        """)
 
     conference = create_related_item_type_proceeding(source_record, MockContext())
 
@@ -137,22 +137,29 @@ def test_complete_conference_maximal(monkeypatch):
                 </series>
                 <partNumber>66</partNumber>
             </relatedItem>
+            <name type="corporate" otherType="publisher" repeatId="0">
+                <namePart type="publisher">Uppsala Läroverk</namePart>
+                <place>
+                    <placeTerm>Uppsala</placeTerm>
+                </place>
+                <role>
+                    <roleTerm>pbl</roleTerm>
+                </role>
+            </name>
         </relatedItem>   
         """,
     )
 
 
 def test_html_title():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <proceedingsTitle>
                 <title>&lt;p&gt;Proceedings of the International Conference on Testing&lt;/p&gt;</title>
                 <subTitle>&lt;p&gt;Advances in Testing Methodologies&lt;/p&gt;</subTitle>
             </proceedingsTitle>
         </publication>
-        """
-    )
+        """)
 
     conference = create_related_item_type_proceeding(source_record, MockContext())
 

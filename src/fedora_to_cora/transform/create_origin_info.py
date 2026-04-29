@@ -4,7 +4,7 @@ from common.common_data import create_record_link
 from cora.context import Context
 from common.xml_utils import create_group, create_text
 from fedora_to_cora.utils import (
-    is_part_of_book,
+    is_not_part_of_book_or_conference,
 )
 
 
@@ -17,7 +17,7 @@ def create_origin_info(
             _create_date_issued(source_record),
             (
                 create_publisher(source_record, context)
-                if not is_part_of_book(source_record)
+                if is_not_part_of_book_or_conference(source_record)
                 else None
             ),
         ],

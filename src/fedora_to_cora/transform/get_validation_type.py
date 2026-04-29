@@ -1,6 +1,5 @@
 import xml.etree.ElementTree as ET
 
-
 # Mapping from publicationTypeCode and publicationSubtypeCode to Cora validationType.
 validation_type_mapping = {
     "article": {
