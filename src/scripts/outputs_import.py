@@ -16,7 +16,8 @@ from multiprocessing import Pool
 from tqdm import tqdm
 import datetime
 import re
-
+from common.ssh_tunnel import SSHTunnel
+from classic.config import SSH_HOST, SSH_PORT, SSH_USER
 
 context = None
 with_binaries = False
@@ -37,6 +38,7 @@ def main():
     print_logo()
 
     args = _parse_args()
+    # with SSHTunnel(SSH_HOST, SSH_PORT, SSH_USER, 8088, "10.0.2.68", 8088):
     outputs_import(
         xml_dir=args.xml_dir,
         system=args.system,

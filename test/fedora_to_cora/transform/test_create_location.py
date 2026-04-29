@@ -7,8 +7,7 @@ import xml.etree.ElementTree as ET
 
 
 def test_create_location():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <urls>
                 <url>
@@ -23,8 +22,7 @@ def test_create_location():
                     </url> 
             </urls>
         </publication>
-        """
-    )
+        """)
 
     location = create_locations(source_record)
 
@@ -49,8 +47,7 @@ def test_create_location():
 
 
 def test_create_location_without_display_label():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <urls>
                 <url>
@@ -58,8 +55,7 @@ def test_create_location_without_display_label():
                 </url>
             </urls>
         </publication>
-        """
-    )
+        """)
 
     location = create_locations(source_record)
 
@@ -74,8 +70,7 @@ def test_create_location_without_display_label():
 
 
 def test_create_location_without_url():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <urls>
                 <url>
@@ -83,8 +78,7 @@ def test_create_location_without_url():
                 </url>
             </urls>
         </publication>
-        """
-    )
+        """)
 
     location = create_locations(source_record)
 
@@ -99,8 +93,7 @@ def test_create_location_without_url():
 
 
 def test_create_order_link():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationOrder>
                 <orderProfileId>OrderProfile-2</orderProfileId>
@@ -110,15 +103,14 @@ def test_create_order_link():
                 <parameters />
             </publicationOrder>
         </publication>
-        """
-    )
+        """)
 
     location = create_location_display_label_order_link(source_record)
 
     assert_equal_for_xml_and_xml_string(
         location,
         """
-        <location displayLabel="orderLink">
+        <location displayLabel="orderLink" repeatId="0">
             <url>http://order.test.se</url>
             <displayLabel>Beställ/Order</displayLabel>
         </location>
@@ -127,8 +119,7 @@ def test_create_order_link():
 
 
 def test_create_order_link_no_order_url():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationOrder>
                 <orderProfileId>OrderProfile-2</orderProfileId>
@@ -137,8 +128,7 @@ def test_create_order_link_no_order_url():
                 <parameters />
             </publicationOrder>
         </publication>
-        """
-    )
+        """)
 
     location = create_location_display_label_order_link(source_record)
 
@@ -146,8 +136,7 @@ def test_create_order_link_no_order_url():
 
 
 def test_create_order_link_empty_order_url():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationOrder>
                 <orderProfileId>OrderProfile-2</orderProfileId>
@@ -157,8 +146,7 @@ def test_create_order_link_empty_order_url():
                 <parameters />
             </publicationOrder>
         </publication>
-        """
-    )
+        """)
 
     location = create_location_display_label_order_link(source_record)
 
