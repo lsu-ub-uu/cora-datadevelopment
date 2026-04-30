@@ -77,6 +77,19 @@ validation_type_mapping = {
 }
 
 
+def get_validation_type_from_fedora_record(source_record: ET.Element) -> str | None:
+    publication_type_code = source_record.findtext(
+        "./publicationType/publicationTypeCode"
+    )
+
+    if publication_type_code == "manuscript":
+        return _get_validation_type_for_manuscript(source_record)
+
+    publication_subtype_code = _get_publication_subtype_code(source_record)
+
+    return _get_validation_type(publication_type_code, publication_subtype_code)
+
+
 def _get_validation_type(
     publication_type_code: str | None, subtype_code: str | None
 ) -> str | None:
@@ -91,14 +104,31 @@ def _get_validation_type(
     return publication_type_mapping[subtype_code]
 
 
-def get_validation_type_from_fedora_record(source_record: ET.Element) -> str | None:
-    publication_type_code = source_record.findtext(
-        "./publicationType/publicationTypeCode"
-    )
+def _get_publication_subtype_code(source_record: ET.Element) -> str | None:
     subtype_code = source_record.findtext("./subtype/publicationSubtypeCode")
-    publication_subtype = source_record.findtext("./publicationSubtype")
+    if subtype_code is not None:
+        return subtype_code
 
     # In some cases, the publication subtype might be stored directly under publicationSubtype instead of subtype/publicationSubtypeCode.
-    resolved_subtype = subtype_code if subtype_code is not None else publication_subtype
+    return source_record.findtext("./publicationSubtype")
 
-    return _get_validation_type(publication_type_code, resolved_subtype)
+
+def _get_validation_type_for_manuscript(source_record: ET.Element) -> str | None:
+    # For manuscripts, we need to check if it's part of a thesis to determine if it is a manuscript or preprint.
+    host_publication_types = source_record.findall(
+        "./hostPublications/hostPublication/publicationType/publicationTypeCode"
+    )
+
+    if _is_part_of_thesis(source_record):
+        return "diva_manuscript"
+
+    return "publication_preprint"
+
+
+def _is_part_of_thesis(source_record: ET.Element) -> bool:
+    host_publication_type_codes = source_record.findall(
+        "./hostPublications/hostPublication/publicationType/publicationTypeCode"
+    )
+    thesis_types = {"comprehensiveDoctoralThesis", "comprehensiveLicentiateThesis"}
+
+    return any(h.text in thesis_types for h in host_publication_type_codes)

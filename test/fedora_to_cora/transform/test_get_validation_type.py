@@ -71,24 +71,21 @@ def test_known_publication_type_with_unknown_subtype_returns_none():
 
 
 def test_get_validation_type():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
                 <publicationTypeCode>collection</publicationTypeCode>
             </publicationType>
         </publication>
-        """
-    )
+        """)
 
     validation_type = get_validation_type_from_fedora_record(source_record)
     assert (validation_type) == "publication_edited-book"
 
 
 def test_get_validation_type_with_subtype():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>50</publicationTypeId>
@@ -99,16 +96,14 @@ def test_get_validation_type_with_subtype():
                 <publicationSubtypeCode>newsItem</publicationSubtypeCode>
             </subtype>
         </publication>
-        """
-    )
+        """)
 
     validation_type = get_validation_type_from_fedora_record(source_record)
     assert (validation_type) == "publication_newspaper-article"
 
 
 def test_empty_subtype():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>50</publicationTypeId>
@@ -118,30 +113,26 @@ def test_empty_subtype():
                 <publicationSubtypeNames />
             </subtype>
         </publication>
-        """
-    )
+        """)
 
     validation_type = get_validation_type_from_fedora_record(source_record)
     assert (validation_type) == "publication_journal-article"
 
 
 def test_missing_validation_type():
-    source_record = ET.fromstring(
-        f"""
+    source_record = ET.fromstring(f"""
         <publication>
             <publicationType>
             </publicationType>
         </publication>
-        """
-    )
+        """)
 
     validation_type = get_validation_type_from_fedora_record(source_record)
     assert (validation_type) is None
 
 
 def test_handle_publication_subtype_from_root_element():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>50</publicationTypeId>
@@ -149,8 +140,38 @@ def test_handle_publication_subtype_from_root_element():
             </publicationType>
             <publicationSubtype>editorialMaterial</publicationSubtype>
         </publication>
-        """
-    )
+        """)
 
     validation_type = get_validation_type_from_fedora_record(source_record)
     assert (validation_type) == "publication_editorial-letter"
+
+
+@pytest.mark.parametrize(
+    "host_publication_type",
+    ["comprehensiveDoctoralThesis", "comprehensiveLicentiateThesis"],
+)
+def test_returns_diva_manuscript_for_manuscript_that_is_part_of_thesis(
+    host_publication_type,
+):
+    source_record = ET.fromstring(f"""
+        <publication>
+            <publicationType>
+                <publicationTypeCode>manuscript</publicationTypeCode>
+            </publicationType>
+            <hostPublications>
+                <hostPublication>
+                    <publicationType>
+                        <publicationTypeCode>someOtherHostPublicationType</publicationTypeCode>
+                    </publicationType>
+                </hostPublication>   
+                <hostPublication>
+                    <publicationType>
+                        <publicationTypeCode>{host_publication_type}</publicationTypeCode>
+                    </publicationType>
+                </hostPublication>   
+            </hostPublications>
+        </publication>
+        """)
+
+    validation_type = get_validation_type_from_fedora_record(source_record)
+    assert (validation_type) == "diva_manuscript"

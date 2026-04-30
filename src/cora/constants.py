@@ -6,6 +6,7 @@ LOGIN_URLS = {
     "pre": "https://pre.diva-portal.org/login/rest/apptoken",
     "pre-k8s": "https://diva.pre.test.ub.uu.se/login/rest/apptoken",
     "mig": "https://mig.diva-portal.org/login/rest/apptoken",
+    "nonfs": "https://nonfs.pre.diva-portal.org/login/rest/apptoken",
 }
 BASE_URL = {
     "local": "http://localhost:8082/diva/rest/record/",
@@ -15,4 +16,5 @@ BASE_URL = {
     "pre": "https://pre.diva-portal.org/rest/record/",
     "pre-k8s": "https://diva.pre.test.ub.uu.se/rest/record/",
     "mig": "https://mig.diva-portal.org/rest/record/",
+    "nonfs": "https://nonfs.pre.diva-portal.org/rest/record/",
 }
