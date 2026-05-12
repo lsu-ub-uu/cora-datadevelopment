@@ -6,12 +6,10 @@ from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
 def test_no_subtype():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
         </publication>
-        """
-    )
+        """)
 
     genre_type_subcategory = create_genre_type_subcategory(source_record)
 
@@ -19,16 +17,14 @@ def test_no_subtype():
 
 
 def test_policy_document():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <subtype>
                 <publicationSubtypeId>2</publicationSubtypeId>
                 <publicationSubtypeCode>policyDocument</publicationSubtypeCode>
             </subtype>
         </publication>
-        """
-    )
+        """)
 
     genre_type_subcategory = create_genre_type_subcategory(source_record)
     assert_equal_for_xml_and_xml_string(
@@ -40,16 +36,14 @@ def test_policy_document():
 
 
 def test_exhibition_catalog():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <subtype>
                 <publicationSubtypeId>3</publicationSubtypeId>
                 <publicationSubtypeCode>exhibitionCatalogue</publicationSubtypeCode>
             </subtype>
         </publication>
-        """
-    )
+        """)
 
     genre_type_subcategory = create_genre_type_subcategory(source_record)
     assert_equal_for_xml_and_xml_string(
@@ -61,58 +55,52 @@ def test_exhibition_catalog():
 
 
 def test_oral_presentation():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <subtype>
                 <publicationSubtypeId>3</publicationSubtypeId>
                 <publicationSubtypeCode>presentation</publicationSubtypeCode>
             </subtype>
         </publication>
-        """
-    )
+        """)
 
     genre_type_subcategory = create_genre_type_subcategory(source_record)
     assert_equal_for_xml_and_xml_string(
         genre_type_subcategory,
         """
-        <genre type="subcategory">oralPresentation</genre>
+        <genre type="subcategory">presentation</genre>
         """,
     )
 
 
 def test_oral_presentation_abstract():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <subtype>
                 <publicationSubtypeId>3</publicationSubtypeId>
                 <publicationSubtypeCode>abstracts</publicationSubtypeCode>
             </subtype>
         </publication>
-        """
-    )
+        """)
 
     genre_type_subcategory = create_genre_type_subcategory(source_record)
     assert_equal_for_xml_and_xml_string(
         genre_type_subcategory,
         """
-        <genre type="subcategory">oralPresentationAbstract</genre>
+        <genre type="subcategory">presentationAbstract</genre>
         """,
     )
 
 
 def test_other_subtype():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <subtype>
                 <publicationSubtypeId>53</publicationSubtypeId>
                 <publicationSubtypeCode>newsItem</publicationSubtypeCode>
             </subtype>
         </publication>
-        """
-    )
+        """)
 
     genre_type_subcategory = create_genre_type_subcategory(source_record)
 
