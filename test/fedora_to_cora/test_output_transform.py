@@ -178,7 +178,7 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <identifier type="se-libr" repeatId="0">0004</identifier>
         <identifier type="se-libr" repeatId="1">0005</identifier>
         <identifier type="archiveNumber">Arkivnummer.01</identifier>
-        <identifier type="localId" repeatId="0">LocalId.01</identifier>
+        <identifier type="localId">LocalId.01</identifier>
         <location repeatId="0"><url>http://example.com</url><displayLabel>BMFEA vol 1-75</displayLabel></location>
         <location displayLabel="orderLink" repeatId="0"><url>http://acta.mamutweb.com/Shop/Product/0476-Laparoscopic-or-Open-Inguinal-Hernia-Repair---Whic/diva2:232194</url><displayLabel>Beställ/Order</displayLabel></location>
         <note type="external">This is an external note.</note>
@@ -318,7 +318,7 @@ def test_output_transform_book(mock_diva_search_requests):
                 </topic>
             </subject>
             <identifier type="isbn" displayLabel="print" repeatId="0">9171084282</identifier>
-            <identifier type="localId" repeatId="0">xxxxx</identifier>
+            <identifier type="localId">xxxxx</identifier>
             <relatedItem type="series" otherType="link" repeatId="controlled0">
                 <series>
                     <linkedRecordType>diva-series</linkedRecordType>
@@ -411,7 +411,7 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                 </topic>
             </subject>
 
-            <identifier type="localId" repeatId="0">xxxxx</identifier>
+            <identifier type="localId">xxxxx</identifier>
             <relatedItem type="book" otherType="text">
                 <titleInfo>
                     <title>Skansen 125</title>
