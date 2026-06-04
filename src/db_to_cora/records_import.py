@@ -61,7 +61,10 @@ def apply_import(
                     level="warning",
                 )
                 return source_record, None
-            context.log(f"Failed to create record: {result.error}", level="error")
+            context.log(
+                f"Failed to create record with old id {old_id}: {result.error}",
+                level="error",
+            )
             raise Exception(f"Record creation failed: {result.error}")
 
     record_mapping = run_with_threads(
