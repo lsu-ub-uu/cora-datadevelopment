@@ -24,7 +24,7 @@ def create_identifier(
                 "identifier",
                 source_text.text,
                 type=type,
-                repeatId=str(i) if type == "localId" or len(source_texts) > 1 else None,
+                repeatId=str(i) if len(source_texts) > 1 else None,
                 preserve_newlines=False,
                 **attributes,
             )
