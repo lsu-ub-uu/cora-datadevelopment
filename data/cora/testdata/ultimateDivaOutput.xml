@@ -237,7 +237,7 @@ sector will be essential.
 	</academicSemester>
 	<studentDegree repeatId="0">
 		<degreeLevel>M1</degreeLevel>
-		<universityPoints>7,5</universityPoints>
+		<credits>7,5</credits>
 	</studentDegree>
 	<externalCollaboration>
 		<namePart repeatId="0">Externt Namn</namePart>

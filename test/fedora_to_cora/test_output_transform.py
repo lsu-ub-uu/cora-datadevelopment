@@ -183,7 +183,7 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <location displayLabel="orderLink" repeatId="0"><url>http://acta.mamutweb.com/Shop/Product/0476-Laparoscopic-or-Open-Inguinal-Hernia-Repair---Whic/diva2:232194</url><displayLabel>Beställ/Order</displayLabel></location>
         <note type="external">This is an external note.</note>
         <academicSemester><year>2022</year><academicSemester>ht</academicSemester></academicSemester>
-        <studentDegree repeatId="0"><degreeLevel>H2</degreeLevel><universityPoints>20</universityPoints></studentDegree>
+        <studentDegree repeatId="0"><degreeLevel>H2</degreeLevel><credits>20</credits></studentDegree>
         <name type="corporate" otherType="externalCollaboration" repeatId="0">
             <role>
                 <roleTerm>ctb</roleTerm>
@@ -532,7 +532,7 @@ def test_output_transform_student_thesis(mock_diva_search_requests):
             </academicSemester>
             <studentDegree repeatId="0">
                 <degreeLevel>H1</degreeLevel>
-                <universityPoints>180</universityPoints>
+                <credits>180</credits>
             </studentDegree>
             <name type="corporate" otherType="externalCollaboration" repeatId="0">
                 <role><roleTerm>ctb</roleTerm></role>

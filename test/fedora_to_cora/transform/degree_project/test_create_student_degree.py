@@ -8,8 +8,7 @@ from cora.context import MockContext
 
 
 def test_create_student_degree_thesis_level():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
       <publication>
             <studentDegrees>
                 <studentDegree>
@@ -19,8 +18,7 @@ def test_create_student_degree_thesis_level():
                 </studentDegree>
             </studentDegrees>
         </publication>
-    """
-    )
+    """)
 
     student_degrees = create_student_degrees(source_record, MockContext())
 
@@ -35,8 +33,7 @@ def test_create_student_degree_thesis_level():
 
 
 def test_create_student_multiple_degree_thesis_level():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
       <publication>
             <studentDegrees>
                 <studentDegree>
@@ -51,8 +48,7 @@ def test_create_student_multiple_degree_thesis_level():
                 </studentDegree>
             </studentDegrees>
         </publication>
-    """
-    )
+    """)
 
     student_degrees = create_student_degrees(source_record, MockContext())
 
@@ -74,8 +70,7 @@ def test_create_student_multiple_degree_thesis_level():
 
 
 def test_create_student_degree_hp():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
       <publication>
             <studentDegrees>
                 <studentDegree>
@@ -85,8 +80,7 @@ def test_create_student_degree_hp():
                 </studentDegree>
             </studentDegrees>
         </publication>
-    """
-    )
+    """)
 
     student_degrees = create_student_degrees(source_record, MockContext())
 
@@ -95,7 +89,7 @@ def test_create_student_degree_hp():
         student_degrees[0],
         """
         <studentDegree repeatId="0">
-            <universityPoints>20</universityPoints>
+            <credits>20</credits>
         </studentDegree>""",
     )
 
@@ -114,8 +108,7 @@ def test_create_linked_course(monkeypatch):
         mock_get_cora_id_by_old_id,
     )
 
-    source_record = ET.fromstring(
-        f"""
+    source_record = ET.fromstring(f"""
         <publication>
             <studentDegrees>
                 <studentDegree>
@@ -125,8 +118,7 @@ def test_create_linked_course(monkeypatch):
                 </studentDegree>
             </studentDegrees>
         </publication>
-    """
-    )
+    """)
 
     student_degrees = create_student_degrees(source_record, MockContext())
     assert len(student_degrees) == 1
@@ -156,8 +148,7 @@ def test_create_linked_programme(monkeypatch):
         mock_get_cora_id_by_old_id,
     )
 
-    source_record = ET.fromstring(
-        f"""
+    source_record = ET.fromstring(f"""
         <publication>
             <studentDegrees>
                 <studentDegree>
@@ -167,8 +158,7 @@ def test_create_linked_programme(monkeypatch):
                 </studentDegree>
             </studentDegrees>
         </publication>
-    """
-    )
+    """)
 
     student_degrees = create_student_degrees(source_record, MockContext())
     assert len(student_degrees) == 1

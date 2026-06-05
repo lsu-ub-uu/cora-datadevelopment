@@ -59,7 +59,6 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - subtitle `subtitle`
   - language <- `language/languageCode3`
 - name type="personal" <- ` authors/person` , ` editors/person` , `otherContributors/contributor`
-
   - ⚠️ person (link to migrated record) <- `authorityPid`
   - namePart type="family" <- `lastName`
   - namePart type="given" <- `firstName`
@@ -96,7 +95,6 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - subject authority="diva"<- `researchSubjects`
   - topic (link to migrated record) <- `subject/subjectId`
 - subject authority="sdg" <- `sustainableDevelopments` ⚠️ Some ids cannot be mapped to sdg codes.
-
   - topic <- mappning av `sustainableDevelopment/developmentId`
 
 - identifier type="isbn" <- `isbnNumbers/isbn/number` if not chapter or conference paper
@@ -165,7 +163,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - academicSemester <- `term` (to lower case)
 - studentDegree <- `studentDegrees`
   - degreeLevel <- `studentDegree/thesisLevel/thesisLevelCode`
-  - universityPoints <- `studentDegree/universityPoints/hp`
+  - credits <- `studentDegree/universityPoints/hp`
   - course (link to migrated record) <- `studentDegree/undergraduateSubject/subjectId`
   - programme (link to migrated record) <- `studentDegree/educationalProgramme/subjectId`
 - externalCollaboration <- `externalCooperation`
@@ -211,7 +209,6 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 - 🆕 relatedItem type="book" otherType="link"
   - book
 - relatedItem type="book" otherType="text"
-
   - titleInfo `bookTitle`
     - title <- `title`
     - subtitle <- `subtitle`
@@ -268,7 +265,6 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
 ## Binary
 
 - binary <- `attachments/attatchment`
-
   - recordInfo
     - visibility <-- från `deleted`, `onHold`, `availableFrom`, `availableUntil`
   - originalFileName <- `path` with only the content after the /

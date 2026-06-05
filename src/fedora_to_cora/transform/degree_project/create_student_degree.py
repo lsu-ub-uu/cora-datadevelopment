@@ -29,7 +29,7 @@ def _create_student_degree(
                 source_student_degree.findtext("./thesisLevel/thesisLevelCode"),
             ),
             create_text(
-                "universityPoints",
+                "credits",
                 source_student_degree.findtext("./universityPoints/hp"),
             ),
             _create_course(source_student_degree, context),
