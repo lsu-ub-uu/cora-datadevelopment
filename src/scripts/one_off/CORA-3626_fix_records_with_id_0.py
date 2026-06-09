@@ -15,6 +15,12 @@ unique_constraint_paths = [
 
 
 def main():
+    """
+    This script is a one-off utility to fix records of a specified type that have an oldId of "0" by
+    creating a new record with the same data but without the oldId, updating all incoming links from diva-output records to point to the new record,
+    and then deleting the original record. It also handles removing and restoring unique constraint values to avoid conflicts during the process.
+    """
+
     print("Updating record links...")
     args = _parse_args()
     context = CoraContext(args.system, args.login_id, args.app_token)
