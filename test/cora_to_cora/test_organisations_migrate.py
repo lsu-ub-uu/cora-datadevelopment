@@ -216,7 +216,59 @@ def test_ignores_root_organisation(
     assert create_record_mock.call_count == 1
     assert update_organisation_relations_mock.call_count == 1
 
+@patch("cora_to_cora.organisations_migrate.update_organisation_relations")
+@patch("cora_to_cora.organisations_migrate.create_record")
+@patch("cora_to_cora.organisations_migrate.validate_record")
+@patch("cora_to_cora.organisations_migrate.transform_organisation")
+def test_skips_migrate_for_existing_organisation(
+    transform_organisation_mock,
+    validate_record_mock,
+    create_record_mock,
+    update_organisation_relations_mock,
+    mock_run_with_threads,
+    requests_mock,
+):
+    mock_context = MockContext()
+    domain = "test_domain"
+
+    test_data = _read_json_file("data/old_cora_search_result_two_organisations.json")
+
+    requests_mock.get(
+        f'https://cora.diva-portal.org/diva/rest/record/searchResult/publicOrganisationSearch?searchData={{"name":"search","children":[{{"name":"include","children":[{{"name":"includePart","children":[{{"name":"divaOrganisationDomainSearchTerm","value":"{domain}"}}]}}]}},{{"name":"rows","value":"1000"}}]}}',
+        status_code=200,
+        json=test_data,
+    )
+
+    create_record_mock.side_effect = [
+        CreateRecordFailureResult(
+            error="Failed to create record with status 409: The record could not be created as it fails unique validation with the following 1 error messages: [A record matching the unique rule with [key: oldId, value: 16205] already exists in the system]"
+        ),
+        CreateRecordSuccessResult(
+            record_id="new_id_2",
+            response_data=ET.Element("created_org_2"),
+        ),
+    ]
+
+    transform_organisation_mock.return_value = ET.Element("organisation")
+
+    organisations_migrate(mock_context, domain)
+    assert requests_mock.call_count == 1
+    mock_context.log.assert_any_call(  # type: ignore
+        "Found 2 organisations to migrate from old Cora system."
+    )
+    assert transform_organisation_mock.call_count == 2
+    assert validate_record_mock.call_count == 0
+    assert create_record_mock.call_count == 2
+    assert update_organisation_relations_mock.call_count == 1
+
+    call_args = update_organisation_relations_mock.call_args[0][0]
+    assert len(call_args) == 1
+
+    old_org, created_org = call_args[0]
+    assert old_org == test_data["dataList"]["data"][1]
+    assert created_org.tag == "created_org_2"
 
 def _read_json_file(filename):
     with open(os.path.join(os.path.dirname(__file__), filename), "r") as f:
         return json.load(f)
+

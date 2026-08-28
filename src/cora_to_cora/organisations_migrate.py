@@ -33,6 +33,11 @@ def organisations_migrate(context: Context, domain: str):
             new_org, record_type="diva-organisation", context=context
         )
         if not is_success_result(created_org):
+            if created_org.error and "status 409" in created_org.error:
+                context.log(
+                    f"Skipping organisation with old ID {new_org.findtext('./recordInfo/oldId')}: already exists in the system."
+                )
+                return
             context.log(
                 f"Failed to create organisation for old ID {new_org.findtext('./recordInfo/oldId')}: {created_org.error}"
             )
