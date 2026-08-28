@@ -180,8 +180,8 @@ def _create_address(old_org_data: dict):
             create_text("postOfficeBox", box),
             create_text("street", street),
             create_text("postcode", postal_code),
-            create_text("place", city),
-            create_text("country", _transform_country(country)),
+            create_text("city", city),
+            create_text("country", _transform_country(country)) if country is not None else None,
         ],
     )
 

@@ -119,3 +119,112 @@ def test_transform_minimal_organisation():
             </authority>
         </organisation>""",
     )
+
+def test_transform_organisation_with_address_without_country():
+    old_org = {
+            "record": {
+                "data": {
+                    "children": [
+                        {
+                            "children": [
+                                {"name": "id", "value": "16501"},
+                                {
+                                    "children": [
+                                        {"name": "linkedRecordType", "value": "recordType"},
+                                        {
+                                            "name": "linkedRecordId",
+                                            "value": "topOrganisation",
+                                        },
+                                    ],
+                                    "name": "type",
+                                },
+                                {
+                                    "children": [
+                                        {"name": "linkedRecordType", "value": "system"},
+                                        {"name": "linkedRecordId", "value": "diva"},
+                                    ],
+                                    "name": "dataDivider",
+                                },
+                                {"name": "domain", "value": "smhi"},
+                            ],
+                            "name": "recordInfo",
+                        },
+                        {
+                            "children": [
+                                {"name": "name", "value": "Något namn"},
+                                {"name": "language", "value": "sv"},
+                            ],
+                            "name": "organisationName",
+                        },
+                        {
+                            "name": "organisationAlternativeName",
+                            "children": [
+                                {"name": "name", "value": "Some name"},
+                                {"name": "language", "value": "en"},
+                            ],
+                        },
+                        {
+                            "name": "address",
+                            "children": [
+                                {
+                                    "name": "box",
+                                    "value": "PO Box 123"
+                                },
+                                {
+                                    "name": "street",
+                                    "value": "Some street 1"
+                                },
+                                {
+                                    "name": "postcode",
+                                    "value": "12345"
+                                },
+                                {
+                                    "name": "city",
+                                    "value": "Some city"
+                                }
+                            ]
+                        }
+                    ],
+                    "name": "organisation",
+                },
+            }
+        }
+
+    transformed_organisation = transform_organisation(old_org)
+    assert_equal_for_xml_and_xml_string(
+        transformed_organisation,
+        """<organisation>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>diva-topOrganisation</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <permissionUnit>
+                    <linkedRecordType>permissionUnit</linkedRecordType>
+                    <linkedRecordId>smhi</linkedRecordId>
+                </permissionUnit>
+                <oldId>16501</oldId>
+            </recordInfo>
+            <genre type="organisationType">topOrganisation</genre>
+            <authority lang="swe" repeatId="swe">
+                <name type="corporate">
+                    <namePart>Något namn</namePart>
+                </name>
+            </authority>
+            <authority lang="eng" repeatId="eng">
+                <name type="corporate">
+                    <namePart>Some name</namePart>
+                </name>
+            </authority>
+            <address>
+                <postOfficeBox>PO Box 123</postOfficeBox>
+                <street>Some street 1</street>
+                <postcode>12345</postcode>
+                <city>Some city</city>
+            </address>
+        </organisation>""",
+    )

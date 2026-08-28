@@ -34,7 +34,7 @@
         <postOfficeBox>PO Box 123</postOfficeBox>
         <street>Some street 1</street>
         <postcode>12345</postcode>
-        <place>Some city</place>
+        <city>Some city</city>
         <country>sw</country>
     </address>
     <identifier type="localId">someCode</identifier>
