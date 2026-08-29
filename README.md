@@ -71,6 +71,10 @@ This repository contains scripts for creating and migrating data.
 
 ## Development
 
+### Prerequisites
+
+Python 3.14
+
 ### Dev installation
 
 ```sh
