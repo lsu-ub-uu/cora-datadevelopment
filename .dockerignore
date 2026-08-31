@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.egg-info/
+.git/
+.idea/
+.coverage
+.pytest_cache/
+logs/
+output_xml/
+reports/
+data/
+test/
+build/
+out/
+*.pyc

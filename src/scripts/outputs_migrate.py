@@ -1,10 +1,8 @@
 import xml.etree.ElementTree as ET
-from common.arg_parser import create_argument_parser
+from common.arg_parser import create_argument_parser, classic_arguments
 from classic.get_classic_publications import get_classic_publications
 from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
 from cora.context import CoraContext
-from common.ssh_tunnel import SSHTunnel
-from classic.config import SSH_HOST, SSH_PORT, SSH_USER
 from tqdm import tqdm
 
 
@@ -24,7 +22,8 @@ def main():
 
     def on_success(pid: str, record: ET.Element):
         result = output_migrate(
-            record, context, apply=args.apply, with_binaries=args.binaries
+            record, context, apply=args.apply, with_binaries=args.binaries,
+            fedora_url=args.fedora_url,
         )
         results.append(result)
         progress.update(1)
@@ -34,13 +33,13 @@ def main():
         context.log(error, level="error")
         progress.update(1)
 
-    with SSHTunnel(SSH_HOST, SSH_PORT, SSH_USER, 8088, "10.0.2.68", 8088):
-        get_classic_publications(
-            pids,
-            workers=args.workers,
-            on_success=on_success,
-            on_error=on_error,
-        )
+    get_classic_publications(
+        pids,
+        workers=args.workers,
+        on_success=on_success,
+        on_error=on_error,
+        fedora_url=args.fedora_url,
+    )
 
     progress.close()
     _print_summary(results)
@@ -54,6 +53,7 @@ def _parse_args():
                 "required": True,
                 "help": "Comma-separated list of publication PIDs to migrate",
             },
+            **classic_arguments,
             "--system": {
                 "default": "pre",
                 "help": "Target Cora system",

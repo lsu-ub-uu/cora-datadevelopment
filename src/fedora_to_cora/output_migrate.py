@@ -39,6 +39,7 @@ def output_migrate(
     context: Context,
     apply: bool = False,
     with_binaries: bool = False,
+    fedora_url: str = "",
 ) -> OutputMigrationResult:
     """
     Migrates a Fedora XML publication record and its attached binaries to Cora.
@@ -85,6 +86,7 @@ def output_migrate(
                 source_record,
                 create_record_result.response_data,
                 context,
+                fedora_url=fedora_url,
             )
             if not success:
                 context.log(

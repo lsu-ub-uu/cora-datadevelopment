@@ -38,7 +38,8 @@ GROUP BY
     mock_execute_sql.return_value = mock_course
 
     result = get_courses(
-        domain="norden", db_user="test_user", db_password="test_password"
+        domain="norden", db_host="localhost", db_port=5432, db_name="auradb",
+        db_user="test_user", db_password="test_password",
     )
 
     assert result == mock_course

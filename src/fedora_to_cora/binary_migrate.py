@@ -6,9 +6,14 @@ import time
 
 
 def migrate_binary(
-    binary_record: ET.Element, pid: str, file_name: str, context: Context
+    binary_record: ET.Element,
+    pid: str,
+    file_name: str,
+    context: Context,
+    *,
+    fedora_url: str,
 ):
-    download_url = f"http://localhost:8088/fedora/get/{pid}/{file_name}"
+    download_url = f"{fedora_url}/fedora/get/{pid}/{file_name}"
     start_migrate = time.perf_counter()
     context.log(f"[PID {pid}] ⏳ Starting migrate file from Fedora: {download_url}")
 

@@ -6,7 +6,9 @@ from classic.get_classic_publications import get_classic_publications
 from common.xml_utils import save_to_file
 
 
-def export_publications_from_fedora(domain: str, workers=16):
+def export_publications_from_fedora(
+    domain: str, workers=16, *, solr_url: str, fedora_url: str
+):
     time_started = _get_now()
     dirname = f"data/fedora_xml/{domain}/{time_started.isoformat()}"
     logger = RunRotatingLogger("data", f"logs/outputs_export.log").get()
@@ -15,7 +17,7 @@ def export_publications_from_fedora(domain: str, workers=16):
     logger.info(f"==== domain={domain} ====")
     logger.info("==================================================")
 
-    pids = get_pids_for_domain(domain)
+    pids = get_pids_for_domain(domain, solr_url=solr_url)
     logger.info(f"Found {len(pids)} publications in domain {domain}")
 
     def handle_record_import_success(pid, record: ET.Element):
@@ -31,6 +33,7 @@ def export_publications_from_fedora(domain: str, workers=16):
         workers,
         on_success=handle_record_import_success,
         on_error=lambda error: logger.error(f"Failed to import publication {error}"),
+        fedora_url=fedora_url,
     )
 
     logger.info(f"--- Successfully imported {len(pids)} publications to {dirname} ---")
