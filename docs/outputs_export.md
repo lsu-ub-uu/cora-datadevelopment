@@ -5,8 +5,7 @@ This script gets all publications for a domain from DiVA Classic, using Solr and
 ## Prerequisites
 
 - Python 3 and PIP installed
-- You must be on the UUB network
-- Your SSH public key must be added to the SSH agent
+- A `.env` file configured with `FEDORA_URL` and `SOLR_URL` (see [README](../README.md#configuration)), or pass them as CLI arguments
 
 ## Installing the package
 

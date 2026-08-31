@@ -15,11 +15,11 @@ pip install .
 ## Running the script
 
 ```bash
-outputs-migrate --system minikube --domain someDomain
+organisations-migrate --system minikube --domain someDomain
 ```
 
 ## Show script help, with all available parameters
 
 ```bash
-outputs-migrate --help
+organisations-migrate --help
 ```

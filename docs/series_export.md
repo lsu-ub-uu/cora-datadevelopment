@@ -1,13 +1,15 @@
 # Series export
 
-This script gets all series from DiVA Classic database and saves them to an XML file, that can be imported using the [`series-export`](./series_export.md) script.
+This script gets all series from DiVA Classic database and saves them to an XML file, that can be imported using the [`series-import`](./series_import.md) script.
+
+> **Note:** Export and import are combined in the `diva-migrate` command. See `diva-migrate --help`.
 
 The output is saved to `data/db_xml/series_{TIMESTAMP}.xml`
 
 ## Prerequisites
 
 - Python 3 and PIP installed
-- Your SSH public key must be added to the SSH agent
+- A `.env` file configured with database connection settings (see [README](../README.md#configuration)), or pass `--db-host`, `--db-user`, `--db-password` as CLI arguments
 - You must have read access to the DiVA Classic database
 
 ## Installing the package
@@ -21,5 +23,3 @@ pip install .
 ```bash
 series-export --domain someDomain
 ```
-
-You will be prompted for the database username and password.
