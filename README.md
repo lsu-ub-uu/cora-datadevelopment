@@ -82,6 +82,7 @@ cp .env.example .env
 Edit `.env` with your values:
 
 ```env
+CORA_URL=https://next.diva-portal.org
 CORA_SYSTEM=preview
 CORA_LOGIN_ID=divaAdmin@cora.epc.ub.uu.se
 CORA_APP_TOKEN=your-token-here
@@ -97,7 +98,11 @@ DB_USER=your-db-user
 DB_PASSWORD=your-db-password
 ```
 
-Any value set in `.env` can be overridden by passing the corresponding CLI argument (e.g. `--system production`).
+`CORA_URL` is optional. When set, it is used to build the record and login URLs and
+overrides the endpoint selected by `--system` or `CORA_SYSTEM`.
+
+Other values set in `.env` can be overridden by passing the corresponding CLI argument
+(e.g. `--system production`).
 
 ## Docker
 

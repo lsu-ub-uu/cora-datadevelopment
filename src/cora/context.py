@@ -31,6 +31,14 @@ class CoraContext(Context):
         self, system: str, login_id: str, app_token: str | None, workers: int = 16
     ):
         self.system = system
+        cora_url = os.environ.get("CORA_URL")
+        if cora_url:
+            cora_url = cora_url.rstrip("/")
+            self._base_url = f"{cora_url}/rest/record/"
+            login_url = f"{cora_url}/login/rest/apptoken"
+        else:
+            self._base_url = constants.BASE_URL[self.system]
+            login_url = constants.LOGIN_URLS[self.system]
         self._logger = RunRotatingLogger("data", f"logs/{main_script}.log").get()
         self.app_token_client = AppTokenClient(
             dependencies={
@@ -41,11 +49,10 @@ class CoraContext(Context):
         )
         if app_token is None:
             app_token = _get_app_token_from_example_user(system, login_id)
-            
 
         self.app_token_client.login(
             {
-                "login_url": constants.LOGIN_URLS[self.system],
+                "login_url": login_url,
                 "login_id": login_id,
                 "app_token": app_token,
             }
@@ -66,7 +73,7 @@ class CoraContext(Context):
 
         :return: The base URL as a string.
         """
-        return constants.BASE_URL[self.system]
+        return self._base_url
 
     def get_auth_token(self) -> str:
         """
