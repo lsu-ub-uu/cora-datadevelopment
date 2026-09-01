@@ -6,7 +6,6 @@ __pycache__/
 .coverage
 .pytest_cache/
 logs/
-output_xml/
 reports/
 data/
 test/

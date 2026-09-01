@@ -7,4 +7,4 @@ COPY src/ src/
 
 RUN pip install --no-cache-dir .
 
-VOLUME ["/app/data", "/app/logs", "/app/output_xml", "/app/reports"]
+VOLUME ["/app/data", "/app/logs", "/app/reports"]

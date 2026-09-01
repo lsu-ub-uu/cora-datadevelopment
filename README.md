@@ -104,20 +104,20 @@ Any value set in `.env` can be overridden by passing the corresponding CLI argum
 ### Build
 
 ```sh
-docker build -t cora-datadevelopment .
+docker build --network=host -t cora-datadevelopment .
 ```
 
 ### Run
 
-Bind-mount `data/`, `logs/`, `output_xml/`, and `reports/` so artifacts persist between runs:
+Bind-mount `data/`, `logs/`, and `reports/` so artifacts persist between runs:
 
 ```sh
 docker run \
   -v ./data:/app/data \
   -v ./logs:/app/logs \
-  -v ./output_xml:/app/output_xml \
   -v ./reports:/app/reports \
   --env-file .env \
+  --network=host \
   cora-datadevelopment <command> [args]
 ```
 
@@ -128,6 +128,7 @@ docker run \
   -v ./data:/app/data \
   -v ./logs:/app/logs \
   --env-file .env \
+  --network=host \
   cora-datadevelopment outputs-export --domain uu
 ```
 
