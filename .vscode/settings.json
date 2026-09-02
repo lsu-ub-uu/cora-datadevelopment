@@ -5,5 +5,7 @@
   "[sql]": {
     "editor.formatOnSave": false,
     "editor.defaultFormatter": null
-  }
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "ms-python.black-formatter"
 }
