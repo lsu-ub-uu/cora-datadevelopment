@@ -66,6 +66,7 @@ def main():
         login_id=args.login_id,
         app_token=args.app_token,
         workers=args.workers,
+        cora_url=args.cora_url,
     )
 
     common_utils.init(CTX, TYPE_PREFIX, RECORD_TYPE, BLACKLIST_TYPES)

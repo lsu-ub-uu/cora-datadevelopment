@@ -28,10 +28,14 @@ class Context(Protocol):
 
 class CoraContext(Context):
     def __init__(
-        self, system: str, login_id: str, app_token: str | None, workers: int = 16
+        self,
+        system: str,
+        login_id: str,
+        app_token: str | None,
+        workers: int = 16,
+        cora_url: str | None = None,
     ):
         self.system = system
-        cora_url = os.environ.get("CORA_URL")
         if cora_url:
             cora_url = cora_url.rstrip("/")
             self._base_url = f"{cora_url}/rest/record/"

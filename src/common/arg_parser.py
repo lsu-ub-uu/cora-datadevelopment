@@ -56,6 +56,10 @@ common_arguments: dict[str, ArgumentConfig] = {
         "help": "Path to the XML file containing source data",
         "required": False,
     },
+    "--cora-url": {
+        "help": "Base URL for the target Cora system",
+        "default": os.environ.get("CORA_URL"),
+    },
     "--system": {
         "help": "Cora system to connect to (e.g., 'preview', 'production')",
         "type": str,
@@ -78,6 +82,10 @@ common_arguments: dict[str, ArgumentConfig] = {
         "type": int,
         "default": int(os.environ.get("CORA_WORKERS", "16")),
     },
+}
+
+cora_url_argument: dict[str, ArgumentConfig] = {
+    "--cora-url": common_arguments["--cora-url"],
 }
 
 classic_arguments: dict[str, ArgumentConfig] = {

@@ -6,7 +6,7 @@ from xml.etree.ElementTree import Element
 
 import requests
 
-from common.arg_parser import ArgumentConfig
+from common.arg_parser import ArgumentConfig, cora_url_argument
 from cora.context import CoraContext
 
 _ctx: CoraContext
@@ -24,6 +24,7 @@ def init(ctx: CoraContext, type_prefix: str, record_type: str, black_list: list)
 
 
 create_validation_type_args: dict[str, ArgumentConfig] = {
+    **cora_url_argument,
     "--system": {
         "help": "Cora system to connect to (e.g., 'preview', 'production')",
         "type": str,
@@ -63,6 +64,7 @@ create_validation_type_args: dict[str, ArgumentConfig] = {
 }
 
 delete_validation_type_args: dict[str, ArgumentConfig] = {
+    **cora_url_argument,
     "--system": {
         "help": "Cora system to connect to (e.g., 'preview', 'production')",
         "type": str,

@@ -1,5 +1,9 @@
 import xml.etree.ElementTree as ET
-from common.arg_parser import create_argument_parser, classic_arguments
+from common.arg_parser import (
+    create_argument_parser,
+    classic_arguments,
+    cora_url_argument,
+)
 from classic.get_classic_publications import get_classic_publications
 from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
 from cora.context import CoraContext
@@ -14,6 +18,7 @@ def main():
         login_id=args.login_id,
         app_token=args.app_token,
         workers=args.workers,
+        cora_url=args.cora_url,
     )
 
     pids = args.pids.split(",")
@@ -53,6 +58,7 @@ def _parse_args():
                 "required": True,
                 "help": "Comma-separated list of publication PIDs to migrate",
             },
+            **cora_url_argument,
             **classic_arguments,
             "--system": {
                 "default": "pre",

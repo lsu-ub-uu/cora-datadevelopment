@@ -1,4 +1,8 @@
-from common.arg_parser import create_argument_parser, classic_arguments
+from common.arg_parser import (
+    create_argument_parser,
+    classic_arguments,
+    cora_url_argument,
+)
 from cora.context import CoraContext
 from cora_to_cora.organisations_migrate import organisations_migrate
 from db_to_cora.publishers_migrate import publishers_migrate
@@ -19,6 +23,7 @@ def main():
                 "type": str,
                 "required": True,
             },
+            **cora_url_argument,
             **classic_arguments,
             "--system": {
                 "help": "Cora system to connect to (e.g., 'preview', 'production')",
@@ -84,7 +89,11 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
     )
 
     context = CoraContext(
-        args.system, args.login_id, args.app_token, workers=args.workers
+        args.system,
+        args.login_id,
+        args.app_token,
+        workers=args.workers,
+        cora_url=args.cora_url,
     )
     context.log(f"=== Migration started for {args.domain} to {args.system} ===")
 

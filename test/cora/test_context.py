@@ -23,14 +23,13 @@ def test_context_logs_in_on_creation(AppTokenClientMock):
 
 @patch("cora.context.AppTokenClient")
 def test_context_builds_urls_from_cora_url_instead_of_system(
-    AppTokenClientMock, monkeypatch
+    AppTokenClientMock,
 ):
-    monkeypatch.setenv("CORA_URL", "https://next.diva-portal.org/")
-
     context = CoraContext(
         system="not-a-configured-system",
         login_id="someLoginId",
         app_token="test-token",
+        cora_url="https://next.diva-portal.org/",
     )
 
     AppTokenClientMock.return_value.login.assert_called_once_with(

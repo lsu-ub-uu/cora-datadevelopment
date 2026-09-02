@@ -153,4 +153,5 @@ def test_main_creates_context_with_correct_args(monkeypatch):
         login_id="test@test.se",
         app_token="token123",
         workers=8,
+        cora_url=None,
     )

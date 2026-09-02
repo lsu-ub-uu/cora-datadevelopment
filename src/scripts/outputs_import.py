@@ -4,7 +4,11 @@ import os
 import sys
 import time
 from xml.etree import ElementTree as ET
-from common.arg_parser import create_argument_parser, classic_arguments
+from common.arg_parser import (
+    create_argument_parser,
+    classic_arguments,
+    cora_url_argument,
+)
 from common.run_rotating_logger import RunRotatingLogger
 from cora.context import CoraContext
 from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
@@ -48,6 +52,7 @@ def main():
         binaries=args.binaries,
         pids=args.pids.split(",") if args.pids else None,
         fedora_url=args.fedora_url or "",
+        cora_url=args.cora_url,
     )
 
 
@@ -62,6 +67,7 @@ def outputs_import(
     binaries: bool = False,
     pids: list[str] | None = None,
     fedora_url: str = "",
+    cora_url: str | None = None,
 ):
     start_time = time.perf_counter()
 
@@ -91,6 +97,7 @@ def outputs_import(
             apply,
             binaries,
             fedora_url,
+            cora_url,
         ),
     ) as pool, tqdm(total=len(source_records), desc="Importing records") as progress:
         for result in pool.imap_unordered(_migrate_record, source_records):
@@ -129,6 +136,7 @@ def _parse_args():
                 "help": "Directory containing XML files to process",
                 "required": True,
             },
+            **cora_url_argument,
             **classic_arguments,
             "--system": {
                 "default": "pre",
@@ -169,9 +177,16 @@ def _parse_args():
     return parser.parse_args()
 
 
-def _init_context(system, login_id, app_token, apply_flag, binaries_flag, fedora_url_arg):
+def _init_context(
+    system, login_id, app_token, apply_flag, binaries_flag, fedora_url_arg, cora_url
+):
     global context, apply, with_binaries, fedora_url
-    context = CoraContext(system=system, login_id=login_id, app_token=app_token)
+    context = CoraContext(
+        system=system,
+        login_id=login_id,
+        app_token=app_token,
+        cora_url=cora_url,
+    )
     apply = apply_flag
     with_binaries = binaries_flag
     fedora_url = fedora_url_arg
