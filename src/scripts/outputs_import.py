@@ -4,7 +4,11 @@ import os
 import sys
 import time
 from xml.etree import ElementTree as ET
-from common.arg_parser import create_argument_parser
+from common.arg_parser import (
+    create_argument_parser,
+    classic_arguments,
+    cora_url_argument,
+)
 from common.run_rotating_logger import RunRotatingLogger
 from cora.context import CoraContext
 from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
@@ -16,12 +20,11 @@ from multiprocessing import Pool
 from tqdm import tqdm
 import datetime
 import re
-from common.ssh_tunnel import SSHTunnel
-from classic.config import SSH_HOST, SSH_PORT, SSH_USER
 
 context = None
 with_binaries = False
 apply = False
+fedora_url = ""
 
 status_labels = {
     "SUCCESS": "✅ Successfully imported as data quality DiVA 2026",
@@ -38,7 +41,6 @@ def main():
     print_logo()
 
     args = _parse_args()
-    # with SSHTunnel(SSH_HOST, SSH_PORT, SSH_USER, 8088, "10.0.2.68", 8088):
     outputs_import(
         xml_dir=args.xml_dir,
         system=args.system,
@@ -49,6 +51,8 @@ def main():
         limit=args.limit,
         binaries=args.binaries,
         pids=args.pids.split(",") if args.pids else None,
+        fedora_url=args.fedora_url or "",
+        cora_url=args.cora_url,
     )
 
 
@@ -62,6 +66,8 @@ def outputs_import(
     limit: int | None = None,
     binaries: bool = False,
     pids: list[str] | None = None,
+    fedora_url: str = "",
+    cora_url: str | None = None,
 ):
     start_time = time.perf_counter()
 
@@ -90,6 +96,8 @@ def outputs_import(
             app_token,
             apply,
             binaries,
+            fedora_url,
+            cora_url,
         ),
     ) as pool, tqdm(total=len(source_records), desc="Importing records") as progress:
         for result in pool.imap_unordered(_migrate_record, source_records):
@@ -128,6 +136,8 @@ def _parse_args():
                 "help": "Directory containing XML files to process",
                 "required": True,
             },
+            **cora_url_argument,
+            **classic_arguments,
             "--system": {
                 "default": "pre",
                 "help": "Target system for migration",
@@ -167,16 +177,24 @@ def _parse_args():
     return parser.parse_args()
 
 
-def _init_context(system, login_id, app_token, apply_flag, binaries_flag):
-    global context, apply, with_binaries
-    context = CoraContext(system=system, login_id=login_id, app_token=app_token)
+def _init_context(
+    system, login_id, app_token, apply_flag, binaries_flag, fedora_url_arg, cora_url
+):
+    global context, apply, with_binaries, fedora_url
+    context = CoraContext(
+        system=system,
+        login_id=login_id,
+        app_token=app_token,
+        cora_url=cora_url,
+    )
     apply = apply_flag
     with_binaries = binaries_flag
+    fedora_url = fedora_url_arg
 
 
 def _migrate_record(source_record):
     assert context is not None, "Context must be initialized before migrating records"
-    return output_migrate(source_record, context, apply, with_binaries=with_binaries)
+    return output_migrate(source_record, context, apply, with_binaries=with_binaries, fedora_url=fedora_url)
 
 
 def _read_source_records(xml_dir: str, limit: int | None = None) -> list[ET.Element]:

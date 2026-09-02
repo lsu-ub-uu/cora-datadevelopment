@@ -1,4 +1,5 @@
 secrets.txt
+.env
 __pycache__
 Cora API Via Python/
 CSV/
@@ -9,7 +10,6 @@ sql_script/
 /.venv/
 *.egg-info/
 .coverage
-/output_xml
 /logs
 /.pytest_cache/
 /data/fedora_xml/

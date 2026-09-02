@@ -138,13 +138,3 @@ publication_map = {
     "67": "diva_dissertation",
     "71": "artistic-work_original-creative-work",
 }
-
-
-def validateRecord_build(record_type, filePath_validateBase, newRecordToCreate):
-    validationOrder_root = read_source_xml(filePath_validateBase)
-    validationOrder_root.find(".//recordType/linkedRecordId").text = record_type
-    validationOrder_root.find(".//validateLinks").text = "false"
-    validationOrder_root.find(".//metadataToValidate").text = "new"
-    record = validationOrder_root.find(".//record")
-    record.append(newRecordToCreate)
-    return validationOrder_root

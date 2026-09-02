@@ -1,5 +1,5 @@
 from copy import deepcopy
-from common.arg_parser import create_argument_parser
+from common.arg_parser import create_argument_parser, cora_url_argument
 from common.threads import run_with_threads
 from cora.delete_record import delete_record
 from cora.create import create_record, is_success_result
@@ -23,7 +23,9 @@ def main():
 
     print("Updating record links...")
     args = _parse_args()
-    context = CoraContext(args.system, args.login_id, args.app_token)
+    context = CoraContext(
+        args.system, args.login_id, args.app_token, cora_url=args.cora_url
+    )
 
     original_record = get_record(context, args.record_type, args.old_record_id)
     record_copy = _copy_as_new_without_record_info_id(original_record)
@@ -166,6 +168,7 @@ def _parse_args():
     parser = create_argument_parser(
         description="Processes fedora XML publication files for a domain, transforms them to Cora format and imports them to the specified Cora system",
         arguments={
+            **cora_url_argument,
             "--system": {
                 "default": "pre",
                 "help": "Target system for migration",

@@ -5,6 +5,8 @@ from classic.get_classic_publications import _get_record_by_pid
 from unittest.mock import MagicMock
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
+FEDORA_URL = "http://localhost:8088"
+
 
 def test_get_record_by_pid_calls_on_success(requests_mock):
     pid = "some-pid"
@@ -15,7 +17,7 @@ def test_get_record_by_pid_calls_on_success(requests_mock):
     mock_on_success = MagicMock()
     mock_on_error = MagicMock()
 
-    _get_record_by_pid(pid, on_success=mock_on_success, on_error=mock_on_error)
+    _get_record_by_pid(pid, on_success=mock_on_success, on_error=mock_on_error, fedora_url=FEDORA_URL)
 
     # assert_equal_for_xml_and_xml_string(result, "<record></record>")
     mock_on_success.assert_called_once()
@@ -37,7 +39,7 @@ def test_get_record_by_pid_calls_on_error(requests_mock):
     mock_on_success = MagicMock()
     mock_on_error = MagicMock()
 
-    _get_record_by_pid(pid, on_success=mock_on_success, on_error=mock_on_error)
+    _get_record_by_pid(pid, on_success=mock_on_success, on_error=mock_on_error, fedora_url=FEDORA_URL)
 
     mock_on_success.assert_not_called()
     mock_on_error.assert_called_once()

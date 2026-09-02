@@ -14,7 +14,7 @@ def test_export_publications_from_fedora(monkeypatch):
     mock_publication = ET.Element("publication")
     get_classic_publications_mock = MagicMock()
     get_classic_publications_mock.side_effect = (
-        lambda pids, workers, on_success, on_error: [
+        lambda pids, workers, on_success, on_error, **kwargs: [
             on_success(pid, mock_publication) for pid in pids
         ]
     )
@@ -29,7 +29,7 @@ def test_export_publications_from_fedora(monkeypatch):
         lambda: datetime(2023, 1, 1, 12, 0, 0),
     )
 
-    export_publications_from_fedora("varldskulturmuseerna")
+    export_publications_from_fedora("varldskulturmuseerna", solr_url="http://solr:8080/solr", fedora_url="http://fedora:8088")
 
     assert get_pids_for_domain_mock.call_count == 1
 
@@ -74,7 +74,7 @@ def test_get_pids_failed(monkeypatch):
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
 
     with pytest.raises(Exception, match="Failed to get PIDs"):
-        export_publications_from_fedora("varldskulturmuseerna")
+        export_publications_from_fedora("varldskulturmuseerna", solr_url="http://solr:8080/solr", fedora_url="http://fedora:8088")
 
     assert get_pids_for_domain_mock.call_count == 1
     assert get_classic_publications_mock.call_count == 0
@@ -87,7 +87,7 @@ def test_get_classic_publications_failed(monkeypatch):
     _set_up_get_classic_publications_mock(monkeypatch, error=True)
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
 
-    export_publications_from_fedora("varldskulturmuseerna")
+    export_publications_from_fedora("varldskulturmuseerna", solr_url="http://solr:8080/solr", fedora_url="http://fedora:8088")
 
     assert get_pids_for_domain_mock.call_count == 1
     assert save_to_file_mock.call_count == 0
@@ -100,7 +100,7 @@ def test_save_to_file_failed(monkeypatch):
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
     save_to_file_mock.side_effect = (Exception("Failed to save file"),)
 
-    export_publications_from_fedora("varldskulturmuseerna")
+    export_publications_from_fedora("varldskulturmuseerna", solr_url="http://solr:8080/solr", fedora_url="http://fedora:8088")
     # Nothing happens
 
 
@@ -117,7 +117,7 @@ def _set_up_get_classic_publications_mock(monkeypatch, error=False):
     mock_publication = ET.Element("publication")
     get_classic_publications_mock = MagicMock()
     get_classic_publications_mock.side_effect = (
-        lambda pids, workers, on_success, on_error: [
+        lambda pids, workers, on_success, on_error, **kwargs: [
             (
                 on_error(f"Failed to get publication {pid}")
                 if error

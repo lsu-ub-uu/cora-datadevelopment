@@ -23,7 +23,10 @@ FROM
     mock_journals = ET.Element("JOURNALS")
     mock_execute_sql.return_value = mock_journals
 
-    result = get_journals(db_user="test_user", db_password="test_password")
+    result = get_journals(
+        db_host="localhost", db_port=5432, db_name="auradb",
+        db_user="test_user", db_password="test_password",
+    )
 
     assert result == mock_journals
     mock_execute_sql.assert_called_once()

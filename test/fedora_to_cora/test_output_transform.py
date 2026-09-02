@@ -197,9 +197,9 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             <namePart>Ytterligare extern partner</namePart>
         </name>
         <name type="corporate" otherType="degreeGrantingInstitution"><namePart>Uppsala universitet</namePart><role><roleTerm>dgg</roleTerm></role></name>
-        <name type="personal" otherType="thesisAdvisor" repeatId="0"><namePart type="family">Handledare</namePart><namePart type="given">Helge</namePart><role><roleTerm repeatId="0">ths</roleTerm></role></name>
-        <name type="personal" otherType="degreeSupervisor" repeatId="0"><namePart type="family">Examinator</namePart><namePart type="given">Erik</namePart><role><roleTerm repeatId="0">dgs</roleTerm></role></name>
-        <name type="personal" otherType="opponent" repeatId="0"><namePart type="family">Opponent</namePart><namePart type="given">Olivia</namePart><role><roleTerm repeatId="0">opn</roleTerm></role></name>
+        <name type="personal" otherType="thesisAdvisor" repeatId="0"><namePart type="family">Handledare</namePart><namePart type="given">Helge</namePart><role><roleTerm>ths</roleTerm></role></name>
+        <name type="personal" otherType="degreeSupervisor" repeatId="0"><namePart type="family">Examinator</namePart><namePart type="given">Erik</namePart><role><roleTerm>dgs</roleTerm></role></name>
+        <name type="personal" otherType="opponent" repeatId="0"><namePart type="family">Opponent</namePart><namePart type="given">Olivia</namePart><role><roleTerm>opn</roleTerm></role></name>
         <defence><language><languageTerm type="code" authority="iso639-2b">swe</languageTerm></language><dateOther type="presentation"><year>2022</year><month>07</month><day>31</day><hh>16</hh><mm>19</mm></dateOther><address><location>Balsalen</location><street>Slottet</street><city>Uppsala</city></address></defence>
         <relatedItem type="journal" otherType="text"><titleInfo><title>Design, Automation and Test in Europe</title></titleInfo><identifier type="issn" displayLabel="pissn">1530-1591</identifier><identifier type="issn" displayLabel="eissn">1558-1101</identifier><part><detail type="volume"><number>15</number></detail><detail type="issue"><number>4</number></detail><detail type="artNo"><number>ART-2022-04</number></detail><extent><start>10</start><end>30</end></extent></part></relatedItem>
         <relatedItem type="conference"><conference>Some conference</conference></relatedItem>
@@ -542,14 +542,14 @@ def test_output_transform_student_thesis(mock_diva_search_requests):
             <namePart type="family">Handledare</namePart>
             <namePart type="given">Helge</namePart>
                 <role>
-                    <roleTerm repeatId="0">ths</roleTerm>
+                    <roleTerm>ths</roleTerm>
                 </role>
             </name>
             <name type="personal" otherType="degreeSupervisor" repeatId="0">
                 <namePart type="family">Examinator</namePart>
                 <namePart type="given">Erik</namePart>
                 <role>
-                    <roleTerm repeatId="0">dgs</roleTerm>
+                    <roleTerm>dgs</roleTerm>
                 </role>
             </name>
             <adminInfo>

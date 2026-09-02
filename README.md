@@ -69,6 +69,74 @@ This repository contains scripts for creating and migrating data.
 4.  - Projects (refefrences persons, organisatoions, funders, subjects)
 5.  - Outputs (references all the other types and outputs)
 
+## Configuration
+
+All scripts read configuration from CLI arguments, environment variables, or a `.env` file (in that priority order).
+
+### Setting up `.env`
+
+```sh
+cp .env.example .env
+```
+
+Edit `.env` with your values:
+
+```env
+CORA_URL=https://next.diva-portal.org
+CORA_SYSTEM=preview
+CORA_LOGIN_ID=divaAdmin@cora.epc.ub.uu.se
+CORA_APP_TOKEN=your-token-here
+CORA_WORKERS=16
+
+FEDORA_URL=http://fedora-host:8088
+SOLR_URL=http://solr-host:8083/solr-admin/dream/select
+
+DB_HOST=diva-storage1
+DB_PORT=5432
+DB_NAME=auradb
+DB_USER=your-db-user
+DB_PASSWORD=your-db-password
+```
+
+`CORA_URL` is optional. When set, it is used to build the record and login URLs and
+overrides the endpoint selected by `--system` or `CORA_SYSTEM`.
+
+Other values set in `.env` can be overridden by passing the corresponding CLI argument
+(e.g. `--system production`).
+
+## Docker
+
+### Build
+
+```sh
+docker build --network=host -t cora-datadevelopment .
+```
+
+### Run
+
+Bind-mount `data/`, `logs/`, and `reports/` so artifacts persist between runs:
+
+```sh
+docker run \
+  -v ./data:/app/data \
+  -v ./logs:/app/logs \
+  -v ./reports:/app/reports \
+  --env-file .env \
+  --network=host \
+  cora-datadevelopment <command> [args]
+```
+
+For example:
+
+```sh
+docker run \
+  -v ./data:/app/data \
+  -v ./logs:/app/logs \
+  --env-file .env \
+  --network=host \
+  cora-datadevelopment outputs-export --domain uu
+```
+
 ## Development
 
 ### Prerequisites

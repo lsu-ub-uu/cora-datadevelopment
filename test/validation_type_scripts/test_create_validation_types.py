@@ -367,6 +367,7 @@ def test_main(monkeypatch, ctx):
         system="testSystem",
         login_id="user",
         app_token="token",
+        cora_url=None,
         workers=1,
         prefix="__XYZ_",
         recordtype="diva-output",

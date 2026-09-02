@@ -26,6 +26,8 @@ def attachments_migrate(
     source_record: ET.Element,
     cora_record: ET.Element,
     context: Context,
+    *,
+    fedora_url: str = "",
 ) -> Tuple[bool, list[str] | None]:
     created_binary_records = []
     record_to_update = copy.deepcopy(cora_record)
@@ -49,7 +51,8 @@ def attachments_migrate(
                 continue
 
             attachment, error = _migrate_attachment(
-                attachment, context, created_binary_records, source_record, host_record
+                attachment, context, created_binary_records, source_record, host_record,
+                fedora_url=fedora_url,
             )
             if attachment is not None:
                 attachments_group.append(attachment)
@@ -95,6 +98,8 @@ def _migrate_attachment(
     created_binary_records: list[ET.Element],
     source_record: ET.Element,
     host_record: ET.Element,
+    *,
+    fedora_url: str = "",
 ) -> Tuple[ET.Element | None, str | None]:
     pid = source_record.findtext("./pid")
     file_name = attachment.findtext("./fileName")
@@ -115,6 +120,7 @@ def _migrate_attachment(
                 pid=pid,
                 file_name=file_name,
                 context=context,
+                fedora_url=fedora_url,
             )
         except Exception as e:
             context.log(f"🥵 [PID {pid}] Error migrating binary: {e}", level="error")

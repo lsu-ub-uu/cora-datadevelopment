@@ -22,6 +22,27 @@ def test_context_logs_in_on_creation(AppTokenClientMock):
 
 
 @patch("cora.context.AppTokenClient")
+def test_context_builds_urls_from_cora_url_instead_of_system(
+    AppTokenClientMock,
+):
+    context = CoraContext(
+        system="not-a-configured-system",
+        login_id="someLoginId",
+        app_token="test-token",
+        cora_url="https://next.diva-portal.org/",
+    )
+
+    AppTokenClientMock.return_value.login.assert_called_once_with(
+        {
+            "login_url": "https://next.diva-portal.org/login/rest/apptoken",
+            "login_id": "someLoginId",
+            "app_token": "test-token",
+        }
+    )
+    assert context.get_base_url() == "https://next.diva-portal.org/rest/record/"
+
+
+@patch("cora.context.AppTokenClient")
 @patch("cora.context.get_deployment_info")
 def test_context_logs_in_with_example_user_when_no_app_token(
     get_deployment_info_mock, AppTokenClientMock

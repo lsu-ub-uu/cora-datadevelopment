@@ -9,10 +9,10 @@ dependencies = [
     "pytest",
     "pytest-cov",
     "pytest-watcher",
-    "fabric",
     "psycopg2-binary",
     "freezegun",
-    "rich"
+    "rich",
+    "python-dotenv"
 ]
 license = "GPL-3.0"
 

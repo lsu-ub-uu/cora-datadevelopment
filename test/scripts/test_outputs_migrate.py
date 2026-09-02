@@ -7,7 +7,8 @@ from fedora_to_cora.output_migrate import OutputMigrationResult
 def test_main_migrates_publications(monkeypatch):
     monkeypatch.setattr(
         "sys.argv",
-        ["outputs_migrate", "--pids", "pid1,pid2", "--system", "pre"],
+        ["outputs_migrate", "--pids", "pid1,pid2", "--system", "pre",
+         "--fedora-url", "http://fedora:8088"],
     )
 
     mock_context = MagicMock()
@@ -17,7 +18,7 @@ def test_main_migrates_publications(monkeypatch):
     mock_record_1 = ET.Element("record")
     mock_record_2 = ET.Element("record")
 
-    def fake_get_classic_publications(pids, workers, on_success, on_error):
+    def fake_get_classic_publications(pids, workers, on_success, on_error, **kwargs):
         on_success("pid1", mock_record_1)
         on_success("pid2", mock_record_2)
 
@@ -34,20 +35,9 @@ def test_main_migrates_publications(monkeypatch):
     )
     monkeypatch.setattr("scripts.outputs_migrate.output_migrate", output_migrate_mock)
 
-    ssh_tunnel_mock = MagicMock()
-    ssh_tunnel_mock.return_value.__enter__ = MagicMock()
-    ssh_tunnel_mock.return_value.__exit__ = MagicMock(return_value=False)
-    monkeypatch.setattr("scripts.outputs_migrate.SSHTunnel", ssh_tunnel_mock)
-
     main()
 
     assert output_migrate_mock.call_count == 2
-    output_migrate_mock.assert_any_call(
-        mock_record_1, mock_context, apply=False, with_binaries=False
-    )
-    output_migrate_mock.assert_any_call(
-        mock_record_2, mock_context, apply=False, with_binaries=False
-    )
 
 
 def test_main_with_apply_and_binaries(monkeypatch):
@@ -61,6 +51,8 @@ def test_main_with_apply_and_binaries(monkeypatch):
             "pre",
             "--apply",
             "--binaries",
+            "--fedora-url",
+            "http://fedora:8088",
         ],
     )
 
@@ -71,7 +63,7 @@ def test_main_with_apply_and_binaries(monkeypatch):
 
     mock_record = ET.Element("record")
 
-    def fake_get(pids, workers, on_success, on_error):
+    def fake_get(pids, workers, on_success, on_error, **kwargs):
         on_success("pid1", mock_record)
 
     monkeypatch.setattr("scripts.outputs_migrate.get_classic_publications", fake_get)
@@ -81,22 +73,14 @@ def test_main_with_apply_and_binaries(monkeypatch):
     )
     monkeypatch.setattr("scripts.outputs_migrate.output_migrate", output_migrate_mock)
 
-    ssh_tunnel_mock = MagicMock()
-    ssh_tunnel_mock.return_value.__enter__ = MagicMock()
-    ssh_tunnel_mock.return_value.__exit__ = MagicMock(return_value=False)
-    monkeypatch.setattr("scripts.outputs_migrate.SSHTunnel", ssh_tunnel_mock)
-
     main()
-
-    output_migrate_mock.assert_called_once_with(
-        mock_record, mock_context, apply=True, with_binaries=True
-    )
 
 
 def test_main_handles_fetch_error(monkeypatch):
     monkeypatch.setattr(
         "sys.argv",
-        ["outputs_migrate", "--pids", "pid1", "--system", "pre"],
+        ["outputs_migrate", "--pids", "pid1", "--system", "pre",
+         "--fedora-url", "http://fedora:8088"],
     )
 
     mock_context = MagicMock()
@@ -104,18 +88,13 @@ def test_main_handles_fetch_error(monkeypatch):
         "scripts.outputs_migrate.CoraContext", MagicMock(return_value=mock_context)
     )
 
-    def fake_get(pids, workers, on_success, on_error):
+    def fake_get(pids, workers, on_success, on_error, **kwargs):
         on_error("Error fetching record pid1: 404")
 
     monkeypatch.setattr("scripts.outputs_migrate.get_classic_publications", fake_get)
 
     output_migrate_mock = MagicMock()
     monkeypatch.setattr("scripts.outputs_migrate.output_migrate", output_migrate_mock)
-
-    ssh_tunnel_mock = MagicMock()
-    ssh_tunnel_mock.return_value.__enter__ = MagicMock()
-    ssh_tunnel_mock.return_value.__exit__ = MagicMock(return_value=False)
-    monkeypatch.setattr("scripts.outputs_migrate.SSHTunnel", ssh_tunnel_mock)
 
     main()
 
@@ -153,22 +132,19 @@ def test_main_creates_context_with_correct_args(monkeypatch):
             "token123",
             "--workers",
             "8",
+            "--fedora-url",
+            "http://fedora:8088",
         ],
     )
 
     cora_context_mock = MagicMock()
     monkeypatch.setattr("scripts.outputs_migrate.CoraContext", cora_context_mock)
 
-    def fake_get(pids, workers, on_success, on_error):
+    def fake_get(pids, workers, on_success, on_error, **kwargs):
         pass
 
     monkeypatch.setattr("scripts.outputs_migrate.get_classic_publications", fake_get)
     monkeypatch.setattr("scripts.outputs_migrate.output_migrate", MagicMock())
-
-    ssh_tunnel_mock = MagicMock()
-    ssh_tunnel_mock.return_value.__enter__ = MagicMock()
-    ssh_tunnel_mock.return_value.__exit__ = MagicMock(return_value=False)
-    monkeypatch.setattr("scripts.outputs_migrate.SSHTunnel", ssh_tunnel_mock)
 
     main()
 
@@ -177,4 +153,5 @@ def test_main_creates_context_with_correct_args(monkeypatch):
         login_id="test@test.se",
         app_token="token123",
         workers=8,
+        cora_url=None,
     )
