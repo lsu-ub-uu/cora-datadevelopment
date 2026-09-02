@@ -1,12 +1,9 @@
 import requests
 import xml.etree.ElementTree as ET
-from common.common_data import validateRecord_build
 from typing import Tuple, List, Optional
-from common.xml_utils import pretty_print_xml
+from common.xml_utils import create_group, create_text, pretty_print_xml
 from cora.context import Context
 from common.threads import run_with_threads
-
-filePath_validateBase = r"data/cora/validate/validation_order_base.xml"
 
 
 def validate_record_list(
@@ -44,7 +41,7 @@ def validate_record(
     old_id = record.find(".//oldId")
     old_id_text = old_id.text if old_id is not None else "N/A"
 
-    validation_order = validateRecord_build(record_type, filePath_validateBase, record)
+    validation_order = _create_validation_order(record_type, record)
 
     request_body = f'<?xml version="1.0" encoding="UTF-8"?>{ET.tostring(validation_order).decode("UTF-8")}'
 
@@ -78,3 +75,58 @@ def validate_record(
             "error",
         )
         return (False, [str(e)])
+
+
+def _create_validation_order(record_type: str, record: ET.Element) -> ET.Element:
+    record_element = ET.Element("record")
+    record_element.append(record)
+    work_order = create_group(
+        "workOrder",
+        [
+            create_group(
+                "order",
+                [
+                    create_group(
+                        "validationOrder",
+                        [
+                            create_group(
+                                "recordInfo",
+                                [
+                                    create_group(
+                                        "dataDivider",
+                                        [
+                                            create_text("linkedRecordType", "system"),
+                                            create_text("linkedRecordId", "divaData"),
+                                        ],
+                                    ),
+                                    create_group(
+                                        "validationType",
+                                        [
+                                            create_text(
+                                                "linkedRecordType", "validationType"
+                                            ),
+                                            create_text(
+                                                "linkedRecordId", "validationOrder"
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                            create_group(
+                                "recordType",
+                                [
+                                    create_text("linkedRecordType", "recordType"),
+                                    create_text("linkedRecordId", record_type),
+                                ],
+                            ),
+                            create_text("validateLinks", "false"),
+                            create_text("metadataToValidate", "new"),
+                        ],
+                    )
+                ],
+            ),
+            record_element,
+        ],
+    )
+    assert work_order is not None
+    return work_order
