@@ -12,8 +12,7 @@ mock_context = MockContext("https://example.org/rest/record/", "test-token")
 
 
 def test_creates_name_type_personal():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -26,8 +25,7 @@ def test_creates_name_type_personal():
                 </person>
             </authors>
         </publication>
-        """
-    )
+        """)
     names = create_name_type_personals(
         source_record,
         mock_context,
@@ -45,8 +43,7 @@ def test_creates_name_type_personal():
 
 
 def test_creates_name_type_personal_birth_year():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -60,8 +57,7 @@ def test_creates_name_type_personal_birth_year():
                 </person>
             </authors>
         </publication>
-        """
-    )
+        """)
     names = create_name_type_personals(
         source_record,
         mock_context,
@@ -80,8 +76,7 @@ def test_creates_name_type_personal_birth_year():
 
 
 def test_creates_name_type_personal_death_year():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -95,8 +90,7 @@ def test_creates_name_type_personal_death_year():
                 </person>
             </authors>
         </publication>
-        """
-    )
+        """)
     names = create_name_type_personals(
         source_record,
         mock_context,
@@ -115,8 +109,7 @@ def test_creates_name_type_personal_death_year():
 
 
 def test_creates_name_type_personal_birth_and_death_year():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -131,8 +124,7 @@ def test_creates_name_type_personal_birth_and_death_year():
                 </person>
             </authors>
         </publication>
-        """
-    )
+        """)
     names = create_name_type_personals(
         source_record,
         mock_context,
@@ -151,8 +143,7 @@ def test_creates_name_type_personal_birth_and_death_year():
 
 
 def test_creates_persons_for_roles():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -206,8 +197,7 @@ def test_creates_persons_for_roles():
                 </contributor>
             </otherContributors>
         </publication>
-        """
-    )
+        """)
     names = create_name_type_personals(
         source_record,
         mock_context,
@@ -231,8 +221,7 @@ def test_creates_persons_for_roles():
 
 
 def test_creates_uncontrolled_affiliation():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -251,8 +240,7 @@ def test_creates_uncontrolled_affiliation():
                 </person>
             </authors>
         </publication>
-        """
-    )
+        """)
     names = create_name_type_personals(
         source_record,
         mock_context,
@@ -287,8 +275,7 @@ def test_creates_controlled_affiliation(monkeypatch):
         mock_get_org,
     )
 
-    source_record = ET.fromstring(
-        f"""
+    source_record = ET.fromstring(f"""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -307,8 +294,7 @@ def test_creates_controlled_affiliation(monkeypatch):
                 </person>
             </authors>
         </publication>
-        """
-    )
+        """)
 
     names = create_name_type_personals(
         source_record,
@@ -334,8 +320,7 @@ def test_creates_controlled_affiliation(monkeypatch):
 
 
 def test_creates_for_author_only_validation_type():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>65</publicationTypeId>
@@ -349,8 +334,7 @@ def test_creates_for_author_only_validation_type():
                 </person>
             </authors>
         </publication>
-        """
-    )
+        """)
     names = create_name_type_personals(
         source_record,
         mock_context,
@@ -368,8 +352,7 @@ def test_creates_for_author_only_validation_type():
 
 
 def test_create_supervisors():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -392,8 +375,7 @@ def test_create_supervisors():
                 </person>
             </supervisors>
         </publication>
-        """
-    )
+        """)
     names = create_thesis_advisor(
         source_record,
         mock_context,
@@ -405,7 +387,7 @@ def test_create_supervisors():
         <name type="personal" otherType="thesisAdvisor" repeatId="0">
             <namePart type="family">Smith</namePart>
             <namePart type="given">Sarah</namePart>
-            <role><roleTerm repeatId="0">ths</roleTerm></role>
+            <role><roleTerm>ths</roleTerm></role>
             <affiliation repeatId="0">
                 <namePart>Extern organisation</namePart>
             </affiliation>
@@ -419,15 +401,14 @@ def test_create_supervisors():
         <name type="personal" otherType="thesisAdvisor" repeatId="1">
             <namePart type="family">Kmith</namePart>
             <namePart type="given">Karah</namePart>
-            <role><roleTerm repeatId="0">ths</roleTerm></role>
+            <role><roleTerm>ths</roleTerm></role>
         </name>
         """,
     )
 
 
 def test_create_opponents():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -440,8 +421,7 @@ def test_create_opponents():
                 </person>
             </opponents>
         </publication>
-        """
-    )
+        """)
     names = create_opponents(
         source_record,
         mock_context,
@@ -453,15 +433,14 @@ def test_create_opponents():
         <name type="personal" otherType="opponent" repeatId="0">
             <namePart type="family">Olsen</namePart>
             <namePart type="given">Oliver</namePart>
-            <role><roleTerm repeatId="0">opn</roleTerm></role>
+            <role><roleTerm>opn</roleTerm></role>
         </name>
         """,
     )
 
 
 def test_create_examiners():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -474,8 +453,7 @@ def test_create_examiners():
                 </person>
             </examiners>
         </publication>
-        """
-    )
+        """)
     names = create_degree_supervisor(
         source_record,
         mock_context,
@@ -487,15 +465,14 @@ def test_create_examiners():
         <name type="personal" otherType="degreeSupervisor" repeatId="0">
             <namePart type="family">Eriksson</namePart>
             <namePart type="given">Erik</namePart>
-            <role><roleTerm repeatId="0">dgs</roleTerm></role>
+            <role><roleTerm>dgs</roleTerm></role>
         </name>
         """,
     )
 
 
 def test_creates_name_identifiers():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -518,8 +495,7 @@ def test_creates_name_identifiers():
                 </person>
             </authors>
         </publication>
-        """
-    )
+        """)
     names = create_name_type_personals(
         source_record,
         mock_context,
@@ -539,8 +515,7 @@ def test_creates_name_identifiers():
 
 
 def test_other_contributor_without_role():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -562,8 +537,7 @@ def test_other_contributor_without_role():
                 </contributor>
             </otherContributors>
         </publication>
-        """
-    )
+        """)
     names = create_name_type_personals(
         source_record,
         mock_context,
@@ -581,8 +555,7 @@ def test_other_contributor_without_role():
 
 
 def test_creates_affiliation_from_research_group():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -596,8 +569,7 @@ def test_creates_affiliation_from_research_group():
                 </person>
             </authors>
         </publication>
-        """
-    )
+        """)
 
     names = create_name_type_personals(
         source_record,
@@ -623,8 +595,7 @@ def test_creates_affiliation_from_research_group():
 
 
 def test_replaces_lowercase_x_in_orcid():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -646,8 +617,7 @@ def test_replaces_lowercase_x_in_orcid():
                 </person>
             </authors>
         </publication>
-        """
-    )
+        """)
     names = create_name_type_personals(
         source_record,
         mock_context,

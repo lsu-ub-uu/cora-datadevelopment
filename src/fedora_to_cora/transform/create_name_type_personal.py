@@ -33,7 +33,7 @@ def create_name_type_personals(
                         [role_term],
                         repeat_id,
                         context,
-                        author_only=_is_author_only_type(source_record),
+                        single_role_only=_is_author_only_type(source_record),
                     )
                 )
                 repeat_id += 1
@@ -62,6 +62,7 @@ def create_thesis_advisor(
             ["ths"],
             i,
             context,
+            single_role_only=True,
             otherType="thesisAdvisor",
         )
         for i, supervisor in enumerate(supervisors)
@@ -78,6 +79,7 @@ def create_opponents(
             ["opn"],
             i,
             context,
+            single_role_only=True,
             otherType="opponent",
         )
         for i, opponent in enumerate(opponents)
@@ -94,6 +96,7 @@ def create_degree_supervisor(
             ["dgs"],
             i,
             context,
+            single_role_only=True,
             otherType="degreeSupervisor",
         )
         for i, examiner in enumerate(examiners)
@@ -105,7 +108,7 @@ def create_name_type_personal(
     role_terms: list[str],
     repeatId: int,
     context: Context,
-    author_only: bool = False,
+    single_role_only: bool = False,
     otherType: str | None = None,
 ) -> ET.Element | None:
     """
@@ -122,7 +125,7 @@ def create_name_type_personal(
             create_text("namePart", type="family", value=person.findtext("./lastName")),
             create_text("namePart", type="given", value=person.findtext("./firstName")),
             _create_date_part(person),
-            _create_role(role_terms, author_only),
+            _create_role(role_terms, single_role_only),
             _create_name_identifier_local_id(
                 _create_name_identifier_local_id(person.find("./localId"))
             ),
@@ -156,14 +159,14 @@ def _create_date_part(person: ET.Element) -> ET.Element | None:
     return create_text("namePart", type="date", value=date_text)
 
 
-def _create_role(role_terms: list[str], author_only: bool) -> ET.Element | None:
+def _create_role(role_terms: list[str], single_role_only: bool) -> ET.Element | None:
     return create_group(
         "role",
         children=[
             create_text(
                 "roleTerm",
                 value=role_term,
-                repeatId=str(i) if not author_only else None,
+                repeatId=str(i) if not single_role_only else None,
             )
             for i, role_term in enumerate(role_terms)
         ],
