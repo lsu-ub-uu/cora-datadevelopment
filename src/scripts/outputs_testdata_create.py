@@ -1,6 +1,6 @@
-import argparse
 import os
 from unittest import result
+from common.arg_parser import create_argument_parser, cora_url_argument
 from common.common_data import read_source_xml
 from cora.context import CoraContext
 from cora.create import create_record, is_success_result
@@ -15,30 +15,27 @@ DEFAULT_ENV = {
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Create Cora test outputs")
-
-    parser.add_argument(
-        "--xml-dir",
-        default=DEFAULT_ENV["xml_dir"],
-        help=f"Directory containing XML files to process (default: {DEFAULT_ENV['xml_dir']})",
-    )
-
-    parser.add_argument(
-        "--system",
-        default=DEFAULT_ENV["system"],
-        help=f"Target system (default: {DEFAULT_ENV['system']})",
-    )
-
-    parser.add_argument(
-        "--login-id",
-        default=DEFAULT_ENV["login_id"],
-        help=f"Login ID for authentication (default: {DEFAULT_ENV['login_id']})",
-    )
-
-    parser.add_argument(
-        "--app-token",
-        default=DEFAULT_ENV["app_token"],
-        help="Application token for authentication (default: uses preset token)",
+    parser = create_argument_parser(
+        description="Create Cora test outputs",
+        arguments={
+            "--xml-dir": {
+                "default": DEFAULT_ENV["xml_dir"],
+                "help": "Directory containing XML files to process",
+            },
+            **cora_url_argument,
+            "--system": {
+                "default": DEFAULT_ENV["system"],
+                "help": "Target system",
+            },
+            "--login-id": {
+                "default": DEFAULT_ENV["login_id"],
+                "help": "Login ID for authentication",
+            },
+            "--app-token": {
+                "default": DEFAULT_ENV["app_token"],
+                "help": "Application token for authentication",
+            },
+        },
     )
 
     args = parser.parse_args()
@@ -48,6 +45,7 @@ def main():
         "system": args.system,
         "login_id": args.login_id,
         "app_token": args.app_token,
+        "cora_url": args.cora_url,
     }
 
     process_cora_testdata_files(**env)
@@ -58,12 +56,14 @@ def process_cora_testdata_files(
     system: str,
     login_id: str,
     app_token: str,
+    cora_url: str | None = None,
 ):
 
     context = CoraContext(
         system=system,
         login_id=login_id,
         app_token=app_token,
+        cora_url=cora_url,
     )
 
     for filename in os.listdir(xml_dir):

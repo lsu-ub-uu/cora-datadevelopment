@@ -1,20 +1,8 @@
 import xml.etree.ElementTree as ET
 import requests
-from classic.config import SSH_HOST, SSH_PORT, SSH_USER
-from common.ssh_tunnel import SSHTunnel
 
 
-LOCAL_PORT = 8080
-
-# REMOTE_HOST = "diva-node4"
-# REMOTE_PORT = 8080
-# SOLR_SEARCH_URL = f"http://localhost:{LOCAL_PORT}/diva-search/diva/select"
-
-REMOTE_HOST = "diva-node7"
-REMOTE_PORT = 8083
-
-
-def download_attachments(fedora_publication: ET.Element) -> None:
+def download_attachments(fedora_publication: ET.Element, *, fedora_url: str) -> None:
     pid = fedora_publication.findtext("./pid")
 
     filenames = []
@@ -24,19 +12,18 @@ def download_attachments(fedora_publication: ET.Element) -> None:
         if filename:
             filenames.append(filename)
 
-    with SSHTunnel(SSH_HOST, SSH_PORT, SSH_USER, LOCAL_PORT, REMOTE_HOST, REMOTE_PORT):
-        for filename in filenames:
-            print(f"Downloading {filename} from {pid}")
-            url = f"http://localhost:{LOCAL_PORT}/fedora/get/{pid}/{filename}"
-            print(f"URL: {url}")
-            response = requests.get(url, stream=True)
-            total = int(response.headers.get("content-length", 0))
-            downloaded = 0
-            for data in response.iter_content(chunk_size=4096):
-                downloaded += len(data)
-                print(f"Downloaded {downloaded} of {total} bytes", end="\r")
-            response.raise_for_status()
-            print(response.text)
+    for filename in filenames:
+        print(f"Downloading {filename} from {pid}")
+        url = f"{fedora_url}/fedora/get/{pid}/{filename}"
+        print(f"URL: {url}")
+        response = requests.get(url, stream=True)
+        total = int(response.headers.get("content-length", 0))
+        downloaded = 0
+        for data in response.iter_content(chunk_size=4096):
+            downloaded += len(data)
+            print(f"Downloaded {downloaded} of {total} bytes", end="\r")
+        response.raise_for_status()
+        print(response.text)
 
 
 if __name__ == "__main__":

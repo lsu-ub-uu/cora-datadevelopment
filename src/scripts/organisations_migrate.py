@@ -1,4 +1,4 @@
-from common.arg_parser import create_argument_parser, common_arguments
+from common.arg_parser import create_argument_parser, cora_url_argument
 from cora.context import CoraContext
 from cora_to_cora.organisations_migrate import organisations_migrate
 
@@ -7,6 +7,7 @@ def main():
     parser = create_argument_parser(
         description="Import organistations from Classic Cora",
         arguments={
+            **cora_url_argument,
             "--system": {
                 "help": "Cora system to connect to (e.g., 'preview', 'production')",
                 "type": str,
@@ -40,6 +41,7 @@ def main():
         login_id=args.login_id,
         app_token=args.app_token,
         workers=args.workers,
+        cora_url=args.cora_url,
     )
     organisations_migrate(context, args.domain)
 

@@ -20,20 +20,19 @@ import xml.etree.ElementTree as ET
 import requests
 from typing import Callable
 from common.threads import run_with_threads
-from common.ssh_tunnel import SSHTunnel
-from classic.config import SSH_HOST, SSH_PORT, SSH_USER
-
-LOCAL_PORT = 8088
-REMOTE_HOST = "10.0.2.68"
-REMOTE_PORT = 8088
 
 
 def get_classic_publications(
-    pids: list[str], workers: int, on_success: Callable, on_error: Callable
+    pids: list[str],
+    workers: int,
+    on_success: Callable,
+    on_error: Callable,
+    *,
+    fedora_url: str,
 ):
     run_with_threads(
         pids,
-        lambda pid: _get_record_by_pid(pid, on_success, on_error),
+        lambda pid: _get_record_by_pid(pid, on_success, on_error, fedora_url=fedora_url),
         workers=workers,
         desc="Importing publications from Classic Fedora",
     )
@@ -43,9 +42,11 @@ def _get_record_by_pid(
     pid: str,
     on_success: Callable[[str, ET.Element], None],
     on_error: Callable[[str], None],
+    *,
+    fedora_url: str,
 ):
     response = requests.get(
-        f"http://localhost:{LOCAL_PORT}/fedora/get/{pid}/MODEL_NOREF", verify=False
+        f"{fedora_url}/fedora/get/{pid}/MODEL_NOREF", verify=False
     )
     response.encoding = response.apparent_encoding
 

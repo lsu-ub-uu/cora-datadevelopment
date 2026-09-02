@@ -37,7 +37,7 @@ def test_migrate_a_publisher(mock_create_record, mock_get_publishers):
         ),
     )
 
-    number_of_records = publishers_migrate(MockContext(), "db_user", "db_password")
+    number_of_records = publishers_migrate(MockContext(), "localhost", 5432, "auradb", "db_user", "db_password")
 
     assert number_of_records == 1
     mock_create_record.assert_called_once()

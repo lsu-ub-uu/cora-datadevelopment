@@ -2,13 +2,14 @@ from cora.context import CoraContext
 import requests
 import xml.etree.ElementTree as ET
 from common.threads import run_with_threads
-from common.arg_parser import create_argument_parser, common_arguments
+from common.arg_parser import create_argument_parser, cora_url_argument
 
 
 def main():
     argparser = create_argument_parser(
         description=f"Remove all records of a record type from Cora",
         arguments={
+            **cora_url_argument,
             "--record-type": {
                 "help": "Type of records to remove (e.g., 'diva-output', 'diva-person', 'diva-organisation')",
                 "type": str,
@@ -44,6 +45,7 @@ def main():
         login_id=args.login_id,
         app_token=args.app_token,
         workers=args.workers,
+        cora_url=args.cora_url,
     )
 
     response = requests.get(

@@ -25,7 +25,10 @@ FROM
     mock_funders = ET.Element("FUNDERS")
     mock_execute_sql.return_value = mock_funders
 
-    result = get_funders(db_user="test_user", db_password="test_password")
+    result = get_funders(
+        db_host="localhost", db_port=5432, db_name="auradb",
+        db_user="test_user", db_password="test_password",
+    )
 
     assert result == mock_funders
     mock_execute_sql.assert_called_once()

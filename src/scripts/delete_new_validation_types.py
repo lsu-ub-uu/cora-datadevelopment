@@ -47,6 +47,7 @@ def main():  # pragma: no cover
         login_id=args.login_id,
         app_token=args.app_token,
         workers=args.workers,
+        cora_url=args.cora_url,
     )
 
     utils.init(CTX, TYPE_PREFIX, "diva-output", BLACKLIST_TYPES)

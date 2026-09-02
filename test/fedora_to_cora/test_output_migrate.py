@@ -118,7 +118,7 @@ def test_success_migrate_with_apply_true_and_with_binaries_true(
     )
 
     mock_attachments_migrate.assert_called_once_with(
-        source_record, mock_created_record, mock_context
+        source_record, mock_created_record, mock_context, fedora_url=""
     )
 
 

@@ -43,7 +43,7 @@ def test_migrate_a_subject_without_relations(mock_create_record, mock_get_subjec
     )
 
     number_of_records = subjects_migrate(
-        MockContext(), "db_user", "db_password", "somedomain"
+        MockContext(), "localhost", 5432, "auradb", "db_user", "db_password", "somedomain"
     )
 
     assert number_of_records == 1
@@ -145,7 +145,7 @@ def test_migrates_a_subject_with_relations(
     mock_create_record.side_effect = create_record_side_effect
 
     number_of_records = subjects_migrate(
-        MockContext(), "db_user", "db_password", "somedomain"
+        MockContext(), "localhost", 5432, "auradb", "db_user", "db_password", "somedomain"
     )
 
     assert number_of_records == 3
