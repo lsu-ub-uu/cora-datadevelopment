@@ -31,7 +31,7 @@ def update_record(
     :param record_id: The ID of the record to update.
     :param context: The Cora context containing authentication and configuration information.
 
-    :return: A CreateRecordResult object containing the success status, record ID (if successful), and any error messages.
+    :return: A UpdateRecordResult object containing the success status, record ID (if successful), and any error messages.
     """
     [request_url, content_type, accept, data_group] = _parse_record(record)
 
