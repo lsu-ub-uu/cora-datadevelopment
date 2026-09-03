@@ -1,5 +1,6 @@
 from typing import Literal
 import xml.etree.ElementTree as ET
+import logging
 from common.xml_utils import pretty_print_xml
 from common.xml_validate import validate_xml, XMLValidationError
 from cora.context import Context
@@ -12,6 +13,8 @@ from fedora_to_cora.transform.transform_output_to_classic_quality import (
     transform_output_to_classic_quality,
 )
 from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
+
+logger = logging.getLogger(__name__)
 
 
 class OutputMigrationResult:
@@ -89,9 +92,8 @@ def output_migrate(
                 fedora_url=fedora_url,
             )
             if not success:
-                context.log(
-                    f"❌ Failed to migrate attachments for record with old id {source_record.findtext('.//pid')} Rolling back.",
-                    level="error",
+                logger.error(
+                    f"❌ Failed to migrate attachments for record with old id {source_record.findtext('.//pid')} Rolling back."
                 )
                 delete_record(create_record_result.response_data, context)
                 return OutputMigrationResult(
@@ -114,9 +116,8 @@ def _handle_invalid_record(
         )
 
     classic_quality_record = transform_output_to_classic_quality(cora_output, errors)
-    context.log(
-        f"Creating classic quality record for old id {pid}:\n{pretty_print_xml(classic_quality_record)}",
-        level="warning",
+    logger.warning(
+        f"Creating classic quality record for old id {pid}:\n{pretty_print_xml(classic_quality_record)}"
     )
     create_result = create_record(
         classic_quality_record,
@@ -126,9 +127,8 @@ def _handle_invalid_record(
     if is_success_result(create_result):
         return OutputMigrationResult(pid, status="CLASSIC_QUALITY", errors=errors)
     else:
-        context.log(
-            f"❌ Failed to create classic quality record for old id {pid}. {create_result.error}",
-            level="error",
+        logger.error(
+            f"❌ Failed to create classic quality record for old id {pid}. {create_result.error}"
         )
 
         return OutputMigrationResult(

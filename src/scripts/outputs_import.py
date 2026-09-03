@@ -9,7 +9,7 @@ from common.arg_parser import (
     classic_arguments,
     cora_url_argument,
 )
-from common.run_rotating_logger import RunRotatingLogger
+from common.logging_config import configure_logging
 from cora.context import CoraContext
 from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
 from common.xml_validate import validate_xml, XMLValidationError
@@ -40,6 +40,7 @@ def main():
 
     print_logo()
 
+    configure_logging()
     args = _parse_args()
     outputs_import(
         xml_dir=args.xml_dir,
@@ -181,6 +182,7 @@ def _init_context(
     system, login_id, app_token, apply_flag, binaries_flag, fedora_url_arg, cora_url
 ):
     global context, apply, with_binaries, fedora_url
+    configure_logging()
     context = CoraContext(
         system=system,
         login_id=login_id,
@@ -194,7 +196,13 @@ def _init_context(
 
 def _migrate_record(source_record):
     assert context is not None, "Context must be initialized before migrating records"
-    return output_migrate(source_record, context, apply, with_binaries=with_binaries, fedora_url=fedora_url)
+    return output_migrate(
+        source_record,
+        context,
+        apply,
+        with_binaries=with_binaries,
+        fedora_url=fedora_url,
+    )
 
 
 def _read_source_records(xml_dir: str, limit: int | None = None) -> list[ET.Element]:

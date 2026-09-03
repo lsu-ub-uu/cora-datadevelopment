@@ -1,9 +1,13 @@
+import logging
+
 from common.xml_utils import create_text, pretty_print_xml, create_group
-from common.run_rotating_logger import RunRotatingLogger
+from common.logging_config import configure_logging
 from cora.context import CoraContext
 from cora.list_records import list_records
 from common.arg_parser import create_argument_parser, common_arguments
 from cora.update import update_record
+
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -14,9 +18,7 @@ def main():
     for each topic under the original subject.
     """
     args = _parse_args()
-    logger = RunRotatingLogger(
-        "data", "logs/CORA-3700_update_subject_authority_diva_model.log"
-    ).get()
+    configure_logging()
 
     logger.info("==== Begin updating diva-output subject authority model ====")
     logger.info(f"==== system={args.system} ====")

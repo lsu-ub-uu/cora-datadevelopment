@@ -2,14 +2,19 @@ from collections import deque
 from typing import Any
 from xml.etree.ElementTree import Element
 
+import logging
 from tqdm import tqdm
 
 from common import validation_type_utils as common_utils
 from common.arg_parser import create_argument_parser
+from common.logging_config import configure_logging
 from common.validation_type_utils import RecordNode
 from cora.context import CoraContext, Context
 
+logger = logging.getLogger(__name__)
+
 CTX: Context
+LOG_FILE = ""
 
 # The recordType to process
 RECORD_TYPE = ""
@@ -47,11 +52,13 @@ TOTAL_FETCHED = 0
 
 
 def main():
-    global CTX, DRY_RUN, TYPE_PREFIX, RECORD_TYPE, DATA_DIVIDER
+    global CTX, DRY_RUN, TYPE_PREFIX, RECORD_TYPE, DATA_DIVIDER, LOG_FILE
+
+    LOG_FILE = configure_logging()
 
     parser = create_argument_parser(
         description="Create new validationTypes with updated IDs and normalized values for a specific recordType.",
-        arguments=common_utils.create_validation_type_args
+        arguments=common_utils.create_validation_type_args,
     )
 
     args = parser.parse_args()
@@ -75,18 +82,19 @@ def main():
 
     if DRY_RUN:
         common_utils.log(
-            "[SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes")
+            "[SCRIPT IN DRY RUN MODE] - No changes will be applied to the system, use --apply to apply changes"
+        )
 
     create_new_validation_types_for_record_type()
 
 
 def start_create_script_printout(system: str):
-    return f'''=== Creating new validation types ===
+    return f"""=== Creating new validation types ===
     
  • System: {system}
  • System base url: {CTX.get_base_url()}
  • Prefix: {TYPE_PREFIX}
- • Record type: {RECORD_TYPE}'''
+ • Record type: {RECORD_TYPE}"""
 
 
 def create_new_validation_types_for_record_type():
@@ -100,7 +108,7 @@ def create_new_validation_types_for_record_type():
     common_utils.log("=== Script finished ===")
     log_results()
 
-    print(f"\n=== Output logged to {CTX.get_log_file_path()} ===")
+    print(f"\n=== Output logged to {LOG_FILE} ===")
 
 
 def build_node_map():
@@ -112,20 +120,27 @@ def build_node_map():
         common_utils.build_node_map_from_child_references(root_url, GLOBAL_NODE_MAP)
         TOTAL_FETCHED = len(GLOBAL_NODE_MAP)
 
-    CTX.log(f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}")
+    logger.info(
+        f"All records fetched: total unique records collected in node map: {len(GLOBAL_NODE_MAP)}"
+    )
     print()
 
 
 def get_validation_types_to_process() -> list[Any]:
     global EXISTING_VALIDATION_TYPES_WITH_PREFIX
 
-    EXISTING_VALIDATION_TYPES_WITH_PREFIX = common_utils.get_ids_for_record_type_matching_prefix("validationType")
+    EXISTING_VALIDATION_TYPES_WITH_PREFIX = (
+        common_utils.get_ids_for_record_type_matching_prefix("validationType")
+    )
     if EXISTING_VALIDATION_TYPES_WITH_PREFIX:
         common_utils.log(
-            f"Found existing validation types that use prefix '{TYPE_PREFIX}', will possibly update these and create needed new ones.")
+            f"Found existing validation types that use prefix '{TYPE_PREFIX}', will possibly update these and create needed new ones."
+        )
         return EXISTING_VALIDATION_TYPES_WITH_PREFIX
 
-    common_utils.log(f"Could not find any existing validation types with prefix '{TYPE_PREFIX}', will create new ones.")
+    common_utils.log(
+        f"Could not find any existing validation types with prefix '{TYPE_PREFIX}', will create new ones."
+    )
     return common_utils.get_validation_types_for_record_type()
 
 
@@ -154,7 +169,8 @@ def collect_record_info_children():
 
 def find_info_roots(global_node_map) -> list[Any]:
     info_roots = [
-        node for node in global_node_map.values()
+        node
+        for node in global_node_map.values()
         if common_utils.info_groups(node.xml_content)
     ]
     return info_roots
@@ -170,7 +186,11 @@ def process_node_map_bottom_up_and_store():
             leaf_queue.append(url)
 
     processed: set[str] = set()
-    progress = tqdm(total=len(GLOBAL_NODE_MAP), desc="Processing records", bar_format="{l_bar}{bar:30}{r_bar}")
+    progress = tqdm(
+        total=len(GLOBAL_NODE_MAP),
+        desc="Processing records",
+        bar_format="{l_bar}{bar:30}{r_bar}",
+    )
     while leaf_queue:
 
         child_reference_url = leaf_queue.popleft()
@@ -201,13 +221,16 @@ def log_results():  # pragma: no cover
 
     if TOTAL_FETCHED != TOTAL_PROCESSED_RECORDS:
         common_utils.log(
-            f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records.")
+            f"\n>>> WARNING!! - Fetched {TOTAL_FETCHED} but only processed {TOTAL_PROCESSED_RECORDS} records."
+        )
 
     if TOTAL_ERRORS:
-        print("\nWarning! There were errors reported during processing, please check the log file for details.")
-        CTX.log("=== Errors reported ===")
-        for (error) in TOTAL_ERRORS:
-            CTX.log(f" > {error}")
+        print(
+            "\nWarning! There were errors reported during processing, please check the log file for details."
+        )
+        logger.info("=== Errors reported ===")
+        for error in TOTAL_ERRORS:
+            logger.info(f" > {error}")
     else:
         common_utils.log("  No errors reported.")
 
@@ -227,12 +250,12 @@ def process_node(global_id_mapping, node):
 
     except Exception as e:
         TOTAL_ERRORS.append(f"Error processing {node.record_id}: {e}")
-        CTX.log(f"Error processing {node.record_id}: {e}")
+        logger.info(f"Error processing {node.record_id}: {e}")
 
 
 def process_and_possibly_update(node, global_id_mapping):
     if DRY_RUN:
-        CTX.log(f"  Dry run mode - not updating {node.new_record_id}\n")
+        logger.info(f"  Dry run mode - not updating {node.new_record_id}\n")
         return True
 
     original_id = node.record_id
@@ -241,7 +264,9 @@ def process_and_possibly_update(node, global_id_mapping):
         return False
 
     if not common_utils.link_dependency_to_top_groups(node.xml_content):
-        CTX.log(f"Top group dependencies was already set to use prefixes, skipping update of '{node.record_id}'...")
+        logger.info(
+            f"Top group dependencies was already set to use prefixes, skipping update of '{node.record_id}'..."
+        )
         return False
     common_utils.remove_action_links(node.xml_content)
     common_utils.update_child_references(node.xml_content, global_id_mapping)
@@ -262,16 +287,17 @@ def process_and_possibly_create(node, global_id_mapping):
     collect_possible_final_value_node(node)
 
     if common_utils.update_final_value_of_validation_type(node.xml_content):
-        CTX.log(f"> Updated finalValue for {original_id} (validationType)")
+        logger.info(f"> Updated finalValue for {original_id} (validationType)")
         updated = True
 
     elif common_utils.record_is_a_child_of_info_group(node, GLOBAL_INFO_CHILDREN):
-        CTX.log(f"> Skipping {original_id} (info group child)")
+        logger.info(f"> Skipping {original_id} (info group child)")
         return False
 
     else:
-        updated = common_utils.possibly_update_data_of_non_info_group_child(node, INFO_GROUPS, FINAL_VALUE_NODES,
-                                                                            updated)
+        updated = common_utils.possibly_update_data_of_non_info_group_child(
+            node, INFO_GROUPS, FINAL_VALUE_NODES, updated
+        )
 
     child_renamed = any(child.record_id in global_id_mapping for child in node.children)
 
@@ -286,7 +312,7 @@ def process_and_possibly_create(node, global_id_mapping):
     common_utils.remove_action_links(node.xml_content)
 
     if common_utils.update_data_divider(node.xml_content, DATA_DIVIDER):
-        CTX.log(f"> Updated data divider of {original_id}")
+        logger.info(f"> Updated data divider of {original_id}")
 
     return prepare_and_try_to_save_record(node)
 
@@ -302,13 +328,20 @@ def possibly_create_new_texts_for_updated_records(node):
         if create_new_texts_for_updated_records(node, ".//textId", try_to_update_text):
             TOTAL_CREATED += 1
 
-    if create_new_texts_for_updated_records(node, ".//defTextId", try_to_update_def_text):
+    if create_new_texts_for_updated_records(
+        node, ".//defTextId", try_to_update_def_text
+    ):
         TOTAL_CREATED += 1
 
 
 def validation_type_validates_target_record_type(node) -> bool:
-    validates_record_type = node.xml_content.find(".//validatesRecordType/linkedRecordId")
-    return validates_record_type is not None and validates_record_type.text.strip() == RECORD_TYPE
+    validates_record_type = node.xml_content.find(
+        ".//validatesRecordType/linkedRecordId"
+    )
+    return (
+        validates_record_type is not None
+        and validates_record_type.text.strip() == RECORD_TYPE
+    )
 
 
 def create_new_texts_for_updated_records(node, id_xpath, text_update_helper):
@@ -338,7 +371,11 @@ def create_new_texts_for_updated_records(node, id_xpath, text_update_helper):
 
 
 def not_a_valid_linked_record_id(linked_record_id) -> bool | Any:
-    return linked_record_id is None or not linked_record_id.text or linked_record_id.text.startswith(TYPE_PREFIX)
+    return (
+        linked_record_id is None
+        or not linked_record_id.text
+        or linked_record_id.text.startswith(TYPE_PREFIX)
+    )
 
 
 def try_to_update_text(xml_content: Element):
@@ -357,7 +394,7 @@ def try_to_update_def_text(xml_content: Element):
     suffixes = {
         "sv": " [Detta är en kopia som håller DiVA classics valideringsnivå]",
         "en": " [This is a copy that meets DiVA classics validation level.]",
-        "no": " [Dette er en kopi som oppfyller DiVA classics valideringsnivå.]"
+        "no": " [Dette er en kopi som oppfyller DiVA classics valideringsnivå.]",
     }
 
     updated = False
@@ -382,7 +419,9 @@ def get_text_node(original_text_id: str) -> RecordNode:
 def check_for_unprocessed_nodes(global_node_map, processed: set[str]):
     unprocessed = [url for url in global_node_map if url not in processed]
     if unprocessed:
-        CTX.log(f"\n>>> WARNING!! -  {len(unprocessed)} records were never processed:")
+        logger.info(
+            f"\n>>> WARNING!! -  {len(unprocessed)} records were never processed:"
+        )
         for url in unprocessed:
             TOTAL_ERRORS.append("Warning: Record: " + url + " was never processed")
 
@@ -393,7 +432,7 @@ def is_already_processed(node_id: str, global_id_mapping: dict) -> bool:
 
 def prepare_and_try_to_save_record(node):
     if DRY_RUN:
-        CTX.log(f"  Dry run mode - not saving {node.new_record_id}\n")
+        logger.info(f"  Dry run mode - not saving {node.new_record_id}\n")
         return True
 
     content_root = common_utils.unwrap_and_clean_xml_for_create(node.xml_content)

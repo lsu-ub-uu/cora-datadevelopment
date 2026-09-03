@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import logging
 from common.arg_parser import (
     create_argument_parser,
     classic_arguments,
@@ -6,13 +7,17 @@ from common.arg_parser import (
 )
 from classic.get_classic_publications import get_classic_publications
 from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
+from common.logging_config import configure_logging
 from cora.context import CoraContext
 from tqdm import tqdm
+
+logger = logging.getLogger(__name__)
 
 
 def main():
     args = _parse_args()
 
+    configure_logging()
     context = CoraContext(
         system=args.system,
         login_id=args.login_id,
@@ -27,15 +32,18 @@ def main():
 
     def on_success(pid: str, record: ET.Element):
         result = output_migrate(
-            record, context, apply=args.apply, with_binaries=args.binaries,
+            record,
+            context,
+            apply=args.apply,
+            with_binaries=args.binaries,
             fedora_url=args.fedora_url,
         )
         results.append(result)
         progress.update(1)
-        context.log(f"{pid}: {result.status}")
+        logger.info(f"{pid}: {result.status}")
 
     def on_error(error: str):
-        context.log(error, level="error")
+        logger.error(error)
         progress.update(1)
 
     get_classic_publications(

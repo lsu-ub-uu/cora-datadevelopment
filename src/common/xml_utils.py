@@ -1,9 +1,10 @@
 import os
+import logging
 from typing import Callable, Sequence
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
 
-from cora.context import Context
+logger = logging.getLogger(__name__)
 
 
 def pretty_print_xml_string(xml_string: str) -> str:
@@ -63,7 +64,6 @@ def save_to_file(xml: ET.Element, filename: str) -> None:
 def transform_record_list(
     source_records: list[ET.Element],
     transform_function: Callable[[ET.Element], ET.Element],
-    context: Context,
 ) -> list[ET.Element]:
     success = True
     results: list[ET.Element] = []
@@ -71,9 +71,8 @@ def transform_record_list(
         try:
             results.append(transform_function(source_record))
         except Exception as e:
-            context.log(
-                f"Error transforming record with oldId {source_record.findtext("old_id")}: {str(e)}",
-                "error",
+            logger.error(
+                f"Error transforming record with oldId {source_record.findtext("old_id")}: {str(e)}"
             )
             success = False
             continue

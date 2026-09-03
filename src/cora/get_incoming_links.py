@@ -1,6 +1,9 @@
 import requests
+import logging
 from cora.context import Context
 from xml.etree import ElementTree as ET
+
+logger = logging.getLogger(__name__)
 
 
 def get_incoming_links(context: Context, record_type: str, record_id: str):
@@ -19,8 +22,7 @@ def get_incoming_links(context: Context, record_type: str, record_id: str):
 
         return response_data.findall("./data/recordToRecordLink")
     except Exception as e:
-        context.log(
-            f"❌ An error occurred while fetching incoming links for {record_type} with id {record_id}: {str(e)}",
-            "error",
+        logger.error(
+            f"❌ An error occurred while fetching incoming links for {record_type} with id {record_id}: {str(e)}"
         )
         raise e

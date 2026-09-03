@@ -38,32 +38,44 @@ def test_process_queue_and_add_note_to_map(sample_xml, monkeypatch):
 
     common_utils.collect_nodes_from_root("http://root_url", global_node_map)
     assert called == True
-    assert global_node_map["http://root_url"].record_id == "__test_prefix_divaTextNewGroup"
+    assert (
+        global_node_map["http://root_url"].record_id == "__test_prefix_divaTextNewGroup"
+    )
 
 
-def test_process_and_possibly_save_not_saved_due_to_not_updated(record_node, monkeypatch):
+def test_process_and_possibly_save_not_saved_due_to_not_updated(
+    record_node, monkeypatch
+):
     monkeypatch.setattr(script, "is_already_processed", lambda node, mapping: False)
     monkeypatch.setattr(common_utils, "normalize_regex_patterns", lambda node: False)
-    monkeypatch.setattr(common_utils, "normalize_child_reference_repeat", lambda node, record_info_groups: False)
+    monkeypatch.setattr(
+        common_utils,
+        "normalize_child_reference_repeat",
+        lambda node, record_info_groups: False,
+    )
     monkeypatch.setattr(common_utils, "update_data_divider", lambda node: False)
 
     result = script.process_and_possibly_create(record_node, {"123": "XYZ_123"})
     assert result is False
 
 
-def test_create_new_validation_types_for_record_type(monkeypatch, ctx):
+def test_create_new_validation_types_for_record_type(monkeypatch, ctx, caplog):
     script.create_new_validation_types_for_record_type()
 
-    calls = [call.args[0] for call in ctx.log.mock_calls]
-    assert any("All records fetched: total unique records collected in node map: 2" in msg for msg in calls)
-    assert any("=== Script finished ===" in msg for msg in calls)
+    assert any(
+        "All records fetched: total unique records collected in node map: 2" in msg
+        for msg in caplog.messages
+    )
+    assert any("=== Script finished ===" in msg for msg in caplog.messages)
 
 
 def test_get_validation_types_to_process(monkeypatch):
     def fake_reply(type):
         return ["__test_prefix_some1"]
 
-    monkeypatch.setattr(common_utils, "get_ids_for_record_type_matching_prefix", fake_reply)
+    monkeypatch.setattr(
+        common_utils, "get_ids_for_record_type_matching_prefix", fake_reply
+    )
 
     id_list = script.get_validation_types_to_process()
     assert "__test_prefix_some1" in id_list
@@ -93,8 +105,12 @@ def test_process_node_update(record_node):
 
 def test_process_node_exception(record_node, monkeypatch):
     monkeypatch.setattr(
-        script, "process_and_possibly_create", lambda *args, **kwargs: (_ for _ in ())
-        .throw(requests.HTTPError("some exception")))
+        script,
+        "process_and_possibly_create",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            requests.HTTPError("some exception")
+        ),
+    )
 
     script.process_node({"a": "b"}, record_node)
 
@@ -111,7 +127,9 @@ def test_process_and_possibly_update_dry_run(mock_top_level, record_node):
 def test_process_and_possibly_update(init_utils, mock_top_level, monkeypatch):
     script.DRY_RUN = False
 
-    monkeypatch.setattr(common_utils, "link_dependency_to_top_groups", lambda node, mapping=None: True)
+    monkeypatch.setattr(
+        common_utils, "link_dependency_to_top_groups", lambda node, mapping=None: True
+    )
 
     assert script.process_and_possibly_update(mock_top_level, {"a": "b"})
 
@@ -124,10 +142,14 @@ def test_process_and_possibly_update_already_processed(mock_top_level, monkeypat
     assert not script.process_and_possibly_update(mock_top_level, global_id_mapping)
 
 
-def test_process_and_possibly_update_children_already_prefixed(mock_top_level, monkeypatch):
+def test_process_and_possibly_update_children_already_prefixed(
+    mock_top_level, monkeypatch
+):
     script.DRY_RUN = False
 
-    monkeypatch.setattr(common_utils, "link_dependency_to_top_groups", lambda node, mapping=None: False)
+    monkeypatch.setattr(
+        common_utils, "link_dependency_to_top_groups", lambda node, mapping=None: False
+    )
 
     assert not script.process_and_possibly_update(mock_top_level, {"a": "b"})
 
@@ -137,8 +159,14 @@ def test_process_and_possibly_create_with_updated_final_value(record_node, monke
     script.RECORD_TYPE = "diva-output"
     script.TYPE_PREFIX = "__some_prefix_"
 
-    monkeypatch.setattr(common_utils, "update_final_value_of_validation_type", lambda node, mapping=None: True)
-    monkeypatch.setattr(script, "validation_type_validates_target_record_type", lambda somebool: True)
+    monkeypatch.setattr(
+        common_utils,
+        "update_final_value_of_validation_type",
+        lambda node, mapping=None: True,
+    )
+    monkeypatch.setattr(
+        script, "validation_type_validates_target_record_type", lambda somebool: True
+    )
     monkeypatch.setattr(script, "try_to_update_text", lambda updateText: True)
     monkeypatch.setattr(script, "try_to_update_def_text", lambda updateDefText: True)
 
@@ -150,10 +178,14 @@ def test_process_and_possibly_create_with_updated_final_value(record_node, monke
     assert "__some_prefix_divaTextNewGroupDefText" in xml
 
 
-def test_process_and_possibly_create_fail_because_record_info_child(record_node, monkeypatch):
+def test_process_and_possibly_create_fail_because_record_info_child(
+    record_node, monkeypatch
+):
     script.DRY_RUN = False
 
-    monkeypatch.setattr(common_utils, "record_is_a_child_of_info_group", lambda node, mapping=None: True)
+    monkeypatch.setattr(
+        common_utils, "record_is_a_child_of_info_group", lambda node, mapping=None: True
+    )
 
     assert not script.process_and_possibly_create(record_node, {"a": "b"})
 
@@ -193,7 +225,7 @@ def test_process_node_map_bottom_up_and_store(create_node_tree, monkeypatch):
         "urlD": node_tree["D"],
         "urlB": node_tree["B"],
         "urlE": node_tree["E"],
-        "urlC": node_tree["C"]
+        "urlC": node_tree["C"],
     }
 
     script.GLOBAL_NODE_MAP = global_node_map
@@ -235,9 +267,18 @@ def test_try_to_update_def_text(sample_text):
     assert changed is True
     text = ET.tostring(sample_text).decode("utf-8")
     text = html.unescape(text)
-    assert "svensk text [Detta är en kopia som håller DiVA classics valideringsnivå]" in text
-    assert "engelsk text [This is a copy that meets DiVA classics validation level.]" in text
-    assert "norsk text [Dette er en kopi som oppfyller DiVA classics valideringsnivå.]" in text
+    assert (
+        "svensk text [Detta är en kopia som håller DiVA classics valideringsnivå]"
+        in text
+    )
+    assert (
+        "engelsk text [This is a copy that meets DiVA classics validation level.]"
+        in text
+    )
+    assert (
+        "norsk text [Dette er en kopi som oppfyller DiVA classics valideringsnivå.]"
+        in text
+    )
 
 
 def test_get_text_node(sample_xml, monkeypatch):
@@ -247,7 +288,9 @@ def test_get_text_node(sample_xml, monkeypatch):
 
 def test_possibly_create_new_texts_for_updated_records(record_node, monkeypatch):
     script.TYPE_PREFIX = "__some_prefix_"
-    monkeypatch.setattr(script, "validation_type_validates_target_record_type", lambda node: True)
+    monkeypatch.setattr(
+        script, "validation_type_validates_target_record_type", lambda node: True
+    )
     monkeypatch.setattr(script, "try_to_update_text", lambda node: True)
     monkeypatch.setattr(script, "try_to_update_def_text", lambda node: True)
 
@@ -259,9 +302,13 @@ def test_possibly_create_new_texts_for_updated_records(record_node, monkeypatch)
     assert "__some_prefix_divaTextNewGroupDefText" in xml
 
 
-def test_possibly_create_new_texts_for_updated_records_not_validation_type(record_node, monkeypatch):
+def test_possibly_create_new_texts_for_updated_records_not_validation_type(
+    record_node, monkeypatch
+):
     script.TYPE_PREFIX = "__some_prefix_"
-    monkeypatch.setattr(script, "validation_type_validates_target_record_type", lambda node: False)
+    monkeypatch.setattr(
+        script, "validation_type_validates_target_record_type", lambda node: False
+    )
     monkeypatch.setattr(script, "try_to_update_text", lambda node: True)
     monkeypatch.setattr(script, "try_to_update_def_text", lambda node: True)
 
@@ -275,11 +322,15 @@ def test_possibly_create_new_texts_for_updated_records_not_validation_type(recor
 
 def test_create_new_texts_for_updated_records_for_text_id(record_node, monkeypatch):
     script.TYPE_PREFIX = "__some_prefix_"
-    monkeypatch.setattr(script, "validation_type_validates_target_record_type", lambda node: True)
+    monkeypatch.setattr(
+        script, "validation_type_validates_target_record_type", lambda node: True
+    )
     monkeypatch.setattr(script, "try_to_update_text", lambda node: True)
     monkeypatch.setattr(script, "try_to_update_def_text", lambda node: True)
 
-    script.create_new_texts_for_updated_records(record_node, ".//textId", script.try_to_update_text)
+    script.create_new_texts_for_updated_records(
+        record_node, ".//textId", script.try_to_update_text
+    )
 
     xml = ET.tostring(record_node.xml_content).decode("utf-8")
     xml = html.unescape(xml)
@@ -289,11 +340,15 @@ def test_create_new_texts_for_updated_records_for_text_id(record_node, monkeypat
 
 def test_create_new_texts_for_updated_records_for_def_text_id(record_node, monkeypatch):
     script.TYPE_PREFIX = "__some_prefix_"
-    monkeypatch.setattr(script, "validation_type_validates_target_record_type", lambda node: True)
+    monkeypatch.setattr(
+        script, "validation_type_validates_target_record_type", lambda node: True
+    )
     monkeypatch.setattr(script, "try_to_update_text", lambda node: True)
     monkeypatch.setattr(script, "try_to_update_def_text", lambda node: True)
 
-    script.create_new_texts_for_updated_records(record_node, ".//defTextId", script.try_to_update_text)
+    script.create_new_texts_for_updated_records(
+        record_node, ".//defTextId", script.try_to_update_text
+    )
 
     xml = ET.tostring(record_node.xml_content).decode("utf-8")
     xml = html.unescape(xml)
@@ -303,11 +358,15 @@ def test_create_new_texts_for_updated_records_for_def_text_id(record_node, monke
 
 def test_create_new_texts_for_updated_records_xpath_not_found(record_node, monkeypatch):
     script.TYPE_PREFIX = "__some_prefix_"
-    monkeypatch.setattr(script, "validation_type_validates_target_record_type", lambda node: True)
+    monkeypatch.setattr(
+        script, "validation_type_validates_target_record_type", lambda node: True
+    )
     monkeypatch.setattr(script, "try_to_update_text", lambda node: True)
     monkeypatch.setattr(script, "try_to_update_def_text", lambda node: True)
 
-    assert not script.create_new_texts_for_updated_records(record_node, ".//not_text_id", script.try_to_update_text)
+    assert not script.create_new_texts_for_updated_records(
+        record_node, ".//not_text_id", script.try_to_update_text
+    )
 
     xml = ET.tostring(record_node.xml_content).decode("utf-8")
     xml = html.unescape(xml)
@@ -315,14 +374,20 @@ def test_create_new_texts_for_updated_records_xpath_not_found(record_node, monke
     assert "divaTextNewGroupDefText" in xml
 
 
-def test_create_new_texts_for_updated_records_not_valid_record_id(record_node, monkeypatch):
+def test_create_new_texts_for_updated_records_not_valid_record_id(
+    record_node, monkeypatch
+):
     script.TYPE_PREFIX = "__some_prefix_"
-    monkeypatch.setattr(script, "validation_type_validates_target_record_type", lambda node: True)
+    monkeypatch.setattr(
+        script, "validation_type_validates_target_record_type", lambda node: True
+    )
     monkeypatch.setattr(script, "try_to_update_text", lambda node: True)
     monkeypatch.setattr(script, "try_to_update_def_text", lambda node: True)
     monkeypatch.setattr(script, "not_a_valid_linked_record_id", lambda node: True)
 
-    assert not script.create_new_texts_for_updated_records(record_node, ".//defTextId", script.try_to_update_text)
+    assert not script.create_new_texts_for_updated_records(
+        record_node, ".//defTextId", script.try_to_update_text
+    )
 
     xml = ET.tostring(record_node.xml_content).decode("utf-8")
     xml = html.unescape(xml)
@@ -332,13 +397,17 @@ def test_create_new_texts_for_updated_records_not_valid_record_id(record_node, m
 
 def test_create_new_texts_for_updated_records_already_updated(record_node, monkeypatch):
     script.TYPE_PREFIX = "__some_prefix_"
-    monkeypatch.setattr(script, "validation_type_validates_target_record_type", lambda node: True)
+    monkeypatch.setattr(
+        script, "validation_type_validates_target_record_type", lambda node: True
+    )
     monkeypatch.setattr(script, "try_to_update_text", lambda node: True)
     monkeypatch.setattr(script, "try_to_update_def_text", lambda node: True)
     monkeypatch.setattr(script, "not_a_valid_linked_record_id", lambda node: False)
     script.UPDATED_TEXTS.add("divaTextNewGroupDefText")
 
-    assert not script.create_new_texts_for_updated_records(record_node, ".//defTextId", script.try_to_update_text)
+    assert not script.create_new_texts_for_updated_records(
+        record_node, ".//defTextId", script.try_to_update_text
+    )
 
     xml = ET.tostring(record_node.xml_content).decode("utf-8")
     xml = html.unescape(xml)
@@ -348,13 +417,17 @@ def test_create_new_texts_for_updated_records_already_updated(record_node, monke
 
 def test_create_new_texts_for_updated_records_no_text_parts(record_node, monkeypatch):
     script.TYPE_PREFIX = "__some_prefix_"
-    monkeypatch.setattr(script, "validation_type_validates_target_record_type", lambda node: True)
+    monkeypatch.setattr(
+        script, "validation_type_validates_target_record_type", lambda node: True
+    )
     monkeypatch.setattr(script, "try_to_update_text", lambda node: True)
     monkeypatch.setattr(script, "try_to_update_def_text", lambda node: True)
     monkeypatch.setattr(script, "not_a_valid_linked_record_id", lambda node: False)
     monkeypatch.setattr(script, "try_to_update_text", lambda node: False)
 
-    assert not script.create_new_texts_for_updated_records(record_node, ".//defTextId", script.try_to_update_text)
+    assert not script.create_new_texts_for_updated_records(
+        record_node, ".//defTextId", script.try_to_update_text
+    )
 
     xml = ET.tostring(record_node.xml_content).decode("utf-8")
     xml = html.unescape(xml)
@@ -372,11 +445,14 @@ def test_main(monkeypatch, ctx):
         prefix="__XYZ_",
         recordtype="diva-output",
         datadivider="diva",
-        apply=False
+        apply=False,
     )
 
-    monkeypatch.setattr(script, "create_argument_parser",
-                        lambda **kwargs: SimpleNamespace(parse_args=lambda: fake_args))
+    monkeypatch.setattr(
+        script,
+        "create_argument_parser",
+        lambda **kwargs: SimpleNamespace(parse_args=lambda: fake_args),
+    )
     monkeypatch.setattr(script, "CoraContext", lambda **kwargs: ctx)
 
     script.main()

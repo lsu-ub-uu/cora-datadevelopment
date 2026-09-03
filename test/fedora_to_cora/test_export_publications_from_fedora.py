@@ -7,8 +7,7 @@ from fedora_to_cora.export_publications_from_fedora import (
 )
 
 
-def test_export_publications_from_fedora(monkeypatch):
-    logger_mock = _set_up_logger_mock(monkeypatch)
+def test_export_publications_from_fedora(monkeypatch, caplog):
     get_pids_for_domain_mock = _set_up_get_pids_mock(monkeypatch)
 
     mock_publication = ET.Element("publication")
@@ -29,7 +28,11 @@ def test_export_publications_from_fedora(monkeypatch):
         lambda: datetime(2023, 1, 1, 12, 0, 0),
     )
 
-    export_publications_from_fedora("varldskulturmuseerna", solr_url="http://solr:8080/solr", fedora_url="http://fedora:8088")
+    export_publications_from_fedora(
+        "varldskulturmuseerna",
+        solr_url="http://solr:8080/solr",
+        fedora_url="http://fedora:8088",
+    )
 
     assert get_pids_for_domain_mock.call_count == 1
 
@@ -59,13 +62,13 @@ def test_export_publications_from_fedora(monkeypatch):
         in save_to_file_mock.mock_calls
     )
 
-    logger_mock.info.assert_any_call(
+    assert (
         "--- Successfully imported 3 publications to data/fedora_xml/varldskulturmuseerna/2023-01-01T12:00:00 ---"
+        in caplog.messages
     )
 
 
 def test_get_pids_failed(monkeypatch):
-    _set_up_logger_mock(monkeypatch)
     get_pids_for_domain_mock = _set_up_get_pids_mock(monkeypatch)
     get_pids_for_domain_mock.side_effect = Exception("Failed to get PIDs")
     get_classic_publications_mock, _ = _set_up_get_classic_publications_mock(
@@ -74,7 +77,11 @@ def test_get_pids_failed(monkeypatch):
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
 
     with pytest.raises(Exception, match="Failed to get PIDs"):
-        export_publications_from_fedora("varldskulturmuseerna", solr_url="http://solr:8080/solr", fedora_url="http://fedora:8088")
+        export_publications_from_fedora(
+            "varldskulturmuseerna",
+            solr_url="http://solr:8080/solr",
+            fedora_url="http://fedora:8088",
+        )
 
     assert get_pids_for_domain_mock.call_count == 1
     assert get_classic_publications_mock.call_count == 0
@@ -82,25 +89,31 @@ def test_get_pids_failed(monkeypatch):
 
 
 def test_get_classic_publications_failed(monkeypatch):
-    _set_up_logger_mock(monkeypatch)
     get_pids_for_domain_mock = _set_up_get_pids_mock(monkeypatch)
     _set_up_get_classic_publications_mock(monkeypatch, error=True)
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
 
-    export_publications_from_fedora("varldskulturmuseerna", solr_url="http://solr:8080/solr", fedora_url="http://fedora:8088")
+    export_publications_from_fedora(
+        "varldskulturmuseerna",
+        solr_url="http://solr:8080/solr",
+        fedora_url="http://fedora:8088",
+    )
 
     assert get_pids_for_domain_mock.call_count == 1
     assert save_to_file_mock.call_count == 0
 
 
 def test_save_to_file_failed(monkeypatch):
-    _set_up_logger_mock(monkeypatch)
     _set_up_get_pids_mock(monkeypatch)
     _set_up_get_classic_publications_mock(monkeypatch)
     save_to_file_mock = _set_up_save_to_file_mock(monkeypatch)
     save_to_file_mock.side_effect = (Exception("Failed to save file"),)
 
-    export_publications_from_fedora("varldskulturmuseerna", solr_url="http://solr:8080/solr", fedora_url="http://fedora:8088")
+    export_publications_from_fedora(
+        "varldskulturmuseerna",
+        solr_url="http://solr:8080/solr",
+        fedora_url="http://fedora:8088",
+    )
     # Nothing happens
 
 
@@ -139,15 +152,6 @@ def _set_up_save_to_file_mock(monkeypatch):
         "fedora_to_cora.export_publications_from_fedora.save_to_file", save_to_file_mock
     )
     return save_to_file_mock
-
-
-def _set_up_logger_mock(monkeypatch):
-    logger_mock = MagicMock()
-    monkeypatch.setattr(
-        "fedora_to_cora.export_publications_from_fedora.RunRotatingLogger.get",
-        MagicMock(return_value=logger_mock),
-    )
-    return logger_mock
 
 
 def _set_up_download_attachments_mock(monkeypatch):

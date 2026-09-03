@@ -1,4 +1,5 @@
 import json
+import logging
 import xml.etree.ElementTree as ET
 from collections import deque
 from typing import Any
@@ -8,6 +9,8 @@ import requests
 
 from common.arg_parser import ArgumentConfig, cora_url_argument
 from cora.context import CoraContext
+
+logger = logging.getLogger(__name__)
 
 _ctx: CoraContext
 _type_prefix: str
@@ -96,7 +99,9 @@ delete_validation_type_args: dict[str, ArgumentConfig] = {
 
 # Representation of a record and its relationships ----------------------------------
 class RecordNode:
-    def __init__(self, record_id: str, record_type: str, url: str, xml_content: Element):
+    def __init__(
+        self, record_id: str, record_type: str, url: str, xml_content: Element
+    ):
         self.record_id = record_id
         self.record_type = record_type
         self.url = url
@@ -108,7 +113,9 @@ class RecordNode:
 
 
 def get_root_urls_for_validation_types(validation_types: list[str]) -> list[str]:
-    return [_ctx.get_base_url() + "validationType/" + string for string in validation_types]
+    return [
+        _ctx.get_base_url() + "validationType/" + string for string in validation_types
+    ]
 
 
 def build_node_map_from_child_references(root_url, global_node_map):
@@ -125,7 +132,9 @@ def build_node_map_from_child_references(root_url, global_node_map):
     return global_node_map
 
 
-def collect_nodes_from_root(root_url: str, global_node_map: dict[str, RecordNode]) -> None:
+def collect_nodes_from_root(
+    root_url: str, global_node_map: dict[str, RecordNode]
+) -> None:
     queue = deque([root_url])
     while queue:
         url = queue.popleft()
@@ -157,7 +166,9 @@ def info_groups(xml_content):
     return name_in_data is not None and name_in_data in ("recordInfo", "adminInfo")
 
 
-def record_is_a_child_of_info_group(node, global_record_info_children: dict[str, Any]) -> bool:
+def record_is_a_child_of_info_group(
+    node, global_record_info_children: dict[str, Any]
+) -> bool:
     return node.url in global_record_info_children
 
 
@@ -172,27 +183,35 @@ def update_final_value_of_validation_type(xml_content):
     return False
 
 
-def possibly_update_data_of_non_info_group_child(node, info_groupz: set, final_value_nodes: set, updated: bool) -> bool:
+def possibly_update_data_of_non_info_group_child(
+    node, info_groupz: set, final_value_nodes: set, updated: bool
+) -> bool:
     if set_data_quality_to_classic(node.xml_content):
         final_value_nodes.add(node.record_id)
-        _ctx.log(f"> Set data quality to classic in {node.record_id}")
+        logger.info(f"> Set data quality to classic in {node.record_id}")
         updated = True
 
     if normalize_regex_patterns(node.xml_content):
-        _ctx.log(fr"> Normalized regex pattern(s) to '^\S.$' in {node.record_id}")
+        logger.info(rf"> Normalized regex pattern(s) to '^\S.$' in {node.record_id}")
         updated = True
 
     excluded_record_ids = info_groupz.union(final_value_nodes)
     if normalize_child_reference_repeat(node.xml_content, excluded_record_ids):
-        _ctx.log(f"> Normalized childReference(s) Min Max to '0-X' in {node.record_id}")
+        logger.info(
+            f"> Normalized childReference(s) Min Max to '0-X' in {node.record_id}"
+        )
         updated = True
     return updated
 
 
-def is_excluded_record_id_ref(child_reference: Element, excluded_record_ids: set) -> bool:
+def is_excluded_record_id_ref(
+    child_reference: Element, excluded_record_ids: set
+) -> bool:
     linked_record_id = child_reference.find(".//ref/linkedRecordId")
     if linked_record_id is not None and linked_record_id.text in excluded_record_ids:
-        _ctx.log(f"Skipped normalizing '{linked_record_id.text}' due to being an excluded record id")
+        logger.info(
+            f"Skipped normalizing '{linked_record_id.text}' due to being an excluded record id"
+        )
         return True
     return False
 
@@ -212,7 +231,12 @@ def normalize_regex_patterns(xml_root):
         for tag in ("regex", "regEx"):
             for element in xml_root.findall(f".//{tag}"):
                 regex = element.text
-                if regex and regex.strip() and regex != r"^[\s\S]+$" and r"^\S.*$" not in regex:
+                if (
+                    regex
+                    and regex.strip()
+                    and regex != r"^[\s\S]+$"
+                    and r"^\S.*$" not in regex
+                ):
                     element.text = r"^\S.*$"
                     updated = True
 
@@ -233,7 +257,11 @@ def normalize_child_reference_repeat(xml_root: Element, excluded_record_ids: set
                 repeat_min_element.text = "0"
                 updated = True
 
-            if repeat_max_element is not None and repeat_max_element.text != "X" and repeat_max_element.text != "1":
+            if (
+                repeat_max_element is not None
+                and repeat_max_element.text != "X"
+                and repeat_max_element.text != "1"
+            ):
                 repeat_max_element.text = "X"
                 updated = True
     return updated
@@ -298,7 +326,10 @@ def parse_record_from_xml(xml_text, url):
 
 
 def fetch_record_as_xml(url: str):
-    headers = {"Authtoken": _ctx.get_auth_token(), "Accept": "application/vnd.cora.record+xml"}
+    headers = {
+        "Authtoken": _ctx.get_auth_token(),
+        "Accept": "application/vnd.cora.record+xml",
+    }
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.text
@@ -320,7 +351,9 @@ def remove_unwanted_elements_for_creation(element: ET.Element):
 
 
 def to_xml_bytes(element):
-    return b'<?xml version="1.0" encoding="UTF-8"?>' + ET.tostring(element, encoding="utf-8")
+    return b'<?xml version="1.0" encoding="UTF-8"?>' + ET.tostring(
+        element, encoding="utf-8"
+    )
 
 
 def collect_child_urls(node: RecordNode, root_url, url) -> list[Any]:
@@ -346,7 +379,9 @@ def find_top_level_children(xml_root):
 
 def find_child_urls(xml_root):
     urls = []
-    for element in xml_root.findall(".//childReferences/childReference/ref/actionLinks/read/url"):
+    for element in xml_root.findall(
+        ".//childReferences/childReference/ref/actionLinks/read/url"
+    ):
         urls.append((element.text or "").strip())
 
     return urls
@@ -364,13 +399,13 @@ def get_validation_type_search_data_for_record_type(record_type: str) -> bytes:
                         "children": [
                             {
                                 "name": "validatesRecordTypeSearchTerm",
-                                "value": f"recordType_{record_type}"
+                                "value": f"recordType_{record_type}",
                             }
-                        ]
+                        ],
                     }
-                ]
+                ],
             }
-        ]
+        ],
     }
     return json.dumps(search_data).encode("utf-8")
 
@@ -385,26 +420,22 @@ def get_record_id_search_data_for_prefix_using_record_type(type_name: str) -> by
                     {
                         "name": "includePart",
                         "children": [
-                            {
-                                "name": "recordIdSearchTerm",
-                                "value": f"{_type_prefix}*"
-                            }
-                        ]
+                            {"name": "recordIdSearchTerm", "value": f"{_type_prefix}*"}
+                        ],
                     }
-                ]
+                ],
             },
-            {
-                "name": "rows",
-                "value": "1000"
-            }
-        ]
+            {"name": "rows", "value": "1000"},
+        ],
     }
     return json.dumps(search_data).encode("utf-8")
 
 
 def get_validation_types_for_record_type():
     search_data = get_validation_type_search_data_for_record_type(_record_type)
-    response_body = get_validation_types_using_search_data("validationType", search_data)
+    response_body = get_validation_types_using_search_data(
+        "validationType", search_data
+    )
 
     return collect_ids_from_response("validationType", response_body)
 
@@ -416,7 +447,9 @@ def get_ids_for_record_type_matching_prefix(record_type: str):
     return collect_ids_from_response_matching_prefix(record_type, response_body)
 
 
-def collect_ids_from_response_matching_prefix(record_type: str, response_body: ET.Element) -> list[Any]:
+def collect_ids_from_response_matching_prefix(
+    record_type: str, response_body: ET.Element
+) -> list[Any]:
     ids = []
     for element in response_body.findall(f".//{record_type}/recordInfo/id"):
         record_id = element.text
@@ -443,8 +476,12 @@ def collect_ids_from_response(record_type: str, response_body: ET.Element) -> li
 
 def break_dependency_to_top_groups(xml_content):
     updated = False
-    updated |= remove_prefix_from_value_of_xpath_using_find(xml_content, ".//newMetadataId/linkedRecordId")
-    updated |= remove_prefix_from_value_of_xpath_using_find(xml_content, ".//metadataId/linkedRecordId")
+    updated |= remove_prefix_from_value_of_xpath_using_find(
+        xml_content, ".//newMetadataId/linkedRecordId"
+    )
+    updated |= remove_prefix_from_value_of_xpath_using_find(
+        xml_content, ".//metadataId/linkedRecordId"
+    )
 
     return updated
 
@@ -460,8 +497,12 @@ def remove_prefix_from_value_of_xpath_using_find(xml_content, path: str) -> bool
 
 def link_dependency_to_top_groups(xml_content):
     updated = False
-    updated |= update_prefix_of_value_of_xpath_using_find(xml_content, ".//newMetadataId/linkedRecordId")
-    updated |= update_prefix_of_value_of_xpath_using_find(xml_content, ".//metadataId/linkedRecordId")
+    updated |= update_prefix_of_value_of_xpath_using_find(
+        xml_content, ".//newMetadataId/linkedRecordId"
+    )
+    updated |= update_prefix_of_value_of_xpath_using_find(
+        xml_content, ".//metadataId/linkedRecordId"
+    )
     return updated
 
 
@@ -480,33 +521,40 @@ def possibly_set_to_not_create_presentations(node):
     if metadata is None:
         return
 
-    element = metadata.find('excludePGroupCreation')
+    element = metadata.find("excludePGroupCreation")
     if element is None:
-        element = ET.Element('excludePGroupCreation')
-        element.text = 'true'
+        element = ET.Element("excludePGroupCreation")
+        element.text = "true"
         metadata.append(element)
 
 
 def log(text: str):  # pragma: no cover
     print(f"\n{text}")
-    _ctx.log(text)
+    logger.info(text)
 
 
-def log_creation_summary(node, record_type_url: str, xml_bytes: bytes | Any):  # pragma: no cover
-    _ctx.log(f">>> POST {node.new_record_id} ({node.record_type})...")
-    _ctx.log(f"  Endpoint: {record_type_url}")
-    _ctx.log("  Payload: " + xml_bytes.decode("utf-8"))
+def log_creation_summary(
+    node, record_type_url: str, xml_bytes: bytes | Any
+):  # pragma: no cover
+    logger.info(f">>> POST {node.new_record_id} ({node.record_type})...")
+    logger.info(f"  Endpoint: {record_type_url}")
+    logger.info("  Payload: " + xml_bytes.decode("utf-8"))
 
 
 # ---- API
 
+
 def get_validation_types_using_search_data(record_type: str, search_data: bytes):
     search_url = _ctx.get_base_url() + f"searchResult/{record_type}Search"
-    headers = {"Authtoken": _ctx.get_auth_token(),
-               "Accept": "application/vnd.cora.recordList+xml",
-               "Content-Type": "application/vnd.cora.recordList+xml"}
+    headers = {
+        "Authtoken": _ctx.get_auth_token(),
+        "Accept": "application/vnd.cora.recordList+xml",
+        "Content-Type": "application/vnd.cora.recordList+xml",
+    }
 
-    response = requests.get(search_url, params={"searchData": search_data}, headers=headers)
+    response = requests.get(
+        search_url, params={"searchData": search_data}, headers=headers
+    )
     response.raise_for_status()
     response_body = ET.fromstring(response.text)
 
@@ -532,41 +580,48 @@ def prepare_and_delete_record(node: RecordNode, errors: list):
     return try_to_delete_record(delete_url, errors)
 
 
-def try_to_post_record(node: RecordNode, xml_bytes: bytes, url: str, errors: list) -> bool:
+def try_to_post_record(
+    node: RecordNode, xml_bytes: bytes, url: str, errors: list
+) -> bool:
     log_creation_summary(node, url, xml_bytes)
     headers = {
         "Authtoken": _ctx.get_auth_token(),
         "Content-Type": "application/vnd.cora.recordgroup+xml",
-        "Accept": "application/vnd.cora.record+xml", }
+        "Accept": "application/vnd.cora.record+xml",
+    }
 
     try:
         response = requests.post(url, data=xml_bytes, headers=headers, timeout=10)
-        _ctx.log(f"  Response: ({response.status_code}) - {response.text}\n")
+        logger.info(f"  Response: ({response.status_code}) - {response.text}\n")
         if response.status_code not in (200, 201):
-            errors.append(f"Failed to save {node.new_record_id} ({response.status_code} - {response.text})")
+            errors.append(
+                f"Failed to save {node.new_record_id} ({response.status_code} - {response.text})"
+            )
             return False
 
         return True
     except requests.RequestException as e:
-        _ctx.log(f">>> Error saving {node.new_record_id}: {e}")
+        logger.info(f">>> Error saving {node.new_record_id}: {e}")
         errors.append(f"Error saving {node.new_record_id}: {e}")
         return False
 
 
 def try_to_delete_record(record_type_url: str, errors: list) -> bool:
-    _ctx.log(f"DELETE: {record_type_url}")
+    logger.info(f"DELETE: {record_type_url}")
     try:
         headers = {
             "Authtoken": _ctx.get_auth_token(),
-            "Accept": "*/*", }
+            "Accept": "*/*",
+        }
 
         if _type_prefix not in record_type_url:
             errors.append(
-                f"Tried to delete a record that probably wasn't supposed to be deleted... {record_type_url}")
+                f"Tried to delete a record that probably wasn't supposed to be deleted... {record_type_url}"
+            )
             return False
 
         response = requests.delete(record_type_url, headers=headers, timeout=10)
-        _ctx.log(f"  Response: ({response.status_code}) - {response.text}")
+        logger.info(f"  Response: ({response.status_code}) - {response.text}")
         if response.status_code not in (200, 201):
             errors.append(f"Failed to delete record: {record_type_url}")
             return False

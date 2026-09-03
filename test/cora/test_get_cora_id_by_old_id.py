@@ -5,7 +5,6 @@ from logging import Logger
 from unittest.mock import MagicMock
 from cora.context import MockContext
 
-
 base_url = "https://pre.diva-portal.org/rest/record/"
 test_token = "test-token"
 mock_context = MockContext(base_url, test_token)
@@ -109,6 +108,7 @@ def test_returns_error_text_when_no_result(requests_mock):
 
 def test_logs_warning_and_returns_first_id_when_multiple_results(
     requests_mock,
+    caplog,
 ):
     old_id_multiple = "222222"
     expected_cora_id = "123"
@@ -149,10 +149,10 @@ def test_logs_warning_and_returns_first_id_when_multiple_results(
     )
     assert requests_mock.call_count == 1
     assert response == expected_cora_id
-    mock_context.log.assert_called_with(  # type: ignore
+    assert (
+        "WARNING",
         f"Warning: Multiple diva-organisations found for old ID '{old_id_multiple}'. Using the first one.",
-        "warning",
-    )
+    ) in [(record.levelname, record.getMessage()) for record in caplog.records]
 
 
 def test_raises_error_when_not_ok_response(requests_mock):
@@ -181,8 +181,7 @@ def with_cache_clear():
 
 
 def create_search_data(old_id):
-    return inline_xml_string(
-        f"""
+    return inline_xml_string(f"""
             <?xml version="1.0" encoding="UTF-8"?>
             <search>
                 <include>
@@ -191,8 +190,7 @@ def create_search_data(old_id):
                     </includePart>
                 </include>
             </search>
-        """
-    )
+        """)
 
 
 def create_mock_response(expected_cora_id):
