@@ -18,7 +18,7 @@ def main():
     """
     args = _parse_args()
     logger = RunRotatingLogger(
-        "data", "logs/CORA-3700_update_subject_authority_diva_model.log"
+        "data", "../../../logs/CORA-3700_update_subject_authority_diva_model.log"
     ).get()
 
     logger.info("==== Begin updating diva-output subject authority model ====")
@@ -60,6 +60,11 @@ def _fix_record(record: ET.Element, context: Context, logger: Logger):
     if subject is None:
         logger.info(f"Skipped record {record_id}: no subject with authority diva")
         return "skipped"
+
+    if subject.attrib.get("repeatId") is not None:
+        logger.info(f"Skipped already migrated record {record_id}")
+        return "skipped"
+
     topics = output.findall("./subject[@authority='diva']/topic")
 
     output.remove(subject)
@@ -93,7 +98,7 @@ def _log_summary(logger: Logger, total: int, updated: int, failed: int, skipped:
     logger.info(f"Total diva-output records: {total}")
     logger.info(f"Updated: {updated}")
     logger.info(f"Failed: {failed}")
-    logger.info(f"Skipped (no diva subject): {skipped}")
+    logger.info(f"Skipped: {skipped}")
     logger.info("================================================")
 
 
