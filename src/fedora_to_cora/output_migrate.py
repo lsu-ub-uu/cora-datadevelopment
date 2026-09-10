@@ -16,6 +16,7 @@ from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
 
 class OutputMigrationResult:
     pid: str
+    publicaion_type: str
     status: Literal[
         "SUCCESS", "CLASSIC_QUALITY", "FAILED", "SKIPPED", "INPUT_VALIDATION_FAILED"
     ]
@@ -24,12 +25,14 @@ class OutputMigrationResult:
     def __init__(
         self,
         pid: str,
+        publication_type: str | None,
         status: Literal[
             "SUCCESS", "CLASSIC_QUALITY", "FAILED", "SKIPPED", "INPUT_VALIDATION_FAILED"
         ],
         errors: list[str] | None = None,
     ):
         self.pid = pid
+        self.publication_type = publication_type if publication_type else "UNKNOWN"
         self.status = status
         self.errors = errors
 
@@ -45,6 +48,7 @@ def output_migrate(
     Migrates a Fedora XML publication record and its attached binaries to Cora.
     """
     pid = source_record.findtext("./pid")
+    publication_type = source_record.findtext("./publicationType/publicationTypeCode")
     assert pid is not None
 
     try:
@@ -52,7 +56,10 @@ def output_migrate(
     except XMLValidationError as e:
         error_str = str(e)
         return OutputMigrationResult(
-            pid, status="INPUT_VALIDATION_FAILED", errors=[error_str]
+            pid,
+            publication_type,
+            status="INPUT_VALIDATION_FAILED",
+            errors=[error_str],
         )
 
     cora_output = transform_to_cora_output(source_record, context)
@@ -64,7 +71,9 @@ def output_migrate(
     )
 
     if not valid:
-        return _handle_invalid_record(errors, pid, cora_output, context)
+        return _handle_invalid_record(
+            errors, pid, publication_type, cora_output, context
+        )
     if apply:
         create_record_result = create_record(
             cora_output,
@@ -75,6 +84,7 @@ def output_migrate(
         if not is_success_result(create_record_result):
             return OutputMigrationResult(
                 pid,
+                publication_type,
                 status="FAILED",
                 errors=(
                     [create_record_result.error] if create_record_result.error else []
@@ -96,19 +106,27 @@ def output_migrate(
                 delete_record(create_record_result.response_data, context)
                 return OutputMigrationResult(
                     pid,
+                    publication_type=publication_type,
                     status="FAILED",
                     errors=errors,
                 )
 
-    return OutputMigrationResult(pid, status="SUCCESS")
+    return OutputMigrationResult(
+        pid, publication_type=publication_type, status="SUCCESS"
+    )
 
 
 def _handle_invalid_record(
-    errors: list[str] | None, pid: str, cora_output: ET.Element, context: Context
+    errors: list[str] | None,
+    pid: str,
+    publication_type: str | None,
+    cora_output: ET.Element,
+    context: Context,
 ) -> OutputMigrationResult:
     if _has_duplicate_old_id(errors, pid):
         return OutputMigrationResult(
             pid,
+            publication_type,
             status="SKIPPED",
             errors=["A record with the same oldId already exists in the system"],
         )
@@ -124,7 +142,9 @@ def _handle_invalid_record(
         context=context,
     )
     if is_success_result(create_result):
-        return OutputMigrationResult(pid, status="CLASSIC_QUALITY", errors=errors)
+        return OutputMigrationResult(
+            pid, publication_type, status="CLASSIC_QUALITY", errors=errors
+        )
     else:
         context.log(
             f"❌ Failed to create classic quality record for old id {pid}. {create_result.error}",
@@ -133,6 +153,7 @@ def _handle_invalid_record(
 
         return OutputMigrationResult(
             pid,
+            publication_type,
             status="FAILED",
             errors=[create_result.error] if create_result.error is not None else [],
         )

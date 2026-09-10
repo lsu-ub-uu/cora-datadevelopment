@@ -194,7 +194,13 @@ def _init_context(
 
 def _migrate_record(source_record):
     assert context is not None, "Context must be initialized before migrating records"
-    return output_migrate(source_record, context, apply, with_binaries=with_binaries, fedora_url=fedora_url)
+    return output_migrate(
+        source_record,
+        context,
+        apply,
+        with_binaries=with_binaries,
+        fedora_url=fedora_url,
+    )
 
 
 def _read_source_records(xml_dir: str, limit: int | None = None) -> list[ET.Element]:
@@ -250,10 +256,40 @@ def _generate_report(results: list[OutputMigrationResult]):
     return (status_counts, error_categories)
 
 
+def _group_error_pids_by_publication_type(results: list[OutputMigrationResult]):
+    grouped_pids = {}
+    for result in results:
+        if result.errors is None:
+            continue
+
+        publication_type = result.publication_type or "UNKNOWN"
+        for error in result.errors:
+            grouped_pids.setdefault(result.status, {}).setdefault(error, {}).setdefault(
+                publication_type, []
+            ).append(result.pid)
+
+    for error_group in grouped_pids.values():
+        for publication_type_group in error_group.values():
+            for publication_type, pids in publication_type_group.items():
+                publication_type_group[publication_type] = sorted(pids)
+
+    return grouped_pids
+
+
+def _format_publication_type_pid_groups(
+    publication_type_groups: dict[str, list[str]], group_separator: str = "\n"
+):
+    return group_separator.join(
+        f"{publication_type}: {', '.join(pids)}"
+        for publication_type, pids in sorted(publication_type_groups.items())
+    )
+
+
 def _print_rich_report(results: list[OutputMigrationResult]):
     """Prints the output of _generate_report using a table from the rich library."""
     console = Console()
     status_counts, errors = _generate_report(results)
+    grouped_error_pids = _group_error_pids_by_publication_type(results)
 
     # Print status counts table
     table = Table(title="Migration Status Counts")
@@ -271,9 +307,15 @@ def _print_rich_report(results: list[OutputMigrationResult]):
                 error_table = Table(title=f"{category} Errors", show_lines=True)
                 error_table.add_column("Error Message", style="red")
                 error_table.add_column("Occurrences", justify="right")
-                error_table.add_column("PIDs", style="cyan")
+                error_table.add_column("PIDs by publication type", style="cyan")
                 for error_msg, pids in error_dict.items():
-                    error_table.add_row(error_msg, str(len(pids)), ", ".join(pids))
+                    publication_type_groups = grouped_error_pids.get(category, {}).get(
+                        error_msg, {}
+                    )
+                    pid_groups = _format_publication_type_pid_groups(
+                        publication_type_groups
+                    )
+                    error_table.add_row(error_msg, str(len(pids)), pid_groups)
                 console.print(error_table)
 
 
@@ -295,6 +337,7 @@ def _save_markdown_report(
     output_dir: str = ".",
 ):
     status_counts, errors = _generate_report(results)
+    grouped_error_pids = _group_error_pids_by_publication_type(results)
     domain, timestamp, filepath = _generate_setup_for_report(xml_dir, output_dir, "md")
 
     os.makedirs(output_dir, exist_ok=True)
@@ -318,10 +361,15 @@ def _save_markdown_report(
         error_dict = errors.get(category, {})
         if error_dict:
             lines.append(f"## {status_labels[category]}\n")
-            lines.append("| Error Message | Occurrences | PIDs |")
+            lines.append("| Error Message | Occurrences | PIDs by publication type |")
             lines.append("|--------------|-------------|------|")
             for error_msg, pids in error_dict.items():
-                pid_str = ", ".join(pids)
+                publication_type_groups = grouped_error_pids.get(category, {}).get(
+                    error_msg, {}
+                )
+                pid_str = _format_publication_type_pid_groups(
+                    publication_type_groups, "<br>"
+                )
                 lines.append(
                     f"| {error_msg.replace('|', ' ').replace(chr(10), ' ')} | {len(pids)} | {pid_str} |"
                 )
@@ -339,6 +387,7 @@ def _save_html_report(
     output_dir: str = ".",
 ):
     status_counts, errors = _generate_report(results)
+    grouped_error_pids = _group_error_pids_by_publication_type(results)
     domain, timestamp, filepath = _generate_setup_for_report(
         xml_dir, output_dir, "html"
     )
@@ -383,7 +432,7 @@ def _save_html_report(
             h2.text = f"{status_labels[category]}"
             table = ET.SubElement(body, "table")
             tr_head = ET.SubElement(table, "tr")
-            for col in ["Error Message", "Occurrences", "PIDs"]:
+            for col in ["Error Message", "Occurrences", "PIDs by publication type"]:
                 th = ET.SubElement(tr_head, "th")
                 th.text = col
             for error_msg, pids in error_dict.items():
@@ -393,7 +442,16 @@ def _save_html_report(
                 td2 = ET.SubElement(tr, "td")
                 td2.text = str(len(pids))
                 td3 = ET.SubElement(tr, "td")
-                td3.text = ", ".join(pids)
+                publication_type_groups = grouped_error_pids.get(category, {}).get(
+                    error_msg, {}
+                )
+                for publication_type, grouped_pids in sorted(
+                    publication_type_groups.items()
+                ):
+                    group = ET.SubElement(td3, "div")
+                    label = ET.SubElement(group, "strong")
+                    label.text = f"{publication_type}: "
+                    label.tail = ", ".join(grouped_pids)
 
     html_str = ET.tostring(html, encoding="unicode", method="html")
     doctype = "<!DOCTYPE html>\n"
