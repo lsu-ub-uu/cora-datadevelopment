@@ -9,11 +9,8 @@ from common.arg_parser import (
     classic_arguments,
     cora_url_argument,
 )
-from common.run_rotating_logger import RunRotatingLogger
 from cora.context import CoraContext
 from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
-from common.xml_validate import validate_xml, XMLValidationError
-from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
 from common.common_data import read_source_xml
 from common.print_logo import print_logo
 from multiprocessing import Pool
