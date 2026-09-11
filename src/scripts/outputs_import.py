@@ -16,7 +16,7 @@ from common.common_data import read_source_xml
 from common.print_logo import print_logo
 from multiprocessing import Pool
 from tqdm import tqdm
-from scripts.util.outputs_import_report import save_reports
+from scripts.util.outputs_import_report.save_reports import save_reports
 
 context = None
 with_binaries = False

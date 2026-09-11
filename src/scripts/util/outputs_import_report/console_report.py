@@ -10,7 +10,7 @@ from scripts.util.outputs_import_report.report_data import (
 )
 
 
-def print_rich_report(results: list[OutputMigrationResult]):
+def print_console_report(results: list[OutputMigrationResult]):
     """Prints the output of generate_report_data using a table from the rich library."""
     console = Console()
     status_counts, errors = generate_report_data(results)
