@@ -104,7 +104,7 @@ def test_migrate_record_reads_source_xml_from_path(
     assert result.status == "SUCCESS"
 
 
-@patch("scripts.outputs_import._save_reports")
+@patch("scripts.outputs_import.save_reports")
 @patch("scripts.outputs_import._filter_source_record_paths_by_pids")
 @patch("scripts.outputs_import._read_source_record_paths")
 @patch("scripts.outputs_import.tqdm", side_effect=lambda **kwargs: _FakeTqdm(**kwargs))
@@ -215,7 +215,7 @@ def test_migrate_record_propagates_xml_parse_error(mock_read_source_xml):
     mock_read_source_xml.assert_called_once_with("/tmp/broken.xml")
 
 
-@patch("scripts.outputs_import._save_reports")
+@patch("scripts.outputs_import.save_reports")
 @patch("scripts.outputs_import._filter_source_record_paths_by_pids")
 @patch("scripts.outputs_import._read_source_record_paths")
 @patch("scripts.outputs_import.tqdm", side_effect=lambda **kwargs: _FakeTqdm(**kwargs))

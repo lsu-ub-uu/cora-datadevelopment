@@ -7,8 +7,15 @@ from fedora_to_cora.output_migrate import OutputMigrationResult
 def test_main_migrates_publications(monkeypatch):
     monkeypatch.setattr(
         "sys.argv",
-        ["outputs_migrate", "--pids", "pid1,pid2", "--system", "pre",
-         "--fedora-url", "http://fedora:8088"],
+        [
+            "outputs_migrate",
+            "--pids",
+            "pid1,pid2",
+            "--system",
+            "pre",
+            "--fedora-url",
+            "http://fedora:8088",
+        ],
     )
 
     mock_context = MagicMock()
@@ -29,8 +36,8 @@ def test_main_migrates_publications(monkeypatch):
 
     output_migrate_mock = MagicMock(
         side_effect=[
-            OutputMigrationResult("pid1", status="SUCCESS"),
-            OutputMigrationResult("pid2", status="SUCCESS"),
+            OutputMigrationResult("pid1", "book", status="SUCCESS"),
+            OutputMigrationResult("pid2", "chapter", status="SUCCESS"),
         ]
     )
     monkeypatch.setattr("scripts.outputs_migrate.output_migrate", output_migrate_mock)
@@ -69,7 +76,7 @@ def test_main_with_apply_and_binaries(monkeypatch):
     monkeypatch.setattr("scripts.outputs_migrate.get_classic_publications", fake_get)
 
     output_migrate_mock = MagicMock(
-        return_value=OutputMigrationResult("pid1", status="SUCCESS")
+        return_value=OutputMigrationResult("pid1", "book", status="SUCCESS")
     )
     monkeypatch.setattr("scripts.outputs_migrate.output_migrate", output_migrate_mock)
 
@@ -79,8 +86,15 @@ def test_main_with_apply_and_binaries(monkeypatch):
 def test_main_handles_fetch_error(monkeypatch):
     monkeypatch.setattr(
         "sys.argv",
-        ["outputs_migrate", "--pids", "pid1", "--system", "pre",
-         "--fedora-url", "http://fedora:8088"],
+        [
+            "outputs_migrate",
+            "--pids",
+            "pid1",
+            "--system",
+            "pre",
+            "--fedora-url",
+            "http://fedora:8088",
+        ],
     )
 
     mock_context = MagicMock()
@@ -104,9 +118,11 @@ def test_main_handles_fetch_error(monkeypatch):
 
 def test_print_summary(capsys):
     results = [
-        OutputMigrationResult("pid1", status="SUCCESS"),
-        OutputMigrationResult("pid2", status="FAILED", errors=["some error"]),
-        OutputMigrationResult("pid3", status="SUCCESS"),
+        OutputMigrationResult("pid1", "book", status="SUCCESS"),
+        OutputMigrationResult(
+            "pid2", "chapter", status="FAILED", errors=["some error"]
+        ),
+        OutputMigrationResult("pid3", "report", status="SUCCESS"),
     ]
 
     _print_summary(results)
