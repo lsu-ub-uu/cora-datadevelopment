@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, cast
 import xml.etree.ElementTree as ET
 from common.xml_utils import pretty_print_xml
 from common.xml_validate import validate_xml, XMLValidationError
@@ -13,24 +13,42 @@ from fedora_to_cora.transform.transform_output_to_classic_quality import (
 )
 from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
 
+OutputMigrationStatus = Literal[
+    "SUCCESS",
+    "CLASSIC_QUALITY",
+    "FAILED",
+    "SKIPPED",
+    "INPUT_VALIDATION_FAILED",
+]
+
 
 class OutputMigrationResult:
     pid: str
-    publicaion_type: str
-    status: Literal[
-        "SUCCESS", "CLASSIC_QUALITY", "FAILED", "SKIPPED", "INPUT_VALIDATION_FAILED"
-    ]
+    publication_type: str
+    status: OutputMigrationStatus
     errors: list[str] | None
 
     def __init__(
         self,
         pid: str,
-        publication_type: str | None,
-        status: Literal[
-            "SUCCESS", "CLASSIC_QUALITY", "FAILED", "SKIPPED", "INPUT_VALIDATION_FAILED"
-        ],
+        publication_type: str | None = None,
+        status: OutputMigrationStatus | None = None,
         errors: list[str] | None = None,
     ):
+        if status is None and isinstance(publication_type, str):
+            valid_statuses = {
+                "SUCCESS",
+                "CLASSIC_QUALITY",
+                "FAILED",
+                "SKIPPED",
+                "INPUT_VALIDATION_FAILED",
+            }
+            if publication_type in valid_statuses:
+                status = cast(OutputMigrationStatus, publication_type)
+                publication_type = "UNKNOWN"
+
+        assert status is not None
+
         self.pid = pid
         self.publication_type = publication_type if publication_type else "UNKNOWN"
         self.status = status

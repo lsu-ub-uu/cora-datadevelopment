@@ -7,11 +7,8 @@ from common.arg_parser import (
     classic_arguments,
     cora_url_argument,
 )
-from common.run_rotating_logger import RunRotatingLogger
 from cora.context import CoraContext
 from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
-from common.xml_validate import validate_xml, XMLValidationError
-from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
 from common.common_data import read_source_xml
 from common.print_logo import print_logo
 from multiprocessing import Pool
@@ -60,14 +57,16 @@ def outputs_import(
 ):
     start_time = time.perf_counter()
 
-    source_records = _read_source_records(xml_dir, limit)
+    source_record_paths = _read_source_record_paths(xml_dir, limit)
 
     if pids is not None:
-        source_records = [
-            record for record in source_records if record.findtext("pid") in pids
-        ]
+        source_record_paths = _filter_source_record_paths_by_pids(
+            source_record_paths, pids
+        )
 
-    print(f"Starting migration of {len(source_records)} records to {system} system...")
+    print(
+        f"Starting migration of {len(source_record_paths)} records to {system} system..."
+    )
     counts = {
         "SUCCESS": 0,
         "CLASSIC_QUALITY": 0,
@@ -88,8 +87,10 @@ def outputs_import(
             fedora_url,
             cora_url,
         ),
-    ) as pool, tqdm(total=len(source_records), desc="Importing records") as progress:
-        for result in pool.imap_unordered(_migrate_record, source_records):
+    ) as pool, tqdm(
+        total=len(source_record_paths), desc="Importing records"
+    ) as progress:
+        for result in pool.imap_unordered(_migrate_record, source_record_paths):
             counts[result.status] += 1
             results.append(result)
             progress.set_postfix_str(
@@ -168,8 +169,9 @@ def _init_context(
     fedora_url = fedora_url_arg
 
 
-def _migrate_record(source_record):
+def _migrate_record(source_record_path: str):
     assert context is not None, "Context must be initialized before migrating records"
+    source_record = read_source_xml(source_record_path)
     return output_migrate(
         source_record,
         context,
@@ -179,15 +181,31 @@ def _migrate_record(source_record):
     )
 
 
-def _read_source_records(xml_dir: str, limit: int | None = None) -> list[ET.Element]:
-    records = [
-        read_source_xml(os.path.join(xml_dir, filename))
+def _read_source_record_paths(xml_dir: str, limit: int | None = None) -> list[str]:
+    source_record_paths = [
+        os.path.join(xml_dir, filename)
         for filename in os.listdir(xml_dir)
         if filename.endswith(".xml")
     ]
+
     if limit is not None:
-        return records[:limit]
-    return records
+        return source_record_paths[:limit]
+
+    return source_record_paths
+
+
+def _filter_source_record_paths_by_pids(
+    source_record_paths: list[str], pids: list[str]
+) -> list[str]:
+    pid_set = set(pids)
+    filtered_paths = []
+
+    for source_record_path in source_record_paths:
+        source_record = read_source_xml(source_record_path)
+        if source_record.findtext("pid") in pid_set:
+            filtered_paths.append(source_record_path)
+
+    return filtered_paths
 
 
 if __name__ == "__main__":
