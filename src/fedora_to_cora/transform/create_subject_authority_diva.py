@@ -9,24 +9,24 @@ DIVA_SUBJECT_RECORD_TYPE = "diva-subject"
 
 def create_subject_authority_diva(
     source_record: ET.Element, context: Context
-) -> ET.Element | None:
+) -> list[ET.Element] | None:
     """
-    Create a subject element with authority "diva" based on the source record.
+    Create subject elements with authority "diva" based on the source record.
+
+    Each subject contains exactly one topic and has a unique repeatId.
     """
-    return create_group(
-        "subject",
-        authority="diva",
-        children=[
-            _create_topic(topic.text, i, context)
-            for i, topic in enumerate(
-                source_record.findall("./researchSubjects/subject/subjectId")
-            )
-            if topic.text
-        ],
-    )
+    subjects = [
+        _create_subject(topic.text, i, context)
+        for i, topic in enumerate(
+            source_record.findall("./researchSubjects/subject/subjectId")
+        )
+        if topic.text
+    ]
+
+    return subjects if subjects else None
 
 
-def _create_topic(subject_id: str, repeat_id: int, context: Context) -> ET.Element:
+def _create_subject(subject_id: str, repeat_id: int, context: Context) -> ET.Element:
     cora_id = get_cora_id_by_old_id(
         subject_id, record_type=DIVA_SUBJECT_RECORD_TYPE, context=context
     )
@@ -35,6 +35,12 @@ def _create_topic(subject_id: str, repeat_id: int, context: Context) -> ET.Eleme
         name_in_data="topic", record_type=DIVA_SUBJECT_RECORD_TYPE, record_id=cora_id
     )
     assert topic is not None
-    topic.set("repeatId", str(repeat_id))
+    subject = create_group(
+        "subject",
+        authority="diva",
+        repeatId=str(repeat_id),
+        children=[topic],
+    )
+    assert subject is not None
 
-    return topic
+    return subject

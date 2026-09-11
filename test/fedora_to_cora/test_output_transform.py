@@ -165,7 +165,7 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <classification authority="ssif" repeatId="0">30224</classification>
         <classification authority="ssif" repeatId="1">60301</classification>
         <subject authority="sdg"><topic repeatId="0">sdg1</topic></subject>
-        <subject authority="diva"><topic repeatId="0"><linkedRecordType>diva-subject</linkedRecordType><linkedRecordId>{subject_id}</linkedRecordId></topic></subject>
+        <subject authority="diva" repeatId="0"><topic><linkedRecordType>diva-subject</linkedRecordType><linkedRecordId>{subject_id}</linkedRecordId></topic></subject>
         <identifier displayLabel="print" repeatId="0" type="isbn">978-91-506-2649-0</identifier>
         <identifier displayLabel="online" repeatId="1" type="isbn">978-92-893-7379-1</identifier>
         <identifier displayLabel="undefined" repeatId="2" type="isbn">978-92-893-7380-7</identifier>
@@ -311,8 +311,8 @@ def test_output_transform_book(mock_diva_search_requests):
                 </name>
             </originInfo>
             <classification authority="ssif" repeatId="0">60503</classification>
-            <subject authority="diva">
-                <topic repeatId="0">
+            <subject authority="diva" repeatId="0">
+                <topic>
                     <linkedRecordType>diva-subject</linkedRecordType>
                     <linkedRecordId>{subject_id}</linkedRecordId>
                 </topic>
@@ -400,12 +400,14 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                 </dateIssued>
             </originInfo>
             <classification authority="ssif" repeatId="0">605</classification>
-            <subject authority="diva">
-                <topic repeatId="0">
+            <subject authority="diva" repeatId="0">
+                <topic>
                     <linkedRecordType>diva-subject</linkedRecordType>
                     <linkedRecordId>{subject_id}</linkedRecordId>
                 </topic>
-                <topic repeatId="1">
+            </subject>
+            <subject authority="diva" repeatId="1">
+                <topic>
                     <linkedRecordType>diva-subject</linkedRecordType>
                     <linkedRecordId>{subject_id}</linkedRecordId>
                 </topic>

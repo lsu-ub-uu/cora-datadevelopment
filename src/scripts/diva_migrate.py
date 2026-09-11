@@ -70,8 +70,7 @@ def main():
     else:
         selected_types = all_types
 
-    print(
-        r"""
+    print(r"""
  _______   __  __     __   ______         __       __  __                                 __       ______            
 /       \ /  |/  |   /  | /      \       /  \     /  |/  |                               /  |     /      \           
 $$$$$$$  |$$/ $$ |   $$ |/$$$$$$  |      $$  \   /$$ |$$/   ______    ______   ______   _$$ |_   /$$$$$$  |  ______  
@@ -85,8 +84,7 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
                                                           $$    $$/                                                  
                                                            $$$$$$/                                                   
                                                            
-"""
-    )
+""")
 
     context = CoraContext(
         args.system,
@@ -144,8 +142,11 @@ def migrate_publishers(args, context):
     print("--- Start migrating publishers")
     num_publishers = publishers_migrate(
         context,
-        db_host=args.db_host, db_port=args.db_port, db_name=args.db_name,
-        db_user=args.db_user, db_password=args.db_password,
+        db_host=args.db_host,
+        db_port=args.db_port,
+        db_name=args.db_name,
+        db_user=args.db_user,
+        db_password=args.db_password,
     )
     print(f"--- {num_publishers} Publishers imported to Cora ---")
 
@@ -154,8 +155,11 @@ def migrate_funders(args, context):
     print("--- Start migrating funders")
     num_funders = funders_migrate(
         context,
-        db_host=args.db_host, db_port=args.db_port, db_name=args.db_name,
-        db_user=args.db_user, db_password=args.db_password,
+        db_host=args.db_host,
+        db_port=args.db_port,
+        db_name=args.db_name,
+        db_user=args.db_user,
+        db_password=args.db_password,
     )
     print(f"--- {num_funders} Funders imported to Cora ---")
 
@@ -164,8 +168,11 @@ def migrate_journals(args, context):
     print("--- Start migrating journals ")
     num_journals = journals_migrate(
         context,
-        db_host=args.db_host, db_port=args.db_port, db_name=args.db_name,
-        db_user=args.db_user, db_password=args.db_password,
+        db_host=args.db_host,
+        db_port=args.db_port,
+        db_name=args.db_name,
+        db_user=args.db_user,
+        db_password=args.db_password,
     )
     print(f"--- {num_journals} Journals imported to Cora ---")
 
@@ -180,8 +187,12 @@ def migrate_subjects(args, context):
     print(f"--- Start migrating subjects for {args.domain} ---")
     num_subjects = subjects_migrate(
         context,
-        db_host=args.db_host, db_port=args.db_port, db_name=args.db_name,
-        db_user=args.db_user, db_password=args.db_password, domain=args.domain,
+        db_host=args.db_host,
+        db_port=args.db_port,
+        db_name=args.db_name,
+        db_user=args.db_user,
+        db_password=args.db_password,
+        domain=args.domain,
     )
     print(f"--- {num_subjects} Subjects imported to Cora ---")
 
@@ -190,8 +201,12 @@ def migrate_programmes(args, context):
     print(f"--- Start migrating programmes for {args.domain} ---")
     num_programmes = programmes_migrate(
         context,
-        db_host=args.db_host, db_port=args.db_port, db_name=args.db_name,
-        db_user=args.db_user, db_password=args.db_password, domain=args.domain,
+        db_host=args.db_host,
+        db_port=args.db_port,
+        db_name=args.db_name,
+        db_user=args.db_user,
+        db_password=args.db_password,
+        domain=args.domain,
     )
     print(f"--- {num_programmes} Programmes imported to Cora ---")
 
@@ -200,8 +215,12 @@ def migrate_courses(args, context):
     print(f"--- Start migrating courses for {args.domain} ---")
     num_courses = courses_migrate(
         context,
-        db_host=args.db_host, db_port=args.db_port, db_name=args.db_name,
-        db_user=args.db_user, db_password=args.db_password, domain=args.domain,
+        db_host=args.db_host,
+        db_port=args.db_port,
+        db_name=args.db_name,
+        db_user=args.db_user,
+        db_password=args.db_password,
+        domain=args.domain,
     )
     print(f"--- {num_courses} Courses imported to Cora ---")
 
@@ -210,8 +229,12 @@ def migrate_series(args, context):
     print(f"--- Start migrating series for {args.domain} ---")
     num_series = series_migrate(
         context,
-        db_host=args.db_host, db_port=args.db_port, db_name=args.db_name,
-        db_user=args.db_user, db_password=args.db_password, domain=args.domain,
+        db_host=args.db_host,
+        db_port=args.db_port,
+        db_name=args.db_name,
+        db_user=args.db_user,
+        db_password=args.db_password,
+        domain=args.domain,
     )
     print(f"--- {num_series} Series imported to Cora ---")
 

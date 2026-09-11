@@ -30,8 +30,7 @@ def test_create_subject_authority_diva(monkeypatch):
         mock_get_id,
     )
 
-    source_record = ET.fromstring(
-        f"""
+    source_record = ET.fromstring(f"""
         <publication>
             <researchSubjects>
                 <subject>
@@ -42,20 +41,29 @@ def test_create_subject_authority_diva(monkeypatch):
                 </subject>
             </researchSubjects>
         </publication>
-        """
-    )
+        """)
 
-    subject = create_subject_authority_diva(source_record, mock_context)
+    subjects = create_subject_authority_diva(source_record, mock_context)
+    assert subjects is not None
+    assert len(subjects) == 2
 
     assert_equal_for_xml_and_xml_string(
-        subject,
+        subjects[0],
         f"""
-        <subject authority="diva">
-            <topic repeatId="0">
+        <subject authority="diva" repeatId="0">
+            <topic>
                 <linkedRecordType>diva-subject</linkedRecordType>
                 <linkedRecordId>{subject_1_cora_id}</linkedRecordId>
             </topic>
-            <topic repeatId="1">
+        </subject>
+        """,
+    )
+
+    assert_equal_for_xml_and_xml_string(
+        subjects[1],
+        f"""
+        <subject authority="diva" repeatId="1">
+            <topic>
                 <linkedRecordType>diva-subject</linkedRecordType>
                 <linkedRecordId>{subject_2_cora_id}</linkedRecordId>
             </topic>
