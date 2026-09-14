@@ -67,7 +67,7 @@ def test_updates_outputs_with_subject_authority_diva(
         """),
     ]
 
-    fix_records(Mock(), MockContext())
+    fix_records(MockContext())
 
     assert mock_update_record.call_count == 2
 
