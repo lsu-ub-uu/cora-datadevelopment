@@ -1,10 +1,13 @@
 import xml.etree.ElementTree as ET
+import logging
 from typing import Callable
 from common.threads import run_with_threads
 from cora.validate import validate_record
 from cora.create import create_record, is_success_result
 from cora.context import Context
 from db_to_cora.update_relations import RelationMapping, update_relations
+
+logger = logging.getLogger(__name__)
 
 
 def records_import(
@@ -15,13 +18,12 @@ def records_import(
     relation_mappings: list[RelationMapping] | None = None,
     apply: bool = False,
 ):
-    context.log(
+    logger.info(
         f"Importing records for type: {record_type} to Cora system: {context.get_system()}"
     )
     print(
         f"Importing records for type: {record_type} to Cora system: {context.get_system()}"
     )
-    print(f"Output logged to {context.get_log_file_path()}")
 
     if apply:
         apply_import(
@@ -56,14 +58,12 @@ def apply_import(
                 f"A record matching the unique rule with [key: oldId, value: {old_id}] already exists in the system"
                 in result.error
             ):
-                context.log(
-                    f"Record with old id {old_id} already exists. Skipping creation.",
-                    level="warning",
+                logger.warning(
+                    f"Record with old id {old_id} already exists. Skipping creation."
                 )
                 return source_record, None
-            context.log(
-                f"Failed to create record with old id {old_id}: {result.error}",
-                level="error",
+            logger.error(
+                f"Failed to create record with old id {old_id}: {result.error}"
             )
             raise Exception(f"Record creation failed: {result.error}")
 

@@ -1,6 +1,9 @@
 import xml.etree.ElementTree as ET
+import logging
 from cora.context import Context
 import requests
+
+logger = logging.getLogger(__name__)
 
 
 def get_record(context: Context, record_type: str, record_id: str) -> ET.Element:
@@ -17,8 +20,7 @@ def get_record(context: Context, record_type: str, record_id: str) -> ET.Element
 
         return ET.fromstring(response.text)
     except Exception as e:
-        context.log(
-            f"❌ An error occurred while fetching record {record_type} with id {record_id}: {str(e)}",
-            "error",
+        logger.error(
+            f"❌ An error occurred while fetching record {record_type} with id {record_id}: {str(e)}"
         )
         raise e

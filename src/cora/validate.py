@@ -1,9 +1,12 @@
 import requests
 import xml.etree.ElementTree as ET
+import logging
 from typing import Tuple, List, Optional
 from common.xml_utils import create_group, create_text, pretty_print_xml
 from cora.context import Context
 from common.threads import run_with_threads
+
+logger = logging.getLogger(__name__)
 
 
 def validate_record_list(
@@ -21,7 +24,7 @@ def validate_record_list(
     valid_records = [valid for (valid, _) in validation_results if valid]
     validation_errors = [errors for (valid, errors) in validation_results if not valid]
 
-    context.log(
+    logger.info(
         f"Validated {len(record_list)} records. {len(valid_records)} valid, {len(validation_errors)} invalid."
     )
 
@@ -49,9 +52,8 @@ def validate_record(
         response = requests.post(validate_url, data=request_body, headers=headers)
 
         if response.status_code != 200 or not response.text:
-            context.log(
-                f"⚠️ Failed to validate {record_type} with oldId {old_id_text}: {response.status_code}.\nRecord XML: \n{pretty_print_xml(record)}",
-                "error",
+            logger.error(
+                f"⚠️ Failed to validate {record_type} with oldId {old_id_text}: {response.status_code}.\nRecord XML: \n{pretty_print_xml(record)}"
             )
             return (False, [f"Validation failed with status {response.status_code}"])
 
@@ -64,15 +66,13 @@ def validate_record(
         errors = [
             msg.text for msg in response_data.findall(".//errorMessage") if msg.text
         ]
-        context.log(
-            f"❌ Validation failed for {record_type} with oldId {old_id_text}.\n\nErrors:\n - {"\n - ".join(errors)}\n\nRecord XML: \n{pretty_print_xml(record)}",
-            "error",
+        logger.error(
+            f"❌ Validation failed for {record_type} with oldId {old_id_text}.\n\nErrors:\n - {"\n - ".join(errors)}\n\nRecord XML: \n{pretty_print_xml(record)}"
         )
         return (False, errors)
     except requests.RequestException as e:
-        context.log(
-            f"❌ Request failed for {record_type} with oldId {old_id_text}: {e}",
-            "error",
+        logger.error(
+            f"❌ Request failed for {record_type} with oldId {old_id_text}: {e}"
         )
         return (False, [str(e)])
 

@@ -2,6 +2,7 @@ import os
 from unittest import result
 from common.arg_parser import create_argument_parser, cora_url_argument
 from common.common_data import read_source_xml
+from common.logging_config import configure_logging
 from cora.context import CoraContext
 from cora.create import create_record, is_success_result
 
@@ -39,6 +40,8 @@ def main():
     )
 
     args = parser.parse_args()
+
+    configure_logging()
 
     env = {
         "xml_dir": args.xml_dir,

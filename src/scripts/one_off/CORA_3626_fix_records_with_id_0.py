@@ -1,5 +1,6 @@
 from copy import deepcopy
 from common.arg_parser import create_argument_parser, cora_url_argument
+from common.logging_config import configure_logging
 from common.threads import run_with_threads
 from cora.delete_record import delete_record
 from cora.create import create_record, is_success_result
@@ -23,6 +24,7 @@ def main():
 
     print("Updating record links...")
     args = _parse_args()
+    configure_logging()
     context = CoraContext(
         args.system, args.login_id, args.app_token, cora_url=args.cora_url
     )

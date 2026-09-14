@@ -1,9 +1,12 @@
 import requests
 import xml.etree.ElementTree as ET
+import logging
 from typing import Tuple, List, Optional
 from cora.context import Context
 from common.threads import run_with_threads
 from common.xml_utils import pretty_print_xml
+
+logger = logging.getLogger(__name__)
 
 
 class UpdateRecordResult:
@@ -54,27 +57,23 @@ def update_record(
             response_data = ET.fromstring(response.text)
             record_id = response_data.findtext(".//id")
 
-            context.log(
-                f"Successfully updated record with id {record_id}",
-            )
+            logger.info(f"Successfully updated record with id {record_id}")
             return UpdateRecordResult(
                 success=True,
                 record_id=record_id,
                 response_data=response_data,
             )
 
-        context.log(
-            f"❌ Failed to update record with oldId {old_id_text}. \n\nStatus: {response.status_code}\n{response.text}\n",
-            "error",
+        logger.error(
+            f"❌ Failed to update record with oldId {old_id_text}. \n\nStatus: {response.status_code}\n{response.text}\n"
         )
         return UpdateRecordResult(
             success=False,
             error=f"Failed to update record with status {response.status_code}: {response.text}",
         )
     except requests.RequestException as e:
-        context.log(
-            f"❌ Request failed for update record with oldId {old_id_text}: {e}",
-            "error",
+        logger.error(
+            f"❌ Request failed for update record with oldId {old_id_text}: {e}"
         )
         return UpdateRecordResult(success=False, error=str(e))
 

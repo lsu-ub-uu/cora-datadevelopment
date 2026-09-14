@@ -23,15 +23,24 @@ def reset_global_data(ctx, init_utils):
 
 def test_delete_records_with_prefix(monkeypatch, record_node):
     def fake_get_ids(prefix):
-        fake_presentations = ["__test_prefix_presentation1", "__test_prefix_presentation2"]
-        fake_validation_types = ["__test_prefix_record1", "__test_prefix_record2", "__test_prefix_record3"]
+        fake_presentations = [
+            "__test_prefix_presentation1",
+            "__test_prefix_presentation2",
+        ]
+        fake_validation_types = [
+            "__test_prefix_record1",
+            "__test_prefix_record2",
+            "__test_prefix_record3",
+        ]
 
         if prefix == "presentation":
             return fake_presentations
         else:
             return fake_validation_types
 
-    monkeypatch.setattr(common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids)
+    monkeypatch.setattr(
+        common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids
+    )
 
     script.delete_records_with_prefix()
     assert script.TOTAL_PROCESSED_RECORDS == 3
@@ -40,7 +49,10 @@ def test_delete_records_with_prefix(monkeypatch, record_node):
 
 def test_delete_records_with_prefix_no_validation_types(monkeypatch):
     def fake_get_ids(prefix):
-        fake_presentations = ["__test_prefix_presentation1", "__test_prefix_presentation2"]
+        fake_presentations = [
+            "__test_prefix_presentation1",
+            "__test_prefix_presentation2",
+        ]
         fake_validation_types = []
 
         if prefix == "presentation":
@@ -48,7 +60,9 @@ def test_delete_records_with_prefix_no_validation_types(monkeypatch):
         else:
             return fake_validation_types
 
-    monkeypatch.setattr(common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids)
+    monkeypatch.setattr(
+        common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids
+    )
 
     script.delete_records_with_prefix()
     assert script.TOTAL_PROCESSED_RECORDS == 0
@@ -66,7 +80,9 @@ def test_delete_presentations(monkeypatch):
     def fake_get_ids(prefix):
         return ["__test_prefix_presentation1", "__test_prefix_presentation2"]
 
-    monkeypatch.setattr(common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids)
+    monkeypatch.setattr(
+        common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids
+    )
     monkeypatch.setattr(script.utils, "try_to_delete_record", lambda url, errors: True)
 
     script.delete_records_of_type_matching_prefix("presentation")
@@ -79,51 +95,60 @@ def test_delete_presentations_no_presentations(monkeypatch):
     def fake_get_ids(prefix):
         return []
 
-    monkeypatch.setattr(common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids)
+    monkeypatch.setattr(
+        common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids
+    )
     monkeypatch.setattr(script.utils, "try_to_delete_record", lambda url, errors: False)
 
     script.delete_records_of_type_matching_prefix("presentation")
     assert script.TOTAL_RECORD_DELETIONS == 0
 
 
-def test_delete_presentations_no_presentations_with_retry(monkeypatch, ctx):
+def test_delete_presentations_no_presentations_with_retry(monkeypatch, ctx, caplog):
     script.DRY_RUN = False
 
     def fake_get_ids(prefix):
         return ["__test_prefix_presentation1", "__test_prefix_presentation2"]
 
-    monkeypatch.setattr(common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids)
+    monkeypatch.setattr(
+        common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids
+    )
     delete_sequence = iter([False, False, True])
-    monkeypatch.setattr(script.utils, "try_to_delete_record",
-                        lambda url, errors: next(delete_sequence, True))
+    monkeypatch.setattr(
+        script.utils,
+        "try_to_delete_record",
+        lambda url, errors: next(delete_sequence, True),
+    )
 
     script.delete_records_of_type_matching_prefix("presentation")
     assert script.TOTAL_RECORD_DELETIONS == 2
 
-    calls = [call.args[0] for call in ctx.log.mock_calls]
-    assert any("Failed to delete record" in msg for msg in calls)
-    assert len(calls) == 2
+    assert any("Failed to delete record" in msg for msg in caplog.messages)
+    assert len(caplog.messages) == 2
 
 
-def test_delete_presentations_no_presentations_failed_delete(monkeypatch, ctx):
+def test_delete_presentations_no_presentations_failed_delete(monkeypatch, ctx, caplog):
     script.DRY_RUN = False
 
     def fake_get_ids(prefix):
         return ["__test_prefix_presentation1"]
 
-    monkeypatch.setattr(common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids)
+    monkeypatch.setattr(
+        common_utils, "get_ids_for_record_type_matching_prefix", fake_get_ids
+    )
     delete_sequence = iter([False, False, True])
-    monkeypatch.setattr(script.utils, "try_to_delete_record",
-                        lambda url, errors: False)
+    monkeypatch.setattr(script.utils, "try_to_delete_record", lambda url, errors: False)
 
     script.delete_records_of_type_matching_prefix("presentation")
     assert script.TOTAL_RECORD_DELETIONS == 0
 
-    calls = [call.args[0] for call in ctx.log.mock_calls]
-    assert any("Failed to delete record" in msg for msg in calls)
-    assert len(calls) == 5
+    assert any("Failed to delete record" in msg for msg in caplog.messages)
+    assert len(caplog.messages) == 5
 
-    assert "Failed to delete http://baseUrl/presentation/__test_prefix_presentation1 after 5 retries!" in script.TOTAL_ERRORS
+    assert (
+        "Failed to delete http://baseUrl/presentation/__test_prefix_presentation1 after 5 retries!"
+        in script.TOTAL_ERRORS
+    )
 
 
 def test_process_node_map_and_delete_records(create_node_tree, monkeypatch):
@@ -133,7 +158,7 @@ def test_process_node_map_and_delete_records(create_node_tree, monkeypatch):
         "urlD": node_tree["D"],
         "urlB": node_tree["B"],
         "urlE": node_tree["E"],
-        "urlC": node_tree["C"]
+        "urlC": node_tree["C"],
     }
 
     processed_order = []
@@ -180,12 +205,11 @@ def test_prepare_url_and_possibly_delete_success_due_to_correct_prefix(record_no
     assert script.prepare_url_and_possibly_delete(record_node)
 
 
-def test_update_record_dry_run(record_node, ctx):
+def test_update_record_dry_run(record_node, ctx, caplog):
     script.DRY_RUN = True
     assert script.update_record(record_node)
 
-    calls = [call.args[0] for call in ctx.log.mock_calls]
-    assert any("Dry run mode" in msg for msg in calls)
+    assert any("Dry run mode" in msg for msg in caplog.messages)
 
 
 def test_update_record(record_node):

@@ -1,12 +1,14 @@
-from logging import Logger
+import logging
 import xml.etree.ElementTree as ET
 from common.threads import run_with_threads
 from common.xml_utils import create_text, pretty_print_xml, create_group
-from common.run_rotating_logger import RunRotatingLogger
+from common.logging_config import configure_logging
 from cora.context import Context, CoraContext
 from cora.list_records import list_records
 from common.arg_parser import create_argument_parser, common_arguments
 from cora.update import update_record
+
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -17,9 +19,7 @@ def main():
     for each topic under the original subject.
     """
     args = _parse_args()
-    logger = RunRotatingLogger(
-        "data", "../../../logs/CORA-3700_update_subject_authority_diva_model.log"
-    ).get()
+    configure_logging()
 
     logger.info("==== Begin updating diva-output subject authority model ====")
     logger.info(f"==== system={args.system} ====")
@@ -28,22 +28,21 @@ def main():
         args.system, args.login_id, args.app_token, cora_url=args.cora_url
     )
 
-    fix_records(logger, context)
+    fix_records(context)
 
 
-def fix_records(logger: Logger, context: Context):
+def fix_records(context: Context):
     output_records = list_records(context, "diva-output")
     logger.info(f"Number of diva-output records: {len(output_records)}")
 
     results = run_with_threads(
         output_records,
-        lambda record: _fix_record(record, context, logger),
+        lambda record: _fix_record(record, context),
         context.get_workers(),
         "Updating diva-output records",
     )
 
     _log_summary(
-        logger,
         len(output_records),
         updated=results.count("updated"),
         failed=results.count("failed"),
@@ -51,7 +50,7 @@ def fix_records(logger: Logger, context: Context):
     )
 
 
-def _fix_record(record: ET.Element, context: Context, logger: Logger):
+def _fix_record(record: ET.Element, context: Context):
     record_id = record.findtext("./data/output/recordInfo/id")
     output = record.find("./data/output")
     assert output is not None, "Output element not found in record"
@@ -93,7 +92,7 @@ def _fix_record(record: ET.Element, context: Context, logger: Logger):
     return "updated" if result.success else "failed"
 
 
-def _log_summary(logger: Logger, total: int, updated: int, failed: int, skipped: int):
+def _log_summary(total: int, updated: int, failed: int, skipped: int):
     logger.info("==================== Summary ====================")
     logger.info(f"Total diva-output records: {total}")
     logger.info(f"Updated: {updated}")

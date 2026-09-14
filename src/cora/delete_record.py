@@ -1,6 +1,9 @@
 import xml.etree.ElementTree as ET
+import logging
 import requests
 from cora.context import Context
+
+logger = logging.getLogger(__name__)
 
 
 def delete_record(record_type: str, record_id: str, context: Context):
@@ -14,8 +17,7 @@ def delete_record(record_type: str, record_id: str, context: Context):
 
         response.raise_for_status()
     except requests.RequestException as e:
-        context.log(
-            f"❌ An error occurred while deleting record {record_type} with id {record_id}: {str(e)}",
-            "error",
+        logger.error(
+            f"❌ An error occurred while deleting record {record_type} with id {record_id}: {str(e)}"
         )
         raise e

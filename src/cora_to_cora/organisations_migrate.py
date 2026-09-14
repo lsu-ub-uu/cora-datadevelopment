@@ -1,4 +1,5 @@
 from typing import Tuple
+import logging
 import requests
 from common.threads import run_with_threads
 from cora.validate import validate_record
@@ -13,15 +14,17 @@ from cora.cora_json_utils import (
 import xml.etree.ElementTree as ET
 from cora.context import Context, CoraContext
 
+logger = logging.getLogger(__name__)
+
 
 def organisations_migrate(context: Context, domain: str):
     old_organisations = _get_old_cora_organisations(context, domain)
 
     if len(old_organisations) == 0:
-        context.log("No organisations found to migrate from old Cora system.")
+        logger.info("No organisations found to migrate from old Cora system.")
         return
 
-    context.log(
+    logger.info(
         f"Found {len(old_organisations)} organisations to migrate from old Cora system."
     )
 
@@ -34,11 +37,11 @@ def organisations_migrate(context: Context, domain: str):
         )
         if not is_success_result(created_org):
             if created_org.error and "status 409" in created_org.error:
-                context.log(
+                logger.info(
                     f"Skipping organisation with old ID {new_org.findtext('./recordInfo/oldId')}: already exists in the system."
                 )
                 return
-            context.log(
+            logger.info(
                 f"Failed to create organisation for old ID {new_org.findtext('./recordInfo/oldId')}: {created_org.error}"
             )
             raise Exception(

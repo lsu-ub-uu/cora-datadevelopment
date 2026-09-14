@@ -1,9 +1,12 @@
 import requests
 import xml.etree.ElementTree as ET
+import logging
 from requests_toolbelt.multipart.encoder import MultipartEncoder
 from common.xml_utils import pretty_print_xml
 from cora.context import Context, CoraContext, MockContext
 from cora.create import create_record
+
+logger = logging.getLogger(__name__)
 
 
 def upload_binary(binary_record: ET.Element, file_name: str, data, context: Context):
@@ -35,9 +38,9 @@ def upload_binary(binary_record: ET.Element, file_name: str, data, context: Cont
     )
 
     if response.status_code == 200:
-        context.log(f"Upload successful: {file_name} ")
+        logger.info(f"Upload successful: {file_name} ")
     else:
-        context.log(f"Upload failed: {response.text}")
+        logger.info(f"Upload failed: {response.text}")
         raise UploadError(
             f"Failed to upload binary file '{file_name}': {response.status_code} - {response.text}"
         )

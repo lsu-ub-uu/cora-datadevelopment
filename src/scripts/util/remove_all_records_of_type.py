@@ -3,6 +3,7 @@ import requests
 import xml.etree.ElementTree as ET
 from common.threads import run_with_threads
 from common.arg_parser import create_argument_parser, cora_url_argument
+from common.logging_config import configure_logging
 
 
 def main():
@@ -40,6 +41,7 @@ def main():
 
     args = argparser.parse_args()
 
+    configure_logging()
     context = CoraContext(
         system=args.system,
         login_id=args.login_id,

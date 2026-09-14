@@ -1,10 +1,13 @@
 import requests
 import xml.etree.ElementTree as ET
 import time
+import logging
 from typing import Literal, Tuple, List, Optional, TypeGuard
 from cora.context import Context
 from common.threads import run_with_threads
 from common.xml_utils import pretty_print_xml
+
+logger = logging.getLogger(__name__)
 
 
 def create_record_list(
@@ -34,7 +37,7 @@ def create_record_list(
         result for result in creation_results if not is_success_result(result)
     ]
 
-    context.log(
+    logger.info(
         f"Created {len(record_list)} records. {len(successful_creates)} succeeded, {len(creation_errors)} failed."
     )
 
@@ -107,17 +110,15 @@ def create_record(
                 record_id = response_data.findtext(".//recordInfo/id")
                 assert record_id is not None, "Record ID not found in response"
                 if attempt > 0:
-                    context.log(
-                        f"✅ Successfully created record for {record_type} with oldId {old_id_text} on attempt {attempt + 1}",
-                        "info",
+                    logger.info(
+                        f"✅ Successfully created record for {record_type} with oldId {old_id_text} on attempt {attempt + 1}"
                     )
                 return CreateRecordSuccessResult(
                     record_id=record_id, response_data=response_data
                 )
 
-            context.log(
-                f"❌ Failed to create record for {record_type} with oldId {old_id_text}. \n\nStatus: {response.status_code}\n{response.text}\n",
-                "error",
+            logger.error(
+                f"❌ Failed to create record for {record_type} with oldId {old_id_text}. \n\nStatus: {response.status_code}\n{response.text}\n"
             )
             return CreateRecordFailureResult(
                 error=f"Failed to create record with status {response.status_code}: {response.text}",
@@ -125,16 +126,14 @@ def create_record(
         except requests.RequestException as e:
             if attempt < max_retries:
                 delay = initial_delay * (2**attempt)
-                context.log(
-                    f"⚠️ Request exception for {record_type} with oldId {old_id_text}: {e}. Retrying in {delay}s (attempt {attempt + 1}/{max_retries + 1})",
-                    "warning",
+                logger.warning(
+                    f"⚠️ Request exception for {record_type} with oldId {old_id_text}: {e}. Retrying in {delay}s (attempt {attempt + 1}/{max_retries + 1})"
                 )
                 time.sleep(delay)
                 continue
             else:
-                context.log(
-                    f"❌ Request failed for {record_type} with oldId {old_id_text}: {e}",
-                    "error",
+                logger.error(
+                    f"❌ Request failed for {record_type} with oldId {old_id_text}: {e}"
                 )
                 return CreateRecordFailureResult(
                     error=str(e),

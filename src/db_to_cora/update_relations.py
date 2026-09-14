@@ -1,9 +1,12 @@
 import xml.etree.ElementTree as ET
+import logging
 from common.threads import run_with_threads
 from cora.context import Context
 from cora.update import update_record
 from common.common_data import create_record_link
 from common.xml_utils import create_group
+
+logger = logging.getLogger(__name__)
 
 
 class RelationMapping:
@@ -60,7 +63,7 @@ def _update_relations_for_single_record(
         for index, related_old_id in enumerate(old_relation_ids):
             if related_old_id in old_id_to_new_id_map:
                 related_new_id = old_id_to_new_id_map[related_old_id]
-                context.log(
+                logger.info(
                     f"Adding relation with type {new_relation_type} from {old_id} to {related_old_id}"
                 )
                 new_record_data.append(
@@ -76,7 +79,7 @@ def _update_relations_for_single_record(
                 modified = True
 
     if modified:
-        context.log(
+        logger.info(
             f"Updating relations for {record_type} record with oldId {new_record.findtext('./oldId')}"
         )
         update_result = update_record(

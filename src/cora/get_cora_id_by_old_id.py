@@ -1,8 +1,11 @@
 import xml.etree.ElementTree as ET
+import logging
 import requests
 from common.xml_utils import inline_xml_string
 from typing import Literal
 from cora.context import Context
+
+logger = logging.getLogger(__name__)
 
 _cache: dict[str, str] = {}
 
@@ -78,9 +81,8 @@ def get_cora_id_by_old_id(
     record_ids = response_xml.findall(".//recordInfo/id")
 
     if len(record_ids) > 1:
-        context.log(
-            f"Warning: Multiple {record_type}s found for old ID '{old_id}'. Using the first one.",
-            "warning",
+        logger.warning(
+            f"Warning: Multiple {record_type}s found for old ID '{old_id}'. Using the first one."
         )
     elif len(record_ids) == 0:
         return f"{record_type} not found for old ID: {old_id}"

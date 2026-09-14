@@ -1,9 +1,11 @@
 from datetime import datetime
-from common.run_rotating_logger import RunRotatingLogger
+import logging
 import xml.etree.ElementTree as ET
 from classic.get_pids_for_domain import get_pids_for_domain
 from classic.get_classic_publications import get_classic_publications
 from common.xml_utils import save_to_file
+
+logger = logging.getLogger(__name__)
 
 
 def export_publications_from_fedora(
@@ -11,7 +13,6 @@ def export_publications_from_fedora(
 ):
     time_started = _get_now()
     dirname = f"data/fedora_xml/{domain}/{time_started.isoformat()}"
-    logger = RunRotatingLogger("data", f"logs/outputs_export.log").get()
 
     logger.info("==== Begin importing publications from Fedora ====")
     logger.info(f"==== domain={domain} ====")

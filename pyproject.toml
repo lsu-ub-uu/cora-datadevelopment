@@ -33,3 +33,4 @@ build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 testpaths = ["test"]
+log_level = "INFO"

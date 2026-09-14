@@ -1,8 +1,11 @@
+import logging
+
 from common.arg_parser import (
     create_argument_parser,
     classic_arguments,
     cora_url_argument,
 )
+from common.logging_config import configure_logging
 from cora.context import CoraContext
 from cora_to_cora.organisations_migrate import organisations_migrate
 from db_to_cora.publishers_migrate import publishers_migrate
@@ -12,6 +15,8 @@ from db_to_cora.subjects_migrate import subjects_migrate
 from db_to_cora.programmes_migrate import programmes_migrate
 from db_to_cora.courses_migrate import courses_migrate
 from db_to_cora.series_migrate import series_migrate
+
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -55,6 +60,8 @@ def main():
     )
     args = argparser.parse_args()
 
+    configure_logging()
+
     # Parse record types
     all_common_types = ["publishers", "funders", "journals"]
     all_domain_types = ["organisations", "subjects", "series", "programmes", "courses"]
@@ -93,7 +100,7 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
         workers=args.workers,
         cora_url=args.cora_url,
     )
-    context.log(f"=== Migration started for {args.domain} to {args.system} ===")
+    logger.info(f"=== Migration started for {args.domain} to {args.system} ===")
 
     # Determine which common types to migrate
     common_types_to_migrate = [t for t in all_common_types if t in selected_types]
@@ -135,7 +142,7 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
         # TODO Outputs
 
         print(f"=== Data migration for {args.domain} domain completed ===")
-    context.log(f"=== Migration completed for {args.domain} to {args.system} ===")
+    logger.info(f"=== Migration completed for {args.domain} to {args.system} ===")
 
 
 def migrate_publishers(args, context):

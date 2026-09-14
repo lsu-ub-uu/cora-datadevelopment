@@ -1,4 +1,5 @@
 from common.arg_parser import create_argument_parser, classic_arguments
+from common.logging_config import configure_logging
 from fedora_to_cora.export_publications_from_fedora import (
     export_publications_from_fedora,
 )
@@ -22,6 +23,8 @@ def main():
     )
 
     args = parser.parse_args()
+
+    configure_logging()
 
     export_publications_from_fedora(
         args.domain,

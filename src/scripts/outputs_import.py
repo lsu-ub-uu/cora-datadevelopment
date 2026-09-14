@@ -7,6 +7,7 @@ from common.arg_parser import (
     classic_arguments,
     cora_url_argument,
 )
+from common.logging_config import configure_logging
 from cora.context import CoraContext
 from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
 from common.common_data import read_source_xml
@@ -26,6 +27,7 @@ def main():
 
     print_logo()
 
+    configure_logging()
     args = _parse_args()
     outputs_import(
         xml_dir=args.xml_dir,
@@ -158,6 +160,7 @@ def _init_context(
     system, login_id, app_token, apply_flag, binaries_flag, fedora_url_arg, cora_url
 ):
     global context, apply, with_binaries, fedora_url
+    configure_logging()
     context = CoraContext(
         system=system,
         login_id=login_id,

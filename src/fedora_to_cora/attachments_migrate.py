@@ -1,6 +1,7 @@
 from typing import Tuple
 import xml.etree.ElementTree as ET
 import copy
+import logging
 
 from cora.context import Context
 from fedora_to_cora.binary_migrate import migrate_binary
@@ -20,6 +21,8 @@ from common.xml_utils import (
     create_text,
     pretty_print_xml,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def attachments_migrate(
@@ -45,13 +48,17 @@ def attachments_migrate(
         host_record = _create_host_record(cora_record_id)
         for attachment in _sort_by_order(attachments):
             if attachment.findtext("./deleted") == "true":
-                context.log(
+                logger.info(
                     f"🗑️ Skipping deleted attachment {attachment.findtext('./fileName')} for record with old id {source_record.findtext('.//pid')}"
                 )
                 continue
 
             attachment, error = _migrate_attachment(
-                attachment, context, created_binary_records, source_record, host_record,
+                attachment,
+                context,
+                created_binary_records,
+                source_record,
+                host_record,
                 fedora_url=fedora_url,
             )
             if attachment is not None:
@@ -62,20 +69,18 @@ def attachments_migrate(
         if not errors and len(attachments_group.findall("./attachment")) > 0:
             update_result = update_record(record_to_update, context)
             if update_result.success:
-                context.log(
+                logger.info(
                     f"✅ Successfully migrated {len(attachments_group.findall('./attachment'))} attachments for record with old id {source_record.findtext('.//pid')}"
                 )
             else:
-                context.log(
-                    f"❌ Failed to update record with attachments for record with old id {source_record.findtext('.//pid')}: {update_result.error}\nUpdate request body:\n{pretty_print_xml(record_to_update)}",
-                    level="error",
+                logger.error(
+                    f"❌ Failed to update record with attachments for record with old id {source_record.findtext('.//pid')}: {update_result.error}\nUpdate request body:\n{pretty_print_xml(record_to_update)}"
                 )
                 errors.append(update_result.error)
                 _roll_back_binary_records(created_binary_records, context)
         else:
-            context.log(
-                "❌ Errors occurred during attachment migration, rolling back created binary records.",
-                level="error",
+            logger.error(
+                "❌ Errors occurred during attachment migration, rolling back created binary records."
             )
             _roll_back_binary_records(created_binary_records, context)
 
@@ -123,7 +128,7 @@ def _migrate_attachment(
                 fedora_url=fedora_url,
             )
         except Exception as e:
-            context.log(f"🥵 [PID {pid}] Error migrating binary: {e}", level="error")
+            logger.error(f"🥵 [PID {pid}] Error migrating binary: {e}")
             return None, str(e)
 
         validation_type = get_validation_type_from_fedora_record(source_record)
@@ -136,9 +141,8 @@ def _migrate_attachment(
         )
         return cora_attachment, None
     else:
-        context.log(
-            f"❌ Failed to create binary record for attachment {attachment.findtext('./name')}: {create_binary_result.error}\nCreate request body:\n{pretty_print_xml(binary_record)}",
-            "error",
+        logger.error(
+            f"❌ Failed to create binary record for attachment {attachment.findtext('./name')}: {create_binary_result.error}\nCreate request body:\n{pretty_print_xml(binary_record)}"
         )
         return None, create_binary_result.error
 

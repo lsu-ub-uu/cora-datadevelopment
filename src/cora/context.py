@@ -3,26 +3,14 @@ from cora import constants
 import requests
 import time
 import threading
-from typing import Protocol, Literal
-from logging import Logger
-from common.run_rotating_logger import RunRotatingLogger
-import sys
-import os
-from unittest.mock import MagicMock
+from typing import Protocol
 from cora.get_deployment_info import get_deployment_info
-
-main_script = os.path.basename(sys.argv[0])
 
 
 class Context(Protocol):
     def get_base_url(self) -> str: ...
-    def get_auth_token(self) -> str: ...
-    def get_logger(self) -> Logger: ...
-    def log(
-        self, message: str, level: Literal["info", "error", "warning"] = "info"
-    ) -> None: ...
-    def get_log_file_path(self) -> str: ...
     def get_workers(self) -> int: ...
+    def get_auth_token(self) -> str: ...
     def get_system(self) -> str: ...
 
 
@@ -43,7 +31,6 @@ class CoraContext(Context):
         else:
             self._base_url = constants.BASE_URL[self.system]
             login_url = constants.LOGIN_URLS[self.system]
-        self._logger = RunRotatingLogger("data", f"logs/{main_script}.log").get()
         self.app_token_client = AppTokenClient(
             dependencies={
                 "requests": requests,
@@ -87,38 +74,6 @@ class CoraContext(Context):
         """
         return str(self.app_token_client.get_auth_token())
 
-    def get_logger(self) -> Logger:
-        """
-        Get the logger instance for logging messages.
-
-        :return: The logger instance.
-        """
-        return self._logger
-
-    def get_log_file_path(self) -> str:
-        """
-        Get the file path of the log file.
-
-        :return: The log file path as a string.
-        """
-        return self._logger.handlers[0].baseFilename  # type: ignore[attr-defined]
-
-    def log(self, message: str, level: Literal["info", "error", "warning"] = "info"):
-        """
-        Log a message with the specified logging level.
-
-        :param message: The message to log.
-        :param level: The logging level (default is "info").
-        """
-        if level == "info":
-            self._logger.info(message)
-        elif level == "error":
-            self._logger.error(message)
-        elif level == "warning":
-            self._logger.warning(message)
-        else:
-            self._logger.debug(message)
-
     def get_workers(self) -> int:
         """
         Get the number of worker threads to use for parallel processing.
@@ -141,24 +96,12 @@ class MockContext(Context):
         self._base_url = base_url
         self._auth_token = auth_token
         self._workers = workers
-        self.log = MagicMock()
-
-    def log(
-        self, message: str, level: Literal["info", "error", "warning"] = "info"
-    ) -> None:
-        pass
 
     def get_base_url(self):
         return self._base_url
 
     def get_auth_token(self):
         return self._auth_token
-
-    def get_logger(self):
-        return MagicMock()
-
-    def get_log_file_path(self) -> str:
-        return "mock_log_file.log"
 
     def get_workers(self) -> int:
         return self._workers

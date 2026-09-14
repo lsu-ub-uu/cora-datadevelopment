@@ -45,7 +45,7 @@ def test_create_record_success(requests_mock):
     )
 
 
-def test_create_record_not_201(requests_mock):
+def test_create_record_not_201(requests_mock, caplog):
     base_url = "https://mock.diva-portal.org/rest/record/"
     auth_token = "mock-token"
     record_type = "someRecordType"
@@ -65,7 +65,7 @@ def test_create_record_not_201(requests_mock):
         result.error == "Failed to create record with status 500: Internal Server Error"
     )
 
-    mock_context.log.assert_called_with(  # type: ignore
+    assert (
+        "ERROR",
         f"❌ Failed to create record for {record_type} with oldId N/A. \n\nStatus: 500\nInternal Server Error\n",
-        "error",
-    )
+    ) in [(record.levelname, record.getMessage()) for record in caplog.records]

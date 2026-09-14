@@ -1,4 +1,5 @@
 from common.arg_parser import create_argument_parser, cora_url_argument
+from common.logging_config import configure_logging
 from cora.context import CoraContext
 from cora_to_cora.organisations_migrate import organisations_migrate
 
@@ -36,6 +37,7 @@ def main():
 
     args = parser.parse_args()
 
+    configure_logging()
     context = CoraContext(
         system=args.system,
         login_id=args.login_id,

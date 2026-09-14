@@ -83,7 +83,7 @@ def test_main_with_apply_and_binaries(monkeypatch):
     main()
 
 
-def test_main_handles_fetch_error(monkeypatch):
+def test_main_handles_fetch_error(monkeypatch, caplog):
     monkeypatch.setattr(
         "sys.argv",
         [
@@ -113,7 +113,9 @@ def test_main_handles_fetch_error(monkeypatch):
     main()
 
     output_migrate_mock.assert_not_called()
-    mock_context.log.assert_any_call("Error fetching record pid1: 404", level="error")
+    assert ("ERROR", "Error fetching record pid1: 404") in [
+        (record.levelname, record.getMessage()) for record in caplog.records
+    ]
 
 
 def test_print_summary(capsys):
