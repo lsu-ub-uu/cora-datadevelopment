@@ -18,3 +18,4 @@ sql_script/
 /build/
 /out/
 /.idea/
+open-tunnels.sh

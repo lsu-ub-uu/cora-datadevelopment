@@ -125,7 +125,7 @@ fedora_person_spec: XMLSpec = {
             },
         }
     },
-    "authorityPid": "$ANY_TEXT$",
+    "authorityPid": "$NOT_YET_IMPLEMENTED$",
 }
 
 
@@ -143,8 +143,8 @@ fedora_language_spec: XMLSpec = {
 }
 
 fedora_publication_title_spec: XMLSpec = {
-    "title": "$ANY_TEXT$",
-    "subTitle": "$ANY_TEXT$",
+    "title": "$HTML$",
+    "subTitle": "$HTML$",
     "language": fedora_language_spec,
 }
 
@@ -278,7 +278,7 @@ fedora_funder_spec: XMLSpec = {
 
 fedora_abstract_spec: XMLSpec = {
     "language": fedora_language_spec,
-    "text": "$ANY_TEXT$",
+    "text": "$HTML$",
 }
 
 fedora_entry_spec: XMLSpec = {
@@ -534,8 +534,8 @@ fedora_publication_xml_spec: XMLSpec = {
         "domain": "$ANY_TEXT$",
         "active": "$ANY_TEXT$",
     },
-    "note": "$ANY_TEXT$",
-    "internalNote": "$ANY_TEXT$",
+    "note": "$HTML$",
+    "internalNote": "$HTML$",
     "organisations": {"organisation": fedora_organisation_spec},
     "articleId": "$ANY_TEXT$",
     "artisticWork": "$ANY_TEXT$",
@@ -572,11 +572,16 @@ fedora_publication_xml_spec: XMLSpec = {
         }
     },
     "editors": {"person": fedora_person_spec},
-    "bookTitle": {"title": "$ANY_TEXT$", "subTitle": "$ANY_TEXT$"},
+    "bookTitle": {
+        "title": "$HTML$",
+        "subTitle": "$HTML$",
+        # Book title language is sometimes present in source data from imports, but is not used by Classic or Cora
+        "language": "$IGNORE$",
+    },
     "bookEditor": "$ANY_TEXT$",
     "proceedingsTitle": {
-        "title": "$ANY_TEXT$",
-        "subTitle": "$ANY_TEXT$",
+        "title": "$HTML$",
+        "subTitle": "$HTML$",
         # Proceedings title language is sometimes present in source data from imports, but is not used by Classic or Cora
         "language": "$IGNORE$",
     },
@@ -727,28 +732,37 @@ fedora_publication_xml_spec: XMLSpec = {
 }
 
 # Circular references for publication
-fedora_publication_xml_spec["hostPublications"] = {
-    "hostPublication": fedora_publication_xml_spec,
-}
-fedora_publication_xml_spec["partsOfPublication"] = {
-    "partOfPublication": fedora_publication_xml_spec,
-}
-fedora_publication_xml_spec["relations"] = {
-    "publicationRelation": {
-        "relation": {
-            "relationId": "$ANY_TEXT$",
-            "code": "$ANY_TEXT$",
-            "relationName": "$ANY_TEXT$",
-            "alternativeNames": {
-                "relationAlternativeName": {
-                    "relationNameId": "$ANY_TEXT$",
-                    "locale": "$ANY_TEXT$",
-                    "relationName": "$ANY_TEXT$",
-                    "helpMessage": "$ANY_TEXT$",
-                }
-            },
-        },
-        "relatedPid": "$ANY_TEXT$",
-        "relatedPublication": fedora_publication_xml_spec,
-    }
-}
+
+fedora_publication_xml_spec["hostPublications"] = "$NOT_YET_IMPLEMENTED$"
+# fedora_publication_xml_spec["hostPublications"] = {
+#     "hostPublication": fedora_publication_xml_spec,
+# }
+
+
+fedora_publication_xml_spec["partsOfPublication"] = "$NOT_YET_IMPLEMENTED$"
+
+# fedora_publication_xml_spec["partsOfPublication"] = {
+#     "publication": fedora_publication_xml_spec,
+# }
+
+fedora_publication_xml_spec["relations"] = "$NOT_YET_IMPLEMENTED$"
+
+# fedora_publication_xml_spec["relations"] = {
+#     "publicationRelation": {
+#         "relation": {
+#             "relationId": "$ANY_TEXT$",
+#             "code": "$ANY_TEXT$",
+#             "relationName": "$ANY_TEXT$",
+#             "alternativeNames": {
+#                 "relationAlternativeName": {
+#                     "relationNameId": "$ANY_TEXT$",
+#                     "locale": "$ANY_TEXT$",
+#                     "relationName": "$ANY_TEXT$",
+#                     "helpMessage": "$ANY_TEXT$",
+#                 }
+#             },
+#         },
+#         "relatedPid": "$ANY_TEXT$",
+#         "relatedPublication": fedora_publication_xml_spec,
+#     }
+# }

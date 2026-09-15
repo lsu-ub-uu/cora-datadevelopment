@@ -9,14 +9,12 @@ from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
 def test_validate_xml_raises_error_on_unknown_child():
     spec: XMLSpec = {"known1": "$ANY_TEXT$", "known2": "$ANY_TEXT$"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <known1>value1</known1>
                 <unknown>value2</unknown>
             </source>
-        """
-    )
+        """)
 
     with pytest.raises(
         XMLValidationError, match="Unknown child element <unknown> found in <source>"
@@ -27,13 +25,11 @@ def test_validate_xml_raises_error_on_unknown_child():
 def test_validate_xml_does_not_raise_when_child_missing():
     spec: XMLSpec = {"known1": "$ANY_TEXT$", "known2": "$ANY_TEXT$"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <known1></known1>
             </source>
-        """
-    )
+        """)
 
     validate_xml(source, spec)
 
@@ -41,16 +37,14 @@ def test_validate_xml_does_not_raise_when_child_missing():
 def test_validate_xml_raises_error_when_expecting_text_and_got_element():
     spec: XMLSpec = {"known1": "$ANY_TEXT$", "known2": "$ANY_TEXT$"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <known1>value1</known1>
                 <known2>
                     <unknown></unknown>
                 </known2>
             </source>
-            """
-    )
+            """)
 
     with pytest.raises(
         XMLValidationError,
@@ -64,14 +58,12 @@ def test_validate_xml_raises_error_when_expecting_element_and_got_text():
         "known1": "$ANY_TEXT$",
         "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <known1>value1</known1>
                 <known2>some text instead of elements</known2>
             </source>
-            """
-    )
+            """)
 
     with pytest.raises(
         XMLValidationError,
@@ -85,14 +77,12 @@ def test_validate_xml_does_not_raise_error_when_expecting_element_and_got_empty_
         "known1": "$ANY_TEXT$",
         "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <known1>value1</known1>
                 <known2></known2>
             </source>
-            """
-    )
+            """)
 
     validate_xml(source, spec)
 
@@ -103,8 +93,7 @@ def test_validate_xml_raises_error_when_child_has_unknown_element():
         "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <known1>value1</known1>
                 <known2>{"child": {"subchild": "$ANY_TEXT$", "ignoredchild": "ignore"}}
@@ -112,8 +101,7 @@ def test_validate_xml_raises_error_when_child_has_unknown_element():
                     <unknown></unknown>
                 </known2>
             </source>
-            """
-    )
+            """)
 
     with pytest.raises(
         XMLValidationError, match="Unknown child element <unknown> found in <known2>"
@@ -127,16 +115,14 @@ def test_validate_xml_does_not_raise_error_when_child_is_missing_element():
         "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <known1>value1</known1>
                 <known2>
                     <known2.1></known2.1>
                 </known2>
             </source>
-            """
-    )
+            """)
 
     validate_xml(source, spec)
 
@@ -156,8 +142,7 @@ def test_validate_xml_does_not_raise_error_for_repeating_element():
         "known1": "$ANY_TEXT$",
         "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <known1>value1</known1>
                 <known2>
@@ -167,8 +152,7 @@ def test_validate_xml_does_not_raise_error_for_repeating_element():
                     <known2.1>value2.1</known2.1>
                 </known2>
             </source>
-        """
-    )
+        """)
 
     validate_xml(source, spec)
 
@@ -178,8 +162,7 @@ def test_validate_xml_raises_error_for_repeating_element():
         "known1": "$ANY_TEXT$",
         "known2": {"known2.1": "$ANY_TEXT$", "known2.2": "$ANY_TEXT$"},
     }
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <known1>value1</known1>
                 <known2>
@@ -190,8 +173,7 @@ def test_validate_xml_raises_error_for_repeating_element():
                     <unknown>value2.2</unknown>
                 </known2>
             </source>
-        """
-    )
+        """)
 
     with pytest.raises(
         XMLValidationError, match="Unknown child element <unknown> found in <known2>"
@@ -202,13 +184,11 @@ def test_validate_xml_raises_error_for_repeating_element():
 def test_validates_with_empty_spec():
     spec: XMLSpec = {"child": {}}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <child></child>
             </source>
-        """
-    )
+        """)
 
     validate_xml(source, spec)
 
@@ -216,8 +196,7 @@ def test_validates_with_empty_spec():
 def test_does_not_raise_error_for_ignored_child():
     spec: XMLSpec = {"child": {"subchild": "$ANY_TEXT$", "ignoredchild": "$IGNORE$"}}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <child>
                     <subchild>value</subchild>
@@ -227,8 +206,7 @@ def test_does_not_raise_error_for_ignored_child():
                     </ignoredchild>
                 </child>
             </source>
-        """
-    )
+        """)
 
     validate_xml(source, spec)
 
@@ -243,8 +221,7 @@ def test_does_not_raise_error_for_complete_publication_xml():
 def test_error_can_contain_multiple_validation_errors():
     spec: XMLSpec = {"child": {"subchild": "$ANY_TEXT$"}, "child2": "$ANY_TEXT$"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <unknown1>value</unknown1>
                 <child>
@@ -252,8 +229,7 @@ def test_error_can_contain_multiple_validation_errors():
                     <unknown2>value</unknown2>
                 </child>
             </source>
-        """
-    )
+        """)
 
     with pytest.raises(
         XMLValidationError,
@@ -265,13 +241,11 @@ def test_error_can_contain_multiple_validation_errors():
 def test_specific_text_value_is_valid():
     spec: XMLSpec = {"child1": "someSpecificValue"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <child1>someSpecificValue</child1>
             </source>
-        """
-    )
+        """)
 
     validate_xml(source, spec)
 
@@ -279,13 +253,11 @@ def test_specific_text_value_is_valid():
 def test_specific_text_value_raises_error_when_other_text():
     spec: XMLSpec = {"child1": "someSpecificValue"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <child1>someOtherSpecificValue</child1>
             </source>
-        """
-    )
+        """)
     with pytest.raises(
         XMLValidationError,
         match="Expected text content 'someSpecificValue' in <child1>, but found 'someOtherSpecificValue'",
@@ -296,15 +268,13 @@ def test_specific_text_value_raises_error_when_other_text():
 def test_specific_text_value_raises_error_when_object_instead_of_text():
     spec: XMLSpec = {"child1": "someSpecificValue"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <child1>
                     <subchild>value</subchild>
                 </child1>
             </source>
-        """
-    )
+        """)
     with pytest.raises(
         XMLValidationError,
         match="Expected text content 'someSpecificValue' in <child1>, but found child elements",
@@ -315,25 +285,21 @@ def test_specific_text_value_raises_error_when_object_instead_of_text():
 def test_specific_text_value_valid_when_element_missing():
     spec: XMLSpec = {"child1": "someSpecificValue"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
             </source>
-        """
-    )
+        """)
     validate_xml(source, spec)
 
 
 def test_assert_empty_element_raises_when_child_element():
     spec: XMLSpec = {"child": "$EMPTY$"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <child><subchild>value</subchild></child>
             </source>
-        """
-    )
+        """)
     with pytest.raises(
         XMLValidationError,
         match="Expected empty element <child>, but found child elements",
@@ -344,13 +310,11 @@ def test_assert_empty_element_raises_when_child_element():
 def test_assert_empty_element_raises_when_text_content():
     spec: XMLSpec = {"child": "$EMPTY$"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <child>someText</child>
             </source>
-        """
-    )
+        """)
     with pytest.raises(
         XMLValidationError,
         match="Expected empty element <child>, but found text content: someText",
@@ -361,13 +325,11 @@ def test_assert_empty_element_raises_when_text_content():
 def test_validate_empty_element_self_closing_tag():
     spec: XMLSpec = {"child": "$EMPTY$"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <child/>
             </source>
-        """
-    )
+        """)
 
     validate_xml(source, spec)
 
@@ -375,12 +337,79 @@ def test_validate_empty_element_self_closing_tag():
 def test_validate_empty_element_empty_tag():
     spec: XMLSpec = {"child": "$EMPTY$"}
 
-    source = ET.fromstring(
-        """
+    source = ET.fromstring("""
             <source>
                 <child></child>
             </source>
-        """
-    )
+        """)
 
     validate_xml(source, spec)
+
+
+def test_validation_fails_for_not_yet_implemented_tag():
+    spec: XMLSpec = {"child1": "$ANY_TEXT$", "child2": "$NOT_YET_IMPLEMENTED$"}
+
+    source = ET.fromstring("""
+            <source>
+                <child1>someText</child1>
+                <child2>someText</child2>
+            </source>
+        """)
+    with pytest.raises(
+        XMLValidationError,
+        match="Element <child2> is marked as NOT_YET_IMPLEMENTED but was found in the XML",
+    ):
+        validate_xml(source, spec)
+
+
+def test_validation_passes_for_not_yet_implemented_tag_when_not_present():
+    spec: XMLSpec = {"child1": "$ANY_TEXT$", "child2": "$NOT_YET_IMPLEMENTED$"}
+
+    source = ET.fromstring("""
+            <source>
+                <child1>someText</child1>
+            </source>
+        """)
+
+    validate_xml(source, spec)
+
+
+def test_validation_should_pass_for_html_without_latex():
+    spec: XMLSpec = {"child": "$HTML$"}
+
+    source = ET.fromstring("""
+            <source>
+                    <child>&lt;p&gt;Lorem ipsum&lt;/p&gt;</child>
+            </source>
+        """)
+    validate_xml(source, spec)
+
+
+def test_validation_should_fail_for_html_with_img():
+    spec: XMLSpec = {"child": "$HTML$"}
+
+    source = ET.fromstring("""
+            <source>
+                    <child>&lt;p&gt;Lorem ipsum. &lt;img src="http://www.diva-portal.org/cgi-bin/mimetex.cgi?%5Cbar%7B%5Cnu%7D" /&gt;&lt;/p&gt;</child>
+            </source>
+        """)
+    with pytest.raises(
+        XMLValidationError,
+        match="Element <child> is marked as HTML and contains unsupported image content",
+    ):
+        validate_xml(source, spec)
+
+
+def test_validation_should_fail_for_field_marked_any_text_with_html_content():
+    spec: XMLSpec = {"child": "$ANY_TEXT$"}
+
+    source = ET.fromstring("""
+            <source>
+                    <child>&lt;p&gt;Lorem ipsum.&lt;/p&gt;</child>
+            </source>
+        """)
+    with pytest.raises(
+        XMLValidationError,
+        match=r"Element <child> is marked as \$ANY_TEXT\$ but contains HTML content",
+    ):
+        validate_xml(source, spec)

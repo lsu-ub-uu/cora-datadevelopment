@@ -1,3 +1,4 @@
+import re
 import xml.etree.ElementTree as ET
 from typing import Union, Literal
 
@@ -47,11 +48,28 @@ def validate_xml(element: ET.Element, spec: XMLSpec) -> None:
                 # Child is ignored
                 continue
 
-            if child_spec == "$ANY_TEXT$" and len(child):
-                # Child is text node
+            if child_spec == "$NOT_YET_IMPLEMENTED$":
                 errors.append(
-                    f"Expected text content in <{child.tag}>, but found child elements"
+                    f"Element <{child.tag}> is marked as NOT_YET_IMPLEMENTED but was found in the XML"
                 )
+                continue
+
+            if child_spec == "$HTML$":
+                if child.text is not None and "<img" in child.text:
+                    errors.append(
+                        f"Element <{child.tag}> is marked as HTML and contains unsupported image content"
+                    )
+                continue
+
+            if child_spec == "$ANY_TEXT$":
+                if len(child):
+                    errors.append(
+                        f"Expected text content in <{child.tag}>, but found child elements"
+                    )
+                elif child.text is not None and _looks_like_html(child.text):
+                    errors.append(
+                        f"Element <{child.tag}> is marked as $ANY_TEXT$ but contains HTML content"
+                    )
                 continue
 
             if child_spec == "$EMPTY$":
@@ -65,7 +83,7 @@ def validate_xml(element: ET.Element, spec: XMLSpec) -> None:
                     )
                 continue
 
-            if child_spec != "$ANY_TEXT$" and isinstance(child_spec, str):
+            if isinstance(child_spec, str):
                 # Child is specific text node
                 if len(child):
                     errors.append(
@@ -93,3 +111,7 @@ def validate_xml(element: ET.Element, spec: XMLSpec) -> None:
     errors = validate_element(element, spec)
     if len(errors) > 0:
         raise XMLValidationError("\n".join(errors))
+
+
+def _looks_like_html(text: str) -> bool:
+    return re.compile(r"<\s*/?[a-zA-Z]").search(text) is not None
