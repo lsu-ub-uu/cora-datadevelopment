@@ -604,7 +604,7 @@ def test_output_transform_conference_paper(mock_diva_search_requests):
                 <namePart type="family">Mocksson</namePart>
                 <namePart type="given">Mock</namePart>
                 <role>
-                    <roleTerm>aut</roleTerm>
+                    <roleTerm repeatId="0">aut</roleTerm>
                 </role>
                 <nameIdentifier type="localId">XXXXX</nameIdentifier>
             </name>
@@ -612,7 +612,7 @@ def test_output_transform_conference_paper(mock_diva_search_requests):
                 <namePart type="family">Mockson</namePart>
                 <namePart type="given">Mock</namePart>
                 <role>
-                    <roleTerm>aut</roleTerm>
+                    <roleTerm repeatId="0">aut</roleTerm>
                 </role>
                 <nameIdentifier type="localId">XXXXX</nameIdentifier>
             </name>
@@ -620,7 +620,7 @@ def test_output_transform_conference_paper(mock_diva_search_requests):
                 <namePart type="family">Mockson</namePart>
                 <namePart type="given">Mock</namePart>
                 <role>
-                    <roleTerm>aut</roleTerm>
+                    <roleTerm repeatId="0">aut</roleTerm>
                 </role>
                 <nameIdentifier type="localId">XXXXX</nameIdentifier>
             </name>
@@ -628,14 +628,14 @@ def test_output_transform_conference_paper(mock_diva_search_requests):
                 <namePart type="family">Mockson</namePart>
                 <namePart type="given">Mock</namePart>
                 <role>
-                    <roleTerm>aut</roleTerm>
+                    <roleTerm repeatId="0">aut</roleTerm>
                 </role>
             </name>
             <name repeatId="4" type="personal">
                 <namePart type="family">Mockson</namePart>
                 <namePart type="given">Mock</namePart>
                 <role>
-                    <roleTerm>aut</roleTerm>
+                    <roleTerm repeatId="0">aut</roleTerm>
                 </role>
             </name>
             <abstract lang="eng" repeatId="0">Hej</abstract>

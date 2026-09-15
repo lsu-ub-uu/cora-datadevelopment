@@ -11,13 +11,14 @@ def create_external_collaborations(source_record: ET.Element) -> list[ET.Element
         source_record (ET.Element): The source XML element containing external cooperation data.
 
     Returns:
-        ET.Element: The created external collaboration XML element.
+        list[ET.Element]: The created external collaboration XML element.
     """
     external = source_record.findtext("./externalCooperation/external")
     partners = source_record.findall("./externalCooperation/partners/partner/name")
 
     if external == "true" and len(partners) == 0:
-        return [_create_external_collaborations_default()]
+        if _is_student_thesis(source_record):
+            return [_create_external_collaborations_default()]
     elif len(partners) > 0:
         return _create_external_collaborations_from_partners(partners)
 
@@ -52,3 +53,12 @@ def _create_external_collaboration(name: str, repeat_id: int):
 
     assert external_collaboration is not None
     return external_collaboration
+
+
+def _is_student_thesis(source_record: ET.Element) -> bool:
+    publication_type_code = source_record.findtext(
+        "./publicationType/publicationTypeCode"
+    )
+    return (
+        publication_type_code is not None and "studentThesis" in publication_type_code
+    )

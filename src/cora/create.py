@@ -49,22 +49,26 @@ class CreateRecordSuccessResult:
         self,
         record_id: str,
         response_data: ET.Element,
+        status: int | None = None,
     ):
         self.success = True
         self.record_id = record_id
         self.error = None
         self.response_data = response_data
+        self.status = status
 
 
 class CreateRecordFailureResult:
     def __init__(
         self,
         error: str,
+        status: int | None = None,
     ):
         self.success = False
         self.error = error
         self.record_id = None
         self.response_data = None
+        self.status = status
 
 
 def create_record(
@@ -114,7 +118,9 @@ def create_record(
                         f"✅ Successfully created record for {record_type} with oldId {old_id_text} on attempt {attempt + 1}"
                     )
                 return CreateRecordSuccessResult(
-                    record_id=record_id, response_data=response_data
+                    record_id=record_id,
+                    response_data=response_data,
+                    status=response.status_code,
                 )
 
             logger.error(
@@ -122,6 +128,7 @@ def create_record(
             )
             return CreateRecordFailureResult(
                 error=f"Failed to create record with status {response.status_code}: {response.text}",
+                status=response.status_code,
             )
         except requests.RequestException as e:
             if attempt < max_retries:
@@ -137,10 +144,12 @@ def create_record(
                 )
                 return CreateRecordFailureResult(
                     error=str(e),
+                    status=None,
                 )
 
     return CreateRecordFailureResult(
         error="Maximum retries exceeded",
+        status=None,
     )
 
 

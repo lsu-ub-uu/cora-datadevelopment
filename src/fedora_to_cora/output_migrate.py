@@ -102,6 +102,13 @@ def output_migrate(
         )
 
         if not is_success_result(create_record_result):
+            if create_record_result.status == 409:
+                return OutputMigrationResult(
+                    pid,
+                    publication_type,
+                    status="SKIPPED",
+                    errors=(["Conflict detected"]),
+                )
             return OutputMigrationResult(
                 pid,
                 publication_type,
@@ -167,6 +174,14 @@ def _handle_invalid_record(
         logger.error(
             f"❌ Failed to create classic quality record for old id {pid}. {create_result.error}"
         )
+
+        if create_result.status == 409:
+            return OutputMigrationResult(
+                pid,
+                publication_type,
+                status="SKIPPED",
+                errors=(["Conflict detected"]),
+            )
 
         return OutputMigrationResult(
             pid,

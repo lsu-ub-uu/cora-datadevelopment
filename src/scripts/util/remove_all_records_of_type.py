@@ -71,7 +71,7 @@ def main():
 
     # Extra confirmation prompt
     print(
-        f"WARNING: You are about to delete {len(record_ids)} records of type {args.record_type}."
+        f"WARNING: You are about to delete {len(record_ids)} records of type {args.record_type} in the Cora system at [{context.get_base_url()}]."
     )
     confirmation = input("Are you sure you want to proceed? (yes/no): ").strip().lower()
     if confirmation not in ["yes", "y"]:

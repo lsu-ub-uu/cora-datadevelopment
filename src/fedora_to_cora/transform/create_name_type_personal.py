@@ -267,15 +267,7 @@ def _is_author_only_type(source_record: ET.Element) -> bool:
     """
 
     author_only_validation_types = {
-        "publication_doctoral-thesis-compilation",
-        "publication_licentiate-thesis-monograph",
         "diva_degree-project",
-        "conference_other",
-        "conference_poster",
-        "conference_paper",
-        "publication_preprint",
-        "publication_licentiate-thesis-compilation",
-        "publication_licentiate-thesis-monograph",
     }
     validation_type = get_validation_type_from_fedora_record(source_record)
 
