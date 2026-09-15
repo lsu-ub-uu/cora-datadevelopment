@@ -17,8 +17,7 @@ def test_attachments_migrate(monkeypatch):
     binary_record_transform_mock = _set_up_binary_record_transform_mock(monkeypatch)
     attachments_transform_mock = _set_up_attachments_transform_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
         <publicationType>
             <publicationTypeCode>report</publicationTypeCode>
@@ -40,11 +39,9 @@ def test_attachments_migrate(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -54,8 +51,7 @@ def test_attachments_migrate(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(
         source_record,
@@ -117,8 +113,7 @@ def test_failed_to_create_binary_record(monkeypatch):
     binary_record_transform_mock = _set_up_binary_record_transform_mock(monkeypatch)
     attachments_transform_mock = _set_up_attachments_transform_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <pid>pid:123</pid>
             <publicationType>
@@ -133,11 +128,9 @@ def test_failed_to_create_binary_record(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -147,8 +140,7 @@ def test_failed_to_create_binary_record(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     success, errors = attachments_migrate(
         source_record,
@@ -176,8 +168,7 @@ def test_failed_to_migrate_binary(monkeypatch):
     attachments_transform_mock = _set_up_attachments_transform_mock(monkeypatch)
     delete_record_mock = _set_up_delete_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <pid>pid:123</pid>
             <publicationType>
@@ -192,11 +183,9 @@ def test_failed_to_migrate_binary(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -206,8 +195,7 @@ def test_failed_to_migrate_binary(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     success, errors = attachments_migrate(
         source_record,
@@ -239,8 +227,7 @@ def test_failed_to_update_record(monkeypatch):
         "fedora_to_cora.attachments_migrate.delete_record", delete_record_mock
     )
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <pid>pid:123</pid>
             <publicationType>
@@ -255,11 +242,9 @@ def test_failed_to_update_record(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -269,8 +254,7 @@ def test_failed_to_update_record(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     success, errors = attachments_migrate(
         source_record,
@@ -306,8 +290,7 @@ def test_roll_back_binary_records_when_something_fails(monkeypatch):
         "fedora_to_cora.attachments_migrate.delete_record", delete_record_mock
     )
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <pid>pid:123</pid>
             <publicationType>
@@ -328,11 +311,9 @@ def test_roll_back_binary_records_when_something_fails(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -342,8 +323,7 @@ def test_roll_back_binary_records_when_something_fails(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     success, errors = attachments_migrate(
         source_record,
@@ -371,8 +351,7 @@ def test_respects_attachment_order(monkeypatch):
     _set_up_binary_record_transform_mock(monkeypatch)
     _set_up_attachments_transform_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
         <publicationType>
             <publicationTypeCode>report</publicationTypeCode>
@@ -403,11 +382,9 @@ def test_respects_attachment_order(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -417,8 +394,7 @@ def test_respects_attachment_order(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(
         source_record,
@@ -483,8 +459,7 @@ def test_attachments_note(monkeypatch):
     binary_record_transform_mock = _set_up_binary_record_transform_mock(monkeypatch)
     attachments_transform_mock = _set_up_attachments_transform_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -515,11 +490,9 @@ def test_attachments_note(monkeypatch):
                 <fileUploadMessage>Some note about the attachments</fileUploadMessage>
             </administrativeInfo>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -529,8 +502,7 @@ def test_attachments_note(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(
         source_record,
@@ -541,7 +513,9 @@ def test_attachments_note(monkeypatch):
     updated_cora_record = update_record_mock.mock_calls[0].args[0]
 
     assert (
-        updated_cora_record.findtext("./data/output/attachments/note")
+        updated_cora_record.findtext(
+            "./data/output/attachments/note[@type='attachment']"
+        )
         == "Some note about the attachments"
     )
 
@@ -552,8 +526,7 @@ def test_migrate_attachment_waiting_to_be_published(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -571,11 +544,9 @@ def test_migrate_attachment_waiting_to_be_published(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -585,8 +556,7 @@ def test_migrate_attachment_waiting_to_be_published(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -621,8 +591,7 @@ def test_migrate_attachment_published(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -641,11 +610,9 @@ def test_migrate_attachment_published(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -655,8 +622,7 @@ def test_migrate_attachment_published(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -691,8 +657,7 @@ def test_migrate_attachment_future_publish_date(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -711,11 +676,9 @@ def test_migrate_attachment_future_publish_date(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -725,8 +688,7 @@ def test_migrate_attachment_future_publish_date(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -769,8 +731,7 @@ def test_migrate_attachment_future_publish_date_approved_by_admin(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -789,11 +750,9 @@ def test_migrate_attachment_future_publish_date_approved_by_admin(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -803,8 +762,7 @@ def test_migrate_attachment_future_publish_date_approved_by_admin(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -847,8 +805,7 @@ def test_migrate_attachment_future_publish_date_has_passed(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -867,11 +824,9 @@ def test_migrate_attachment_future_publish_date_has_passed(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -881,8 +836,7 @@ def test_migrate_attachment_future_publish_date_has_passed(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -919,8 +873,7 @@ def test_migrate_attachment_waiting_to_be_archived(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -938,11 +891,9 @@ def test_migrate_attachment_waiting_to_be_archived(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output>
@@ -952,8 +903,7 @@ def test_migrate_attachment_waiting_to_be_archived(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -987,8 +937,7 @@ def test_migrate_attachment_archived(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -1007,11 +956,9 @@ def test_migrate_attachment_archived(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -1021,8 +968,7 @@ def test_migrate_attachment_archived(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -1055,8 +1001,7 @@ def test_migrate_attachment_waiting_for_future_available_until(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -1075,11 +1020,9 @@ def test_migrate_attachment_waiting_for_future_available_until(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output>
@@ -1089,8 +1032,7 @@ def test_migrate_attachment_waiting_for_future_available_until(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -1133,8 +1075,7 @@ def test_migrate_attachment_future_unpublish_date_approved_by_admin(monkeypatch)
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -1154,11 +1095,9 @@ def test_migrate_attachment_future_unpublish_date_approved_by_admin(monkeypatch)
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -1168,8 +1107,7 @@ def test_migrate_attachment_future_unpublish_date_approved_by_admin(monkeypatch)
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -1212,8 +1150,7 @@ def test_migrate_attachment_future_unpublish_date_has_passed(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -1233,11 +1170,9 @@ def test_migrate_attachment_future_unpublish_date_has_passed(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -1247,8 +1182,7 @@ def test_migrate_attachment_future_unpublish_date_has_passed(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -1292,8 +1226,7 @@ def test_migrate_attachment_future_wished_publish_and_unpublish(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -1313,11 +1246,9 @@ def test_migrate_attachment_future_wished_publish_and_unpublish(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -1327,8 +1258,7 @@ def test_migrate_attachment_future_wished_publish_and_unpublish(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -1381,8 +1311,7 @@ def test_migrate_attachment_future_publish_and_unpublish_approved_by_admin(monke
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -1402,11 +1331,9 @@ def test_migrate_attachment_future_publish_and_unpublish_approved_by_admin(monke
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -1416,8 +1343,7 @@ def test_migrate_attachment_future_publish_and_unpublish_approved_by_admin(monke
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -1470,8 +1396,7 @@ def test_migrate_attachment_past_publish_and_future_unpublish(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -1491,11 +1416,9 @@ def test_migrate_attachment_past_publish_and_future_unpublish(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -1505,8 +1428,7 @@ def test_migrate_attachment_past_publish_and_future_unpublish(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -1550,8 +1472,7 @@ def test_migrate_attachment_past_publish_and_unpublish(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -1571,11 +1492,9 @@ def test_migrate_attachment_past_publish_and_unpublish(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -1585,8 +1504,7 @@ def test_migrate_attachment_past_publish_and_unpublish(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -1628,8 +1546,7 @@ def test_secrecy(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -1650,11 +1567,9 @@ def test_secrecy(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -1664,8 +1579,7 @@ def test_secrecy(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -1698,8 +1612,7 @@ def test_secrecy_with_to_be_published(monkeypatch):
     _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -1720,11 +1633,9 @@ def test_secrecy_with_to_be_published(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -1734,8 +1645,7 @@ def test_secrecy_with_to_be_published(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -1768,8 +1678,7 @@ def test_skips_deleted_attachment(monkeypatch):
     migrate_attachment_mock = _set_up_migrate_binary_mock(monkeypatch)
     update_record_mock = _set_up_update_record_mock(monkeypatch)
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>report</publicationTypeCode>
@@ -1786,11 +1695,9 @@ def test_skips_deleted_attachment(monkeypatch):
                 </attachment>
             </attachments>
         </publication>
-        """
-    )
+        """)
 
-    cora_record = ET.fromstring(
-        """
+    cora_record = ET.fromstring("""
         <record>
             <data>
                 <output> 
@@ -1800,8 +1707,7 @@ def test_skips_deleted_attachment(monkeypatch):
                 </output>
             </data>
         </record>
-        """
-    )
+        """)
 
     attachments_migrate(source_record, cora_record, MockContext())
 
@@ -1900,8 +1806,7 @@ def _set_up_attachments_transform_mock(monkeypatch):
         binary_record_id,
     ):
         file_name = source_attachment.findtext("./fileName")
-        return ET.fromstring(
-            f"""
+        return ET.fromstring(f"""
                 <attachment repeatId=\"{file_name}\">
                     <attachmentFile>
                     <linkedRecordType>binary</linkedRecordType>
@@ -1912,8 +1817,7 @@ def _set_up_attachments_transform_mock(monkeypatch):
                         <availability>availableNow</availability>
                     </adminInfo>
                 </attachment>
-            """
-        )
+            """)
 
     attachment_transform_mock = MagicMock(side_effect=_attachment_transform)
     monkeypatch.setattr(

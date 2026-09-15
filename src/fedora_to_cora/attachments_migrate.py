@@ -170,7 +170,11 @@ def _create_note(source_record: ET.Element) -> ET.Element | None:
         "./administrativeInfo/fileUploadMessage"
     )
     if file_upload_message is not None and file_upload_message.strip() != "":
-        return create_text("note", file_upload_message)
+        return create_text(
+            "note",
+            type="attachment",
+            value=file_upload_message,
+        )
 
 
 def _create_reviewed(source_record: ET.Element) -> ET.Element | None:
