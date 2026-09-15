@@ -12,7 +12,7 @@ def create_defence_or_presentation(source_record: ET.Element) -> ET.Element | No
         tag_name,
         children=[
             _create_language(source_record),
-            _create_duration(source_record),
+            _create_duration(source_record, tag_name),
             _create_address(source_record),
         ],
     )
@@ -49,7 +49,7 @@ def _create_language(source_record: ET.Element):
     )
 
 
-def _create_duration(source_record: ET.Element):
+def _create_duration(source_record: ET.Element, tag_name: str):
     duration_source = source_record.findtext("./defence/date")
 
     if duration_source is None:
@@ -62,7 +62,7 @@ def _create_duration(source_record: ET.Element):
 
     return create_group(
         "dateOther",
-        type="presentation",
+        type=tag_name,
         children=[
             create_text("year", year),
             create_text("month", month),

@@ -6,8 +6,7 @@ from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
 def test_create_defence():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
          <publication>
             <publicationType>
                 <publicationTypeId>54</publicationTypeId>
@@ -26,8 +25,7 @@ def test_create_defence():
             </defence>
         </publication>
 
-        """
-    )
+        """)
 
     admin = create_defence_or_presentation(source_record)
 
@@ -38,7 +36,7 @@ def test_create_defence():
                 <language>
                     <languageTerm type="code" authority="iso639-2b">swe</languageTerm>
                 </language>
-                <dateOther type="presentation">
+                <dateOther type="defence">
                     <year>2022</year>
                     <month>07</month>
                     <day>31</day>
@@ -60,8 +58,7 @@ def test_create_defence():
 
 
 def test_create_empty_defence():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>54</publicationTypeId>
@@ -72,8 +69,7 @@ def test_create_empty_defence():
                 </room>
             </defence>
         </publication>
-        """
-    )
+        """)
 
     admin = create_defence_or_presentation(source_record)
 
@@ -81,8 +77,7 @@ def test_create_empty_defence():
 
 
 def test_create_empty_presentation():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>65</publicationTypeId>
@@ -93,8 +88,7 @@ def test_create_empty_presentation():
                 </room>
             </defence>
         </publication>
-        """
-    )
+        """)
 
     admin = create_defence_or_presentation(source_record)
 
@@ -102,8 +96,7 @@ def test_create_empty_presentation():
 
 
 def test_create_presentation_if_degree_project():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>65</publicationTypeId>
@@ -121,8 +114,7 @@ def test_create_presentation_if_degree_project():
                 </room>
             </defence>
         </publication>
-        """
-    )
+        """)
 
     admin = create_defence_or_presentation(source_record)
 
