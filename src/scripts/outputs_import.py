@@ -69,6 +69,40 @@ def outputs_import(
     print(
         f"Starting migration of {len(source_record_paths)} records to {system} system..."
     )
+
+    results = _transform_and_create_outputs(
+        xml_dir,
+        system,
+        login_id,
+        app_token,
+        processes,
+        apply,
+        limit,
+        binaries,
+        fedora_url,
+        cora_url,
+    )
+    _update_records_with_relations()
+
+    end_time = time.perf_counter()
+    elapsed_time = end_time - start_time
+    print(f"Migration completed in {elapsed_time:.2f} seconds.")
+
+    save_reports(results, xml_dir=xml_dir, system=system, output_dir="reports")
+
+
+def _transform_and_create_outputs(
+    xml_dir: str,
+    system: str,
+    login_id: str,
+    app_token: str,
+    processes: int,
+    apply: bool,
+    limit: int | None = None,
+    binaries: bool = False,
+    fedora_url: str = "",
+    cora_url: str | None = None,
+) -> list[OutputMigrationResult]:
     counts = {
         "SUCCESS": 0,
         "CLASSIC_QUALITY": 0,
@@ -90,21 +124,18 @@ def outputs_import(
             cora_url,
         ),
     ) as pool, tqdm(
-        total=len(source_record_paths), desc="Importing records"
+        total=len(_read_source_record_paths(xml_dir, limit)), desc="Importing records"
     ) as progress:
-        for result in pool.imap_unordered(_migrate_record, source_record_paths):
+        for result in pool.imap_unordered(
+            _migrate_record, _read_source_record_paths(xml_dir, limit)
+        ):
             counts[result.status] += 1
             results.append(result)
             progress.set_postfix_str(
                 f"✅ {counts['SUCCESS']} | ⚠️ {counts['CLASSIC_QUALITY']} | ❌ {counts['FAILED']} | ➡️ {counts['SKIPPED']} | ⛔{counts['INPUT_VALIDATION_FAILED']}"
             )
             progress.update(1)
-
-    end_time = time.perf_counter()
-    elapsed_time = end_time - start_time
-    print(f"Migration completed in {elapsed_time:.2f} seconds.")
-
-    save_reports(results, xml_dir=xml_dir, system=system, output_dir="reports")
+    return results
 
 
 def _parse_args():

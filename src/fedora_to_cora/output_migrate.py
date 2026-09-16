@@ -24,11 +24,22 @@ OutputMigrationStatus = Literal[
 logger = logging.getLogger(__name__)
 
 
+class OutputMigrationRelation:
+    relation_type: Literal["constituent", "related"]
+    pid: str
+
+    def __init__(self, relation_type: Literal["constituent", "related"], pid: str):
+        self.relation_type = relation_type
+        self.pid = pid
+
+
 class OutputMigrationResult:
     pid: str
     publication_type: str
     status: OutputMigrationStatus
     errors: list[str] | None
+    cora_id: str
+    relations: list[OutputMigrationRelation] | None
 
     def __init__(
         self,
@@ -36,6 +47,8 @@ class OutputMigrationResult:
         publication_type: str | None = None,
         status: OutputMigrationStatus | None = None,
         errors: list[str] | None = None,
+        cora_id: str | None = None,
+        relations: list[OutputMigrationRelation] | None = None,
     ):
         if status is None and isinstance(publication_type, str):
             valid_statuses = {
@@ -55,6 +68,8 @@ class OutputMigrationResult:
         self.publication_type = publication_type if publication_type else "UNKNOWN"
         self.status = status
         self.errors = errors
+        self.cora_id = cora_id if cora_id else ""
+        self.relations = relations if relations else None
 
 
 def output_migrate(
