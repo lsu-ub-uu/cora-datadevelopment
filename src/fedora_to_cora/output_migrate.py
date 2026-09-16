@@ -170,7 +170,7 @@ def _migrate_record_as_classic_quality(
             f"Validating classic quality record for old id {pid}:\n{pretty_print_xml(classic_quality_record)}"
         )
         return _dry_run_classic_quality_migration(
-            classic_quality_record, pid, publication_type, context
+            classic_quality_record, pid, publication_type, context, errors
         )
     else:
         logger.warning(
@@ -186,14 +186,25 @@ def _dry_run_classic_quality_migration(
     pid: str,
     publication_type: str | None,
     context: Context,
+    errors: list[str] | None,
 ) -> OutputMigrationResult:
-    valid, errors = validate_record(
+    classic_valid, classic_errors = validate_record(
         classic_quality_record,
         record_type="diva-output",
         context=context,
     )
+    if classic_valid:
+        return OutputMigrationResult(
+            pid,
+            publication_type,
+            status="CLASSIC_QUALITY",
+            errors=errors,
+        )
     return OutputMigrationResult(
-        pid, publication_type, status="SUCCESS" if valid else "FAILED", errors=errors
+        pid,
+        publication_type,
+        status="FAILED",
+        errors=classic_errors,
     )
 
 
