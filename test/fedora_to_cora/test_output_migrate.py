@@ -303,7 +303,7 @@ def test_migrate_with_classic_quality_apply_false(
 @patch("fedora_to_cora.output_migrate.create_record")
 @patch("fedora_to_cora.output_migrate.pretty_print_xml")
 @patch("fedora_to_cora.output_migrate.validate_xml")
-def test_migrate_with_classic_quality(
+def test_migrate_with_classic_quality_without_binaries(
     mock_validate_xml, mock_pretty_print, mock_create, mock_transform, mock_validate
 ):
     mock_context = MockContext()
@@ -379,9 +379,11 @@ def test_migrate_with_classic_quality(
 @patch("fedora_to_cora.output_migrate.validate_record")
 @patch("fedora_to_cora.output_migrate.create_record")
 @patch("fedora_to_cora.output_migrate.attachments_migrate")
+@patch("fedora_to_cora.output_migrate.pretty_print_xml")
 @patch("fedora_to_cora.output_migrate.validate_xml")
-def xtest_migrate_classic_quality_with_apply_true_and_with_binaries_true(
+def test_migrate_classic_quality_with_apply_true_and_with_binaries_true(
     mock_validate_xml,
+    mock_pretty_print,
     mock_attachments_migrate,
     mock_create_record,
     mock_validate_record,
@@ -400,7 +402,15 @@ def xtest_migrate_classic_quality_with_apply_true_and_with_binaries_true(
         <record>
             <recordInfo>
                 <id>test-id</id>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>publication_report</linkedRecordId>
+                </validationType>
             </recordInfo>
+            <dataQuality>2026</dataQuality>
+            <adminInfo>
+                <note type="internal">Some internal note.</note>
+            </adminInfo>
         </record>
         """)
 
@@ -408,6 +418,8 @@ def xtest_migrate_classic_quality_with_apply_true_and_with_binaries_true(
 
     expected_errors = ["Missing required field", "Invalid format"]
     mock_validate_record.return_value = (False, expected_errors)
+
+    mock_pretty_print.return_value = "pretty printed xml"
 
     mock_created_record = ET.Element("record")
     mock_create_record.return_value = CreateRecordSuccessResult(
@@ -429,10 +441,25 @@ def xtest_migrate_classic_quality_with_apply_true_and_with_binaries_true(
         context=mock_context,
     )
 
-    mock_create_record.assert_called_once_with(
-        mock_cora_output,
-        record_type="diva-output",
-        context=mock_context,
+    assert mock_create_record.call_count == 1
+    created_output = mock_create_record.call_args[0][0]
+    assert_equal_for_xml_and_xml_string(
+        created_output,
+        """
+        <record>
+            <recordInfo>
+                <id>test-id</id>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>classic_publication_report</linkedRecordId>
+                </validationType>
+            </recordInfo>
+            <dataQuality>classic</dataQuality>
+            <adminInfo>
+                <note type="internal">Some internal note.Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic. Validation errors:- Missing required field- Invalid format</note>
+            </adminInfo>
+        </record>
+        """,
     )
 
     mock_attachments_migrate.assert_called_once_with(
