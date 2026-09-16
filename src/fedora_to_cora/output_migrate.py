@@ -74,12 +74,11 @@ def output_migrate(
     try:
         validate_xml(source_record, fedora_publication_xml_spec)
     except XMLValidationError as e:
-        error_str = str(e)
         return OutputMigrationResult(
             pid,
             publication_type,
             status="INPUT_VALIDATION_FAILED",
-            errors=[error_str],
+            errors=[str(e)],
         )
 
     cora_output = transform_to_cora_output(source_record, context)
@@ -89,11 +88,11 @@ def output_migrate(
         record_type="diva-output",
         context=context,
     )
-
     if not valid:
-        return _handle_invalid_record(
-            errors, pid, publication_type, cora_output, context
+        return _handle_failed_cora_validation(
+            errors, pid, publication_type, cora_output, context, apply
         )
+
     if apply:
         create_record_result = create_record(
             cora_output,
@@ -102,13 +101,6 @@ def output_migrate(
         )
 
         if not is_success_result(create_record_result):
-            if create_record_result.status == 409:
-                return OutputMigrationResult(
-                    pid,
-                    publication_type,
-                    status="SKIPPED",
-                    errors=(["Conflict detected"]),
-                )
             return OutputMigrationResult(
                 pid,
                 publication_type,
@@ -142,12 +134,13 @@ def output_migrate(
     )
 
 
-def _handle_invalid_record(
+def _handle_failed_cora_validation(
     errors: list[str] | None,
     pid: str,
     publication_type: str | None,
     cora_output: ET.Element,
     context: Context,
+    apply,
 ) -> OutputMigrationResult:
     if _has_duplicate_old_id(errors, pid):
         return OutputMigrationResult(
@@ -157,10 +150,60 @@ def _handle_invalid_record(
             errors=["A record with the same oldId already exists in the system"],
         )
 
-    classic_quality_record = transform_output_to_classic_quality(cora_output, errors)
-    logger.warning(
-        f"Creating classic quality record for old id {pid}:\n{pretty_print_xml(classic_quality_record)}"
+    return _migrate_record_as_classic_quality(
+        errors, pid, publication_type, cora_output, context, apply
     )
+
+
+def _migrate_record_as_classic_quality(
+    errors: list[str] | None,
+    pid: str,
+    publication_type: str | None,
+    cora_output: ET.Element,
+    context: Context,
+    apply: bool,
+) -> OutputMigrationResult:
+    classic_quality_record = transform_output_to_classic_quality(cora_output, errors)
+
+    if not apply:
+        logger.warning(
+            f"Validating classic quality record for old id {pid}:\n{pretty_print_xml(classic_quality_record)}"
+        )
+        return _dry_run_classic_quality_migration(
+            classic_quality_record, pid, publication_type, context
+        )
+    else:
+        logger.warning(
+            f"Creating classic quality record for old id {pid}:\n{pretty_print_xml(classic_quality_record)}"
+        )
+        return _apply_classic_quality_migration(
+            classic_quality_record, pid, publication_type, context, errors
+        )
+
+
+def _dry_run_classic_quality_migration(
+    classic_quality_record: ET.Element,
+    pid: str,
+    publication_type: str | None,
+    context: Context,
+) -> OutputMigrationResult:
+    valid, errors = validate_record(
+        classic_quality_record,
+        record_type="diva-output",
+        context=context,
+    )
+    return OutputMigrationResult(
+        pid, publication_type, status="SUCCESS" if valid else "FAILED", errors=errors
+    )
+
+
+def _apply_classic_quality_migration(
+    classic_quality_record: ET.Element,
+    pid: str,
+    publication_type: str | None,
+    context: Context,
+    errors: list[str] | None,
+):
     create_result = create_record(
         classic_quality_record,
         record_type="diva-output",
@@ -174,15 +217,6 @@ def _handle_invalid_record(
         logger.error(
             f"❌ Failed to create classic quality record for old id {pid}. {create_result.error}"
         )
-
-        if create_result.status == 409:
-            return OutputMigrationResult(
-                pid,
-                publication_type,
-                status="SKIPPED",
-                errors=(["Conflict detected"]),
-            )
-
         return OutputMigrationResult(
             pid,
             publication_type,
