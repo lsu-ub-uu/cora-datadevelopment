@@ -90,7 +90,14 @@ def output_migrate(
     )
     if not valid:
         return _handle_failed_cora_validation(
-            errors, pid, publication_type, cora_output, context, apply
+            errors,
+            pid,
+            publication_type,
+            source_record,
+            cora_output,
+            context,
+            apply,
+            with_binaries,
         )
 
     if apply:
@@ -111,17 +118,13 @@ def output_migrate(
             )
 
         if with_binaries:
-            success, errors = attachments_migrate(
+            success, errors = _migrate_attachments_with_rollback(
                 source_record,
                 create_record_result.response_data,
                 context,
                 fedora_url=fedora_url,
             )
             if not success:
-                logger.error(
-                    f"❌ Failed to migrate attachments for record with old id {source_record.findtext('.//pid')} Rolling back."
-                )
-                delete_record(create_record_result.response_data, context)
                 return OutputMigrationResult(
                     pid,
                     publication_type=publication_type,
@@ -134,13 +137,38 @@ def output_migrate(
     )
 
 
+def _migrate_attachments_with_rollback(
+    source_record: ET.Element,
+    created_record: ET.Element,
+    context: Context,
+    *,
+    fedora_url: str = "",
+) -> tuple[bool, list[str] | None]:
+    success, errors = attachments_migrate(
+        source_record,
+        created_record,
+        context,
+        fedora_url=fedora_url,
+    )
+    if success:
+        return success, errors
+
+    logger.error(
+        f"❌ Failed to migrate attachments for record with old id {source_record.findtext('.//pid')} Rolling back."
+    )
+    delete_record(created_record, context)
+    return success, errors
+
+
 def _handle_failed_cora_validation(
     errors: list[str] | None,
     pid: str,
     publication_type: str | None,
+    source_record: ET.Element,
     cora_output: ET.Element,
     context: Context,
-    apply,
+    apply: bool,
+    with_binaries: bool = False,
 ) -> OutputMigrationResult:
     if _has_duplicate_old_id(errors, pid):
         return OutputMigrationResult(
@@ -151,7 +179,14 @@ def _handle_failed_cora_validation(
         )
 
     return _migrate_record_as_classic_quality(
-        errors, pid, publication_type, cora_output, context, apply
+        errors,
+        pid,
+        publication_type,
+        source_record,
+        cora_output,
+        context,
+        apply,
+        with_binaries,
     )
 
 
@@ -159,9 +194,11 @@ def _migrate_record_as_classic_quality(
     errors: list[str] | None,
     pid: str,
     publication_type: str | None,
+    source_record: ET.Element,
     cora_output: ET.Element,
     context: Context,
     apply: bool,
+    with_binaries: bool = False,
 ) -> OutputMigrationResult:
     classic_quality_record = transform_output_to_classic_quality(cora_output, errors)
 
@@ -177,7 +214,13 @@ def _migrate_record_as_classic_quality(
             f"Creating classic quality record for old id {pid}:\n{pretty_print_xml(classic_quality_record)}"
         )
         return _apply_classic_quality_migration(
-            classic_quality_record, pid, publication_type, context, errors
+            classic_quality_record,
+            pid,
+            publication_type,
+            context,
+            errors,
+            source_record=source_record,
+            with_binaries=with_binaries,
         )
 
 
@@ -214,6 +257,9 @@ def _apply_classic_quality_migration(
     publication_type: str | None,
     context: Context,
     errors: list[str] | None,
+    *,
+    source_record: ET.Element | None = None,
+    with_binaries: bool = False,
 ):
     create_result = create_record(
         classic_quality_record,
@@ -221,6 +267,19 @@ def _apply_classic_quality_migration(
         context=context,
     )
     if is_success_result(create_result):
+        if with_binaries and source_record is not None:
+            success, attachment_errors = _migrate_attachments_with_rollback(
+                source_record,
+                create_result.response_data,
+                context,
+            )
+            if not success:
+                return OutputMigrationResult(
+                    pid,
+                    publication_type,
+                    status="FAILED",
+                    errors=attachment_errors,
+                )
         return OutputMigrationResult(
             pid, publication_type, status="CLASSIC_QUALITY", errors=errors
         )
