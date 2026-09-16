@@ -69,22 +69,3 @@ def _create_name_type_corporate_from_organisation_id(
             ),
         ],
     )
-    name = ET.Element("name", type="corporate", repeatId=str(repeat_id))
-
-    old_id = get_cora_id_by_old_id(
-        old_id, record_type="diva-organisation", context=context
-    )
-
-    organisation_link = create_record_link(
-        name_in_data="organisation", record_type="diva-organisation", record_id=old_id
-    )
-
-    name.append(organisation_link)
-
-    role = ET.SubElement(name, "role")
-    if author_only:
-        ET.SubElement(role, "roleTerm").text = "aut"
-    else:
-        ET.SubElement(role, "roleTerm", repeatId="0").text = "cre"
-
-    return name
