@@ -4,6 +4,7 @@ import logging
 from common.xml_utils import pretty_print_xml
 from common.xml_validate import validate_xml, XMLValidationError
 from cora.context import Context
+from fedora_to_cora.output_migration_result import OutputMigrationResult
 from cora.delete import delete_record
 from fedora_to_cora.attachments_migrate import attachments_migrate
 from fedora_to_cora.output_transform import transform_to_cora_output
@@ -13,48 +14,9 @@ from fedora_to_cora.transform.transform_output_to_classic_quality import (
     transform_output_to_classic_quality,
 )
 from fedora_to_cora.fedora_publication_spec import fedora_publication_xml_spec
+from fedora_to_cora.create_relations import create_relations
 
-OutputMigrationStatus = Literal[
-    "SUCCESS",
-    "CLASSIC_QUALITY",
-    "FAILED",
-    "SKIPPED",
-    "INPUT_VALIDATION_FAILED",
-]
 logger = logging.getLogger(__name__)
-
-
-class OutputMigrationResult:
-    pid: str
-    publication_type: str
-    status: OutputMigrationStatus
-    errors: list[str] | None
-
-    def __init__(
-        self,
-        pid: str,
-        publication_type: str | None = None,
-        status: OutputMigrationStatus | None = None,
-        errors: list[str] | None = None,
-    ):
-        if status is None and isinstance(publication_type, str):
-            valid_statuses = {
-                "SUCCESS",
-                "CLASSIC_QUALITY",
-                "FAILED",
-                "SKIPPED",
-                "INPUT_VALIDATION_FAILED",
-            }
-            if publication_type in valid_statuses:
-                status = cast(OutputMigrationStatus, publication_type)
-                publication_type = "UNKNOWN"
-
-        assert status is not None
-
-        self.pid = pid
-        self.publication_type = publication_type if publication_type else "UNKNOWN"
-        self.status = status
-        self.errors = errors
 
 
 def output_migrate(
@@ -69,6 +31,8 @@ def output_migrate(
     """
     pid = source_record.findtext("./pid")
     publication_type = source_record.findtext("./publicationType/publicationTypeCode")
+    cora_id = None
+    relations = []
     assert pid is not None
 
     try:
@@ -107,7 +71,10 @@ def output_migrate(
             context=context,
         )
 
-        if not is_success_result(create_record_result):
+        if is_success_result(create_record_result):
+            cora_id = create_record_result.record_id
+            relations = create_relations(source_record)
+        else:
             return OutputMigrationResult(
                 pid,
                 publication_type,
@@ -133,7 +100,11 @@ def output_migrate(
                 )
 
     return OutputMigrationResult(
-        pid, publication_type=publication_type, status="SUCCESS"
+        pid,
+        publication_type=publication_type,
+        status="SUCCESS",
+        cora_id=cora_id,
+        relations=relations,
     )
 
 
@@ -281,7 +252,12 @@ def _apply_classic_quality_migration(
                     errors=attachment_errors,
                 )
         return OutputMigrationResult(
-            pid, publication_type, status="CLASSIC_QUALITY", errors=errors
+            pid,
+            publication_type,
+            status="CLASSIC_QUALITY",
+            errors=errors,
+            cora_id=create_result.record_id,
+            relations=create_relations(classic_quality_record),
         )
     else:
         logger.error(

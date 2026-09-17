@@ -9,7 +9,8 @@ from common.arg_parser import (
 )
 from common.logging_config import configure_logging
 from cora.context import CoraContext
-from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
+from fedora_to_cora.output_migrate import output_migrate
+from fedora_to_cora.output_relations_migrate import migrate_output_relations
 from common.common_data import read_source_xml
 from common.print_logo import print_logo
 from multiprocessing import Pool
@@ -17,9 +18,6 @@ from tqdm import tqdm
 from scripts.util.outputs_import_report.save_reports import save_reports
 
 context = None
-with_binaries = False
-apply = False
-fedora_url = ""
 
 
 def main():
@@ -69,12 +67,61 @@ def outputs_import(
     print(
         f"Starting migration of {len(source_record_paths)} records to {system} system..."
     )
+
+    migration_results = _migrate_outputs(
+        source_record_paths=source_record_paths,
+        system=system,
+        login_id=login_id,
+        app_token=app_token,
+        processes=processes,
+        apply=apply,
+        binaries=binaries,
+        fedora_url=fedora_url,
+        cora_url=cora_url,
+    )
+
+    relation_migration_results = _migrate_output_relations(
+        migration_results=migration_results,
+        system=system,
+        login_id=login_id,
+        app_token=app_token,
+        processes=processes,
+        apply=apply,
+        fedora_url=fedora_url,
+        cora_url=cora_url,
+    )
+
+    end_time = time.perf_counter()
+    elapsed_time = end_time - start_time
+    print(f"Migration completed in {elapsed_time:.2f} seconds.")
+
+    print(
+        f"Successfully migrated {len([r for r in migration_results if r.status == 'SUCCESS'])} records."
+    )
+
+    save_reports(
+        migration_results, xml_dir=xml_dir, system=system, output_dir="reports"
+    )
+
+
+def _migrate_outputs(
+    source_record_paths: list[str],
+    system: str,
+    login_id: str,
+    app_token: str,
+    processes: int,
+    apply: bool,
+    binaries: bool = False,
+    fedora_url: str = "",
+    cora_url: str | None = None,
+):
     counts = {
         "SUCCESS": 0,
         "CLASSIC_QUALITY": 0,
         "FAILED": 0,
         "SKIPPED": 0,
         "INPUT_VALIDATION_FAILED": 0,
+        "PENDING_RELATIONS": 0,
     }
     results = []
     with Pool(
@@ -96,15 +143,62 @@ def outputs_import(
             counts[result.status] += 1
             results.append(result)
             progress.set_postfix_str(
-                f"✅ {counts['SUCCESS']} | ⚠️ {counts['CLASSIC_QUALITY']} | ❌ {counts['FAILED']} | ➡️ {counts['SKIPPED']} | ⛔{counts['INPUT_VALIDATION_FAILED']}"
+                f"✅ {counts['SUCCESS']} | ⚠️ {counts['CLASSIC_QUALITY']} | ❌ {counts['FAILED']} | ➡️ {counts['SKIPPED']} | ⛔{counts['INPUT_VALIDATION_FAILED']} | ⏳ {counts['PENDING_RELATIONS']}"
             )
             progress.update(1)
+    return results
 
-    end_time = time.perf_counter()
-    elapsed_time = end_time - start_time
-    print(f"Migration completed in {elapsed_time:.2f} seconds.")
 
-    save_reports(results, xml_dir=xml_dir, system=system, output_dir="reports")
+def _migrate_output_relations(
+    migration_results: list,
+    processes: int,
+    system: str,
+    login_id: str,
+    app_token: str,
+    apply: bool,
+    fedora_url: str = "",
+    cora_url: str | None = None,
+):
+    counts = {
+        "SUCCESS": 0,
+        "FAILED": 0,
+        "SKIPPED": 0,
+        "PENDING_RELATIONS": 0,
+    }
+    results = []
+
+    with Pool(
+        processes,
+        _init_context,
+        initargs=(
+            system,
+            login_id,
+            app_token,
+            apply,
+            False,
+            fedora_url,
+            cora_url,
+        ),
+    ) as pool, tqdm(
+        total=len(migration_results), desc="Importing output relations"
+    ) as progress:
+        for result in pool.imap_unordered(
+            _update_relations_for_output, migration_results
+        ):
+            counts[result.status] += 1
+            results.append(result)
+            progress.set_postfix_str(
+                f"✅ {counts['SUCCESS']} | ❌ {counts['FAILED']} | ➡️ {counts['SKIPPED']} | ⏳ {counts['PENDING_RELATIONS']}"
+            )
+            progress.update(1)
+    # Ensure all processes are completed before returning results
+    return results
+
+
+def _update_relations_for_output(migration_result):
+    assert context is not None, "Context must be initialized"
+
+    return migrate_output_relations(migration_result, context)
 
 
 def _parse_args():

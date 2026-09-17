@@ -20,6 +20,7 @@ record_type_to_searchId = {
     "diva-course": "diva-courseSearch",
     "diva-project": "diva-projectSearch",
     "diva-programme": "diva-programmeSearch",
+    "diva-output": "diva-outputPublicSearch",
 }
 
 
@@ -38,6 +39,7 @@ def get_cora_id_by_old_id(
         "diva-course",
         "diva-project",
         "diva-programme",
+        "diva-output",
     ],
     context: Context,
 ) -> str:
@@ -64,7 +66,11 @@ def get_cora_id_by_old_id(
         "Authtoken": context.get_auth_token(),
     }
 
-    search_data = _create_search_data(old_id)
+    search_data = (
+        _create_diva_output_search_data(old_id)
+        if record_type == "diva-output"
+        else _create_search_data(old_id)
+    )
     params = {"searchData": inline_xml_string(search_data)}
 
     response = requests.get(
@@ -103,6 +109,19 @@ def _create_search_data(old_id: str) -> str:
             <include>
                 <includePart>
                     <oldIdSearchTerm>{old_id}</oldIdSearchTerm>
+                </includePart>
+            </include>
+        </search>
+    """
+
+
+def _create_diva_output_search_data(old_id: str) -> str:
+    return f"""
+        <?xml version="1.0" encoding="UTF-8"?>
+        <search>
+            <include>
+                <includePart>
+                    <genericIdSearchTerm>{old_id.replace(":", "?")}</genericIdSearchTerm>
                 </includePart>
             </include>
         </search>

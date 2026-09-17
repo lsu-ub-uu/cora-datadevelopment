@@ -6,7 +6,8 @@ from common.arg_parser import (
     cora_url_argument,
 )
 from classic.get_classic_publications import get_classic_publications
-from fedora_to_cora.output_migrate import output_migrate, OutputMigrationResult
+from fedora_to_cora.output_migrate import output_migrate
+from fedora_to_cora.output_migration_result import OutputMigrationResult
 from common.logging_config import configure_logging
 from cora.context import CoraContext
 from tqdm import tqdm
