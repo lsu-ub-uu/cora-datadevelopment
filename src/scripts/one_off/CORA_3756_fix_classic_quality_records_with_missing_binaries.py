@@ -11,7 +11,7 @@ from cora.context import Context, CoraContext
 from fedora_to_cora.attachments_migrate import attachments_migrate
 from cora.get_record import get_record
 
-record_ids = ["267", "1976", "1563", "32", "919", "304", "183"]
+record_ids = ["267", "1976", "1563", "32", "919", "304", "183", "407"]
 
 logger = logging.getLogger(__name__)
 
