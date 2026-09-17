@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+from collections.abc import Callable
 from xml.etree import ElementTree as ET
 from common.arg_parser import (
     create_argument_parser,
@@ -10,6 +11,7 @@ from common.arg_parser import (
 from common.logging_config import configure_logging
 from cora.context import CoraContext
 from fedora_to_cora.output_migrate import output_migrate
+from fedora_to_cora.output_migration_result import OutputMigrationResult
 from fedora_to_cora.output_relations_migrate import migrate_output_relations
 from common.common_data import read_source_xml
 from common.print_logo import print_logo
@@ -86,8 +88,6 @@ def outputs_import(
         login_id=login_id,
         app_token=app_token,
         processes=processes,
-        apply=apply,
-        fedora_url=fedora_url,
         cora_url=cora_url,
     )
 
@@ -123,40 +123,38 @@ def _migrate_outputs(
         "INPUT_VALIDATION_FAILED": 0,
         "PENDING_RELATIONS": 0,
     }
-    results = []
-    with Pool(
-        processes,
-        _init_context,
+    return _run_pool_with_progress(
+        work_items=source_record_paths,
+        worker=_migrate_record,
+        processes=processes,
         initargs=(
             system,
             login_id,
             app_token,
+            cora_url,
             apply,
             binaries,
             fedora_url,
-            cora_url,
         ),
-    ) as pool, tqdm(
-        total=len(source_record_paths), desc="Importing records"
-    ) as progress:
-        for result in pool.imap_unordered(_migrate_record, source_record_paths):
-            counts[result.status] += 1
-            results.append(result)
-            progress.set_postfix_str(
-                f"✅ {counts['SUCCESS']} | ⚠️ {counts['CLASSIC_QUALITY']} | ❌ {counts['FAILED']} | ➡️ {counts['SKIPPED']} | ⛔{counts['INPUT_VALIDATION_FAILED']} | ⏳ {counts['PENDING_RELATIONS']}"
-            )
-            progress.update(1)
-    return results
+        progress_desc="Importing records",
+        counts=counts,
+        status_order=[
+            ("SUCCESS", "✅"),
+            ("CLASSIC_QUALITY", "⚠️"),
+            ("FAILED", "❌"),
+            ("SKIPPED", "➡️"),
+            ("INPUT_VALIDATION_FAILED", "⛔"),
+            ("PENDING_RELATIONS", "⏳"),
+        ],
+    )
 
 
 def _migrate_output_relations(
-    migration_results: list,
+    migration_results: list[OutputMigrationResult],
     processes: int,
     system: str,
     login_id: str,
     app_token: str,
-    apply: bool,
-    fedora_url: str = "",
     cora_url: str | None = None,
 ):
     counts = {
@@ -165,40 +163,20 @@ def _migrate_output_relations(
         "SKIPPED": 0,
         "PENDING_RELATIONS": 0,
     }
-    results = []
-
-    with Pool(
-        processes,
-        _init_context,
-        initargs=(
-            system,
-            login_id,
-            app_token,
-            apply,
-            False,
-            fedora_url,
-            cora_url,
-        ),
-    ) as pool, tqdm(
-        total=len(migration_results), desc="Importing output relations"
-    ) as progress:
-        for result in pool.imap_unordered(
-            _update_relations_for_output, migration_results
-        ):
-            counts[result.status] += 1
-            results.append(result)
-            progress.set_postfix_str(
-                f"✅ {counts['SUCCESS']} | ❌ {counts['FAILED']} | ➡️ {counts['SKIPPED']} | ⏳ {counts['PENDING_RELATIONS']}"
-            )
-            progress.update(1)
-    # Ensure all processes are completed before returning results
-    return results
-
-
-def _update_relations_for_output(migration_result):
-    assert context is not None, "Context must be initialized"
-
-    return migrate_output_relations(migration_result, context)
+    return _run_pool_with_progress(
+        work_items=migration_results,
+        worker=_update_relations_for_output,
+        processes=processes,
+        initargs=(system, login_id, app_token, cora_url),
+        progress_desc="Importing output relations",
+        counts=counts,
+        status_order=[
+            ("SUCCESS", "✅"),
+            ("FAILED", "❌"),
+            ("SKIPPED", "➡️"),
+            ("PENDING_RELATIONS", "⏳"),
+        ],
+    )
 
 
 def _parse_args():
@@ -251,7 +229,13 @@ def _parse_args():
 
 
 def _init_context(
-    system, login_id, app_token, apply_flag, binaries_flag, fedora_url_arg, cora_url
+    system,
+    login_id,
+    app_token,
+    cora_url,
+    apply_flag=False,
+    binaries_flag=False,
+    fedora_url_arg="",
 ):
     global context, apply, with_binaries, fedora_url
     configure_logging()
@@ -266,6 +250,36 @@ def _init_context(
     fedora_url = fedora_url_arg
 
 
+def _run_pool_with_progress(
+    work_items: list,
+    worker: Callable,
+    processes: int,
+    initargs: tuple,
+    progress_desc: str,
+    counts: dict[str, int],
+    status_order: list[tuple[str, str]],
+):
+    results = []
+
+    with Pool(
+        processes,
+        _init_context,
+        initargs=initargs,
+    ) as pool, tqdm(total=len(work_items), desc=progress_desc) as progress:
+        for result in pool.imap_unordered(worker, work_items):
+            counts[result.status] += 1
+            results.append(result)
+            progress.set_postfix_str(_format_progress_counts(counts, status_order))
+            progress.update(1)
+    return results
+
+
+def _format_progress_counts(
+    counts: dict[str, int], status_order: list[tuple[str, str]]
+) -> str:
+    return " | ".join(f"{icon} {counts[status]}" for status, icon in status_order)
+
+
 def _migrate_record(source_record_path: str):
     assert context is not None, "Context must be initialized before migrating records"
     source_record = read_source_xml(source_record_path)
@@ -276,6 +290,12 @@ def _migrate_record(source_record_path: str):
         with_binaries=with_binaries,
         fedora_url=fedora_url,
     )
+
+
+def _update_relations_for_output(migration_result: OutputMigrationResult):
+    assert context is not None, "Context must be initialized"
+
+    return migrate_output_relations(migration_result, context)
 
 
 def _read_source_record_paths(xml_dir: str, limit: int | None = None) -> list[str]:

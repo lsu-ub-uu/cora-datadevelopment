@@ -9,13 +9,19 @@ from scripts import outputs_import
 
 class _FakePool:
     test_results = []
+    test_results_batches = []
     captured_iterable = None
     captured_processes = None
     captured_initargs = None
+    captured_iterables = []
+    captured_processes_list = []
+    captured_initargs_list = []
 
     def __init__(self, processes, initializer, initargs):
         _FakePool.captured_processes = processes
         _FakePool.captured_initargs = initargs
+        _FakePool.captured_processes_list.append(processes)
+        _FakePool.captured_initargs_list.append(initargs)
 
     def __enter__(self):
         return self
@@ -25,6 +31,9 @@ class _FakePool:
 
     def imap_unordered(self, worker, iterable):
         _FakePool.captured_iterable = list(iterable)
+        _FakePool.captured_iterables.append(_FakePool.captured_iterable)
+        if _FakePool.test_results_batches:
+            return iter(_FakePool.test_results_batches.pop(0))
         return iter(_FakePool.test_results)
 
 
@@ -116,9 +125,18 @@ def test_outputs_import_orchestrates_loading_filtering_pool_and_reports(
     mock_save_reports,
 ):
     _FakeTqdm.instances = []
-    _FakePool.test_results = [
-        OutputMigrationResult("diva2:1", "SUCCESS"),
-        OutputMigrationResult("diva2:2", "FAILED", errors=["x"]),
+    _FakePool.captured_iterables = []
+    _FakePool.captured_processes_list = []
+    _FakePool.captured_initargs_list = []
+    _FakePool.test_results_batches = [
+        [
+            OutputMigrationResult("diva2:1", "SUCCESS"),
+            OutputMigrationResult("diva2:2", "FAILED", errors=["x"]),
+        ],
+        [
+            OutputMigrationResult("diva2:1", "SUCCESS"),
+            OutputMigrationResult("diva2:2", "FAILED", errors=["relation"]),
+        ],
     ]
 
     mock_read_source_record_paths.return_value = ["a.xml", "b.xml", "c.xml"]
@@ -143,11 +161,26 @@ def test_outputs_import_orchestrates_loading_filtering_pool_and_reports(
         ["a.xml", "b.xml", "c.xml"], ["diva2:2"]
     )
     assert _FakePool.captured_processes == 2
-    assert _FakePool.captured_iterable == ["b.xml", "c.xml"]
+    assert _FakePool.captured_iterables[0] == ["b.xml", "c.xml"]
+    assert _FakePool.captured_initargs_list[0] == (
+        "pre",
+        "user",
+        "token",
+        "",
+        False,
+        False,
+        "",
+    )
+    assert _FakePool.captured_initargs_list[1] == ("pre", "user", "token", "")
+    assert [result.pid for result in _FakePool.captured_iterables[1]] == [
+        "diva2:1",
+        "diva2:2",
+    ]
     assert _FakeTqdm.instances[0].total == 2
     assert _FakeTqdm.instances[0].updated == 2
     assert "✅ 1" in _FakeTqdm.instances[0].postfixes[-1]
     assert "❌ 1" in _FakeTqdm.instances[0].postfixes[-1]
+    assert _FakeTqdm.instances[1].desc == "Importing output relations"
 
     results_arg = mock_save_reports.call_args.args[0]
     assert [result.status for result in results_arg] == ["SUCCESS", "FAILED"]
@@ -227,9 +260,18 @@ def test_outputs_import_preserves_reporting_contract_without_pid_filter(
     mock_save_reports,
 ):
     _FakeTqdm.instances = []
-    _FakePool.test_results = [
-        OutputMigrationResult("diva2:1", "SUCCESS"),
-        OutputMigrationResult("diva2:2", "CLASSIC_QUALITY", errors=["warning"]),
+    _FakePool.captured_iterables = []
+    _FakePool.captured_processes_list = []
+    _FakePool.captured_initargs_list = []
+    _FakePool.test_results_batches = [
+        [
+            OutputMigrationResult("diva2:1", "SUCCESS"),
+            OutputMigrationResult("diva2:2", "CLASSIC_QUALITY", errors=["warning"]),
+        ],
+        [
+            OutputMigrationResult("diva2:1", "SUCCESS"),
+            OutputMigrationResult("diva2:2", "SKIPPED"),
+        ],
     ]
 
     mock_read_source_record_paths.return_value = ["a.xml", "b.xml"]
@@ -249,7 +291,7 @@ def test_outputs_import_preserves_reporting_contract_without_pid_filter(
     )
 
     mock_filter_source_record_paths_by_pids.assert_not_called()
-    assert _FakePool.captured_iterable == ["a.xml", "b.xml"]
+    assert _FakePool.captured_iterables[0] == ["a.xml", "b.xml"]
     assert _FakeTqdm.instances[0].total == 2
     assert _FakeTqdm.instances[0].updated == 2
 
