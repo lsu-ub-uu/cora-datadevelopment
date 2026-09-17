@@ -150,13 +150,13 @@ def _migrate_attachments_with_rollback(
         context,
         fedora_url=fedora_url,
     )
-    if success:
-        return success, errors
 
-    logger.error(
-        f"❌ Failed to migrate attachments for record with old id {source_record.findtext('.//pid')} Rolling back."
-    )
-    delete_record(created_record, context)
+    if not success:
+        logger.error(
+            f"❌ Failed to migrate attachments for record with old id {source_record.findtext('.//pid')} Rolling back."
+        )
+        delete_record(created_record, context)
+
     return success, errors
 
 
@@ -258,7 +258,7 @@ def _apply_classic_quality_migration(
     context: Context,
     errors: list[str] | None,
     *,
-    source_record: ET.Element | None = None,
+    source_record: ET.Element,
     with_binaries: bool = False,
 ):
     create_result = create_record(
@@ -267,7 +267,7 @@ def _apply_classic_quality_migration(
         context=context,
     )
     if is_success_result(create_result):
-        if with_binaries and source_record is not None:
+        if with_binaries:
             success, attachment_errors = _migrate_attachments_with_rollback(
                 source_record,
                 create_result.response_data,
