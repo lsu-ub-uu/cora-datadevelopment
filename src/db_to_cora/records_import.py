@@ -1,3 +1,4 @@
+import re
 import xml.etree.ElementTree as ET
 import logging
 from typing import Callable
@@ -46,7 +47,16 @@ def apply_import(
     relation_mappings: list[RelationMapping] | None = None,
 ):
     def process_record(source_record: ET.Element):
-        transformed_record = transform_function(source_record)
+        logger.info(
+            f"Processing {record_type} with old id {source_record.findtext('./old_id')}"
+        )
+        try:
+            transformed_record = transform_function(source_record)
+        except Exception as e:
+            old_id = source_record.findtext("./old_id")
+            logger.error(f"Failed to transform record with old id {old_id}: {e}")
+            raise e
+
         result = create_record(
             transformed_record, record_type=record_type, context=context
         )
