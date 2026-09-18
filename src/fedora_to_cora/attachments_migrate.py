@@ -49,7 +49,7 @@ def attachments_migrate(
         for attachment in _sort_by_order(attachments):
             if attachment.findtext("./deleted") == "true":
                 logger.info(
-                    f"🗑️ Skipping deleted attachment {attachment.findtext('./fileName')} for record with old id {source_record.findtext('.//pid')}"
+                    f"🗑️ Skipping deleted attachment {attachment.findtext('./fileName')} for record with old id {source_record.findtext('./pid')}"
                 )
                 continue
 
@@ -70,11 +70,11 @@ def attachments_migrate(
             update_result = update_record(record_to_update, context)
             if update_result.success:
                 logger.info(
-                    f"✅ Successfully migrated {len(attachments_group.findall('./attachment'))} attachments for record with old id {source_record.findtext('.//pid')}"
+                    f"✅ Successfully migrated {len(attachments_group.findall('./attachment'))} attachments for record with old id {source_record.findtext('./pid')}"
                 )
             else:
                 logger.error(
-                    f"❌ Failed to update record with attachments for record with old id {source_record.findtext('.//pid')}: {update_result.error}\nUpdate request body:\n{pretty_print_xml(record_to_update)}"
+                    f"❌ Failed to update record with attachments for record with old id {source_record.findtext('./pid')}: {update_result.error}\nUpdate request body:\n{pretty_print_xml(record_to_update)}"
                 )
                 errors.append(update_result.error)
                 _roll_back_binary_records(created_binary_records, context)

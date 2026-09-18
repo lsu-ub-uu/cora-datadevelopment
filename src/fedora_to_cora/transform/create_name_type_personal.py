@@ -16,8 +16,8 @@ def create_name_type_personals(
     """
 
     role_terms_by_selector = [
-        (".//authors/person", "aut"),
-        (".//editors/person", "edt"),
+        ("./authors/person", "aut"),
+        ("./editors/person", "edt"),
     ]
 
     name_type_personals = []
@@ -38,7 +38,7 @@ def create_name_type_personals(
                 )
                 repeat_id += 1
 
-    for contributor in source_record.findall(".//otherContributors/contributor"):
+    for contributor in source_record.findall("./otherContributors/contributor"):
         role_terms = [
             marc_code.text
             for marc_code in contributor.findall("./roles/role/marcCode")
@@ -55,7 +55,7 @@ def create_name_type_personals(
 def create_thesis_advisor(
     source_record: ET.Element, context: Context
 ) -> list[ET.Element | None]:
-    supervisors = source_record.findall(".//supervisors/person")
+    supervisors = source_record.findall("./supervisors/person")
     return [
         create_name_type_personal(
             supervisor,
@@ -72,7 +72,7 @@ def create_thesis_advisor(
 def create_opponents(
     source_record: ET.Element, context: Context
 ) -> list[ET.Element | None]:
-    opponents = source_record.findall(".//opponents/person")
+    opponents = source_record.findall("./opponents/person")
     return [
         create_name_type_personal(
             opponent,
@@ -89,7 +89,7 @@ def create_opponents(
 def create_degree_supervisor(
     source_record: ET.Element, context: Context
 ) -> list[ET.Element | None]:
-    examiners = source_record.findall(".//examiners/person")
+    examiners = source_record.findall("./examiners/person")
     return [
         create_name_type_personal(
             examiner,
