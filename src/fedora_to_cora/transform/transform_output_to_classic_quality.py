@@ -10,6 +10,7 @@ def transform_output_to_classic_quality(
 
     _update_validation_type(classic_quality_output)
     _update_data_quality(classic_quality_output)
+    _handle_known_errors(classic_quality_output, validation_errors)
     _add_validation_errors_to_internal_note(classic_quality_output, validation_errors)
 
     return classic_quality_output
@@ -56,3 +57,21 @@ def _add_validation_errors_to_internal_note(
         note_element = ET.Element("note", type="internal")
         admin_info.append(note_element)
         note_element.text = validation_error_text
+
+
+def _handle_known_errors(
+    classic_quality_output: ET.Element, validation_errors: list[str] | None
+):
+    if not validation_errors or len(validation_errors) == 0:
+        return None
+
+    for error in validation_errors:
+        if (
+            "Could not find metadata for child with nameInData: relatedItem and attributes: type:conference"
+            in error
+        ):
+            related_conference = classic_quality_output.find(
+                "./relatedItem[@type='conference']"
+            )
+            if related_conference is not None:
+                classic_quality_output.remove(related_conference)

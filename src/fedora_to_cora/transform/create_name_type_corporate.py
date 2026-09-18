@@ -63,3 +63,10 @@ def _create_name_type_corporate_from_organisation_id(
             ),
         ],
     )
+
+
+def _get_role(source_record: ET.Element) -> str:
+    validation_type = get_validation_type_from_fedora_record(source_record)
+    if validation_type in ["publication_edited-book", "conference_proceeding"]:
+        return "edt"
+    return "aut"
