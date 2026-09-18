@@ -14,7 +14,6 @@ class OutputRelation:
 
 OutputMigrationStatus = Literal[
     "SUCCESS",
-    "PENDING_RELATIONS",
     "CLASSIC_QUALITY",
     "FAILED",
     "SKIPPED",

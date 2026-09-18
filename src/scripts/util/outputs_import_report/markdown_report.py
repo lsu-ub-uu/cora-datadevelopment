@@ -1,10 +1,13 @@
 import os
 
 from fedora_to_cora.output_migrate import OutputMigrationResult
+from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResult
 from scripts.util.outputs_import_report.report_data import (
     ERROR_CATEGORIES_IN_ORDER,
+    RELATION_ERRORS_LABEL,
     STATUS_LABELS,
     format_publication_type_pid_groups,
+    generate_relation_error_data,
     generate_report_data,
     generate_setup_for_report,
     group_error_pids_by_publication_type,
@@ -16,6 +19,7 @@ def save_markdown_report(
     xml_dir: str,
     system: str,
     output_dir: str = ".",
+    relation_results: list[OutputRelationMigrationResult] | None = None,
 ):
     status_counts, errors = generate_report_data(results)
     grouped_error_pids = group_error_pids_by_publication_type(results)
@@ -56,6 +60,24 @@ def save_markdown_report(
                 )
             lines.append("")
 
+    _append_relation_errors_section(lines, relation_results or [])
+
     with open(filepath, "w", encoding="utf-8") as file_obj:
         file_obj.write("\n".join(lines))
     print(f"Markdown report saved to {filepath}")
+
+
+def _append_relation_errors_section(
+    lines: list[str], relation_results: list[OutputRelationMigrationResult]
+):
+    relation_errors = generate_relation_error_data(relation_results)
+    if not relation_errors:
+        return
+
+    lines.append(f"## {RELATION_ERRORS_LABEL}\n")
+    lines.append("| Error Message | Occurrences | PIDs |")
+    lines.append("|--------------|-------------|------|")
+    for error_msg, pids in relation_errors.items():
+        sanitized = error_msg.replace("|", " ").replace(chr(10), " ")
+        lines.append(f"| {sanitized} | {len(pids)} | {', '.join(pids)} |")
+    lines.append("")

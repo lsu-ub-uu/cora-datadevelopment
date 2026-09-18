@@ -4,6 +4,7 @@ import pytest
 
 from cora.context import MockContext
 from fedora_to_cora.output_migrate import OutputMigrationResult
+from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResult
 from scripts import outputs_import
 
 
@@ -134,8 +135,12 @@ def test_outputs_import_orchestrates_loading_filtering_pool_and_reports(
             OutputMigrationResult("diva2:2", "FAILED", errors=["x"]),
         ],
         [
-            OutputMigrationResult("diva2:1", "SUCCESS"),
-            OutputMigrationResult("diva2:2", "FAILED", errors=["relation"]),
+            OutputRelationMigrationResult(
+                status="UPDATED", pid="diva2:1", cora_id="1", error=None
+            ),
+            OutputRelationMigrationResult(
+                status="FAILED", pid="diva2:2", cora_id="2", error="relation"
+            ),
         ],
     ]
 
@@ -184,11 +189,17 @@ def test_outputs_import_orchestrates_loading_filtering_pool_and_reports(
 
     results_arg = mock_save_reports.call_args.args[0]
     assert [result.status for result in results_arg] == ["SUCCESS", "FAILED"]
-    assert mock_save_reports.call_args.kwargs == {
+    save_reports_kwargs = mock_save_reports.call_args.kwargs
+    relation_results = save_reports_kwargs.pop("relation_results")
+    assert save_reports_kwargs == {
         "xml_dir": "/tmp/xml",
         "system": "pre",
         "output_dir": "reports",
     }
+    assert [(r.status, r.pid, r.error) for r in relation_results] == [
+        ("UPDATED", "diva2:1", None),
+        ("FAILED", "diva2:2", "relation"),
+    ]
 
 
 def test_migrate_record_raises_assertion_when_context_not_initialized():
@@ -269,8 +280,12 @@ def test_outputs_import_preserves_reporting_contract_without_pid_filter(
             OutputMigrationResult("diva2:2", "CLASSIC_QUALITY", errors=["warning"]),
         ],
         [
-            OutputMigrationResult("diva2:1", "SUCCESS"),
-            OutputMigrationResult("diva2:2", "SKIPPED"),
+            OutputRelationMigrationResult(
+                status="UPDATED", pid="diva2:1", cora_id="1", error=None
+            ),
+            OutputRelationMigrationResult(
+                status="NO_RELATIONS", pid="diva2:2", cora_id="2", error=None
+            ),
         ],
     ]
 

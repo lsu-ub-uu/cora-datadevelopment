@@ -733,17 +733,13 @@ fedora_publication_xml_spec: XMLSpec = {
 
 # Circular references for publication
 
-fedora_publication_xml_spec["hostPublications"] = "$NOT_YET_IMPLEMENTED$"
-# fedora_publication_xml_spec["hostPublications"] = {
-#     "hostPublication": fedora_publication_xml_spec,
-# }
+fedora_publication_xml_spec["hostPublications"] = {
+    "hostPublication": fedora_publication_xml_spec,
+}
 
-
-fedora_publication_xml_spec["partsOfPublication"] = "$NOT_YET_IMPLEMENTED$"
-
-# fedora_publication_xml_spec["partsOfPublication"] = {
-#     "publication": fedora_publication_xml_spec,
-# }
+fedora_publication_xml_spec["partsOfPublication"] = {
+    "publication": fedora_publication_xml_spec,
+}
 
 fedora_publication_xml_spec["relations"] = "$NOT_YET_IMPLEMENTED$"
 

@@ -2,15 +2,21 @@ from rich.console import Console
 from rich.table import Table
 
 from fedora_to_cora.output_migrate import OutputMigrationResult
+from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResult
 from scripts.util.outputs_import_report.report_data import (
     ERROR_CATEGORIES_IN_ORDER,
+    RELATION_ERRORS_LABEL,
     format_publication_type_pid_groups,
+    generate_relation_error_data,
     generate_report_data,
     group_error_pids_by_publication_type,
 )
 
 
-def print_console_report(results: list[OutputMigrationResult]):
+def print_console_report(
+    results: list[OutputMigrationResult],
+    relation_results: list[OutputRelationMigrationResult] | None = None,
+):
     """Prints the output of generate_report_data using a table from the rich library."""
     console = Console()
     status_counts, errors = generate_report_data(results)
@@ -40,3 +46,21 @@ def print_console_report(results: list[OutputMigrationResult]):
                     )
                     error_table.add_row(error_msg, str(len(pids)), pid_groups)
                 console.print(error_table)
+
+    _print_relation_errors(console, relation_results or [])
+
+
+def _print_relation_errors(
+    console: Console, relation_results: list[OutputRelationMigrationResult]
+):
+    relation_errors = generate_relation_error_data(relation_results)
+    if not relation_errors:
+        return
+
+    table = Table(title=RELATION_ERRORS_LABEL, show_lines=True)
+    table.add_column("Error Message", style="red")
+    table.add_column("Occurrences", justify="right")
+    table.add_column("PIDs", style="cyan")
+    for error_msg, pids in relation_errors.items():
+        table.add_row(error_msg, str(len(pids)), ", ".join(pids))
+    console.print(table)

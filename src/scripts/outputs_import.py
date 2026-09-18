@@ -100,7 +100,11 @@ def outputs_import(
     )
 
     save_reports(
-        migration_results, xml_dir=xml_dir, system=system, output_dir="reports"
+        migration_results,
+        xml_dir=xml_dir,
+        system=system,
+        output_dir="reports",
+        relation_results=relation_migration_results,
     )
 
 
@@ -121,7 +125,6 @@ def _migrate_outputs(
         "FAILED": 0,
         "SKIPPED": 0,
         "INPUT_VALIDATION_FAILED": 0,
-        "PENDING_RELATIONS": 0,
     }
     return _run_pool_with_progress(
         work_items=source_record_paths,
@@ -144,7 +147,6 @@ def _migrate_outputs(
             ("FAILED", "❌"),
             ("SKIPPED", "➡️"),
             ("INPUT_VALIDATION_FAILED", "⛔"),
-            ("PENDING_RELATIONS", "⏳"),
         ],
     )
 
@@ -158,10 +160,9 @@ def _migrate_output_relations(
     cora_url: str | None = None,
 ):
     counts = {
-        "SUCCESS": 0,
+        "UPDATED": 0,
+        "NO_RELATIONS": 0,
         "FAILED": 0,
-        "SKIPPED": 0,
-        "PENDING_RELATIONS": 0,
     }
     return _run_pool_with_progress(
         work_items=migration_results,
@@ -171,10 +172,9 @@ def _migrate_output_relations(
         progress_desc="Importing output relations",
         counts=counts,
         status_order=[
-            ("SUCCESS", "✅"),
+            ("UPDATED", "✅"),
+            ("NO_RELATIONS", "➡️"),
             ("FAILED", "❌"),
-            ("SKIPPED", "➡️"),
-            ("PENDING_RELATIONS", "⏳"),
         ],
     )
 

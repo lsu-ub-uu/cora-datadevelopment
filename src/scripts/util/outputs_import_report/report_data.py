@@ -3,6 +3,7 @@ import os
 import re
 
 from fedora_to_cora.output_migrate import OutputMigrationResult
+from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResult
 
 STATUS_LABELS = {
     "SUCCESS": "✅ Successfully imported as data quality DiVA 2026",
@@ -18,6 +19,24 @@ ERROR_CATEGORIES_IN_ORDER = [
     "CLASSIC_QUALITY",
     "SKIPPED",
 ]
+
+RELATION_ERRORS_LABEL = "❌ Failed to migrate relations"
+
+
+def generate_relation_error_data(
+    relation_results: list[OutputRelationMigrationResult],
+) -> dict[str, list[str]]:
+    errors: dict[str, list[str]] = {}
+    for result in relation_results:
+        if result.status != "FAILED" or result.error is None:
+            continue
+        errors.setdefault(result.error, []).append(result.pid)
+
+    for error in errors:
+        errors[error] = sorted(errors[error])
+
+    sorted_items = sorted(errors.items(), key=lambda item: len(item[1]), reverse=True)
+    return dict(sorted_items)
 
 
 def generate_report_data(results: list[OutputMigrationResult]):

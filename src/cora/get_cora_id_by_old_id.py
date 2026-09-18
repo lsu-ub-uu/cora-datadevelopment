@@ -20,7 +20,7 @@ record_type_to_searchId = {
     "diva-course": "diva-courseSearch",
     "diva-project": "diva-projectSearch",
     "diva-programme": "diva-programmeSearch",
-    "diva-output": "diva-outputPublicSearch",
+    "diva-output": "outputPublicSearch",
 }
 
 

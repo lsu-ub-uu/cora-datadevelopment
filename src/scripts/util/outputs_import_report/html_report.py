@@ -2,9 +2,12 @@ import os
 from xml.etree import ElementTree as ET
 
 from fedora_to_cora.output_migrate import OutputMigrationResult
+from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResult
 from scripts.util.outputs_import_report.report_data import (
     ERROR_CATEGORIES_IN_ORDER,
+    RELATION_ERRORS_LABEL,
     STATUS_LABELS,
+    generate_relation_error_data,
     generate_report_data,
     generate_setup_for_report,
     group_error_pids_by_publication_type,
@@ -16,6 +19,7 @@ def save_html_report(
     xml_dir: str,
     system: str,
     output_dir: str = ".",
+    relation_results: list[OutputRelationMigrationResult] | None = None,
 ):
     status_counts, errors = generate_report_data(results)
     grouped_error_pids = group_error_pids_by_publication_type(results)
@@ -82,8 +86,34 @@ def save_html_report(
                     label.text = f"{publication_type}: "
                     label.tail = ", ".join(grouped_pids)
 
+    _append_relation_errors_section(body, relation_results or [])
+
     html_str = ET.tostring(html, encoding="unicode", method="html")
     doctype = "<!DOCTYPE html>\n"
     with open(filepath, "w", encoding="utf-8") as file_obj:
         file_obj.write(doctype + html_str)
     print(f"HTML report saved to {filepath}")
+
+
+def _append_relation_errors_section(
+    body: ET.Element, relation_results: list[OutputRelationMigrationResult]
+):
+    relation_errors = generate_relation_error_data(relation_results)
+    if not relation_errors:
+        return
+
+    h2 = ET.SubElement(body, "h2")
+    h2.text = RELATION_ERRORS_LABEL
+    table = ET.SubElement(body, "table")
+    tr_head = ET.SubElement(table, "tr")
+    for col in ["Error Message", "Occurrences", "PIDs"]:
+        th = ET.SubElement(tr_head, "th")
+        th.text = col
+    for error_msg, pids in relation_errors.items():
+        tr = ET.SubElement(table, "tr")
+        td1 = ET.SubElement(tr, "td")
+        td1.text = error_msg.replace("|", " ").replace("\n", " ")
+        td2 = ET.SubElement(tr, "td")
+        td2.text = str(len(pids))
+        td3 = ET.SubElement(tr, "td")
+        td3.text = ", ".join(pids)
