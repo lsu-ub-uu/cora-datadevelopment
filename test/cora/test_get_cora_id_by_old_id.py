@@ -160,7 +160,7 @@ def test_get_cora_id_by_old_id_for_diva_output(requests_mock):
     expected_cora_id = "123"
 
     requests_mock.get(
-        f"https://pre.diva-portal.org/rest/record/searchResult/diva-outputPublicSearch?searchData={create_diva_output_search_data(old_id)}",
+        f"https://pre.diva-portal.org/rest/record/searchResult/outputPublicSearch?searchData={create_diva_output_search_data(old_id)}",
         request_headers={"Authtoken": test_token},
         text=create_mock_response(expected_cora_id),
     )
