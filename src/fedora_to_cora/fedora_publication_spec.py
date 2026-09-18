@@ -334,6 +334,7 @@ fedora_journal_spec: XMLSpec = {
     "fridaLevel": fedora_frida_level_spec,
     "controlled": "$ANY_TEXT$",
     "openAccess": "$ANY_TEXT$",
+    "closedDate": "$IGNORE$",
     "subjects": "$IGNORE$",
     "relationships": "$IGNORE$",
 }
