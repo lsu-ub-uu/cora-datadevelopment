@@ -18,8 +18,7 @@ def test_no_responsible_organisation():
 
 
 def test_empty_responsible_organisation():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>journal_article</publicationTypeCode>
@@ -29,8 +28,7 @@ def test_empty_responsible_organisation():
                 </organisation>
             </responsibleOrganisations>
         </publication>             
-    """
-    )
+    """)
 
     names = create_name_type_corporate(source_record, MockContext())
 
@@ -44,8 +42,7 @@ def test_create_name_type_corporate_from_responsible_organisation(mock_get_cora_
         "879601": "org-67890",
     }.get(old_id, "default-id")
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>journal_article</publicationTypeCode>
@@ -59,8 +56,7 @@ def test_create_name_type_corporate_from_responsible_organisation(mock_get_cora_
                 </organisation>
             </responsibleOrganisations>
         </publication>
-    """
-    )
+    """)
 
     names = create_name_type_corporate(source_record, MockContext())
     assert_equal_for_xml_and_xml_string(
@@ -71,7 +67,7 @@ def test_create_name_type_corporate_from_responsible_organisation(mock_get_cora_
                 <linkedRecordType>diva-organisation</linkedRecordType>
                 <linkedRecordId>org-12345</linkedRecordId>
             </organisation>
-            <role><roleTerm repeatId="0">cre</roleTerm></role>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
         </name>
         """,
     )
@@ -83,7 +79,7 @@ def test_create_name_type_corporate_from_responsible_organisation(mock_get_cora_
                 <linkedRecordType>diva-organisation</linkedRecordType>
                 <linkedRecordId>org-67890</linkedRecordId>
             </organisation>
-            <role><roleTerm repeatId="0">cre</roleTerm></role>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
         </name>
         """,
     )
@@ -92,23 +88,20 @@ def test_create_name_type_corporate_from_responsible_organisation(mock_get_cora_
 @pytest.mark.parametrize(
     "validation_type",
     [
-        ("conference_paper"),
         ("conference_other"),
-        ("publication_preprint"),
     ],
 )
 @patch("fedora_to_cora.transform.create_name_type_corporate.get_cora_id_by_old_id")
 @patch(
     "fedora_to_cora.transform.create_name_type_corporate.get_validation_type_from_fedora_record"
 )
-def test_role_has_no_repeat_id_for_author_only_types(
+def test_role_has_no_repeat_id_for_single_role_types(
     mock_get_validation_type, mock_get_cora_id, validation_type
 ):
     mock_get_cora_id.return_value = "org-12345"
     mock_get_validation_type.return_value = validation_type
 
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeCode>journal_article</publicationTypeCode>
@@ -122,8 +115,7 @@ def test_role_has_no_repeat_id_for_author_only_types(
                 </organisation>
             </responsibleOrganisations>
         </publication>
-    """
-    )
+    """)
 
     names = create_name_type_corporate(source_record, MockContext())
 

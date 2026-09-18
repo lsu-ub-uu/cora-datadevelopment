@@ -15,22 +15,20 @@ def create_name_type_corporate(
         "./responsibleOrganisations/organisation/organisationId"
     )
 
-    author_only = _is_author_only_type(source_record)
+    single_role = _is_single_role_type(source_record)
 
     return [
         _create_name_type_corporate_from_organisation_id(
-            org_id.text, context, author_only, index
+            org_id.text, context, single_role, index
         )
         for index, org_id in enumerate(responsible_organisation_ids)
         if org_id.text is not None and org_id.text.strip() != ""
     ]
 
 
-def _is_author_only_type(source_record: ET.Element) -> bool:
+def _is_single_role_type(source_record: ET.Element) -> bool:
     author_only_validation_types = {
-        "conference_paper",
         "conference_other",
-        "publication_preprint",
     }
     return (
         get_validation_type_from_fedora_record(source_record)
@@ -39,7 +37,7 @@ def _is_author_only_type(source_record: ET.Element) -> bool:
 
 
 def _create_name_type_corporate_from_organisation_id(
-    old_id: str, context: Context, author_only: bool, repeat_id: int = 0
+    old_id: str, context: Context, single_role: bool, repeat_id: int = 0
 ):
     return create_group(
         "name",
@@ -56,14 +54,10 @@ def _create_name_type_corporate_from_organisation_id(
             create_group(
                 "role",
                 [
-                    (
-                        create_text("roleTerm", "aut")
-                        if author_only
-                        else create_text(
-                            "roleTerm",
-                            "cre",
-                            repeatId="0",
-                        )
+                    create_text(
+                        "roleTerm",
+                        repeatId=None if single_role else "0",
+                        value="aut",
                     )
                 ],
             ),

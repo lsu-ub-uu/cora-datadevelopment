@@ -124,7 +124,7 @@ def test_output_transform_ultimate(mock_diva_search_requests):
                 <linkedRecordType>diva-organisation</linkedRecordType>
                 <linkedRecordId>{affiliation_organisation_id}</linkedRecordId>
             </organisation>
-            <role><roleTerm repeatId="0">cre</roleTerm></role>
+            <role><roleTerm repeatId="0">aut</roleTerm></role>
         </name>
         <note type="creatorCount">1</note>
         <typeOfResource>stillImage</typeOfResource>
