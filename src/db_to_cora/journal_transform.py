@@ -10,7 +10,7 @@ from common.xml_validate import XMLSpec, validate_xml
 
 allowed_children: XMLSpec = {
     "old_id": "$ANY_TEXT$",
-    "title": "$ANY_TEXT$",
+    "title": "$HTML$",
     "subtitle": "$ANY_TEXT$",
     "end_date": "$ANY_TEXT$",
     "identifier_eissn": "$ANY_TEXT$",

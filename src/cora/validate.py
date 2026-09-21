@@ -9,28 +9,6 @@ from common.threads import run_with_threads
 logger = logging.getLogger(__name__)
 
 
-def validate_record_list(
-    record_list: list[ET.Element], record_type: str, context: Context
-):
-    validation_results: List[Tuple[bool, Optional[List[str]]]] = run_with_threads(
-        record_list,
-        lambda record: validate_record(
-            record, record_type=record_type, context=context
-        ),
-        workers=context.get_workers(),
-        desc="Validating records",
-    )
-
-    valid_records = [valid for (valid, _) in validation_results if valid]
-    validation_errors = [errors for (valid, errors) in validation_results if not valid]
-
-    logger.info(
-        f"Validated {len(record_list)} records. {len(valid_records)} valid, {len(validation_errors)} invalid."
-    )
-
-    return validation_results
-
-
 def validate_record(
     record: ET.Element, *, record_type: str, context: Context
 ) -> Tuple[bool, Optional[List[str]]]:

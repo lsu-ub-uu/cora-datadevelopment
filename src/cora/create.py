@@ -2,7 +2,7 @@ import requests
 import xml.etree.ElementTree as ET
 import time
 import logging
-from typing import Literal, Tuple, List, Optional, TypeGuard
+from typing import Literal, Tuple, List, Optional, TypeIs
 from cora.context import Context
 from common.threads import run_with_threads
 from common.xml_utils import pretty_print_xml
@@ -155,5 +155,5 @@ def create_record(
 
 def is_success_result(
     result: CreateRecordSuccessResult | CreateRecordFailureResult,
-) -> TypeGuard[CreateRecordSuccessResult]:
+) -> TypeIs[CreateRecordSuccessResult]:
     return result.success

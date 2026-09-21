@@ -9,7 +9,7 @@ from cora.delete import delete_record
 from fedora_to_cora.attachments_migrate import attachments_migrate
 from fedora_to_cora.output_transform import transform_to_cora_output
 from cora.validate import validate_record
-from cora.create import create_record, is_success_result
+from cora.create import create_record, is_success_result, CreateRecordFailureResult
 from fedora_to_cora.transform.transform_output_to_classic_quality import (
     transform_output_to_classic_quality,
 )
@@ -245,6 +245,7 @@ def _apply_classic_quality_migration(
                 context,
             )
             if not success:
+
                 return OutputMigrationResult(
                     pid,
                     publication_type,
@@ -260,6 +261,13 @@ def _apply_classic_quality_migration(
             relations=create_relations(classic_quality_record),
         )
     else:
+        if _create_failed_due_to_duplicate(create_result, pid):
+            return OutputMigrationResult(
+                pid,
+                publication_type,
+                status="SKIPPED",
+                errors=["A record with the same oldId already exists in the system"],
+            )
         logger.error(
             f"❌ Failed to create classic quality record for old id {pid}. {create_result.error}"
         )
@@ -272,8 +280,20 @@ def _apply_classic_quality_migration(
 
 
 def _has_duplicate_old_id(errors: list[str] | None, old_id: str) -> bool:
+    logger.info(
+        f"➡️ Skipped record with oldId {old_id} due to duplicate record found when creating classic quality record. Errors: {errors}"
+    )
     return errors is not None and any(
         error
         == f"A record matching the unique rule with [key: oldId, value: {old_id}] already exists in the system"
         for error in errors
+    )
+
+
+def _create_failed_due_to_duplicate(
+    create_result: CreateRecordFailureResult, old_id: str
+) -> bool:
+    return create_result.status == 409 and (
+        f"A record matching the unique rule with [key: oldId, value: {old_id}] already exists in the system"
+        in create_result.error
     )
