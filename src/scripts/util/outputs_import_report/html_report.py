@@ -7,10 +7,13 @@ from scripts.util.outputs_import_report.report_data import (
     ERROR_CATEGORIES_IN_ORDER,
     RELATION_ERRORS_LABEL,
     STATUS_LABELS,
+    extract_export_date,
+    format_yes_no,
     generate_relation_error_data,
     generate_report_data,
     generate_setup_for_report,
     group_error_pids_by_publication_type,
+    resolve_target_system,
 )
 
 
@@ -18,6 +21,9 @@ def save_html_report(
     results: list[OutputMigrationResult],
     xml_dir: str,
     system: str,
+    apply: bool,
+    binaries: bool,
+    cora_url: str | None,
     output_dir: str = ".",
     relation_results: list[OutputRelationMigrationResult] | None = None,
 ):
@@ -26,6 +32,11 @@ def save_html_report(
     domain, timestamp, filepath = generate_setup_for_report(xml_dir, output_dir, "html")
 
     os.makedirs(output_dir, exist_ok=True)
+
+    target_system = resolve_target_system(system, cora_url)
+    dry_run = format_yes_no(not apply)
+    with_binaries = format_yes_no(binaries)
+    export_date = extract_export_date(xml_dir)
 
     html = ET.Element("html")
     head = ET.SubElement(html, "head")
@@ -41,8 +52,14 @@ def save_html_report(
     p = ET.SubElement(body, "p")
     p.text = f"Total records processed: {sum(status_counts.values())}"
 
-    p2 = ET.SubElement(body, "p")
-    p2.text = f"Domain: {domain} | Target System: {system}"
+    p_source = ET.SubElement(body, "p")
+    p_source.text = f"Export date: {export_date}"
+
+    p_meta = ET.SubElement(body, "p")
+    p_meta.text = (
+        f"Domain: {domain} | Target system: {target_system} | "
+        f"Dry run: {dry_run} | With binaries: {with_binaries}"
+    )
 
     h2_counts = ET.SubElement(body, "h2")
     h2_counts.text = "Status Counts"

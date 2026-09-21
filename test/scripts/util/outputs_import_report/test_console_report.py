@@ -3,7 +3,7 @@ from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResul
 from scripts.util.outputs_import_report.console_report import print_console_report
 
 
-def test_print_console_report_outputs_summary_and_error_tables(capsys):
+def test_print_console_report_outputs_summary_only(capsys):
     results = [
         OutputMigrationResult("pid-1", "article", status="SUCCESS"),
         OutputMigrationResult(
@@ -20,7 +20,14 @@ def test_print_console_report_outputs_summary_and_error_tables(capsys):
         ),
     ]
 
-    print_console_report(results)
+    print_console_report(
+        results,
+        xml_dir="data/fedora_xml/umu/2026-09-21T14:37:18.299640",
+        system="pre",
+        apply=False,
+        binaries=True,
+        cora_url=None,
+    )
 
     captured = capsys.readouterr()
     output = captured.out
@@ -28,13 +35,18 @@ def test_print_console_report_outputs_summary_and_error_tables(capsys):
     assert "==== Migration Report ====" in output
     assert "Total records processed: 3" in output
     assert "Migration Status Counts" in output
-    assert "FAILED Errors" in output
-    assert "CLASSIC_QUALITY Errors" in output
-    assert "failed issue" in output
-    assert "book: pid-2" in output
+    assert "Export date: 2026-09-21T14:37:18.299640" in output
+    assert "Target system: pre" in output
+    assert "Dry run: Yes" in output
+    assert "With binaries: Yes" in output
+    assert "FAILED Errors" not in output
+    assert "CLASSIC_QUALITY Errors" not in output
+    assert "failed issue" not in output
+    assert "classic issue" not in output
+    assert "book: pid-2" not in output
 
 
-def test_print_console_report_renders_relation_errors_section(capsys):
+def test_print_console_report_omits_relation_errors_section(capsys):
     results = [OutputMigrationResult("pid-1", "article", status="SUCCESS")]
     relation_results = [
         OutputRelationMigrationResult(
@@ -43,29 +55,21 @@ def test_print_console_report_renders_relation_errors_section(capsys):
         OutputRelationMigrationResult(
             status="FAILED", pid="pid-2", cora_id="2", error="boom"
         ),
-        OutputRelationMigrationResult(
-            status="FAILED", pid="pid-3", cora_id="3", error="boom"
-        ),
     ]
 
-    print_console_report(results, relation_results=relation_results)
+    print_console_report(
+        results,
+        xml_dir="data/fedora_xml/umu/outputs",
+        system="pre",
+        apply=True,
+        binaries=False,
+        cora_url="https://cora.example.org",
+        relation_results=relation_results,
+    )
 
     output = capsys.readouterr().out
 
-    assert "Failed to migrate relations" in output
-    assert "boom" in output
-    assert "pid-2" in output
-    assert "pid-3" in output
-
-
-def test_print_console_report_omits_relation_errors_when_none(capsys):
-    results = [OutputMigrationResult("pid-1", "article", status="SUCCESS")]
-    relation_results = [
-        OutputRelationMigrationResult(
-            status="UPDATED", pid="pid-1", cora_id="1", error=None
-        ),
-    ]
-
-    print_console_report(results, relation_results=relation_results)
-
-    assert "Failed to migrate relations" not in capsys.readouterr().out
+    assert "Target system: https://cora.example.org" in output
+    assert "Failed to migrate relations" not in output
+    assert "boom" not in output
+    assert "pid-2" not in output

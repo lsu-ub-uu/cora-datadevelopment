@@ -9,6 +9,9 @@ def save_reports(
     results: list[OutputMigrationResult],
     xml_dir: str,
     system: str,
+    apply: bool,
+    binaries: bool,
+    cora_url: str | None,
     output_dir: str = ".",
     relation_results: list[OutputRelationMigrationResult] | None = None,
 ):
@@ -17,6 +20,9 @@ def save_reports(
         results,
         xml_dir=xml_dir,
         system=system,
+        apply=apply,
+        binaries=binaries,
+        cora_url=cora_url,
         output_dir=output_dir,
         relation_results=relation_results,
     )
@@ -24,7 +30,18 @@ def save_reports(
         results,
         xml_dir=xml_dir,
         system=system,
+        apply=apply,
+        binaries=binaries,
+        cora_url=cora_url,
         output_dir=output_dir,
         relation_results=relation_results,
     )
-    print_console_report(results, relation_results=relation_results)
+    print_console_report(
+        results,
+        xml_dir=xml_dir,
+        system=system,
+        apply=apply,
+        binaries=binaries,
+        cora_url=cora_url,
+        relation_results=relation_results,
+    )

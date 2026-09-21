@@ -6,11 +6,14 @@ from scripts.util.outputs_import_report.report_data import (
     ERROR_CATEGORIES_IN_ORDER,
     RELATION_ERRORS_LABEL,
     STATUS_LABELS,
+    extract_export_date,
     format_publication_type_pid_groups,
+    format_yes_no,
     generate_relation_error_data,
     generate_report_data,
     generate_setup_for_report,
     group_error_pids_by_publication_type,
+    resolve_target_system,
 )
 
 
@@ -18,6 +21,9 @@ def save_markdown_report(
     results: list[OutputMigrationResult],
     xml_dir: str,
     system: str,
+    apply: bool,
+    binaries: bool,
+    cora_url: str | None,
     output_dir: str = ".",
     relation_results: list[OutputRelationMigrationResult] | None = None,
 ):
@@ -27,12 +33,20 @@ def save_markdown_report(
 
     os.makedirs(output_dir, exist_ok=True)
 
+    target_system = resolve_target_system(system, cora_url)
+    dry_run = format_yes_no(not apply)
+    with_binaries = format_yes_no(binaries)
+    export_date = extract_export_date(xml_dir)
+
     lines = []
     lines.append(f"# Migration Report ({timestamp})\n")
     lines.append(f"**Total records processed:** {sum(status_counts.values())}")
     lines.append("")
-    lines.append(f"**Source XML Directory:** `{xml_dir}`  ")
-    lines.append(f"**Domain: {domain} | Target System:** `{system}`  ")
+    lines.append(f"**Export date:** `{export_date}`  ")
+    lines.append(f"**Domain:** {domain}  ")
+    lines.append(f"**Target system:** `{target_system}`  ")
+    lines.append(f"**Dry run:** {dry_run}  ")
+    lines.append(f"**With binaries:** {with_binaries}  ")
     lines.append("")
 
     lines.append("## Status Counts\n")

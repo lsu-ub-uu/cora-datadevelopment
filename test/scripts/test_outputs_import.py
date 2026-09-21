@@ -194,6 +194,9 @@ def test_outputs_import_orchestrates_loading_filtering_pool_and_reports(
     assert save_reports_kwargs == {
         "xml_dir": "/tmp/xml",
         "system": "pre",
+        "apply": False,
+        "binaries": False,
+        "cora_url": "",
         "output_dir": "reports",
     }
     assert [(r.status, r.pid, r.error) for r in relation_results] == [

@@ -22,8 +22,11 @@ def test_save_html_report_creates_expected_file(tmp_path):
 
     save_html_report(
         results,
-        xml_dir="data/fedora_xml/umu/outputs",
+        xml_dir="data/fedora_xml/umu/2026-09-21T14:37:18.299640",
         system="pre",
+        apply=False,
+        binaries=False,
+        cora_url=None,
         output_dir=str(tmp_path),
     )
 
@@ -35,7 +38,12 @@ def test_save_html_report_creates_expected_file(tmp_path):
     assert report_text.startswith("<!DOCTYPE html>")
     assert "Migration Report (" in report_text
     assert "Total records processed: 3" in report_text
-    assert "Domain: umu | Target System: pre" in report_text
+    assert "Export date: 2026-09-21T14:37:18.299640" in report_text
+    assert "data/fedora_xml" not in report_text
+    assert (
+        "Domain: umu | Target system: pre | Dry run: Yes | With binaries: No"
+        in report_text
+    )
     assert "✅ Successfully imported as data quality DiVA 2026" in report_text
     assert "❌ Failed to import" in report_text
     assert "➡️ Skipped" in report_text
@@ -64,6 +72,9 @@ def test_save_html_report_includes_relation_errors_section(tmp_path):
         results,
         xml_dir="data/fedora_xml/umu/outputs",
         system="pre",
+        apply=True,
+        binaries=True,
+        cora_url=None,
         output_dir=str(tmp_path),
         relation_results=relation_results,
     )

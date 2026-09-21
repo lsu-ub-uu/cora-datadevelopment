@@ -119,3 +119,15 @@ def generate_setup_for_report(
     filename = f"outputs-import-{domain}-{timestamp}.{filetype}"
     filepath = os.path.join(output_dir, filename)
     return (domain, timestamp, filepath)
+
+
+def resolve_target_system(system: str, cora_url: str | None) -> str:
+    return cora_url if cora_url else system
+
+
+def extract_export_date(xml_dir: str) -> str:
+    return os.path.basename(os.path.normpath(xml_dir))
+
+
+def format_yes_no(value: bool) -> str:
+    return "Yes" if value else "No"

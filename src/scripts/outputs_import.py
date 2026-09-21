@@ -103,6 +103,9 @@ def outputs_import(
         migration_results,
         xml_dir=xml_dir,
         system=system,
+        apply=apply,
+        binaries=binaries,
+        cora_url=cora_url,
         output_dir="reports",
         relation_results=relation_migration_results,
     )
