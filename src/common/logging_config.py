@@ -1,4 +1,5 @@
 import logging
+import multiprocessing
 import sys
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
@@ -52,7 +53,8 @@ def configure_logging(
     for name in _NOISY_LOGGERS:
         logging.getLogger(name).setLevel(logging.WARNING)
 
-    print(f"Writing logs to {handler.baseFilename}")
+    if multiprocessing.current_process().name == "MainProcess":
+        print(f"Writing logs to {handler.baseFilename}")
     return handler.baseFilename
 
 

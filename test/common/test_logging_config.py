@@ -36,6 +36,18 @@ def test_prints_path_of_log_file_when_configured(tmp_path, capsys):
     assert capsys.readouterr().out == f"Writing logs to {log_file}\n"
 
 
+def test_does_not_print_in_worker_process(tmp_path, capsys, monkeypatch):
+    fake_worker = type("P", (), {"name": "SpawnPoolWorker-1"})()
+    monkeypatch.setattr(
+        "common.logging_config.multiprocessing.current_process",
+        lambda: fake_worker,
+    )
+
+    configure_logging("my_script", log_dir=str(tmp_path))
+
+    assert capsys.readouterr().out == ""
+
+
 def test_creates_log_directory(tmp_path):
     log_dir = tmp_path / "does" / "not" / "exist"
 
