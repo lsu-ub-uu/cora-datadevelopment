@@ -36,6 +36,15 @@ def _add_validation_errors_to_internal_note(
     if not validation_errors or len(validation_errors) == 0:
         return None
 
+    validation_error_text = (
+        'Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic. Validation errors:- '
+        + "- ".join(validation_errors)
+    )
+
+    _add_internal_note(classic_quality_output, validation_error_text)
+
+
+def _add_internal_note(classic_quality_output: ET.Element, note_text: str):
     existing_admin_info = classic_quality_output.find("./adminInfo")
     if existing_admin_info is None:
         admin_info = ET.Element("adminInfo")
@@ -45,18 +54,13 @@ def _add_validation_errors_to_internal_note(
 
     existing_internal_note = admin_info.find("./note[@type='internal']")
 
-    validation_error_text = (
-        'Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic. Validation errors:- '
-        + "- ".join(validation_errors)
-    )
-
     if existing_internal_note is not None:
         note_element = existing_internal_note
-        note_element.text = (note_element.text or "") + validation_error_text
+        note_element.text = (note_element.text or "") + note_text
     else:
         note_element = ET.Element("note", type="internal")
         admin_info.append(note_element)
-        note_element.text = validation_error_text
+        note_element.text = note_text
 
 
 def _handle_known_errors(
@@ -65,7 +69,7 @@ def _handle_known_errors(
     if not validation_errors or len(validation_errors) == 0:
         return None
 
-    for error in validation_errors:
+    for i, error in enumerate(validation_errors):
         if (
             "Could not find metadata for child with nameInData: relatedItem and attributes: type:conference"
             in error
@@ -74,4 +78,9 @@ def _handle_known_errors(
                 "./relatedItem[@type='conference']"
             )
             if related_conference is not None:
+
+                validation_errors[i] = (
+                    error
+                    + f" (conference: \"{related_conference.findtext('./conference')}\")"
+                )
                 classic_quality_output.remove(related_conference)

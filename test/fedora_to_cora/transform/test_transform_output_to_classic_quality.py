@@ -135,7 +135,9 @@ def test_handles_related_conference_on_wrong_validation_type():
             <someChild1 repeatId="two">someValue2</someChild1>
             <someChild2>someValue3</someChild2>
             <adminInfo>
-                <note type="internal">Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic. Validation errors:- Data is not valid: Could not find metadata for child with nameInData: relatedItem and attributes: type:conference</note>
+                <note type="internal">
+                    Record created with dataQuality "classic" due to validation errors during migration from DiVA Classic. Validation errors:- Data is not valid: Could not find metadata for child with nameInData: relatedItem and attributes: type:conference (conference: "Some fancy conference")
+                </note>
             </adminInfo>
         </record>
         """,
