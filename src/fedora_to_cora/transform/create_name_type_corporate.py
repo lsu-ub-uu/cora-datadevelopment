@@ -16,10 +16,11 @@ def create_name_type_corporate(
     )
 
     single_role = _is_single_role_type(source_record)
+    role = _get_role(source_record)
 
     return [
         _create_name_type_corporate_from_organisation_id(
-            org_id.text, context, single_role, index
+            org_id.text, context, single_role, role, index
         )
         for index, org_id in enumerate(responsible_organisation_ids)
         if org_id.text is not None and org_id.text.strip() != ""
@@ -37,7 +38,7 @@ def _is_single_role_type(source_record: ET.Element) -> bool:
 
 
 def _create_name_type_corporate_from_organisation_id(
-    old_id: str, context: Context, single_role: bool, repeat_id: int = 0
+    old_id: str, context: Context, single_role: bool, role: str, repeat_id: int = 0
 ):
     return create_group(
         "name",
@@ -57,7 +58,7 @@ def _create_name_type_corporate_from_organisation_id(
                     create_text(
                         "roleTerm",
                         repeatId=None if single_role else "0",
-                        value="aut",
+                        value=role,
                     )
                 ],
             ),
