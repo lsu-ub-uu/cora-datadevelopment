@@ -1,5 +1,5 @@
-from cora.client.app_token_client import AppTokenClient
-from cora import constants
+from cora.auth.app_token_client import AppTokenClient
+from cora import cora_urls
 import requests
 import time
 import threading
@@ -29,8 +29,8 @@ class CoraContext(Context):
             self._base_url = f"{cora_url}/rest/record/"
             login_url = f"{cora_url}/login/rest/apptoken"
         else:
-            self._base_url = constants.BASE_URL[self.system]
-            login_url = constants.LOGIN_URLS[self.system]
+            self._base_url = cora_urls.BASE_URL[self.system]
+            login_url = cora_urls.LOGIN_URLS[self.system]
         self.app_token_client = AppTokenClient(
             dependencies={
                 "requests": requests,

@@ -1,5 +1,5 @@
 import requests
-from cora.constants import BASE_URL
+from cora.cora_urls import BASE_URL
 
 
 def get_deployment_info(system: str):

@@ -32,49 +32,13 @@ def get_first_atomic_value_with_name_in_data(
     return childValue
 
 
-def append_value_to_list(childValue, element, list):
-    if childValue is not None:
-        list.append(element)
-
-
-def getOrganisationNameValueWithNameInData(
-    childrenList, nameInData
-):  # borde kunna vara samma som nedan
-    specificChild = find_child_with_name_in_data(childrenList, nameInData)
-    specificChildsChildren = find_child_with_name_in_data(
-        specificChild["children"], "name"
+def get_linked_record_id_with_name_in_data(dataChildren, nameInData):
+    record_link = find_child_with_name_in_data(dataChildren, nameInData)
+    if record_link is None:
+        return None
+    linked_record_id = find_child_with_name_in_data(
+        record_link["children"], "linkedRecordId"
     )
-    return specificChildsChildren["value"]
-
-
-def get_linked_record_id_with_name_in_data(
-    dataChildren, nameInData
-):  # borde kunna vara samma som ovan
-    linkedChild = find_child_with_name_in_data(dataChildren, nameInData)
-    linkedRecordId = find_child_with_name_in_data(
-        linkedChild["children"], "linkedRecordId"
-    )
-    return linkedRecordId["value"]
-
-
-def getValidationTypeLink(recordInfoChildren):
-    validationType = get_linked_record_id_with_name_in_data(recordInfoChildren, "type")
-    # newValidationType = checkValidationTypeLinkAndGetNewValue(validationType)
-    return validationType
-
-
-def getParentEarlierLinks(
-    recordChildren, typeOfOrganisationLink
-):  # BYT UT RECORDCHILDREN TILL RESPONSE_RECORD
-    linkedId = []
-    for organisationLink in recordChildren:
-        childNameInData = organisationLink["name"]
-        if childNameInData == typeOfOrganisationLink:
-            organisationLinkValue = find_child_with_name_in_data(
-                organisationLink["children"], "organisationLink"
-            )
-            linkedRecordId = find_child_with_name_in_data(
-                organisationLinkValue["children"], "linkedRecordId"
-            )
-            linkedId.append(linkedRecordId["value"])
-    return linkedId
+    if linked_record_id is None:
+        return None
+    return linked_record_id["value"]

@@ -1,6 +1,6 @@
 from cora.context import CoraContext
 from unittest.mock import patch
-from cora import constants
+from cora import cora_urls
 
 
 @patch("cora.context.AppTokenClient")
@@ -13,7 +13,7 @@ def test_context_logs_in_on_creation(AppTokenClientMock):
     instance.get_auth_token = lambda: "mocked-token"
     instance.login.assert_called_once_with(
         {
-            "login_url": constants.LOGIN_URLS["minikube"],
+            "login_url": cora_urls.LOGIN_URLS["minikube"],
             "login_id": "someLoginId",
             "app_token": "test-token",
         }
@@ -72,7 +72,7 @@ def test_context_logs_in_with_example_user_when_no_app_token(
     instance.get_auth_token = lambda: "mocked-token"
     instance.login.assert_called_once_with(
         {
-            "login_url": constants.LOGIN_URLS["dev"],
+            "login_url": cora_urls.LOGIN_URLS["dev"],
             "login_id": "exampleLoginId",
             "app_token": "exampleAppToken",
         }

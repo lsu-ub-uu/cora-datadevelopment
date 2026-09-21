@@ -1,8 +1,8 @@
 import unittest
 
-from cora.client.app_token_client import AppTokenClient
+from cora.auth.app_token_client import AppTokenClient
 from unittest.mock import MagicMock
-from cora.client.login_error import LoginError
+from cora.auth.login_error import LoginError
 
 
 class TestAppTokenClient(unittest.TestCase):
