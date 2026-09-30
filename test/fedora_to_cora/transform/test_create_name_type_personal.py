@@ -36,7 +36,7 @@ def test_creates_name_type_personal():
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
     )
@@ -69,7 +69,7 @@ def test_creates_name_type_personal_birth_year():
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
             <namePart type="date">1802</namePart>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
     )
@@ -102,7 +102,7 @@ def test_creates_name_type_personal_death_year():
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
             <namePart type="date">-1802</namePart>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
     )
@@ -136,7 +136,7 @@ def test_creates_name_type_personal_birth_and_death_year():
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
             <namePart type="date">1802-1977</namePart>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
     )
@@ -205,19 +205,49 @@ def test_creates_persons_for_roles():
 
     assert len(names) == 4
 
-    abel = names[0].find("./role/roleTerm")
-    assert abel is not None and abel.text == "aut"
+    [abel, beata, fiona, gunnar] = names
 
-    beata = names[1].find("./role/roleTerm")
-    assert beata is not None and beata.text == "edt"
-
-    fiona = names[2].findall("./role/roleTerm")
-    assert len(fiona) == 2
-    assert fiona[0].text == "wdc"
-    assert fiona[1].text == "act"
-
-    gunnar = names[3].find("./role/roleTerm")
-    assert gunnar is not None and gunnar.text == "dnc"
+    assert_equal_for_xml_and_xml_string(
+        abel,
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">The Author</namePart>
+            <namePart type="given">Abel</namePart>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
+        </name>
+        """,
+    )
+    assert_equal_for_xml_and_xml_string(
+        beata,
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">The Editor</namePart>
+            <namePart type="given">Beata</namePart>
+            <role repeatId="0"><roleTerm>edt</roleTerm></role>
+        </name>
+        """,
+    )
+    assert_equal_for_xml_and_xml_string(
+        fiona,
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">The Woodcutter</namePart>
+            <namePart type="given">Fiona</namePart>
+            <role repeatId="0"><roleTerm>wdc</roleTerm></role>
+            <role repeatId="1"><roleTerm>act</roleTerm></role>
+        </name>
+        """,
+    )
+    assert_equal_for_xml_and_xml_string(
+        gunnar,
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">The Dancer</namePart>
+            <namePart type="given">Gunnar</namePart>
+            <role repeatId="0"><roleTerm>dnc</roleTerm></role>
+        </name>
+        """,
+    )
 
 
 def test_creates_uncontrolled_affiliation():
