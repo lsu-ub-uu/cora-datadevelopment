@@ -220,7 +220,7 @@ def test_creates_persons_for_roles():
     assert_equal_for_xml_and_xml_string(
         beata,
         """
-        <name type="personal" repeatId="0">
+        <name type="personal" repeatId="1">
             <namePart type="family">The Editor</namePart>
             <namePart type="given">Beata</namePart>
             <role repeatId="0"><roleTerm>edt</roleTerm></role>
@@ -230,7 +230,7 @@ def test_creates_persons_for_roles():
     assert_equal_for_xml_and_xml_string(
         fiona,
         """
-        <name type="personal" repeatId="0">
+        <name type="personal" repeatId="2">
             <namePart type="family">The Woodcutter</namePart>
             <namePart type="given">Fiona</namePart>
             <role repeatId="0"><roleTerm>wdc</roleTerm></role>
@@ -241,7 +241,7 @@ def test_creates_persons_for_roles():
     assert_equal_for_xml_and_xml_string(
         gunnar,
         """
-        <name type="personal" repeatId="0">
+        <name type="personal" repeatId="3">
             <namePart type="family">The Dancer</namePart>
             <namePart type="given">Gunnar</namePart>
             <role repeatId="0"><roleTerm>dnc</roleTerm></role>
@@ -281,7 +281,7 @@ def test_creates_uncontrolled_affiliation():
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
             <affiliation repeatId="0">
                 <namePart>Extern organisation</namePart>
             </affiliation>
@@ -337,7 +337,7 @@ def test_creates_controlled_affiliation(monkeypatch):
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
             <affiliation repeatId="0">
                 <organisation>
                     <linkedRecordType>diva-organisation</linkedRecordType>
@@ -536,7 +536,7 @@ def test_creates_name_identifiers():
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
             <nameIdentifier type="localId">aaaa111</nameIdentifier>
             <nameIdentifier type="orcid">0000-0002-3134-8865</nameIdentifier>
         </name>
@@ -614,7 +614,7 @@ def test_creates_affiliation_from_research_group():
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
             <affiliation repeatId="0">
                 <namePart>Forskargänget</namePart>
                 <description>researchGroup</description>
@@ -658,7 +658,7 @@ def test_replaces_lowercase_x_in_orcid():
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
             <nameIdentifier type="orcid">0000-0002-3134-886X</nameIdentifier>
         </name>
         """,

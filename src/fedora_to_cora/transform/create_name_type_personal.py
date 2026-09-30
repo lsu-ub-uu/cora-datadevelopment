@@ -125,7 +125,7 @@ def create_name_type_personal(
             create_text("namePart", type="family", value=person.findtext("./lastName")),
             create_text("namePart", type="given", value=person.findtext("./firstName")),
             _create_date_part(person),
-            _create_role(role_terms, single_role_only),
+            _create_roles(role_terms, single_role_only),
             _create_name_identifier_local_id(
                 _create_name_identifier_local_id(person.find("./localId"))
             ),
@@ -159,18 +159,22 @@ def _create_date_part(person: ET.Element) -> ET.Element | None:
     return create_text("namePart", type="date", value=date_text)
 
 
-def _create_role(role_terms: list[str], single_role_only: bool) -> ET.Element | None:
-    return create_group(
-        "role",
-        children=[
-            create_text(
-                "roleTerm",
-                value=role_term,
-                repeatId=str(i) if not single_role_only else None,
-            )
-            for i, role_term in enumerate(role_terms)
-        ],
-    )
+def _create_roles(
+    role_terms: list[str], single_role_only: bool
+) -> list[ET.Element | None]:
+    return [
+        create_group(
+            "role",
+            repeatId=str(i) if not single_role_only else None,
+            children=[
+                create_text(
+                    "roleTerm",
+                    value=role_term,
+                )
+            ],
+        )
+        for i, role_term in enumerate(role_terms)
+    ]
 
 
 def _create_affiliations(person: ET.Element, context: Context) -> list[ET.Element]:

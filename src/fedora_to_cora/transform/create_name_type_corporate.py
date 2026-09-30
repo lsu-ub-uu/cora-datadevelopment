@@ -52,16 +52,15 @@ def _create_name_type_corporate_from_organisation_id(
                     old_id, record_type="diva-organisation", context=context
                 ),
             ),
-            create_group(
-                "role",
-                [
-                    create_text(
-                        "roleTerm",
-                        repeatId=None if single_role else "0",
-                        value=role,
-                    )
-                ],
-            ),
+            [
+                create_group(
+                    "role",
+                    repeatId=None if single_role else "0",
+                    children=[
+                        create_text("roleTerm", value=role),
+                    ],
+                )
+            ],
         ],
     )
 

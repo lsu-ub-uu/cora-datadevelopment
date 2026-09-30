@@ -102,15 +102,15 @@ def test_output_transform_ultimate(mock_diva_search_requests):
         <name type="personal" repeatId="0">
             <namePart type="family">Andersson</namePart>
             <namePart type="given">Michaela</namePart>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
             <nameIdentifier type="localId">mican434</nameIdentifier>
             <nameIdentifier type="orcid">0000-0002-3134-8865</nameIdentifier>
         </name>
         <name type="personal" repeatId="1">
             <namePart type="family">Östasiatiska museet</namePart>
             <namePart type="given">Östasiatiska museet</namePart>
-            <role>
-                <roleTerm repeatId="0">edt</roleTerm>
+            <role repeatId="0">
+                <roleTerm>edt</roleTerm>
             </role>
             <affiliation repeatId="0">
                 <organisation>
@@ -124,7 +124,7 @@ def test_output_transform_ultimate(mock_diva_search_requests):
                 <linkedRecordType>diva-organisation</linkedRecordType>
                 <linkedRecordId>{affiliation_organisation_id}</linkedRecordId>
             </organisation>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         <note type="creatorCount">1</note>
         <typeOfResource>stillImage</typeOfResource>
@@ -274,8 +274,8 @@ def test_output_transform_book(mock_diva_search_requests):
                 <namePart type="family">Bergman</namePart>
                 <namePart type="given">Ingrid</namePart>
                 <namePart type="date">1934-2013</namePart>
-                <role>
-                    <roleTerm repeatId="0">edt</roleTerm>
+                <role repeatId="0">
+                    <roleTerm>edt</roleTerm>
                 </role>
                 <affiliation repeatId="0">
                     <organisation>
@@ -378,8 +378,8 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                 <namePart type="family">Mockson</namePart>
                 <namePart type="given">Mock</namePart>
                 <namePart type="date">1954</namePart>
-                <role>
-                    <roleTerm repeatId="0">aut</roleTerm>
+                <role repeatId="0">
+                    <roleTerm>aut</roleTerm>
                 </role>
                 <affiliation repeatId="0">
                     <organisation>
@@ -603,39 +603,39 @@ def test_output_transform_conference_paper(mock_diva_search_requests):
             <name repeatId="0" type="personal">
                 <namePart type="family">Mocksson</namePart>
                 <namePart type="given">Mock</namePart>
-                <role>
-                    <roleTerm repeatId="0">aut</roleTerm>
+                <role repeatId="0">
+                    <roleTerm>aut</roleTerm>
                 </role>
                 <nameIdentifier type="localId">XXXXX</nameIdentifier>
             </name>
             <name repeatId="1" type="personal">
                 <namePart type="family">Mockson</namePart>
                 <namePart type="given">Mock</namePart>
-                <role>
-                    <roleTerm repeatId="0">aut</roleTerm>
+                <role repeatId="0">
+                    <roleTerm>aut</roleTerm>
                 </role>
                 <nameIdentifier type="localId">XXXXX</nameIdentifier>
             </name>
             <name repeatId="2" type="personal">
                 <namePart type="family">Mockson</namePart>
                 <namePart type="given">Mock</namePart>
-                <role>
-                    <roleTerm repeatId="0">aut</roleTerm>
+                <role repeatId="0">
+                    <roleTerm>aut</roleTerm>
                 </role>
                 <nameIdentifier type="localId">XXXXX</nameIdentifier>
             </name>
             <name repeatId="3" type="personal">
                 <namePart type="family">Mockson</namePart>
                 <namePart type="given">Mock</namePart>
-                <role>
-                    <roleTerm repeatId="0">aut</roleTerm>
+                <role repeatId="0">
+                    <roleTerm>aut</roleTerm>
                 </role>
             </name>
             <name repeatId="4" type="personal">
                 <namePart type="family">Mockson</namePart>
                 <namePart type="given">Mock</namePart>
-                <role>
-                    <roleTerm repeatId="0">aut</roleTerm>
+                <role repeatId="0">
+                    <roleTerm>aut</roleTerm>
                 </role>
             </name>
             <abstract lang="eng" repeatId="0">Hej</abstract>

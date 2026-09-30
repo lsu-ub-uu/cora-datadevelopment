@@ -67,7 +67,7 @@ def test_create_name_type_corporate_from_responsible_organisation(mock_get_cora_
                 <linkedRecordType>diva-organisation</linkedRecordType>
                 <linkedRecordId>org-12345</linkedRecordId>
             </organisation>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
     )
@@ -79,7 +79,7 @@ def test_create_name_type_corporate_from_responsible_organisation(mock_get_cora_
                 <linkedRecordType>diva-organisation</linkedRecordType>
                 <linkedRecordId>org-67890</linkedRecordId>
             </organisation>
-            <role><roleTerm repeatId="0">aut</roleTerm></role>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
     )

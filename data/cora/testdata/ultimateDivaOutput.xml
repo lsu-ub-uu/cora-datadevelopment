@@ -67,35 +67,35 @@
 	<name repeatId="0" type="personal">
 		<namePart type="family">Hornborg</namePart>
 		<namePart type="given">Sara</namePart>
-		<role>
-			<roleTerm repeatId="0">aut</roleTerm>
+		<role repeatId="0">
+			<roleTerm>aut</roleTerm>
 		</role>
 	</name>
 	<name repeatId="1" type="personal">
 		<namePart type="family">Aarsæther</namePart>
 		<namePart type="given">Karl Gunnar</namePart>
-		<role>
-			<roleTerm repeatId="0">aut</roleTerm>
+		<role repeatId="0">
+			<roleTerm>aut</roleTerm>
 		</role>
 	</name>
 	<name repeatId="2" type="personal">
 		<namePart type="family">Bastardie</namePart>
 		<namePart type="given">François</namePart>
-		<role>
-			<roleTerm repeatId="0">aut</roleTerm>
+		<role repeatId="0">
+			<roleTerm>aut</roleTerm>
 		</role>
 	</name>
 	<name repeatId="3" type="personal">
 		<namePart type="family">Jafarzadeh</namePart>
 		<namePart type="given">Sepideh</namePart>
-		<role>
-			<roleTerm repeatId="0">acp</roleTerm>
+		<role repeatId="0">
+			<roleTerm>acp</roleTerm>
 		</role>
 	</name>
 	<name repeatId="0" type="corporate">
 		<namePart>Nordic Council of Ministers</namePart>
-		<role>
-			<roleTerm repeatId="0">aut</roleTerm>
+		<role repeatId="0">
+			<roleTerm>aut</roleTerm>
 		</role>
 	</name>
 	<note type="creatorCount">12</note>
