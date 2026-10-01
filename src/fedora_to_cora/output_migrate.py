@@ -62,6 +62,7 @@ def output_migrate(
             context,
             apply,
             with_binaries,
+            fedora_url,
         )
 
     if apply:
@@ -140,6 +141,7 @@ def _handle_failed_cora_validation(
     context: Context,
     apply: bool,
     with_binaries: bool = False,
+    fedora_url: str | None = "",
 ) -> OutputMigrationResult:
     if _has_duplicate_old_id(errors, pid):
         return OutputMigrationResult(
@@ -158,6 +160,7 @@ def _handle_failed_cora_validation(
         context,
         apply,
         with_binaries,
+        fedora_url,
     )
 
 
@@ -170,6 +173,7 @@ def _migrate_record_as_classic_quality(
     context: Context,
     apply: bool,
     with_binaries: bool = False,
+    fedora_url: str | None = "",
 ) -> OutputMigrationResult:
     classic_quality_record = transform_output_to_classic_quality(cora_output, errors)
 
@@ -192,6 +196,7 @@ def _migrate_record_as_classic_quality(
             errors,
             source_record=source_record,
             with_binaries=with_binaries,
+            fedora_url=fedora_url,
         )
 
 
@@ -231,6 +236,7 @@ def _apply_classic_quality_migration(
     *,
     source_record: ET.Element,
     with_binaries: bool = False,
+    fedora_url: str | None = "",
 ):
     create_result = create_record(
         classic_quality_record,
@@ -243,6 +249,7 @@ def _apply_classic_quality_migration(
                 source_record,
                 create_result.response_data,
                 context,
+                fedora_url=fedora_url,
             )
             if not success:
 
