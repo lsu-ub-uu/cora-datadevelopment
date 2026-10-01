@@ -72,6 +72,9 @@ This repository contains scripts for creating and migrating data.
 ## Configuration
 
 All scripts read configuration from CLI arguments, environment variables, or a `.env` file (in that priority order).
+CLI commands load `.env` at startup; direct Python calls use the process environment only.
+When no app token is supplied through the CLI or `CORA_APP_TOKEN`, Cora looks up
+the configured example user. The default Cora system is `minikube`.
 
 ### Setting up `.env`
 

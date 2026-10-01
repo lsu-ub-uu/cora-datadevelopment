@@ -30,7 +30,7 @@ def attachments_migrate(
     cora_record: ET.Element,
     context: Context,
     *,
-    fedora_url: str = "",
+    fedora_url: str | None = "",
 ) -> Tuple[bool, list[str] | None]:
     created_binary_records = []
     record_to_update = copy.deepcopy(cora_record)
@@ -104,7 +104,7 @@ def _migrate_attachment(
     source_record: ET.Element,
     host_record: ET.Element,
     *,
-    fedora_url: str = "",
+    fedora_url: str | None = "",
 ) -> Tuple[ET.Element | None, str | None]:
     pid = source_record.findtext("./pid")
     file_name = attachment.findtext("./fileName")

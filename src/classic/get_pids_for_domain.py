@@ -1,8 +1,12 @@
 import xml.etree.ElementTree as ET
+import os
 import requests
 
 
-def get_pids_for_domain(domain: str, *, solr_url: str) -> list[str]:
+def get_pids_for_domain(domain: str, *, solr_url: str | None) -> list[str]:
+    solr_url = solr_url if solr_url is not None else os.environ.get("SOLR_URL")
+    if not solr_url:
+        raise ValueError("SOLR_URL is required to fetch domain PIDs")
     number_of_records_response = requests.get(
         f"{solr_url}?q=domain%3A{domain}&start=0&rows=0&wt=xml&indent=true"
     )

@@ -3,10 +3,16 @@ import logging
 from common.arg_parser import (
     create_argument_parser,
     classic_arguments,
-    cora_url_argument,
+    common_arguments,
 )
 from common.logging_config import configure_logging
-from cora.context import CoraContext
+from common.environment import load_environment
+from cora.context import (
+    CoraContext,
+    resolve_cora_system,
+    resolve_cora_login_id,
+    resolve_cora_workers,
+)
 from cora_to_cora.organisations_migrate import organisations_migrate
 from db_to_cora.publishers_migrate import publishers_migrate
 from db_to_cora.funders_migrate import funders_migrate
@@ -20,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    load_environment()
     argparser = create_argument_parser(
         description="Migrate data from DiVA Classic to DiVA on Cora",
         arguments={
@@ -28,25 +35,8 @@ def main():
                 "type": str,
                 "required": True,
             },
-            **cora_url_argument,
+            **common_arguments,
             **classic_arguments,
-            "--system": {
-                "help": "Cora system to connect to (e.g., 'preview', 'production')",
-                "type": str,
-                "default": "minikube",
-            },
-            "--login-id": {
-                "default": "divaAdmin@cora.epc.ub.uu.se",
-                "help": "Login ID for authentication.",
-            },
-            "--app-token": {
-                "help": "Application token for authentication. If not provided, the script will look for an example user configured with this id",
-            },
-            "--workers": {
-                "help": "Number of worker threads for processing",
-                "type": int,
-                "default": 16,
-            },
             "--include-common-data": {
                 "help": "Include common data (publishers, funders, journals) in the migration",
                 "action": "store_true",
@@ -59,7 +49,9 @@ def main():
         },
     )
     args = argparser.parse_args()
-
+    args.system = resolve_cora_system(args.system)
+    args.login_id = resolve_cora_login_id(args.login_id)
+    args.workers = resolve_cora_workers(args.workers)
     configure_logging()
 
     # Parse record types

@@ -7,6 +7,7 @@ from tqdm import tqdm
 
 from common import validation_type_utils as common_utils
 from common.arg_parser import create_argument_parser
+from common.environment import load_environment
 from common.logging_config import configure_logging
 from common.validation_type_utils import RecordNode
 from cora.context import CoraContext, Context
@@ -52,6 +53,7 @@ TOTAL_FETCHED = 0
 
 
 def main():
+    load_environment()
     global CTX, DRY_RUN, TYPE_PREFIX, RECORD_TYPE, DATA_DIVIDER, LOG_FILE
 
     LOG_FILE = configure_logging()
@@ -78,7 +80,7 @@ def main():
 
     common_utils.init(CTX, TYPE_PREFIX, RECORD_TYPE, BLACKLIST_TYPES)
 
-    common_utils.log(start_create_script_printout(args.system))
+    common_utils.log(start_create_script_printout(CTX.get_system()))
 
     if DRY_RUN:
         common_utils.log(

@@ -1,5 +1,6 @@
 from copy import deepcopy
-from common.arg_parser import create_argument_parser, cora_url_argument
+from common.arg_parser import create_argument_parser, common_arguments
+from common.environment import load_environment
 from common.logging_config import configure_logging
 from common.threads import run_with_threads
 from cora.delete_record import delete_record
@@ -22,6 +23,7 @@ def main():
     and then deleting the original record. It also handles removing and restoring unique constraint values to avoid conflicts during the process.
     """
 
+    load_environment()
     print("Updating record links...")
     args = _parse_args()
     configure_logging()
@@ -170,18 +172,7 @@ def _parse_args():
     parser = create_argument_parser(
         description="Processes fedora XML publication files for a domain, transforms them to Cora format and imports them to the specified Cora system",
         arguments={
-            **cora_url_argument,
-            "--system": {
-                "default": "pre",
-                "help": "Target system for migration",
-            },
-            "--login-id": {
-                "default": "migration@cora.epc.ub.uu.se",
-                "help": "Login ID for authentication",
-            },
-            "--app-token": {
-                "help": "Application token for authentication",
-            },
+            **common_arguments,
             "--record-type": {
                 "help": "The type of record to update links for",
             },

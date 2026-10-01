@@ -1,5 +1,6 @@
 from cora.auth.app_token_client import AppTokenClient
 from cora import cora_urls
+import os
 import requests
 import time
 import threading
@@ -14,15 +15,38 @@ class Context(Protocol):
     def get_system(self) -> str: ...
 
 
+def resolve_cora_system(system: str | None) -> str:
+    return system if system is not None else os.environ.get("CORA_SYSTEM", "minikube")
+
+
+def resolve_cora_login_id(login_id: str | None) -> str:
+    return (
+        login_id
+        if login_id is not None
+        else os.environ.get("CORA_LOGIN_ID", "divaAdmin@cora.epc.ub.uu.se")
+    )
+
+
+def resolve_cora_workers(workers: int | None) -> int:
+    return workers if workers is not None else int(os.environ.get("CORA_WORKERS", "16"))
+
+
+def resolve_cora_url(cora_url: str | None) -> str | None:
+    return cora_url if cora_url is not None else os.environ.get("CORA_URL")
+
+
 class CoraContext(Context):
     def __init__(
         self,
-        system: str,
-        login_id: str,
-        app_token: str | None,
-        workers: int = 16,
+        system: str | None = None,
+        login_id: str | None = None,
+        app_token: str | None = None,
+        workers: int | None = None,
         cora_url: str | None = None,
     ):
+        system = resolve_cora_system(system)
+        login_id = resolve_cora_login_id(login_id)
+        cora_url = resolve_cora_url(cora_url)
         self.system = system
         if cora_url:
             cora_url = cora_url.rstrip("/")
@@ -39,6 +63,8 @@ class CoraContext(Context):
             }
         )
         if app_token is None:
+            app_token = os.environ.get("CORA_APP_TOKEN")
+        if app_token is None:
             app_token = _get_app_token_from_example_user(system, login_id)
 
         self.app_token_client.login(
@@ -48,7 +74,7 @@ class CoraContext(Context):
                 "app_token": app_token,
             }
         )
-        self._workers = workers
+        self._workers = resolve_cora_workers(workers)
 
     def get_system(self) -> str:
         """

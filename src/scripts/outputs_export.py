@@ -1,11 +1,18 @@
-from common.arg_parser import create_argument_parser, classic_arguments
+from common.arg_parser import (
+    create_argument_parser,
+    classic_arguments,
+    common_arguments,
+)
+from common.environment import load_environment
 from common.logging_config import configure_logging
+from cora.context import resolve_cora_workers
 from fedora_to_cora.export_publications_from_fedora import (
     export_publications_from_fedora,
 )
 
 
 def main():
+    load_environment()
     parser = create_argument_parser(
         description="Export publications from Fedora for a specified domain and save to disk",
         arguments={
@@ -13,11 +20,7 @@ def main():
                 "required": True,
                 "help": "Domain to export publications from (e.g., 'varldskulturmuserna')",
             },
-            "--workers": {
-                "type": int,
-                "default": 16,
-                "help": "Number of worker threads to use (default: 16)",
-            },
+            "--workers": common_arguments["--workers"],
             **classic_arguments,
         },
     )
@@ -28,7 +31,7 @@ def main():
 
     export_publications_from_fedora(
         args.domain,
-        workers=args.workers,
+        workers=resolve_cora_workers(args.workers),
         solr_url=args.solr_url,
         fedora_url=args.fedora_url,
     )

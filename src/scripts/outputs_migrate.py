@@ -3,12 +3,13 @@ import logging
 from common.arg_parser import (
     create_argument_parser,
     classic_arguments,
-    cora_url_argument,
+    common_arguments,
 )
 from classic.get_classic_publications import get_classic_publications
 from fedora_to_cora.output_migrate import output_migrate
 from fedora_to_cora.output_migration_result import OutputMigrationResult
 from common.logging_config import configure_logging
+from common.environment import load_environment
 from cora.context import CoraContext
 from tqdm import tqdm
 
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    load_environment()
     args = _parse_args()
 
     configure_logging()
@@ -49,7 +51,7 @@ def main():
 
     get_classic_publications(
         pids,
-        workers=args.workers,
+        workers=context.get_workers(),
         on_success=on_success,
         on_error=on_error,
         fedora_url=args.fedora_url,
@@ -67,28 +69,8 @@ def _parse_args():
                 "required": True,
                 "help": "Comma-separated list of publication PIDs to migrate",
             },
-            **cora_url_argument,
+            **common_arguments,
             **classic_arguments,
-            "--system": {
-                "default": "pre",
-                "help": "Target Cora system",
-            },
-            "--login-id": {
-                "default": "divaAdmin@cora.epc.ub.uu.se",
-                "help": "Login ID for authentication",
-            },
-            "--app-token": {
-                "help": "Application token for authentication",
-            },
-            "--workers": {
-                "type": int,
-                "default": 16,
-                "help": "Number of worker threads",
-            },
-            "--apply": {
-                "action": "store_true",
-                "help": "Create records in Cora (dry-run if not set)",
-            },
             "--binaries": {
                 "action": "store_true",
                 "help": "Also migrate binaries",

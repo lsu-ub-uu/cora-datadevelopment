@@ -7,7 +7,7 @@ from xml.etree.ElementTree import Element
 
 import requests
 
-from common.arg_parser import ArgumentConfig, cora_url_argument
+from common.arg_parser import ArgumentConfig, common_arguments
 from cora.context import CoraContext
 
 logger = logging.getLogger(__name__)
@@ -27,28 +27,7 @@ def init(ctx: CoraContext, type_prefix: str, record_type: str, black_list: list)
 
 
 create_validation_type_args: dict[str, ArgumentConfig] = {
-    **cora_url_argument,
-    "--system": {
-        "help": "Cora system to connect to (e.g., 'preview', 'production')",
-        "type": str,
-        "default": "minikube",
-    },
-    "--login-id": {
-        "default": "divaAdmin@cora.epc.ub.uu.se",
-        "help": "Login ID for authentication",
-    },
-    "--app-token": {
-        "help": "Application token for authentication",
-    },
-    "--apply": {
-        "help": "Apply changes to the Cora system (dry run if not present)",
-        "action": "store_true",
-    },
-    "--workers": {
-        "help": "Number of worker threads for processing",
-        "type": int,
-        "default": 16,
-    },
+    **common_arguments,
     "--datadivider": {
         "help": "The data divider to set for the created records (e.g, 'diva', 'cora')",
         "type": str,
@@ -67,28 +46,7 @@ create_validation_type_args: dict[str, ArgumentConfig] = {
 }
 
 delete_validation_type_args: dict[str, ArgumentConfig] = {
-    **cora_url_argument,
-    "--system": {
-        "help": "Cora system to connect to (e.g., 'preview', 'production')",
-        "type": str,
-        "default": "minikube",
-    },
-    "--login-id": {
-        "default": "divaAdmin@cora.epc.ub.uu.se",
-        "help": "Login ID for authentication",
-    },
-    "--app-token": {
-        "help": "Application token for authentication",
-    },
-    "--apply": {
-        "help": "Apply changes to the Cora system (dry run if not present)",
-        "action": "store_true",
-    },
-    "--workers": {
-        "help": "Number of worker threads for processing",
-        "type": int,
-        "default": 16,
-    },
+    **common_arguments,
     "--prefix": {
         "help": "Which prefix to use for deletions (only records and presentations using this ID-prefix will be deleted",
         "type": str,

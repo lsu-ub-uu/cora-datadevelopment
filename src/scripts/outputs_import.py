@@ -6,10 +6,11 @@ from xml.etree import ElementTree as ET
 from common.arg_parser import (
     create_argument_parser,
     classic_arguments,
-    cora_url_argument,
+    common_arguments,
 )
 from common.logging_config import configure_logging
-from cora.context import CoraContext
+from common.environment import load_environment
+from cora.context import CoraContext, resolve_cora_system, resolve_cora_login_id
 from fedora_to_cora.output_migrate import output_migrate
 from fedora_to_cora.output_migration_result import OutputMigrationResult
 from fedora_to_cora.output_relations_migrate import migrate_output_relations
@@ -25,21 +26,22 @@ context = None
 def main():
     """Main entry point for the outputs import script."""
 
+    load_environment()
     print_logo()
 
     configure_logging()
     args = _parse_args()
     outputs_import(
         xml_dir=args.xml_dir,
-        system=args.system,
-        login_id=args.login_id,
+        system=resolve_cora_system(args.system),
+        login_id=resolve_cora_login_id(args.login_id),
         app_token=args.app_token,
         processes=args.processes,
         apply=args.apply,
         limit=args.limit,
         binaries=args.binaries,
         pids=args.pids.split(",") if args.pids else None,
-        fedora_url=args.fedora_url or "",
+        fedora_url=args.fedora_url,
         cora_url=args.cora_url,
     )
 
@@ -48,15 +50,17 @@ def outputs_import(
     xml_dir: str,
     system: str,
     login_id: str,
-    app_token: str,
+    app_token: str | None,
     processes: int,
     apply: bool,
     limit: int | None = None,
     binaries: bool = False,
     pids: list[str] | None = None,
-    fedora_url: str = "",
+    fedora_url: str | None = None,
     cora_url: str | None = None,
 ):
+    system = resolve_cora_system(system)
+    login_id = resolve_cora_login_id(login_id)
     start_time = time.perf_counter()
 
     source_record_paths = _read_source_record_paths(xml_dir, limit)
@@ -115,11 +119,11 @@ def _migrate_outputs(
     source_record_paths: list[str],
     system: str,
     login_id: str,
-    app_token: str,
+    app_token: str | None,
     processes: int,
     apply: bool,
     binaries: bool = False,
-    fedora_url: str = "",
+    fedora_url: str | None = None,
     cora_url: str | None = None,
 ):
     counts = {
@@ -159,7 +163,7 @@ def _migrate_output_relations(
     processes: int,
     system: str,
     login_id: str,
-    app_token: str,
+    app_token: str | None,
     cora_url: str | None = None,
 ):
     counts = {
@@ -190,27 +194,21 @@ def _parse_args():
                 "help": "Directory containing XML files to process",
                 "required": True,
             },
-            **cora_url_argument,
+            **{
+                name: common_arguments[name]
+                for name in (
+                    "--cora-url",
+                    "--system",
+                    "--login-id",
+                    "--app-token",
+                    "--apply",
+                )
+            },
             **classic_arguments,
-            "--system": {
-                "default": "pre",
-                "help": "Target system for migration",
-            },
-            "--login-id": {
-                "default": "divaAdmin@cora.epc.ub.uu.se",
-                "help": "Login ID for authentication",
-            },
-            "--app-token": {
-                "help": "Application token for authentication",
-            },
             "--processes": {
                 "type": int,
                 "default": 2,
                 "help": "Number of processes",
-            },
-            "--apply": {
-                "action": "store_true",
-                "help": "Create records in Cora. (If not set, will behave as a dry-run)",
             },
             "--limit": {
                 "type": int,

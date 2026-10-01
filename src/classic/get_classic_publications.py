@@ -17,6 +17,7 @@ This file is part of DiVA Client.
 """
 
 import xml.etree.ElementTree as ET
+import os
 import requests
 from typing import Callable
 from common.threads import run_with_threads
@@ -28,11 +29,16 @@ def get_classic_publications(
     on_success: Callable,
     on_error: Callable,
     *,
-    fedora_url: str,
+    fedora_url: str | None,
 ):
+    fedora_url = fedora_url if fedora_url is not None else os.environ.get("FEDORA_URL")
+    if not fedora_url:
+        raise ValueError("FEDORA_URL is required to fetch publications")
     run_with_threads(
         pids,
-        lambda pid: _get_record_by_pid(pid, on_success, on_error, fedora_url=fedora_url),
+        lambda pid: _get_record_by_pid(
+            pid, on_success, on_error, fedora_url=fedora_url
+        ),
         workers=workers,
         desc="Importing publications from Classic Fedora",
     )
@@ -43,11 +49,12 @@ def _get_record_by_pid(
     on_success: Callable[[str, ET.Element], None],
     on_error: Callable[[str], None],
     *,
-    fedora_url: str,
+    fedora_url: str | None,
 ):
-    response = requests.get(
-        f"{fedora_url}/fedora/get/{pid}/MODEL_NOREF", verify=False
-    )
+    fedora_url = fedora_url if fedora_url is not None else os.environ.get("FEDORA_URL")
+    if not fedora_url:
+        raise ValueError("FEDORA_URL is required to fetch publications")
+    response = requests.get(f"{fedora_url}/fedora/get/{pid}/MODEL_NOREF", verify=False)
     response.encoding = response.apparent_encoding
 
     if response.status_code == 200:

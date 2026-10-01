@@ -2,39 +2,20 @@ from cora.context import CoraContext
 import requests
 import xml.etree.ElementTree as ET
 from common.threads import run_with_threads
-from common.arg_parser import create_argument_parser, cora_url_argument
+from common.arg_parser import create_argument_parser, common_arguments
+from common.environment import load_environment
 from common.logging_config import configure_logging
 
 
 def main():
+    load_environment()
     argparser = create_argument_parser(
         description=f"Remove all records of a record type from Cora",
         arguments={
-            **cora_url_argument,
+            **common_arguments,
             "--record-type": {
                 "help": "Type of records to remove (e.g., 'diva-output', 'diva-person', 'diva-organisation')",
                 "type": str,
-            },
-            "--system": {
-                "help": "Cora system to connect to (e.g., 'preview', 'production')",
-                "type": str,
-                "default": "minikube",
-            },
-            "--login-id": {
-                "default": "divaAdmin@cora.epc.ub.uu.se",
-                "help": "Login ID for authentication",
-            },
-            "--app-token": {
-                "help": "Application token for authentication",
-            },
-            "--apply": {
-                "help": "Apply changes to the Cora system (dry run if not present)",
-                "action": "store_true",
-            },
-            "--workers": {
-                "help": "Number of worker threads for processing",
-                "type": int,
-                "default": 16,
             },
         },
     )
@@ -87,7 +68,9 @@ def main():
             },
         )
 
-    run_with_threads(record_ids, delete_record, args.workers, "Deleting records")
+    run_with_threads(
+        record_ids, delete_record, context.get_workers(), "Deleting records"
+    )
     print(f"Deleted {len(record_ids)} records of type {args.record_type}.")
 
 

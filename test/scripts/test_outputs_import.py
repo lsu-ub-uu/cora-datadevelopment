@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import sys
 from unittest.mock import patch
 import pytest
 
@@ -6,6 +7,34 @@ from cora.context import MockContext
 from fedora_to_cora.output_migrate import OutputMigrationResult
 from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResult
 from scripts import outputs_import
+
+
+def test_parse_args_defers_environment_defaults(monkeypatch):
+    monkeypatch.setenv("CORA_APP_TOKEN", "test-token")
+    monkeypatch.setattr(sys, "argv", ["outputs-import", "--xml-dir", "xml"])
+
+    args = outputs_import._parse_args()
+
+    assert (args.system, args.login_id, args.app_token) == (None, None, None)
+
+
+def test_main_resolves_environment_before_import(monkeypatch):
+    monkeypatch.setenv("CORA_SYSTEM", "dev")
+    monkeypatch.setenv("CORA_LOGIN_ID", "test-login")
+    monkeypatch.setenv("CORA_APP_TOKEN", "test-token")
+    monkeypatch.setattr(sys, "argv", ["outputs-import", "--xml-dir", "xml"])
+    monkeypatch.setattr(outputs_import, "print_logo", lambda: None)
+    monkeypatch.setattr(outputs_import, "configure_logging", lambda: None)
+    captured = {}
+    monkeypatch.setattr(
+        outputs_import, "outputs_import", lambda **kwargs: captured.update(kwargs)
+    )
+
+    outputs_import.main()
+
+    assert captured["system"] == "dev"
+    assert captured["login_id"] == "test-login"
+    assert captured["app_token"] is None
 
 
 class _FakePool:

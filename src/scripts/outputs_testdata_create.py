@@ -1,40 +1,25 @@
 import os
 from unittest import result
-from common.arg_parser import create_argument_parser, cora_url_argument
+from common.arg_parser import create_argument_parser, common_arguments
+from common.environment import load_environment
 from common.common_data import read_source_xml
 from common.logging_config import configure_logging
 from cora.context import CoraContext
 from cora.create import create_record, is_success_result
 
-# Default environment configuration
-DEFAULT_ENV = {
-    "xml_dir": "data/cora/testdata",
-    "system": "preview",
-    "login_id": "divaAdmin@cora.epc.ub.uu.se",
-    "app_token": "49ce00fb-68b5-4089-a5f7-1c225d3cf156",
-}
-
 
 def main():
+    load_environment()
     parser = create_argument_parser(
         description="Create Cora test outputs",
         arguments={
             "--xml-dir": {
-                "default": DEFAULT_ENV["xml_dir"],
+                "default": "data/cora/testdata",
                 "help": "Directory containing XML files to process",
             },
-            **cora_url_argument,
-            "--system": {
-                "default": DEFAULT_ENV["system"],
-                "help": "Target system",
-            },
-            "--login-id": {
-                "default": DEFAULT_ENV["login_id"],
-                "help": "Login ID for authentication",
-            },
-            "--app-token": {
-                "default": DEFAULT_ENV["app_token"],
-                "help": "Application token for authentication",
+            **{
+                name: common_arguments[name]
+                for name in ("--cora-url", "--system", "--login-id", "--app-token")
             },
         },
     )

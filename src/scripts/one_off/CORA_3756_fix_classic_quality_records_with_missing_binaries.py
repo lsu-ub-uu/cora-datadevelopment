@@ -1,6 +1,7 @@
 import logging
 from common.common_data import read_source_xml
 from common.logging_config import configure_logging
+from common.environment import load_environment
 from common.arg_parser import (
     create_argument_parser,
     common_arguments,
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    load_environment()
     configure_logging()
     args = create_argument_parser(
         description="Processes fedora XML publication files for a domain, transforms them to Cora format and imports them to the specified Cora system",

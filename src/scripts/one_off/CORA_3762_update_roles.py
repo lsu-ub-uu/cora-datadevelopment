@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from common.threads import run_with_threads
 from common.xml_utils import create_text, pretty_print_xml, create_group
 from common.logging_config import configure_logging
+from common.environment import load_environment
 from cora.context import Context, CoraContext
 from cora.list_records import list_records
 from common.arg_parser import create_argument_parser, common_arguments
@@ -18,17 +19,18 @@ def main():
     Removes the original subject element and creates new subject elements
     for each topic under the original subject.
     """
+    load_environment()
     args = _parse_args()
     configure_logging()
 
     logger.info("==== Begin updating diva-output subject authority model ====")
-    logger.info(f"==== system={args.system} ====")
     if not args.apply:
         logger.info("Running in dry-run mode (no changes will be applied)")
 
     context = CoraContext(
         args.system, args.login_id, args.app_token, cora_url=args.cora_url
     )
+    logger.info(f"==== system={context.get_system()} ====")
 
     fix_records(context, apply=args.apply)
 

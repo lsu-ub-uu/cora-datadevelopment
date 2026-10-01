@@ -1,4 +1,5 @@
 import requests
+import os
 import xml.etree.ElementTree as ET
 import logging
 from requests_toolbelt.multipart.encoder import MultipartEncoder
@@ -14,8 +15,11 @@ def migrate_binary(
     file_name: str,
     context: Context,
     *,
-    fedora_url: str,
+    fedora_url: str | None,
 ):
+    fedora_url = fedora_url if fedora_url is not None else os.environ.get("FEDORA_URL")
+    if not fedora_url:
+        raise ValueError("FEDORA_URL is required to migrate binaries")
     download_url = f"{fedora_url}/fedora/get/{pid}/{file_name}"
     start_migrate = time.perf_counter()
     logger.info(f"[PID {pid}] ⏳ Starting migrate file from Fedora: {download_url}")

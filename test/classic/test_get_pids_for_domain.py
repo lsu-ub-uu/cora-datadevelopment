@@ -7,6 +7,14 @@ from classic.get_pids_for_domain import get_pids_for_domain
 SOLR_URL = "http://localhost:8080/solr-admin/dream/select"
 
 
+def test_missing_solr_url_fails_before_request(monkeypatch):
+    monkeypatch.delenv("SOLR_URL", raising=False)
+    with patch("classic.get_pids_for_domain.requests.get") as request:
+        with pytest.raises(ValueError, match="SOLR_URL"):
+            get_pids_for_domain("test_domain", solr_url=None)
+    request.assert_not_called()
+
+
 def test_get_pids_for_domain(requests_mock):
     requests_mock.get(
         f"{SOLR_URL}?q=domain%3Atest_domain&start=0&rows=0&wt=xml&indent=true",

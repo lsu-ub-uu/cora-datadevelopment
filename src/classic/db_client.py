@@ -1,4 +1,5 @@
 import psycopg2
+import os
 import xml.etree.ElementTree as ET
 import time
 from typing import Optional
@@ -8,12 +9,24 @@ def execute_sql(
     query: str,
     *,
     params: Optional[dict[str, str]] = None,
-    db_host: str,
-    db_port: int,
-    db_name: str,
-    db_user: str,
-    db_password: str,
+    db_host: str | None,
+    db_port: int | None,
+    db_name: str | None,
+    db_user: str | None,
+    db_password: str | None,
 ) -> ET.Element:
+    db_host = db_host if db_host is not None else os.environ.get("DB_HOST", "localhost")
+    db_port = db_port if db_port is not None else int(os.environ.get("DB_PORT", "5432"))
+    db_name = db_name if db_name is not None else os.environ.get("DB_NAME", "auradb")
+    db_user = db_user if db_user is not None else os.environ.get("DB_USER")
+    db_password = (
+        db_password if db_password is not None else os.environ.get("DB_PASSWORD")
+    )
+    if not db_user:
+        raise ValueError("DB_USER is required for database access")
+    if not db_password:
+        raise ValueError("DB_PASSWORD is required for database access")
+
     max_retries = 2
     retry_delay = 1  # seconds
 

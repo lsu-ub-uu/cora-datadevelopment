@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 from common import validation_type_utils as utils
 from common.arg_parser import create_argument_parser
+from common.environment import load_environment
 from common.logging_config import configure_logging
 from cora.context import CoraContext, Context
 
@@ -35,6 +36,7 @@ TOTAL_ERRORS = []
 
 
 def main():  # pragma: no cover
+    load_environment()
     global CTX, DRY_RUN, TYPE_PREFIX, LOG_FILE
 
     LOG_FILE = configure_logging()
@@ -59,7 +61,7 @@ def main():  # pragma: no cover
 
     utils.init(CTX, TYPE_PREFIX, "diva-output", BLACKLIST_TYPES)
 
-    utils.log(start_delete_script_printout(args.system))
+    utils.log(start_delete_script_printout(CTX.get_system()))
 
     if DRY_RUN:
         utils.log(

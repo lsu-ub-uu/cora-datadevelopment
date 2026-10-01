@@ -1,9 +1,5 @@
 import argparse
-import os
 from typing import TypedDict, Any, Literal
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 class RequiredArgumentConfig(TypedDict):
@@ -44,7 +40,12 @@ def create_argument_parser(
     parser = argparse.ArgumentParser(description=description)
 
     for name, config in arguments.items():
-        if "default" in config and config.get("action") != "store_true":
+        config = config.copy()
+        if (
+            name != "--app-token"
+            and "default" in config
+            and config.get("action") != "store_true"
+        ):
             config["help"] += f" (default: {config['default']})"
         parser.add_argument(name, **config)
 
@@ -58,19 +59,15 @@ common_arguments: dict[str, ArgumentConfig] = {
     },
     "--cora-url": {
         "help": "Base URL for the target Cora system",
-        "default": os.environ.get("CORA_URL"),
     },
     "--system": {
         "help": "Cora system to connect to (e.g., 'preview', 'production')",
         "type": str,
-        "default": os.environ.get("CORA_SYSTEM", "minikube"),
     },
     "--login-id": {
-        "default": os.environ.get("CORA_LOGIN_ID", "divaAdmin@cora.epc.ub.uu.se"),
         "help": "Login ID for authentication",
     },
     "--app-token": {
-        "default": os.environ.get("CORA_APP_TOKEN"),
         "help": "Application token for authentication",
     },
     "--apply": {
@@ -80,7 +77,6 @@ common_arguments: dict[str, ArgumentConfig] = {
     "--workers": {
         "help": "Number of worker threads for processing",
         "type": int,
-        "default": int(os.environ.get("CORA_WORKERS", "16")),
     },
 }
 
@@ -91,31 +87,24 @@ cora_url_argument: dict[str, ArgumentConfig] = {
 classic_arguments: dict[str, ArgumentConfig] = {
     "--fedora-url": {
         "help": "Base URL for Classic Fedora service",
-        "default": os.environ.get("FEDORA_URL"),
     },
     "--solr-url": {
         "help": "Base URL for Classic Solr service",
-        "default": os.environ.get("SOLR_URL"),
     },
     "--db-host": {
         "help": "Classic database host",
-        "default": os.environ.get("DB_HOST", "localhost"),
     },
     "--db-port": {
         "help": "Classic database port",
         "type": int,
-        "default": int(os.environ.get("DB_PORT", "5432")),
     },
     "--db-name": {
         "help": "Classic database name",
-        "default": os.environ.get("DB_NAME", "auradb"),
     },
     "--db-user": {
         "help": "Classic database user",
-        "default": os.environ.get("DB_USER"),
     },
     "--db-password": {
         "help": "Classic database password",
-        "default": os.environ.get("DB_PASSWORD"),
     },
 }

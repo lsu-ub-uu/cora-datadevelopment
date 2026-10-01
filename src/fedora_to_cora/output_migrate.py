@@ -24,7 +24,7 @@ def output_migrate(
     context: Context,
     apply: bool = False,
     with_binaries: bool = False,
-    fedora_url: str = "",
+    fedora_url: str | None = "",
 ) -> OutputMigrationResult:
     """
     Migrates a Fedora XML publication record and its attached binaries to Cora.
@@ -113,7 +113,7 @@ def _migrate_attachments_with_rollback(
     created_record: ET.Element,
     context: Context,
     *,
-    fedora_url: str = "",
+    fedora_url: str | None = "",
 ) -> tuple[bool, list[str] | None]:
     success, errors = attachments_migrate(
         source_record,

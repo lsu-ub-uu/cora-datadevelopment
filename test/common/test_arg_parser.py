@@ -2,7 +2,12 @@
 
 import pytest
 import argparse
-from common.arg_parser import create_argument_parser, ArgumentConfig
+from common.arg_parser import (
+    create_argument_parser,
+    ArgumentConfig,
+    common_arguments,
+    classic_arguments,
+)
 
 
 def test_create_argument_parser_basic():
@@ -105,3 +110,39 @@ def test_argument_config_typing():
 
     assert config["required"] is True
     assert "required" not in config2
+
+
+def test_app_token_default_is_not_shown_in_help():
+    parser = create_argument_parser(
+        "Token test",
+        {"--app-token": {"help": "Application token", "default": "test-token"}},
+    )
+
+    assert parser.parse_args([]).app_token == "test-token"
+    assert "test-token" not in parser.format_help()
+
+
+def test_environment_backed_arguments_are_unset_until_consumed(monkeypatch):
+    monkeypatch.setenv("CORA_APP_TOKEN", "synthetic-token")
+    monkeypatch.setenv("DB_HOST", "synthetic-host")
+    parser = create_argument_parser(
+        "Defaults", {**common_arguments, **classic_arguments}
+    )
+
+    args = parser.parse_args([])
+
+    for name in (
+        "cora_url",
+        "system",
+        "login_id",
+        "app_token",
+        "workers",
+        "fedora_url",
+        "solr_url",
+        "db_host",
+        "db_port",
+        "db_name",
+        "db_user",
+        "db_password",
+    ):
+        assert getattr(args, name) is None
