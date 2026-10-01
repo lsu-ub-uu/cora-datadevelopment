@@ -11,7 +11,7 @@ file_label_id_to_type = {
     "57": "popularSummary",
     "58": "audio",
     "59": "movie",
-    "60": "imageDiva",
+    "60": "image",
     "61": "attachment",
     "62": "notificationOfSubmissionOfAThesis",
     "63": "software",

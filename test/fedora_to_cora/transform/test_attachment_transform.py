@@ -7,16 +7,14 @@ from freezegun import freeze_time
 
 
 def test_attachment_transform():
-    source_attachment = ET.fromstring(
-        """
+    source_attachment = ET.fromstring("""
             <attachment>
                 <fileLabel>
                     <fileLabelId>50</fileLabelId>
                 </fileLabel>
                 <path>test.pdf</path>
             </attachment>
-        """
-    )
+        """)
     binary_record_id = "binary:12345"
 
     attachment = attachment_transform(
@@ -81,8 +79,7 @@ def test_attachment_transform():
 def test_does_not_include_attachment_version_depending_on_validation_type_when_not_full_text(
     validation_type, should_not_have_attachment_version
 ):
-    source_attachment = ET.fromstring(
-        f"""
+    source_attachment = ET.fromstring(f"""
             <attachment>
                 <fileLabel>
                     <fileLabelId>51</fileLabelId>
@@ -91,8 +88,7 @@ def test_does_not_include_attachment_version_depending_on_validation_type_when_n
                 <prePrint>true</prePrint>
                 <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
             </attachment>
-        """
-    )
+        """)
 
     attachment = attachment_transform(
         source_attachment,
@@ -148,8 +144,7 @@ def test_does_not_include_attachment_version_depending_on_validation_type_when_n
 def test_includes_attachment_version_depending_on_validation_type(
     validation_type, should_have_attachment_version
 ):
-    source_attachment = ET.fromstring(
-        f"""
+    source_attachment = ET.fromstring(f"""
             <attachment>
                 <fileLabel>
                     <fileLabelId>50</fileLabelId>
@@ -158,8 +153,7 @@ def test_includes_attachment_version_depending_on_validation_type(
                 <prePrint>true</prePrint>
                 <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
             </attachment>
-        """
-    )
+        """)
 
     attachment = attachment_transform(
         source_attachment,
@@ -215,8 +209,7 @@ def test_includes_attachment_version_depending_on_validation_type(
 def test_does_not_include_attachment_version_depending_on_validation_type(
     validation_type, should_not_have_attachment_version
 ):
-    source_attachment = ET.fromstring(
-        f"""
+    source_attachment = ET.fromstring(f"""
             <attachment>
                 <fileLabel>
                     <fileLabelId>51</fileLabelId>
@@ -225,8 +218,7 @@ def test_does_not_include_attachment_version_depending_on_validation_type(
                 <prePrint>true</prePrint>
                 <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
             </attachment>
-        """
-    )
+        """)
 
     attachment = attachment_transform(
         source_attachment,
@@ -251,8 +243,7 @@ def test_does_not_include_attachment_version_depending_on_validation_type(
 def test_attachment_version_submitted_when_preprint(
     tagName, expected_attachment_version
 ):
-    source_attachment = ET.fromstring(
-        f"""
+    source_attachment = ET.fromstring(f"""
             <attachment>
                 <fileLabel>
                     <fileLabelId>50</fileLabelId>
@@ -261,8 +252,7 @@ def test_attachment_version_submitted_when_preprint(
                 <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
                 <{tagName}>true</{tagName}>
             </attachment>
-        """
-    )
+        """)
 
     binary_record_id = "binary:12345"
 
@@ -277,8 +267,7 @@ def test_attachment_version_submitted_when_preprint(
 
 
 def test_raises_error_when_multiple_attachment_versions():
-    source_attachment = ET.fromstring(
-        """
+    source_attachment = ET.fromstring("""
         <attachment>
             <fileLabel>
                 <fileLabelId>50</fileLabelId>
@@ -287,8 +276,7 @@ def test_raises_error_when_multiple_attachment_versions():
             <prePrint>true</prePrint>
             <postPrint>true</postPrint>
         </attachment>
-        """
-    )
+        """)
 
     binary_record_id = "binary:12345"
 
@@ -301,8 +289,7 @@ def test_raises_error_when_multiple_attachment_versions():
 
 
 def test_secrecy():
-    source_attachment = ET.fromstring(
-        """
+    source_attachment = ET.fromstring("""
         <attachment>
             <fileLabel>
                 <fileLabelId>50</fileLabelId>
@@ -312,8 +299,7 @@ def test_secrecy():
                 <secrecy>true</secrecy>
             </secrecyInfo>
         </attachment>
-        """
-    )
+        """)
 
     binary_record_id = "binary:12345"
 
@@ -323,12 +309,11 @@ def test_secrecy():
         binary_record_id=binary_record_id,
     )
 
-    assert attachment.findtext("./adminInfo/secrecy") == "true"
+    assert attachment.findtext("./requestedVisibility") == "confidential"
 
 
 def test_registration_number():
-    source_attachment = ET.fromstring(
-        """
+    source_attachment = ET.fromstring("""
         <attachment>
             <fileLabel>
                 <fileLabelId>50</fileLabelId>
@@ -336,8 +321,7 @@ def test_registration_number():
             <path>test.pdf</path>
             <registrationNumber>1234</registrationNumber>
         </attachment>
-        """
-    )
+        """)
 
     binary_record_id = "binary:12345"
 
@@ -347,23 +331,18 @@ def test_registration_number():
         binary_record_id=binary_record_id,
     )
 
-    assert (
-        attachment.findtext("./adminInfo/identifier[@type='registrationNumber']")
-        == "1234"
-    )
+    assert attachment.findtext("./identifier[@type='registrationNumber']") == "1234"
 
 
 def test_display_label():
-    source_attachment = ET.fromstring(
-        """
+    source_attachment = ET.fromstring("""
         <attachment>
             <fileLabel>
                 <fileLabelId>50</fileLabelId>
             </fileLabel>
             <selectedFileName>test.pdf</selectedFileName>
         </attachment>
-        """
-    )
+        """)
 
     binary_record_id = "binary:12345"
 
@@ -389,16 +368,14 @@ def test_display_label():
 
 
 def test_digitized():
-    source_attachment = ET.fromstring(
-        """
+    source_attachment = ET.fromstring("""
         <attachment>
             <fileLabel>
                 <fileLabelId>50</fileLabelId>
             </fileLabel>
             <digitized>true</digitized>
         </attachment>
-        """
-    )
+        """)
 
     binary_record_id = "binary:12345"
 
@@ -424,16 +401,14 @@ def test_digitized():
 
 
 def test_print_ready_file():
-    source_attachment = ET.fromstring(
-        """
+    source_attachment = ET.fromstring("""
         <attachment>
             <fileLabel>
                 <fileLabelId>50</fileLabelId>
             </fileLabel>
             <printOnDemand>true</printOnDemand>
         </attachment>
-        """
-    )
+        """)
 
     binary_record_id = "binary:12345"
 
@@ -460,16 +435,14 @@ def test_print_ready_file():
 
 @freeze_time("2025-01-01T00:00.000+01:00")
 def test_sets_date_to_be_published_when_available_from_is_in_the_future():
-    source_attachment = ET.fromstring(
-        """
+    source_attachment = ET.fromstring("""
         <attachment>
             <fileLabel>
                 <fileLabelId>50</fileLabelId>
             </fileLabel>
             <availableFrom>2026-02-01T00:00:00+00:00</availableFrom>
         </attachment>
-        """
-    )
+        """)
 
     binary_record_id = "binary:12345"
 
@@ -499,16 +472,14 @@ def test_sets_date_to_be_published_when_available_from_is_in_the_future():
 
 
 def test_date_to_be_unpublished():
-    source_attachment = ET.fromstring(
-        """
+    source_attachment = ET.fromstring("""
         <attachment>
             <fileLabel>
                 <fileLabelId>50</fileLabelId>
             </fileLabel>
             <availableUntil>2020-01-01T00:00:00+00:00</availableUntil>
         </attachment>
-        """
-    )
+        """)
 
     binary_record_id = "binary:12345"
 

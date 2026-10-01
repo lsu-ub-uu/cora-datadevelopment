@@ -36,7 +36,11 @@ def attachment_transform(
                 if _should_have_attachment_version(validation_type)
                 else None
             ),
-            _create_admin_info(source_attachment),
+            create_text(
+                "identifier",
+                type="registrationNumber",
+                value=source_attachment.findtext("./registrationNumber"),
+            ),
             create_text(
                 "displayLabel", source_attachment.findtext("./selectedFileName")
             ),
@@ -121,21 +125,3 @@ def _get_attachment_version(source_attachment: ET.Element) -> str | None:
     elif print_ == "true":
         return "published"
     return None
-
-
-def _create_admin_info(source_attachment: ET.Element):
-    return create_group(
-        "adminInfo",
-        children=[
-            create_text(
-                "secrecy",
-                source_attachment.findtext("secrecyInfo/secrecy"),
-                type="secrecy",
-            ),
-            create_text(
-                "identifier",
-                source_attachment.findtext("./registrationNumber"),
-                type="registrationNumber",
-            ),
-        ],
-    )
