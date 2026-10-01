@@ -660,6 +660,62 @@ def test_migrate_classic_quality_with_apply_true_and_with_binaries_true(
 @patch("fedora_to_cora.output_migrate.attachments_migrate")
 @patch("fedora_to_cora.output_migrate.pretty_print_xml")
 @patch("fedora_to_cora.output_migrate.validate_xml")
+def test_migrate_classic_quality_with_binaries_forwards_fedora_url(
+    mock_validate_xml,
+    mock_pretty_print,
+    mock_attachments_migrate,
+    mock_create_record,
+    mock_validate_record,
+    mock_transform,
+):
+    mock_context = MockContext()
+    source_record = ET.fromstring("""
+        <publication>
+            <pid>diva2:707087</pid>
+        </publication>
+        """)
+    mock_transform.return_value = ET.fromstring("""
+        <record>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>publication_report</linkedRecordId>
+                </validationType>
+            </recordInfo>
+            <dataQuality>2026</dataQuality>
+        </record>
+        """)
+    mock_validate_record.return_value = (False, ["Missing required field"])
+    mock_pretty_print.return_value = "pretty printed xml"
+    mock_created_record = ET.Element("record")
+    mock_create_record.return_value = CreateRecordSuccessResult(
+        record_id="123", response_data=mock_created_record
+    )
+    mock_attachments_migrate.return_value = (True, [])
+
+    result = output_migrate(
+        source_record,
+        mock_context,
+        apply=True,
+        with_binaries=True,
+        fedora_url="http://fedora.example:8088",
+    )
+
+    assert result.status == "CLASSIC_QUALITY"
+    mock_attachments_migrate.assert_called_once_with(
+        source_record,
+        mock_created_record,
+        mock_context,
+        fedora_url="http://fedora.example:8088",
+    )
+
+
+@patch("fedora_to_cora.output_migrate.transform_to_cora_output")
+@patch("fedora_to_cora.output_migrate.validate_record")
+@patch("fedora_to_cora.output_migrate.create_record")
+@patch("fedora_to_cora.output_migrate.attachments_migrate")
+@patch("fedora_to_cora.output_migrate.pretty_print_xml")
+@patch("fedora_to_cora.output_migrate.validate_xml")
 @patch("fedora_to_cora.output_migrate.create_relations")
 def test_migrate_classic_quality_with_apply_true_and_with_binaries_true_with_relations(
     mock_create_relations,
