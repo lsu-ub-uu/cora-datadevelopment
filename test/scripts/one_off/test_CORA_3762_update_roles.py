@@ -81,9 +81,7 @@ def test_updates_outputs_with_role_terms_repeat_id(
                         </recordInfo>
                         <name type="personal">
                             <role repeatId="0">
-                                <roleTerm>
-                                    <roleTerm>author</roleTerm>
-                                </roleTerm>
+                                <roleTerm>author</roleTerm>
                             </role>
                         </name>
                     </output>
@@ -102,14 +100,10 @@ def test_updates_outputs_with_role_terms_repeat_id(
                         </recordInfo>
                         <name type="personal">
                             <role repeatId="0">
-                                <roleTerm>
-                                    <roleTerm>author</roleTerm>
-                                </roleTerm>
+                                <roleTerm>author</roleTerm>
                             </role>
                             <role repeatId="1">
-                                <roleTerm>
-                                    <roleTerm>editor</roleTerm>
-                                </roleTerm>
+                                <roleTerm>editor</roleTerm>
                             </role>
                         </name>
                     </output>
@@ -211,9 +205,7 @@ def test_skips_person_without_role_terms_to_migrate_and_updates_other_person(
                         </name>
                         <name type="personal">
                             <role repeatId="0">
-                                <roleTerm>
-                                    <roleTerm>editor</roleTerm>
-                                </roleTerm>
+                                <roleTerm>editor</roleTerm>
                             </role>
                         </name>
                     </output>

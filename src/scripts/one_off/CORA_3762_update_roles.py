@@ -116,12 +116,7 @@ def fix_record(record: ET.Element, context: Context, apply: bool):
                 "role",
                 repeatId=role_term.attrib.get("repeatId"),
                 children=[
-                    create_group(
-                        "roleTerm",
-                        children=[
-                            create_text("roleTerm", role_term.text),
-                        ],
-                    )
+                    create_text("roleTerm", role_term.text),
                 ],
             )
             assert new_role is not None, "Failed to create new role element"
@@ -134,6 +129,9 @@ def fix_record(record: ET.Element, context: Context, apply: bool):
             result = update_record(record, context)
             return "updated" if result.success else "failed"
         else:
+            logger.info(
+                f"Dry-run mode: would update record {record_id} with data\n\n: {pretty_print_xml(record)}"
+            )
             return "updated"
     else:
         logger.info(f"No changes made to record {record_id}")
