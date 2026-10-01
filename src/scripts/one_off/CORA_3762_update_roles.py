@@ -127,6 +127,10 @@ def fix_record(record: ET.Element, context: Context, apply: bool):
         logger.debug(f"Transformed record {record_id}: {pretty_print_xml(record)}")
         if apply:
             result = update_record(record, context)
+            if not result.success:
+                logger.error(
+                    f"Failed to update record {record_id} with data\n\n: {pretty_print_xml(record)}"
+                )
             return "updated" if result.success else "failed"
         else:
             logger.info(
