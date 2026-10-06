@@ -14,21 +14,23 @@ def test_create_old_record():
 
     cora_record = create_old_record(ET.fromstring(source_record))
     assert_equal_for_xml_and_xml_string(
-        cora_record,
+        cora_record.find("./recordInfo"),
         f"""
-        <oldRecord>
-            <recordInfo>
-                <id>{pid}</id>
-                <validationType>
-                    <linkedRecordType>validationType</linkedRecordType>
-                    <linkedRecordId>diva-oldRecord</linkedRecordId>
-                </validationType>
-                <dataDivider>
-                    <linkedRecordType>system</linkedRecordType>
-                    <linkedRecordId>divaData</linkedRecordId>
-                </dataDivider>
-                <oldId>{pid}</oldId>
-            </recordInfo>
-            <recordXml>{source_record}</recordXml>
-        </oldRecord>""",
+        <recordInfo>
+            <id>{pid}</id>
+            <validationType>
+                <linkedRecordType>validationType</linkedRecordType>
+                <linkedRecordId>diva-oldRecord</linkedRecordId>
+            </validationType>
+            <dataDivider>
+                <linkedRecordType>system</linkedRecordType>
+                <linkedRecordId>divaData</linkedRecordId>
+            </dataDivider>
+            <oldId>{pid}</oldId>
+        </recordInfo>""",
+    )
+    assert cora_record.findtext("./recordXml") == (
+        f"<![CDATA[<record>   <pid>{pid}</pid>   <publicationType> "
+        "    <publicationTypeCode>journal</publicationTypeCode>   "
+        "</publicationType> </record>]]>"
     )

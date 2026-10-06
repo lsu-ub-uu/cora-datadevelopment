@@ -28,7 +28,9 @@ def create_old_record(source_record: ET.Element) -> ET.Element:
                     create_text("oldId", value=source_record.findtext("./pid")),
                 ],
             ),
-            create_text("recordXml", value=pretty_print_xml(source_record)),
+            create_text(
+                "recordXml", value=f"<![CDATA[{pretty_print_xml(source_record)}]]>"
+            ),
         ],
     )
     assert old_record is not None
