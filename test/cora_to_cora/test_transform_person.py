@@ -1,55 +1,23 @@
 from unittest.mock import Mock, patch
-
+import json
 from cora_to_cora.transform_person import (
-    _get_organisation_id_from_person_domain_part_id,
     transform_person,
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
 def test_transform_minimal_person():
-    minimal_old_person = {
-        "record": {
-            "data": {
-                "name": "person",
-                "children": [
-                    {
-                        "name": "recordInfo",
-                        "children": [
-                            {"name": "id", "value": "authority-person:11111"},
-                            {
-                                "name": "type",
-                                "children": [
-                                    {"name": "linkedRecordType", "value": "recordType"},
-                                    {"name": "linkedRecordId", "value": "person"},
-                                ],
-                            },
-                            {
-                                "name": "dataDivider",
-                                "children": [
-                                    {"name": "linkedRecordType", "value": "system"},
-                                    {"name": "linkedRecordId", "value": "diva"},
-                                ],
-                            },
-                            {
-                                "name": "tsCreated",
-                                "value": "2017-04-26T06:20:31.886000Z",
-                            },
-                            {"name": "public", "value": "yes"},
-                            {"name": "domain", "value": "smhi", "repeatId": "0"},
-                        ],
-                    },
-                    {
-                        "name": "authorisedName",
-                        "children": [
-                            {"name": "familyName", "value": "Andréasson"},
-                            {"name": "givenName", "value": "David"},
-                        ],
-                    },
-                ],
+    minimal_old_person = json.loads("""{
+            "authorityPerson": {
+                "defaultName": {
+                    "lastname": "Andréasson",
+                    "firstname": "David",
+                    "addition": "",
+                    "number": ""
+                },
+                "pid": "authority-person:11111",
             }
-        }
-    }
+        }""")
 
     transformed_person = transform_person(minimal_old_person)
 
@@ -77,63 +45,380 @@ def test_transform_minimal_person():
     )
 
 
-def test_transform_maximal_person():
+@patch("cora_to_cora.transform_person.get_cora_id_by_old_id")
+def test_transform_maximal_person(mock_get_cora_id_by_old_id):
 
-    maximal_old_person = {
-        "record": {
-            "data": {
-                "name": "person",
-                "children": [
-                    {
-                        "name": "recordInfo",
-                        "children": [
-                            {"name": "id", "value": "authority-person:11111"},
-                            {
-                                "name": "type",
-                                "children": [
-                                    {"name": "linkedRecordType", "value": "recordType"},
-                                    {"name": "linkedRecordId", "value": "person"},
-                                ],
-                            },
-                            {
-                                "name": "dataDivider",
-                                "children": [
-                                    {"name": "linkedRecordType", "value": "system"},
-                                    {"name": "linkedRecordId", "value": "diva"},
-                                ],
-                            },
-                            {
-                                "name": "tsCreated",
-                                "value": "2017-04-26T06:20:31.886000Z",
-                            },
-                            {"name": "public", "value": "yes"},
-                            {"name": "domain", "value": "smhi", "repeatId": "0"},
-                        ],
-                    },
-                    {
-                        "name": "authorisedName",
-                        "children": [
-                            {"name": "familyName", "value": "Andréasson"},
-                            {"name": "givenName", "value": "David"},
-                        ],
-                    },
-                    {
-                        "name": "alternativeName",
-                        "children": [
-                            {"name": "familyName", "value": "Andreasson"},
-                            {"name": "givenName", "value": "David"},
-                        ],
-                        "repeatId": "0",
-                    },
-                    {
-                        "name": "ORCID_ID",
-                        "value": "0000-0002-1825-0097",
-                        "repeatId": "0",
-                    },
+    mock_get_cora_id_by_old_id.side_effect = lambda old_id: "cora-" + old_id
+
+    maximal_old_person = json.loads("""{
+  "authorityPerson": {
+    "defaultName": {
+      "lastname": "Andersson",
+      "firstname": "Sara",
+      "addition": "Professor",
+      "number": ""
+    },
+    "birthYear": "1988",
+    "email": "sara.tobiasson@user.uu.se",
+    "alternativeNames": [
+      {
+        "lastname": "Tobiasson",
+        "firstname": "Sara",
+        "addition": "",
+        "number": ""
+      },
+      {
+        "lastname": "Andersson",
+        "firstname": "Anna",
+        "addition": "",
+        "number": ""
+      }
+    ],
+    "identifiers": [
+      {
+        "type": "LIBRIS",
+        "domain": "",
+        "value": "2541478441254",
+        "from": "",
+        "until": ""
+      },
+      {
+        "type": "LOCAL",
+        "domain": "kau",
+        "value": "test123",
+        "from": "",
+        "until": ""
+      },
+      {
+        "type": "LOCAL",
+        "domain": "smhi",
+        "value": "test123",
+        "from": "",
+        "until": ""
+      },
+      {
+        "type": "LOCAL",
+        "domain": "uu",
+        "value": "sarto903",
+        "from": "",
+        "until": ""
+      },
+      {
+        "type": "ORCID",
+        "domain": "",
+        "value": "0000-1111-2222-3333",
+        "from": "",
+        "until": ""
+      },
+      {
+        "type": "VIAF",
+        "domain": "",
+        "value": "12aer458",
+        "from": "",
+        "until": ""
+      }
+    ],
+    "affiliations": [
+      {
+        "organisationId": 12100,
+        "domain": "uu",
+        "name": "IT-avdelningen",
+        "alternativeName": "IT Division",
+        "from": "2025",
+        "parents": [
+          {
+            "organisationId": 979,
+            "domain": "uu",
+            "name": "Universitetsförvaltningen",
+            "alternativeName": "University Administration",
+            "parents": [
+              {
+                "organisationId": 978,
+                "domain": "uu",
+                "name": "Uppsala universitet",
+                "alternativeName": "Uppsala University",
+                "active": true,
+                "organisationNumber": "202100-2932-0"
+              }
+            ],
+            "active": true,
+            "organisationNumber": ""
+          }
+        ],
+        "active": true,
+        "organisationNumber": ""
+      },
+      {
+        "organisationId": 12102,
+        "domain": "uu",
+        "name": "Zooekologi",
+        "alternativeName": "Animal ecology",
+        "from": "2010",
+        "until": "2011",
+        "parents": [
+          {
+            "organisationId": 6800,
+            "domain": "uu",
+            "name": "Institutionen för ekologi och genetik",
+            "alternativeName": "Department of Ecology and Genetics",
+            "parents": [
+              {
+                "organisationId": 1112,
+                "domain": "uu",
+                "name": "Biologiska sektionen",
+                "alternativeName": "Biology",
+                "parents": [
+                  {
+                    "organisationId": 1031,
+                    "domain": "uu",
+                    "name": "Teknisk-naturvetenskapliga vetenskapsområdet",
+                    "alternativeName": "Disciplinary Domain of Science and Technology",
+                    "parents": [
+                      {
+                        "organisationId": 978,
+                        "domain": "uu",
+                        "name": "Uppsala universitet",
+                        "alternativeName": "Uppsala University",
+                        "active": true,
+                        "organisationNumber": "202100-2932-0"
+                      }
+                    ],
+                    "active": true,
+                    "organisationNumber": ""
+                  }
                 ],
-            }
+                "active": true,
+                "organisationNumber": ""
+              }
+            ],
+            "active": true,
+            "organisationNumber": ""
+          }
+        ],
+        "active": true,
+        "organisationNumber": ""
+      },
+      {
+        "organisationId": 2950,
+        "domain": "uu",
+        "name": "Avdelningen för Arkeologi och osteologi",
+        "alternativeName": "Department of Archeology and Osteology",
+        "from": "2015",
+        "until": "2018",
+        "parents": [
+          {
+            "organisationId": 2802,
+            "domain": "uu",
+            "name": "Högskolan på Gotland",
+            "alternativeName": "Gotland University",
+            "active": false,
+            "organisationNumber": ""
+          }
+        ],
+        "active": false,
+        "organisationNumber": ""
+      },
+      {
+        "organisationId": 7655,
+        "domain": "uu",
+        "name": "Växtekologi och evolution",
+        "alternativeName": "Plant Ecology and Evolution",
+        "from": "2025",
+        "until": "2025",
+        "parents": [
+          {
+            "organisationId": 6800,
+            "domain": "uu",
+            "name": "Institutionen för ekologi och genetik",
+            "alternativeName": "Department of Ecology and Genetics",
+            "parents": [
+              {
+                "organisationId": 1112,
+                "domain": "uu",
+                "name": "Biologiska sektionen",
+                "alternativeName": "Biology",
+                "parents": [
+                  {
+                    "organisationId": 1031,
+                    "domain": "uu",
+                    "name": "Teknisk-naturvetenskapliga vetenskapsområdet",
+                    "alternativeName": "Disciplinary Domain of Science and Technology",
+                    "parents": [
+                      {
+                        "organisationId": 978,
+                        "domain": "uu",
+                        "name": "Uppsala universitet",
+                        "alternativeName": "Uppsala University",
+                        "active": true,
+                        "organisationNumber": "202100-2932-0"
+                      }
+                    ],
+                    "active": true,
+                    "organisationNumber": ""
+                  }
+                ],
+                "active": true,
+                "organisationNumber": ""
+              }
+            ],
+            "active": true,
+            "organisationNumber": ""
+          }
+        ],
+        "active": true,
+        "organisationNumber": ""
+      },
+      {
+        "organisationId": 880751,
+        "domain": "uu",
+        "name": "test org 2 att tabort",
+        "alternativeName": "test org 2 to remove",
+        "from": "2021",
+        "until": "2024",
+        "parents": [
+          {
+            "organisationId": 880050,
+            "domain": "uu",
+            "name": "TESTTESTTEST",
+            "alternativeName": "TESTTESTTEST - engrish",
+            "parents": [
+              {
+                "organisationId": 2802,
+                "domain": "uu",
+                "name": "Högskolan på Gotland",
+                "alternativeName": "Gotland University",
+                "active": false,
+                "organisationNumber": ""
+              }
+            ],
+            "active": true,
+            "organisationNumber": ""
+          }
+        ],
+        "active": true,
+        "organisationNumber": "123456-789"
+      },
+      {
+        "organisationId": 878500,
+        "domain": "uu",
+        "name": "Testorganisation 1 att ta bort",
+        "alternativeName": "Testorganisation 1 to remove",
+        "from": "2024",
+        "until": "2024",
+        "parents": [
+          {
+            "organisationId": 985,
+            "domain": "uu",
+            "name": "Universitetsbiblioteket",
+            "alternativeName": "University Library",
+            "parents": [
+              {
+                "organisationId": 978,
+                "domain": "uu",
+                "name": "Uppsala universitet",
+                "alternativeName": "Uppsala University",
+                "active": true,
+                "organisationNumber": "202100-2932-0"
+              }
+            ],
+            "active": true,
+            "organisationNumber": ""
+          }
+        ],
+        "active": true,
+        "organisationNumber": "78596-985"
+      },
+      {
+        "organisationId": 872557,
+        "domain": "smhi",
+        "name": "Samhälle och säkerhet",
+        "alternativeName": "Core Services",
+        "parents": [
+          {
+            "organisationId": 16501,
+            "domain": "smhi",
+            "name": "SMHI",
+            "alternativeName": "SMHI",
+            "active": true,
+            "organisationNumber": "202100-0696"
+          }
+        ],
+        "active": true,
+        "organisationNumber": ""
+      },
+      {
+        "organisationId": 880800,
+        "domain": "uu",
+        "name": "Test test",
+        "alternativeName": "Test test",
+        "from": "2024",
+        "until": "2025",
+        "parents": [
+          {
+            "organisationId": 978,
+            "domain": "uu",
+            "name": "Uppsala universitet",
+            "alternativeName": "Uppsala University",
+            "active": true,
+            "organisationNumber": "202100-2932-0"
+          }
+        ],
+        "active": true,
+        "organisationNumber": ""
+      },
+      {
+        "name": "Organsiation som fritext med ett årtal",
+        "alternativeName": "",
+        "from": "2025",
+        "active": false,
+        "organisationNumber": ""
+      },
+      {
+        "name": "En annan organisation med slutår",
+        "alternativeName": "",
+        "until": "2026",
+        "active": false,
+        "organisationNumber": ""
+      }
+    ],
+    "urls": [
+      {
+        "label": "En url label",
+        "url": "http://www.url.se"
+      },
+      {
+        "label": "En annan url",
+        "url": "http://www.enannanurl.se"
+      }
+    ],
+    "biographies": {
+      "eng": "<p><em>Min</em> biografi, <sup>en</sup> jätte <sub>lång</sub> text <em>med</em> olika <strong>formateringar</strong>. På engelska.</p>",
+      "swe": "<p><strong>Min</strong> <em>biografi</em>, <sub>en</sub> jätte <sup>lång</sup> text med olika formateringar. På svenska.</p>"
+    },
+    "publicRecord": true,
+    "type": "PERSON",
+    "pid": "authority-person:11111",
+    "recordInfo": {
+      "events": [
+        {
+          "type": "CREATE",
+          "timestamp": "2022-09-09T11:39:48.483Z",
+          "name": "Sara Tobiasson",
+          "userId": "sarto903",
+          "ip": "130.238.90.152"
+        },
+        {
+          "type": "UPDATE",
+          "timestamp": "2022-09-09T11:41:01.964Z",
+          "name": "Sara Tobiasson",
+          "userId": "sarto903",
+          "ip": "130.238.90.152"
         }
+      ],
+      "recordDeleted": false
     }
+  },
+}""")
 
     transformed_person = transform_person(maximal_old_person)
 
@@ -153,286 +438,135 @@ def test_transform_maximal_person():
             </recordInfo>
             <authority>
                 <name type="personal">
-                    <namePart type="given">David</namePart>
-                    <namePart type="family">Andréasson</namePart>
+                    <namePart type="given">Sara</namePart>
+                    <namePart type="family">Andersson</namePart>
+                    <namePart type="termsOfAddress">Professor</namePart>
                 </name>
             </authority>
             <variant>
-                <name type="personal">
-                    <namePart type="given">David</namePart>
-                    <namePart type="family">Andreasson</namePart>
+                <name type="personal" repeatId="0">
+                    <namePart type="given">Sara</namePart>
+                    <namePart type="family">Tobiasson</namePart>
+                </name>
+                <name type="personal" repeatId="1">
+                    <namePart type="given">Anna</namePart>
+                    <namePart type="family">Andersson</namePart>
                 </name>
             </variant>
-            <nameIdentifier type="orcid">0000-0002-1825-0097</nameIdentifier>
-            </person>""",
-    )
-
-    """
-                <location>
-                    <url>https://example.com/profile</url>
-                    <displayLabel>Profile page</displayLabel>
-                </location>
-                <email>email@example.com</email>
-                <note type="biographical" lang="eng">Senior researcher in climate studies</note>    
-                <nameIdentifier type="localId">diva-local-123</nameIdentifier>
-                <nameIdentifier type="localId">diva-local-123</nameIdentifier>
-                <nameIdentifier type="orcid">0000-0002-1825-0097</nameIdentifier>
-                <nameIdentifier type="se-libr">LIBR-12345</nameIdentifier>
-                <nameIdentifier type="openAlex">A1234567890</nameIdentifier>
-                <nameIdentifier type="scopus">12345678901</nameIdentifier>
-                <nameIdentifier type="wos">ABC-1234-5678</nameIdentifier>
-                <nameIdentifier type="googleScholar">AbC123dEf45</nameIdentifier>
-                <nameIdentifier type="viaf">12345678</nameIdentifier>
-                <affiliation>
-                    <organisation>
-                        <linkedRecordType>diva-organisation</linkedRecordType>
-                        <linkedRecordId>diva-org-123</linkedRecordId>
-                    </organisation>
-                    <namePart>Department of Meteorology</namePart>
-                    <identifier type="ror">0abc12345</identifier>
-                    <country>af</country>
-                    <description>researchGroup</description>
-                    <startDate>
-                        <year>2020</year>
-                        <month>09</month>
-                        <day>15</day>
-                    </startDate>
-                    <endDate>
-                        <year>2024</year>
-                        <month>06</month>
-                        <day>30</day>
-                    </endDate>
-                </affiliation>"""
-
-
-@patch("cora_to_cora.transform_person.get_cora_id_by_old_id")
-@patch("cora_to_cora.transform_person.requests.get")
-def test_transform_domain_part(mock_requests_get, mock_get_cora_id_by_old_id):
-    domainpart = {
-        "name": "personDomainPart",
-        "children": [
-            {
-                "name": "recordInfo",
-                "children": [
-                    {"name": "id", "value": "authority-person:101313:kau"},
-                    {
-                        "name": "type",
-                        "children": [
-                            {"name": "linkedRecordType", "value": "recordType"},
-                            {"name": "linkedRecordId", "value": "personDomainPart"},
-                        ],
-                    },
-                    {
-                        "name": "dataDivider",
-                        "children": [
-                            {"name": "linkedRecordType", "value": "system"},
-                            {"name": "linkedRecordId", "value": "diva"},
-                        ],
-                    },
-                    {"name": "tsCreated", "value": "2022-03-24T13:19:58.934000Z"},
-                    {"name": "domain", "value": "kau"},
-                    {"name": "public", "value": "yes"},
-                ],
-            },
-            {
-                "name": "affiliation",
-                "children": [
-                    {
-                        "name": "organisationLink",
-                        "children": [
-                            {"name": "linkedRecordType", "value": "organisation"},
-                            {
-                                "name": "linkedRecordId",
-                                "value": "diva-organisation:11961",
-                            },
-                        ],
-                    }
-                ],
-                "repeatId": "0",
-            },
-        ],
-    }
-
-    domain_old_person = {
-        "record": {
-            "data": {
-                "name": "person",
-                "children": [
-                    {
-                        "name": "recordInfo",
-                        "children": [
-                            {"name": "id", "value": "authority-person:11111"},
-                            {
-                                "name": "type",
-                                "children": [
-                                    {"name": "linkedRecordType", "value": "recordType"},
-                                    {"name": "linkedRecordId", "value": "person"},
-                                ],
-                            },
-                            {
-                                "name": "dataDivider",
-                                "children": [
-                                    {"name": "linkedRecordType", "value": "system"},
-                                    {"name": "linkedRecordId", "value": "diva"},
-                                ],
-                            },
-                            {
-                                "name": "tsCreated",
-                                "value": "2017-04-26T06:20:31.886000Z",
-                            },
-                            {"name": "public", "value": "yes"},
-                            {"name": "domain", "value": "smhi", "repeatId": "0"},
-                        ],
-                    },
-                    {
-                        "name": "authorisedName",
-                        "children": [
-                            {"name": "familyName", "value": "Andréasson"},
-                            {"name": "givenName", "value": "David"},
-                        ],
-                    },
-                    {
-                        "name": "personDomainPart",
-                        "children": [
-                            {"name": "linkedRecordType", "value": "personDomainPart"},
-                            {
-                                "name": "linkedRecordId",
-                                "value": "authority-person:44211:smhi",
-                            },
-                        ],
-                        "repeatId": "0",
-                    },
-                ],
-            }
-        }
-    }
-
-    context = Mock()
-    mock_response = Mock()
-    mock_response.raise_for_status.return_value = None
-    mock_response.json.return_value = domainpart
-    mock_requests_get.return_value = mock_response
-    mock_get_cora_id_by_old_id.return_value = "cora-diva-organisation:11961"
-
-    transformed_person = transform_person(domain_old_person, context=context)
-
-    mock_get_cora_id_by_old_id.assert_called_once_with(
-        "diva-organisation:11961",
-        record_type="diva-organisation",
-        context=context,
-    )
-
-    assert_equal_for_xml_and_xml_string(
-        transformed_person,
-        """<person>
-            <recordInfo>
-                <validationType>
-                    <linkedRecordType>validationType</linkedRecordType>
-                    <linkedRecordId>diva-person</linkedRecordId>
-                </validationType>
-            <dataDivider>
-                <linkedRecordType>system</linkedRecordType>
-                <linkedRecordId>divaData</linkedRecordId>
-            </dataDivider>
-            <oldId>authority-person:11111</oldId>
-            </recordInfo>
-            <authority>
-                <name type="personal">
-                    <namePart type="given">David</namePart>
-                    <namePart type="family">Andréasson</namePart>
-                </name>
-            </authority>
-            <affiliation>
+            <email>sara.tobiasson@user.uu.se</email>
+            <location>
+                <displaLabel>En url label</displaLabel>
+                <url>http://www.url.se</url>
+            </location>
+            <location>
+                <displaLabel>En annan url</displaLabel>
+                <url>http://www.enannanurl.se</url>
+            </location>
+            <note type="biographical" lang="eng">Min biografi, en jätte lång text med olika formateringar. På engelska.</note>
+            <note type="biographical" lang="swe">Min biografi, en jätte lång text med olika formateringar. På svenska.</note>
+            <nameIdentifier type="localId" repeatId="0">kau/test123</nameIdentifier>
+            <nameIdentifier type="localId" repeatId="1">smhi/test123</nameIdentifier>
+            <nameIdentifier type="localId" repeatId="2">uu/sarto903</nameIdentifier>
+            <nameIdentifier type="orcid" repeatId="0">0000-1111-2222-3333</nameIdentifier>
+            <nameIdentifier type="viaf" repeatId="0">12aer458</nameIdentifier>
+            <affiliation repeatId="0">
                 <organisation>
                     <linkedRecordType>diva-organisation</linkedRecordType>
-                    <linkedRecordId>cora-diva-organisation:11961</linkedRecordId>
+                    <linkedRecordId>cora-12100</linkedRecordId>
+                </organisation>
+                <startDate>
+                    <year>2025</year>
+                </startDate>
+            </affiliation>
+            <affiliation repeatId="1">
+                <organisation>
+                    <linkedRecordType>diva-organisation</linkedRecordType>
+                    <linkedRecordId>cora-12102</linkedRecordId>
+                </organisation>
+                <startDate>
+                    <year>2010</year>
+                </startDate>
+                <endDate>
+                    <year>2011</year>
+                </endDate>
+            </affiliation>
+            <affiliation repeatId="2">
+                <organisation>
+                    <linkedRecordType>diva-organisation</linkedRecordType>
+                    <linkedRecordId>cora-2950</linkedRecordId>
+                </organisation>
+                <startDate>
+                    <year>2015</year>
+                </startDate>
+                <endDate>
+                    <year>2018</year>
+                </endDate>
+            </affiliation>
+            <affiliation repeatId="3">
+                <organisation>
+                    <linkedRecordType>diva-organisation</linkedRecordType>
+                    <linkedRecordId>cora-7655</linkedRecordId>
+                </organisation>
+                <startDate>
+                    <year>2025</year>
+                </startDate>
+                <endDate>
+                    <year>2025</year>
+                </endDate>
+            </affiliation>
+            <affiliation repeatId="4">
+                <organisation>
+                    <linkedRecordType>diva-organisation</linkedRecordType>
+                    <linkedRecordId>cora-880751</linkedRecordId>
+                </organisation>
+                <startDate>
+                    <year>2021</year>
+                </startDate>
+                <endDate>
+                    <year>2024</year>
+                </endDate>
+            </affiliation>
+            <affiliation repeatId="5">
+                <organisation>
+                    <linkedRecordType>diva-organisation</linkedRecordType>
+                    <linkedRecordId>cora-878500</linkedRecordId>
+                </organisation>
+                <startDate>
+                    <year>2024</year>
+                </startDate>
+                <endDate>
+                    <year>2024</year>
+                </endDate>
+            </affiliation>
+            <affiliation repeatId="6">
+                <organisation>
+                    <linkedRecordType>diva-organisation</linkedRecordType>
+                    <linkedRecordId>cora-872557</linkedRecordId>
                 </organisation>
             </affiliation>
-            </person>""",
-    )
-
-    """ 
-    person har
-        personDomainPart -> recordLink
-            authority-person:44211:smhi
-            affiliation -> organisationLink
-            den pekar på subOrganisation(partOfOrganisation) med classic id
-      
-    """
-
-
-@patch("cora_to_cora.transform_person.get_cora_id_by_old_id")
-@patch("cora_to_cora.transform_person.requests.get")
-def test_get_organisation_id_by_person_domain_part_id(
-    mock_requests_get, mock_get_cora_id_by_old_id
-):
-    mock_context = Mock()
-    mock_context.get_base_url.return_value = (
-        "https://cora.diva-portal.org/diva/rest/record/"
-    )
-    mock_context.get_auth_token.return_value = "token"
-
-    mock_response = Mock()
-    mock_response.raise_for_status.return_value = None
-    mock_response.json.return_value = {
-        "name": "personDomainPart",
-        "children": [
-            {
-                "name": "recordInfo",
-                "children": [
-                    {"name": "id", "value": "authority-person:101313:kau"},
-                    {
-                        "name": "type",
-                        "children": [
-                            {"name": "linkedRecordType", "value": "recordType"},
-                            {"name": "linkedRecordId", "value": "personDomainPart"},
-                        ],
-                    },
-                    {
-                        "name": "dataDivider",
-                        "children": [
-                            {"name": "linkedRecordType", "value": "system"},
-                            {"name": "linkedRecordId", "value": "diva"},
-                        ],
-                    },
-                    {"name": "tsCreated", "value": "2022-03-24T13:19:58.934000Z"},
-                    {"name": "domain", "value": "kau"},
-                    {"name": "public", "value": "yes"},
-                ],
-            },
-            {
-                "name": "affiliation",
-                "children": [
-                    {
-                        "name": "organisationLink",
-                        "children": [
-                            {"name": "linkedRecordType", "value": "organisation"},
-                            {
-                                "name": "linkedRecordId",
-                                "value": "diva-organisation:11961",
-                            },
-                        ],
-                    }
-                ],
-                "repeatId": "0",
-            },
-        ],
-    }
-    mock_requests_get.return_value = mock_response
-    mock_get_cora_id_by_old_id.return_value = "cora-diva-organisation:11961"
-
-    result = _get_organisation_id_from_person_domain_part_id(
-        "authority-person:101313:kau",
-        mock_context,
-    )
-
-    assert result == "cora-diva-organisation:11961"
-    mock_requests_get.assert_called_once_with(
-        "https://cora.diva-portal.org/diva/rest/record/personDomainPart/authority-person:101313:kau",
-        headers={"Accept": "application/json", "authToken": "token"},
-    )
-    mock_get_cora_id_by_old_id.assert_called_once_with(
-        "diva-organisation:11961",
-        record_type="diva-organisation",
-        context=mock_context,
+            <affiliation repeatId="7">
+                <organisation>
+                    <linkedRecordType>diva-organisation</linkedRecordType>
+                    <linkedRecordId>cora-880800</linkedRecordId>
+                </organisation>
+                <startDate>
+                    <year>2024</year>
+                </startDate>
+                <endDate>
+                    <year>2025</year>
+                </endDate>
+            </affiliation>
+            <affiliation repeatId="8">
+                <namePart>Organsiation som fritext med ett årtal</namePart>
+                <startDate>
+                    <year>2025</year>
+                </startDate>
+            </affiliation>
+            <affiliation repeatId="9">
+                <namePart>En annan organisation med slutår</namePart>
+                <endDate>
+                    <year>2026</year>
+                </endDate>
+            </affiliation>
+        </person>""",
     )
