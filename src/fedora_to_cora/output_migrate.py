@@ -4,6 +4,7 @@ import logging
 from common.xml_utils import pretty_print_xml
 from common.xml_validate import validate_xml, XMLValidationError
 from cora.context import Context
+from fedora_to_cora.create_old_record import old_record_migrate
 from fedora_to_cora.output_migration_result import OutputMigrationResult
 from cora.delete import delete_record
 from fedora_to_cora.attachments_migrate import attachments_migrate
@@ -66,7 +67,6 @@ def output_migrate(
         )
 
     if apply:
-
         create_record_result = create_record(
             cora_output,
             record_type="diva-output",
@@ -76,6 +76,7 @@ def output_migrate(
         if is_success_result(create_record_result):
             cora_id = create_record_result.record_id
             relations = create_relations(source_record)
+            _migrate_old_record_with_rollback(source_record, context)
         else:
             return OutputMigrationResult(
                 pid,
@@ -85,7 +86,6 @@ def output_migrate(
                     [create_record_result.error] if create_record_result.error else []
                 ),
             )
-
         if with_binaries:
             success, errors = _migrate_attachments_with_rollback(
                 source_record,
@@ -108,6 +108,12 @@ def output_migrate(
         cora_id=cora_id,
         relations=relations,
     )
+
+
+def _migrate_old_record_with_rollback(
+    source_record: ET.Element, context: Context
+) -> None:
+    old_record = old_record_migrate(source_record)
 
 
 def _migrate_attachments_with_rollback(
