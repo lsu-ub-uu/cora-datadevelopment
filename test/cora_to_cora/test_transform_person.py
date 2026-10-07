@@ -15,7 +15,7 @@ def test_transform_minimal_person():
                     "addition": "",
                     "number": ""
                 },
-                "pid": "authority-person:11111",
+                  "pid": "authority-person:11111"
             }
         }""")
 
@@ -48,7 +48,7 @@ def test_transform_minimal_person():
 @patch("cora_to_cora.transform_person.get_cora_id_by_old_id")
 def test_transform_maximal_person(mock_get_cora_id_by_old_id):
 
-    mock_get_cora_id_by_old_id.side_effect = lambda old_id: "cora-" + old_id
+    mock_get_cora_id_by_old_id.side_effect = lambda old_id, **kwargs: "cora-" + old_id
 
     maximal_old_person = json.loads("""{
   "authorityPerson": {
@@ -417,10 +417,10 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
       ],
       "recordDeleted": false
     }
-  },
+  }
 }""")
 
-    transformed_person = transform_person(maximal_old_person)
+    transformed_person = transform_person(maximal_old_person, context=Mock())
 
     assert_equal_for_xml_and_xml_string(
         transformed_person,
@@ -454,12 +454,12 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
                 </name>
             </variant>
             <email>sara.tobiasson@user.uu.se</email>
-            <location>
-                <displaLabel>En url label</displaLabel>
+            <location repeatId="0">
+                <displayLabel>En url label</displayLabel>
                 <url>http://www.url.se</url>
             </location>
-            <location>
-                <displaLabel>En annan url</displaLabel>
+            <location repeatId="1">
+                <displayLabel>En annan url</displayLabel>
                 <url>http://www.enannanurl.se</url>
             </location>
             <note type="biographical" lang="eng">Min biografi, en jätte lång text med olika formateringar. På engelska.</note>
@@ -468,6 +468,7 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
             <nameIdentifier type="localId" repeatId="1">smhi/test123</nameIdentifier>
             <nameIdentifier type="localId" repeatId="2">uu/sarto903</nameIdentifier>
             <nameIdentifier type="orcid" repeatId="0">0000-1111-2222-3333</nameIdentifier>
+            <nameIdentifier repeatId="0" type="se-libr">2541478441254</nameIdentifier>
             <nameIdentifier type="viaf" repeatId="0">12aer458</nameIdentifier>
             <affiliation repeatId="0">
                 <organisation>
@@ -570,3 +571,69 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
             </affiliation>
         </person>""",
     )
+
+
+def test_transform_person_prefixes_local_identifier_with_domain():
+    old_person = {
+        "authorityPerson": {
+            "defaultName": {
+                "firstname": "Sara",
+                "lastname": "Andersson",
+                "addition": "",
+            },
+            "pid": "authority-person:11111",
+            "identifiers": [
+                {"type": "LOCAL", "domain": "uu", "value": "sarto903"},
+                {"type": "ORCID", "domain": "", "value": "0000-1111-2222-3333"},
+            ],
+        }
+    }
+
+    transformed_person = transform_person(old_person)
+
+    assert (
+        transformed_person.findtext("nameIdentifier[@type='localId']") == "uu/sarto903"
+    )
+    assert (
+        transformed_person.findtext("nameIdentifier[@type='orcid']")
+        == "0000-1111-2222-3333"
+    )
+
+
+def test_transform_person_numbers_identifiers_per_type():
+    old_person = {
+        "authorityPerson": {
+            "defaultName": {
+                "firstname": "Sara",
+                "lastname": "Andersson",
+                "addition": "",
+            },
+            "pid": "authority-person:11111",
+            "identifiers": [
+                {"type": "LOCAL", "domain": "kau", "value": "test123"},
+                {"type": "ORCID", "domain": "", "value": "0000-1111-2222-3333"},
+                {"type": "LOCAL", "domain": "uu", "value": " "},
+                {"type": "LIBRIS", "domain": "", "value": "2541478441254"},
+                {"type": "LOCAL", "domain": "smhi", "value": "test123"},
+                {"type": "VIAF", "domain": "", "value": "12aer458"},
+                {"type": "ORCID", "domain": "", "value": "0000-4444-5555-6666"},
+                {"type": "LOCAL", "domain": "uu", "value": "sarto903"},
+            ],
+        }
+    }
+
+    transformed_person = transform_person(old_person)
+
+    identifiers = transformed_person.findall("nameIdentifier")
+    assert [
+        (identifier.attrib["type"], identifier.attrib["repeatId"])
+        for identifier in identifiers
+    ] == [
+        ("localId", "0"),
+        ("localId", "1"),
+        ("localId", "2"),
+        ("orcid", "0"),
+        ("orcid", "1"),
+        ("se-libr", "0"),
+        ("viaf", "0"),
+    ]
