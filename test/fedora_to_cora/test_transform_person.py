@@ -1,6 +1,6 @@
 from unittest.mock import Mock, patch
 import json
-from cora_to_cora.transform_person import (
+from fedora_to_cora.transform_person import (
     transform_person,
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
@@ -45,7 +45,7 @@ def test_transform_minimal_person():
     )
 
 
-@patch("cora_to_cora.transform_person.get_cora_id_by_old_id")
+@patch("fedora_to_cora.transform_person.get_cora_id_by_old_id")
 def test_transform_maximal_person(mock_get_cora_id_by_old_id):
 
     mock_get_cora_id_by_old_id.side_effect = lambda old_id, **kwargs: "cora-" + old_id
