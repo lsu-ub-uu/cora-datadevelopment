@@ -45,6 +45,49 @@ def test_transform_minimal_person():
     )
 
 
+def test_transform_person_with_only_swe_biography():
+    minimal_old_person = json.loads("""{
+            "authorityPerson": {
+                "defaultName": {
+                    "lastname": "Andréasson",
+                    "firstname": "David",
+                    "addition": "",
+                    "number": ""
+                },
+                "biographies": {
+                  "swe": "Hej hopp"
+                },
+                "pid": "authority-person:11111"
+            }
+        }""")
+
+    transformed_person = transform_person(minimal_old_person)
+
+    assert_equal_for_xml_and_xml_string(
+        transformed_person,
+        """<person>
+            <recordInfo>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>diva-person</linkedRecordId>
+                </validationType>
+            <dataDivider>
+                <linkedRecordType>system</linkedRecordType>
+                <linkedRecordId>divaData</linkedRecordId>
+            </dataDivider>
+            <oldId>authority-person:11111</oldId>
+            </recordInfo>
+            <authority>
+                <name type="personal">
+                    <namePart type="given">David</namePart>
+                    <namePart type="family">Andréasson</namePart>
+                </name>
+            </authority>
+            <note type="biographical" lang="swe">Hej hopp</note>
+            </person>""",
+    )
+
+
 @patch("fedora_to_cora.transform_person.get_cora_id_by_old_id")
 def test_transform_maximal_person(mock_get_cora_id_by_old_id):
 

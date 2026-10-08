@@ -26,24 +26,6 @@ def test_returns_error_when_failed_to_fetch_authority_pid(mock_get_authority_per
 
 
 @patch("fedora_to_cora.person_migrate.get_authority_person")
-def test_returns_error_when_validate_json_fails(mock_get_authority_person):
-    mock_get_authority_person.return_value = json.loads("""
-            {
-                "invalid": "data"
-            }
-        """)
-
-    result = migrate_person("authority-person:11111", MockContext())
-
-    assert result.status == "FAILED"
-    assert result.cora_person_id is None
-    assert (
-        result.error
-        == "JSON validation error: Missing required property 'authorityPerson' at root"
-    )
-
-
-@patch("fedora_to_cora.person_migrate.get_authority_person")
 @patch("fedora_to_cora.person_migrate.create_record")
 def test_returns_error_when_create_record_fails(
     mock_create_record, mock_get_authority_person

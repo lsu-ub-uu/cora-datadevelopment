@@ -133,7 +133,7 @@ def _create_location(old_person: dict):
 
 
 def _create_note(old_person: dict, lang: str):
-    if "biographies" not in old_person:
+    if "biographies" not in old_person or lang not in old_person["biographies"]:
         return None
 
     return create_text(
