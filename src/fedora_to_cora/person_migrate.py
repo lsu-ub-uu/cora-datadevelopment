@@ -26,11 +26,6 @@ def migrate_person(authority_pid: str, context: Context) -> MigratePersonResult:
             "FAILED", None, f"Failed to fetch authority person: {e}"
         )
 
-    try:
-        validate_authority_person_json(person)
-    except AuthorityPersonJSONValidationError as e:
-        return MigratePersonResult("FAILED", None, f"JSON validation error: {e}")
-
     transformed_person = transform_person(person, context)
 
     create_result = create_record(
