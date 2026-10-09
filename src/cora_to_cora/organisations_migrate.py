@@ -3,19 +3,74 @@ import json
 import logging
 import requests
 from common.threads import run_with_threads
-from cora.validate import validate_record
 from cora.create import create_record, is_success_result
-from cora.update import update_record
 from cora_to_cora.transform_organisation import transform_organisation
 from cora_to_cora.update_organisation_relations import update_organisation_relations
 from cora.cora_json_utils import (
     find_child_with_name_in_data,
+    get_first_atomic_value_with_name_in_data,
     get_linked_record_id_with_name_in_data,
 )
 import xml.etree.ElementTree as ET
 from cora.context import Context, CoraContext
 
 logger = logging.getLogger(__name__)
+
+VALID_ORGANISATION_DOMAINS = frozenset(
+    {
+        "hh",
+        "miun",
+        "hig",
+        "naturvardsverket",
+        "kkh",
+        "hv",
+        "fmv",
+        "du",
+        "skh",
+        "mchs",
+        "his",
+        "raa",
+        "nai",
+        "liu",
+        "norden",
+        "kth",
+        "uu",
+        "riksarkivet",
+        "nrm",
+        "isof",
+        "ehs",
+        "lnu",
+        "shh",
+        "konstfack",
+        "cora",
+        "havochvatten",
+        "ri",
+        "trafikverket",
+        "mdu",
+        "gih",
+        "kmh",
+        "ju",
+        "rkh",
+        "nationalmuseum",
+        "sh",
+        "swedgeo",
+        "bth",
+        "umu",
+        "kau",
+        "ivl",
+        "diva",
+        "mau",
+        "polar",
+        "su",
+        "vti",
+        "ltu",
+        "smhi",
+        "fhs",
+        "nordiskamuseet",
+        "oru",
+        "hb",
+    }
+)
 
 
 def organisations_migrate(context: Context, domain: str | None = None):
@@ -97,10 +152,10 @@ def _get_old_cora_organisations(context, domain: str | None = None):
             raise Exception(f"Empty organisation page at start {offset}")
         organisations.extend(page)
         offset += page_size
-    return list(filter(_is_not_root_organisation, organisations))
+    return list(filter(_should_migrate_organisation, organisations))
 
 
-def _is_not_root_organisation(old_org: dict) -> bool:
+def _should_migrate_organisation(old_org: dict) -> bool:
     old_org_data = old_org["record"]["data"]
 
     record_info = find_child_with_name_in_data(old_org_data["children"], "recordInfo")
@@ -108,4 +163,5 @@ def _is_not_root_organisation(old_org: dict) -> bool:
     record_type_id = get_linked_record_id_with_name_in_data(
         record_info["children"], "type"
     )
-    return record_type_id != "rootOrganisation"
+    domain = get_first_atomic_value_with_name_in_data(record_info["children"], "domain")
+    return record_type_id != "rootOrganisation" and domain in VALID_ORGANISATION_DOMAINS

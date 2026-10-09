@@ -32,7 +32,7 @@ def transform_person(
                 ],
             ),
             _create_authority(old_person),
-            _create_variant(old_person),
+            _create_variants(old_person),
             _create_email(old_person),
             _create_location(old_person),
             _create_note(old_person, "eng"),
@@ -81,14 +81,23 @@ def _create_authority(old_person: dict):
     )
 
 
-def _create_variant(old_person: dict):
+def _create_variants(old_person: dict):
+    return [
+        _create_variant(alternative_name, str(index))
+        for index, alternative_name in enumerate(
+            old_person["alternativeNames"] if "alternativeNames" in old_person else []
+        )
+    ]
+
+
+def _create_variant(alternative_name: dict, repeat_id: str):
     return create_group(
         "variant",
+        repeatId=str(repeat_id),
         children=[
             create_group(
                 "name",
                 type="personal",
-                repeatId=str(repeat_id),
                 children=[
                     create_text(
                         "namePart", alternative_name["firstname"], type="given"
@@ -98,11 +107,6 @@ def _create_variant(old_person: dict):
                     ),
                 ],
             )
-            for repeat_id, alternative_name in enumerate(
-                old_person["alternativeNames"]
-                if "alternativeNames" in old_person
-                else []
-            )
         ],
     )
 
@@ -110,7 +114,7 @@ def _create_variant(old_person: dict):
 def _create_email(old_person_data: dict):
     email = old_person_data["email"] if "email" in old_person_data else ""
     if email:
-        return create_text("email", email)
+        return create_text("email", repeatId="0", value=email)
     return None
 
 
@@ -138,9 +142,10 @@ def _create_note(old_person: dict, lang: str):
 
     return create_text(
         "note",
-        clean_rich_text(old_person["biographies"][lang]),
+        repeatId=lang,
         type="biographical",
         lang=lang,
+        value=clean_rich_text(old_person["biographies"][lang]),
     )
 
 
@@ -157,12 +162,12 @@ def _create_name_identifier(old_person_data: dict):
     )
     for type, source_type in identifier_types:
         for identifier in identifiers:
-            if identifier["type"] != source_type:
+            if "value" not in identifier or "type" not in identifier:
                 continue
 
+            if identifier["type"] != source_type:
+                continue
             value = identifier["value"]
-            if type == "localId" and value.strip():
-                value = f"{identifier['domain']}/{value}"
 
             name_identifier = create_text(
                 "nameIdentifier",
