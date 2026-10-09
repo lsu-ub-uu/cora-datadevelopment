@@ -143,6 +143,29 @@ def test_migrates_pages_and_filters_roots_before_updating_relations(
     assert requests_mock.call_count == 2
 
 
+def test_omits_organisations_with_invalid_domains(requests_mock):
+    records = _read_json_file("data/old_cora_search_result_two_organisations.json")[
+        "dataList"
+    ]["data"]
+    valid_record, invalid_record = records
+    invalid_record_info = next(
+        child
+        for child in invalid_record["record"]["data"]["children"]
+        if child["name"] == "recordInfo"
+    )
+    invalid_domain = next(
+        child for child in invalid_record_info["children"] if child["name"] == "domain"
+    )
+    invalid_domain["value"] = "not-a-valid-domain"
+
+    requests_mock.get(
+        SEARCH_URL,
+        json={"dataList": {"totalNo": "2", "data": records}},
+    )
+
+    assert _get_old_cora_organisations(MockContext()) == [valid_record]
+
+
 @pytest.mark.parametrize("domain", [None, "test_domain"])
 def test_cli_accepts_optional_domain(domain):
     arguments = ["organisations-migrate", "--system", "minikube"]
@@ -235,11 +258,9 @@ def test_get_old_organisations_failed(requests_mock):
 
 @patch("cora_to_cora.organisations_migrate.update_organisation_relations")
 @patch("cora_to_cora.organisations_migrate.create_record")
-@patch("cora_to_cora.organisations_migrate.validate_record")
 @patch("cora_to_cora.organisations_migrate.transform_organisation")
 def test_creates_transformed_record_when_apply_and_two_results(
     transform_organisation_mock,
-    validate_record_mock,
     create_record_mock,
     update_organisation_relations_mock,
     mock_run_with_threads,
@@ -276,7 +297,6 @@ def test_creates_transformed_record_when_apply_and_two_results(
     assert requests_mock.call_count == 1
     assert "Found 2 organisations to migrate from old Cora system." in caplog.messages
     assert transform_organisation_mock.call_count == 2
-    assert validate_record_mock.call_count == 0
     assert create_record_mock.call_count == 2
     assert update_organisation_relations_mock.call_count == 1
 
@@ -297,11 +317,9 @@ def test_creates_transformed_record_when_apply_and_two_results(
 
 @patch("cora_to_cora.organisations_migrate.update_organisation_relations")
 @patch("cora_to_cora.organisations_migrate.create_record")
-@patch("cora_to_cora.organisations_migrate.validate_record")
 @patch("cora_to_cora.organisations_migrate.transform_organisation")
 def test_aborts_migration_when_any_create_record_fails(
     transform_organisation_mock,
-    validate_record_mock,
     create_record_mock,
     update_organisation_relations_mock,
     mock_run_with_threads,
@@ -339,7 +357,6 @@ def test_aborts_migration_when_any_create_record_fails(
             "Found 2 organisations to migrate from old Cora system." in caplog.messages
         )
         assert transform_organisation_mock.call_count == 2
-        assert validate_record_mock.call_count == 0
         assert create_record_mock.call_count == 1
 
         assert (
@@ -352,11 +369,9 @@ def test_aborts_migration_when_any_create_record_fails(
 
 @patch("cora_to_cora.organisations_migrate.update_organisation_relations")
 @patch("cora_to_cora.organisations_migrate.create_record")
-@patch("cora_to_cora.organisations_migrate.validate_record")
 @patch("cora_to_cora.organisations_migrate.transform_organisation")
 def test_ignores_root_organisation(
     transform_organisation_mock,
-    validate_record_mock,
     create_record_mock,
     update_organisation_relations_mock,
     mock_run_with_threads,
@@ -383,18 +398,15 @@ def test_ignores_root_organisation(
     assert requests_mock.call_count == 1
     assert "Found 1 organisations to migrate from old Cora system." in caplog.messages
     assert transform_organisation_mock.call_count == 1
-    assert validate_record_mock.call_count == 0
     assert create_record_mock.call_count == 1
     assert update_organisation_relations_mock.call_count == 1
 
 
 @patch("cora_to_cora.organisations_migrate.update_organisation_relations")
 @patch("cora_to_cora.organisations_migrate.create_record")
-@patch("cora_to_cora.organisations_migrate.validate_record")
 @patch("cora_to_cora.organisations_migrate.transform_organisation")
 def test_skips_migrate_for_existing_organisation(
     transform_organisation_mock,
-    validate_record_mock,
     create_record_mock,
     update_organisation_relations_mock,
     mock_run_with_threads,
@@ -428,7 +440,6 @@ def test_skips_migrate_for_existing_organisation(
     assert requests_mock.call_count == 1
     assert "Found 2 organisations to migrate from old Cora system." in caplog.messages
     assert transform_organisation_mock.call_count == 2
-    assert validate_record_mock.call_count == 0
     assert create_record_mock.call_count == 2
     assert update_organisation_relations_mock.call_count == 1
 

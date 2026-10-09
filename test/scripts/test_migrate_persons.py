@@ -5,6 +5,7 @@ from unittest.mock import Mock, call
 
 import pytest
 
+import common.threads as threads
 from fedora_to_cora.person_migrate import MigratePersonResult
 from scripts import migrate_persons
 
@@ -94,7 +95,7 @@ def test_migration_statuses_and_unexpected_errors(cli, capsys, caplog, dependenc
     (xml_dir / "persons.xml").write_text(
         "<publication>"
         + "".join(
-            f"<authorityPid>person:{number}</authorityPid>" for number in range(4)
+            f"<authorityPid>person:{number}</authorityPid>" for number in range(5)
         )
         + "</publication>"
     )
@@ -106,6 +107,8 @@ def test_migration_statuses_and_unexpected_errors(cli, capsys, caplog, dependenc
             return MigratePersonResult("SKIPPED", None, "Already exists")
         if authority_pid == "person:2":
             return MigratePersonResult("FAILED", None, "API rejected person")
+        if authority_pid == "person:4":
+            return MigratePersonResult("FAILED", None, "API rejected person")
         raise RuntimeError("Unexpected transformation error")
 
     dependencies["migrate_person"].side_effect = migrate
@@ -114,10 +117,42 @@ def test_migration_statuses_and_unexpected_errors(cli, capsys, caplog, dependenc
         migrate_persons.main()
 
     assert error.value.code == 1
-    assert dependencies["migrate_person"].call_count == 4
-    assert "Created: 1 | Skipped: 1 | Failed: 2" in capsys.readouterr().out
+    assert dependencies["migrate_person"].call_count == 5
+    output = capsys.readouterr().out
+    assert "Created: 1 | Skipped: 1 | Failed: 3" in output
+    assert (
+        "Migration errors:\n"
+        "  2x API rejected person | authorityPid(s): person:2, person:4\n"
+        "  1x Unexpected transformation error | authorityPid(s): person:3" in output
+    )
     assert "person:2: API rejected person" in caplog.text
     assert "person:3: Unexpected transformation error" in caplog.text
+
+
+def test_thread_progress_shows_status_tallies(monkeypatch):
+    postfixes = []
+
+    class Progress:
+        def __init__(self, iterable):
+            self.iterable = iterable
+
+        def __iter__(self):
+            return iter(self.iterable)
+
+        def set_postfix_str(self, value):
+            postfixes.append(value)
+
+    monkeypatch.setattr(threads, "tqdm", lambda iterable, **kwargs: Progress(iterable))
+
+    results = threads.run_with_threads(
+        ["CREATED", "FAILED"],
+        lambda status: MigratePersonResult(status, None, None),
+        workers=1,
+        status_order=[("CREATED", "✅"), ("SKIPPED", "➡️"), ("FAILED", "❌")],
+    )
+
+    assert [result.status for result in results] == ["CREATED", "FAILED"]
+    assert postfixes == ["✅ 1 | ➡️ 0 | ❌ 0", "✅ 1 | ➡️ 0 | ❌ 1"]
 
 
 def test_skipped_person_is_success(cli, capsys, dependencies):

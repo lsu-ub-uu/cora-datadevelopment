@@ -7,9 +7,6 @@ from requests_mock import mock
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from common.xml_utils import create_group
 from cora.context import MockContext
-from fedora_to_cora.authority_person_json_validate import (
-    AuthorityPersonJSONValidationError,
-)
 from fedora_to_cora.person_migrate import migrate_person
 from cora.create import CreateRecordFailureResult, CreateRecordSuccessResult
 
@@ -73,7 +70,38 @@ def test_returns_skipped_when_person_already_exists(
         }
     """)
     mock_create_record.return_value = CreateRecordFailureResult(
-        "The record could not be created as it fails unique validation with the following 1 error messages: [A record matching the unique rule with [key: oldId, value: authority-person:11111] already exists in the system]"
+        "The record could not be created as it fails unique validation with the following 1 error messages: [A record matching the unique rule with [key: oldId, value: authority-person:11111] already exists in the system]",
+        status=409,
+    )
+    result = migrate_person("authority-person:11111", MockContext())
+
+    assert result.status == "SKIPPED"
+    assert result.cora_person_id is None
+    assert result.error == "Cora diva-person record already exists"
+
+
+@patch("fedora_to_cora.person_migrate.get_authority_person")
+@patch("fedora_to_cora.person_migrate.create_record")
+def test_returns_skipped_when_person_already_exists_and_other_error(
+    mock_create_record, mock_get_authority_person
+):
+
+    mock_get_authority_person.return_value = json.loads("""
+        {
+            "authorityPerson": {
+                "defaultName": {
+                    "lastname": "Andréasson",
+                    "firstname": "David",
+                    "addition": "",
+                    "number": ""
+                },
+                  "pid": "authority-person:11111"
+            }
+        }
+    """)
+    mock_create_record.return_value = CreateRecordFailureResult(
+        "Failed to create record with status 409: The record could not be created as it fails unique validation with the following 3 error messages: [A record matching the unique rule with [key: oldId, value: authority-person:11111] already exists in the system, A record matching the unique rule with [key: nameIdentifierLocalId, value: smhi/a002217] already exists in the system, A record matching the unique rule with [key: nameIdentifierOrcid, value: 0000-0002-0542-7738] already exists in the system]",
+        status=409,
     )
     result = migrate_person("authority-person:11111", MockContext())
 

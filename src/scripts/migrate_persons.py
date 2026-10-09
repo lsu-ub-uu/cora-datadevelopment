@@ -1,5 +1,6 @@
 import logging
-from collections import Counter
+from collections import Counter, defaultdict
+from dataclasses import dataclass
 from functools import partial
 from pathlib import Path
 import sys
@@ -16,6 +17,20 @@ from fedora_to_cora.person_migrate import MigratePersonResult, migrate_person
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class PersonMigrationOutcome:
+    authority_pid: str
+    result: MigratePersonResult
+
+    @property
+    def status(self) -> str:
+        return self.result.status
+
+    @property
+    def error(self) -> str | None:
+        return self.result.error
+
+
 def _read_authority_pids(xml_path: Path) -> tuple[set[str], bool]:
     try:
         publication = read_source_xml(xml_path)
@@ -30,14 +45,14 @@ def _read_authority_pids(xml_path: Path) -> tuple[set[str], bool]:
     return authority_pids, True
 
 
-def _migrate_person(authority_pid: str, context: Context) -> MigratePersonResult:
+def _migrate_person(authority_pid: str, context: Context) -> PersonMigrationOutcome:
     try:
         result = migrate_person(authority_pid, context)
     except Exception as error:
         result = MigratePersonResult("FAILED", None, str(error))
     if result.status == "FAILED":
         logger.error("Failed to migrate %s: %s", authority_pid, result.error)
-    return result
+    return PersonMigrationOutcome(authority_pid, result)
 
 
 def main() -> None:
@@ -87,7 +102,7 @@ def main() -> None:
     )
     print(f"Unique persons: {len(authority_pids)}")
 
-    results: list[MigratePersonResult] = []
+    results: list[PersonMigrationOutcome] = []
     if authority_pids:
         try:
             context = CoraContext(
@@ -106,12 +121,31 @@ def main() -> None:
             partial(_migrate_person, context=context),
             workers=workers,
             desc="Migrating persons",
+            status_order=[
+                ("CREATED", "✅"),
+                ("SKIPPED", "➡️"),
+                ("FAILED", "❌"),
+            ],
         )
     counts = Counter(result.status for result in results)
     print(
         f"Created: {counts['CREATED']} | Skipped: {counts['SKIPPED']}"
         f" | Failed: {counts['FAILED']}"
     )
+    if counts["FAILED"]:
+        error_pids: dict[str, list[str]] = defaultdict(list)
+        for result in results:
+            if result.status == "FAILED":
+                error_pids[result.error or "Unknown error"].append(result.authority_pid)
+        print("Migration errors:")
+        for error_message, authority_pids_for_error in sorted(
+            error_pids.items(), key=lambda item: (-len(item[1]), item[0])
+        ):
+            pids = ", ".join(sorted(authority_pids_for_error))
+            print(
+                f"  {len(authority_pids_for_error)}x {error_message}"
+                f" | authorityPid(s): {pids}"
+            )
     if failed_files or counts["FAILED"]:
         raise SystemExit(1)
 

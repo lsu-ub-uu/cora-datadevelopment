@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 import xml.etree.ElementTree as ET
 from classic.get_authority_person import get_authority_person
+from common.xml_utils import pretty_print_xml
 from cora.context import Context
-from fedora_to_cora.authority_person_json_validate import (
-    AuthorityPersonJSONValidationError,
-    validate_authority_person_json,
-)
 from fedora_to_cora.transform_person import transform_person
 from cora.create import create_record, is_success_result
 from typing import Literal
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -37,6 +37,9 @@ def migrate_person(authority_pid: str, context: Context) -> MigratePersonResult:
             return MigratePersonResult(
                 "SKIPPED", None, "Cora diva-person record already exists"
             )
+        logger.error(
+            f"Failed to create person record: {create_result.error}. Data:\n{pretty_print_xml(transformed_person)}"
+        )
         return MigratePersonResult(
             "FAILED", None, f"Failed to create person record: {create_result.error}"
         )
@@ -46,6 +49,6 @@ def migrate_person(authority_pid: str, context: Context) -> MigratePersonResult:
 
 def _record_already_exists(error_message: str, authority_pid: str) -> bool:
     return (
-        error_message
-        == f"The record could not be created as it fails unique validation with the following 1 error messages: [A record matching the unique rule with [key: oldId, value: {authority_pid}] already exists in the system]"
+        f"A record matching the unique rule with [key: oldId, value: {authority_pid}] already exists in the system"
+        in error_message
     )
