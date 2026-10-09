@@ -36,7 +36,8 @@ def test_returns_error_when_create_record_fails(
                     "addition": "",
                     "number": ""
                 },
-                  "pid": "authority-person:11111"
+                  "pid": "authority-person:11111",
+                  "publicRecord": true
             }
         }
     """)
@@ -65,7 +66,8 @@ def test_returns_skipped_when_person_already_exists(
                     "addition": "",
                     "number": ""
                 },
-                  "pid": "authority-person:11111"
+                  "pid": "authority-person:11111",
+                  "publicRecord": true
             }
         }
     """)
@@ -95,7 +97,8 @@ def test_returns_skipped_when_person_already_exists_and_other_error(
                     "addition": "",
                     "number": ""
                 },
-                  "pid": "authority-person:11111"
+                  "pid": "authority-person:11111",
+                  "publicRecord": true
             }
         }
     """)
@@ -124,7 +127,8 @@ def test_calls_create_person_with_transformed_person_and_returns_created_person(
                     "addition": "",
                     "number": ""
                 },
-                  "pid": "authority-person:11111"
+                  "pid": "authority-person:11111",
+                  "publicRecord": true
             }
         }
     """)
@@ -165,3 +169,29 @@ def test_calls_create_person_with_transformed_person_and_returns_created_person(
         mock_create_record.call_args[0][0], expected_cora_person
     )
     assert result.cora_person_id == "some_cora_id"
+
+
+@patch("fedora_to_cora.person_migrate.get_authority_person")
+@patch("fedora_to_cora.person_migrate.create_record")
+def test_skips_non_public_record(mock_create_record, mock_get_authority_person):
+    mock_get_authority_person.return_value = json.loads("""
+        {
+            "authorityPerson": {
+                "defaultName": {
+                    "lastname": "Andréasson",
+                    "firstname": "David",
+                    "addition": "",
+                    "number": ""
+                },
+                  "pid": "authority-person:11111",
+                  "publicRecord": false
+            }
+        }
+    """)
+
+    result = migrate_person("authority-person:11111", MockContext())
+
+    assert mock_create_record.call_count == 0
+    assert result.status == "SKIPPED"
+    assert result.cora_person_id is None
+    assert result.error == "Skipped non-public authority record"

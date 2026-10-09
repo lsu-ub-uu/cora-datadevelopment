@@ -26,6 +26,11 @@ def migrate_person(authority_pid: str, context: Context) -> MigratePersonResult:
             "FAILED", None, f"Failed to fetch authority person: {e}"
         )
 
+    if _is_hidden_person(person):
+        return MigratePersonResult(
+            "SKIPPED", None, "Skipped non-public authority record"
+        )
+
     transformed_person = transform_person(person, context)
 
     create_result = create_record(
@@ -52,3 +57,7 @@ def _record_already_exists(error_message: str, authority_pid: str) -> bool:
         f"A record matching the unique rule with [key: oldId, value: {authority_pid}] already exists in the system"
         in error_message
     )
+
+
+def _is_hidden_person(person: dict) -> bool:
+    return not person["authorityPerson"]["publicRecord"]
