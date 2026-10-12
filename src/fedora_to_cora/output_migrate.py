@@ -124,7 +124,7 @@ def _migrate_old_record_with_rollback(
     created_record: ET.Element,
     context: Context,
 ) -> tuple[bool, list[str] | None]:
-    success, errors = old_record_migrate(source_record, context)
+    success, errors, _ = old_record_migrate(source_record, context)
 
     if not success:
         logger.error(

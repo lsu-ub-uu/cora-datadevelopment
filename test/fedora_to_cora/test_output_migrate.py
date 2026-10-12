@@ -60,7 +60,7 @@ def test_migrate_with_apply_false(
 @patch("fedora_to_cora.output_migrate.validate_xml")
 @patch(
     "fedora_to_cora.output_migrate.old_record_migrate",
-    return_value=(True, None),
+    return_value=(True, None, "old-record-id"),
 )
 def test_success_migrate_with_apply_true_and_with_binaries_true(
     mock_old_record_migrate,
@@ -130,7 +130,7 @@ def test_success_migrate_with_apply_true_and_with_binaries_true(
 @patch("fedora_to_cora.output_migrate.create_relations")
 @patch(
     "fedora_to_cora.output_migrate.old_record_migrate",
-    return_value=(True, None),
+    return_value=(True, None, "old-record-id"),
 )
 def test_success_migrate_with_apply_true_and_with_binaries_true_with_relations(
     mock_old_record_migrate,
@@ -187,7 +187,7 @@ def test_success_migrate_with_apply_true_and_with_binaries_true_with_relations(
 @patch("fedora_to_cora.output_migrate.validate_xml")
 @patch(
     "fedora_to_cora.output_migrate.old_record_migrate",
-    return_value=(True, None),
+    return_value=(True, None, "old-record-id"),
 )
 def test_success_migrate_with_apply_true_and_with_binaries_false(
     mock_old_record_migrate,
@@ -258,7 +258,7 @@ def test_success_migrate_with_apply_true_and_with_binaries_false(
 @patch("fedora_to_cora.output_migrate.create_relations")
 @patch(
     "fedora_to_cora.output_migrate.old_record_migrate",
-    return_value=(True, None),
+    return_value=(True, None, "old-record-id"),
 )
 def test_success_migrate_with_apply_true_and_with_binaries_false_with_relations(
     mock_old_record_migrate,
@@ -317,7 +317,7 @@ def test_success_migrate_with_apply_true_and_with_binaries_false_with_relations(
 @patch("fedora_to_cora.output_migrate.validate_xml")
 @patch(
     "fedora_to_cora.output_migrate.old_record_migrate",
-    return_value=(True, None),
+    return_value=(True, None, "old-record-id"),
 )
 def test_rollback_when_failed_to_migrate_attachment(
     mock_old_record_migrate,
@@ -370,7 +370,7 @@ def test_rollback_when_failed_to_migrate_attachment(
 @patch("fedora_to_cora.output_migrate.validate_xml")
 @patch(
     "fedora_to_cora.output_migrate.old_record_migrate",
-    return_value=(False, ["old record create failed"]),
+    return_value=(False, ["old record create failed"], None),
 )
 def test_rollback_when_old_record_migration_fails(
     mock_old_record_migrate,

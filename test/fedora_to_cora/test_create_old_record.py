@@ -83,7 +83,7 @@ def test_old_record_migrate_returns_success_tuple(monkeypatch):
         ET.fromstring("<record><pid>123</pid></record>"), MagicMock()
     )
 
-    assert result == (True, None)
+    assert result == (True, None, "123")
 
 
 def test_old_record_migrate_returns_failure_tuple(monkeypatch):
@@ -96,7 +96,7 @@ def test_old_record_migrate_returns_failure_tuple(monkeypatch):
         ET.fromstring("<record><pid>123</pid></record>"), MagicMock()
     )
 
-    assert result == (False, ["create failed"])
+    assert result == (False, ["create failed"], None)
 
 
 def test_old_record_migrate_returns_exception_as_error(monkeypatch):
@@ -111,4 +111,4 @@ def test_old_record_migrate_returns_exception_as_error(monkeypatch):
         ET.fromstring("<record><pid>123</pid></record>"), MagicMock()
     )
 
-    assert result == (False, ["create raised"])
+    assert result == (False, ["create raised"], None)

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def old_record_migrate(
     source_record: ET.Element,
     context: Context,
-) -> tuple[bool, list[str] | None]:
+) -> tuple[bool, list[str] | None, str | None]:
     old_record = transform_old_record(source_record)
     try:
         result = create_record(
@@ -19,11 +19,11 @@ def old_record_migrate(
         )
     except Exception as e:
         logger.error(f"Error transforming old record: {e}")
-        return False, [str(e)]
+        return False, [str(e)], None
 
     if is_success_result(result):
-        return True, None
-    return False, [result.error]
+        return True, None, result.record_id
+    return False, [result.error], None
 
 
 def transform_old_record(source_record: ET.Element) -> ET.Element:
