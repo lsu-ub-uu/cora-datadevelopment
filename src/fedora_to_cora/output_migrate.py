@@ -4,7 +4,7 @@ import logging
 from common.xml_utils import pretty_print_xml
 from common.xml_validate import validate_xml, XMLValidationError
 from cora.context import Context
-from fedora_to_cora.create_old_record import old_record_migrate
+from fedora_to_cora.migrate_old_record import old_record_migrate
 from fedora_to_cora.output_migration_result import OutputMigrationResult
 from cora.delete import delete_record
 from fedora_to_cora.attachments_migrate import attachments_migrate
@@ -76,7 +76,16 @@ def output_migrate(
         if is_success_result(create_record_result):
             cora_id = create_record_result.record_id
             relations = create_relations(source_record)
-            _migrate_old_record_with_rollback(source_record, context)
+            success, errors = _migrate_old_record_with_rollback(
+                source_record, create_record_result.response_data, context
+            )
+            if not success:
+                return OutputMigrationResult(
+                    pid,
+                    publication_type=publication_type,
+                    status="FAILED",
+                    errors=errors,
+                )
         else:
             return OutputMigrationResult(
                 pid,
@@ -111,9 +120,19 @@ def output_migrate(
 
 
 def _migrate_old_record_with_rollback(
-    source_record: ET.Element, context: Context
-) -> None:
-    old_record = old_record_migrate(source_record)
+    source_record: ET.Element,
+    created_record: ET.Element,
+    context: Context,
+) -> tuple[bool, list[str] | None]:
+    success, errors = old_record_migrate(source_record, context)
+
+    if not success:
+        logger.error(
+            f"❌ Failed to migrate old record for record with old id {source_record.findtext('./pid')} Rolling back."
+        )
+        delete_record(created_record, context)
+
+    return success, errors
 
 
 def _migrate_attachments_with_rollback(
