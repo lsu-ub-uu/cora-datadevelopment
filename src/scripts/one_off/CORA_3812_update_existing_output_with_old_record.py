@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as ET
 import logging
 from pathlib import Path
-from common.common_data import create_record_link
 from common.environment import load_environment
 from common.logging_config import configure_logging
 from common.arg_parser import create_argument_parser, common_arguments
@@ -10,7 +9,7 @@ from common.xml_utils import pretty_print_xml
 from cora.context import Context, CoraContext
 from cora.list_records import list_records
 from cora.update import update_record
-from fedora_to_cora.migrate_old_record import old_record_migrate
+from fedora_to_cora.migrate_old_record import old_record_migrate, update_record_info
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +67,7 @@ def fix_record(record: ET.Element, context: Context, apply: bool) -> str:
         logger.error(f"Failed to create old record for {old_id}: {error}")
         return "failed"
 
-    output = _update_record_info(record_id, record)
+    output = update_record_info(record_id, record)
     result = update_record(output, context)
     if not result.success:
         logger.error(
@@ -103,19 +102,6 @@ def _log_summary(total: int, updated: int, failed: int, skipped: int, apply: boo
 def _get_old_record(old_id: str) -> ET.Element:
     old_record_path = Path("data/fedora_xml/nordiskamuseet") / f"{old_id}.xml"
     return ET.parse(old_record_path).getroot()
-
-
-def _update_record_info(cora_old_record_id: str, output: ET.Element) -> ET.Element:
-    assert output is not None, "record should not be None"
-    assert cora_old_record_id is not None, "pid should not be None"
-    record_info = output.find("recordInfo")
-    assert record_info is not None, "recordInfo should not be None"
-    old_record_tag = create_record_link(
-        "oldRecord", "diva-oldRecord", cora_old_record_id
-    )
-    assert old_record_tag is not None, "old_record_tag should not be None"
-    record_info.append(old_record_tag)
-    return output
 
 
 def _parse_args():

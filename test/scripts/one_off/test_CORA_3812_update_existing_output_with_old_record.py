@@ -1,16 +1,10 @@
 from unittest.mock import patch
 import xml.etree.ElementTree as ET
 from pathlib import Path
-
 import pytest
-
 from cora.context import MockContext
-
-from common.test_helper import assert_equal_for_xml_and_xml_string
-from common.xml_utils import pretty_print_xml
 from scripts.one_off.CORA_3812_update_existing_output_with_old_record import (
     _get_old_record,
-    _update_record_info,
     fix_records,
 )
 
@@ -68,42 +62,3 @@ def test_get_old_record_loads_xml_for_old_id(mock_parse):
         Path("data/fedora_xml/nordiskamuseet/fedora-id.xml")
     )
     assert old_record.findtext("id") == old_id
-
-
-def test_update_record_info():
-    pid = "some_test_pid"
-    record = ET.fromstring(f"""
-        <output>
-            <recordInfo>
-            <id>some_id</id>
-            <type>
-                <linkedRecordType>recordType</linkedRecordType>
-                <linkedRecordId>diva-output</linkedRecordId>
-            </type>
-            <validationType>
-                <linkedRecordType>validationType</linkedRecordType>
-                <linkedRecordId>diva-output</linkedRecordId>
-            </validationType>
-            </recordInfo>
-        </output>""")
-    updated_record = _update_record_info(pid, record)
-    assert_equal_for_xml_and_xml_string(
-        updated_record,
-        pretty_print_xml(ET.fromstring(f"""<output>
-                        <recordInfo>
-                            <id>some_id</id>
-                            <type>
-                                <linkedRecordType>recordType</linkedRecordType>
-                                <linkedRecordId>diva-output</linkedRecordId>
-                            </type>
-                            <validationType>
-                                <linkedRecordType>validationType</linkedRecordType>
-                                <linkedRecordId>diva-output</linkedRecordId>
-                            </validationType>
-                            <oldRecord>
-                                <linkedRecordType>diva-oldRecord</linkedRecordType>
-                                <linkedRecordId>{pid}</linkedRecordId>
-                            </oldRecord>
-                        </recordInfo>
-                    </output>""")),
-    )

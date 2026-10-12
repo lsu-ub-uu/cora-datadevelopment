@@ -3,8 +3,13 @@ import pytest
 from unittest.mock import MagicMock
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from common.common_data import read_source_xml
+from common.xml_utils import pretty_print_xml
 from cora.create import CreateRecordFailureResult, CreateRecordSuccessResult
-from fedora_to_cora.migrate_old_record import old_record_migrate, transform_old_record
+from fedora_to_cora.migrate_old_record import (
+    old_record_migrate,
+    transform_old_record,
+    update_record_info,
+)
 
 
 def test_create_old_record():
@@ -112,3 +117,57 @@ def test_old_record_migrate_returns_exception_as_error(monkeypatch):
     )
 
     assert result == (False, ["create raised"], None)
+
+
+def test_update_record_info():
+    pid = "some_test_pid"
+    record = ET.fromstring("""
+        <output>
+            <recordInfo>
+            <id>some_id</id>
+            <type>
+                <linkedRecordType>recordType</linkedRecordType>
+                <linkedRecordId>diva-output</linkedRecordId>
+            </type>
+            <validationType>
+                <linkedRecordType>validationType</linkedRecordType>
+                <linkedRecordId>diva-output</linkedRecordId>
+            </validationType>
+            </recordInfo>
+        </output>""")
+    updated_record = update_record_info(pid, record)
+    assert_equal_for_xml_and_xml_string(
+        updated_record,
+        pretty_print_xml(ET.fromstring(f"""<output>
+                        <recordInfo>
+                            <id>some_id</id>
+                            <type>
+                                <linkedRecordType>recordType</linkedRecordType>
+                                <linkedRecordId>diva-output</linkedRecordId>
+                            </type>
+                            <validationType>
+                                <linkedRecordType>validationType</linkedRecordType>
+                                <linkedRecordId>diva-output</linkedRecordId>
+                            </validationType>
+                            <oldRecord>
+                                <linkedRecordType>diva-oldRecord</linkedRecordType>
+                                <linkedRecordId>{pid}</linkedRecordId>
+                            </oldRecord>
+                        </recordInfo>
+                    </output>""")),
+    )
+
+
+@pytest.mark.parametrize(
+    ("cora_old_record_id", "output", "error_message"),
+    [
+        ("old-record-id", None, "record should not be None"),
+        (None, ET.Element("output"), "pid should not be None"),
+        ("old-record-id", ET.Element("output"), "recordInfo should not be None"),
+    ],
+)
+def test_update_record_info_rejects_missing_required_values(
+    cora_old_record_id, output, error_message
+):
+    with pytest.raises(AssertionError, match=error_message):
+        update_record_info(cora_old_record_id, output)
