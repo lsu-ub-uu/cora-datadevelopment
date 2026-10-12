@@ -5,14 +5,14 @@ from cora.context import MockContext
 from cora.create import CreateRecordSuccessResult
 from db_to_cora.programmes_migrate import programmes_migrate
 
-
-@patch("db_to_cora.programmes_migrate.get_programmes")
-@patch(
-    "db_to_cora.records_import.create_record",
-)
-def test_migrate_a_programme_without_relations(mock_create_record, mock_get_programmes):
-    mock_get_programmes.return_value = ET.fromstring(
-        """
+class TestProgrammesMigrate:
+    @patch("db_to_cora.programmes_migrate.get_programmes")
+    @patch(
+        "db_to_cora.records_import.create_record",
+    )
+    def test_migrate_a_programme_without_relations(self, mock_create_record, mock_get_programmes):
+        mock_get_programmes.return_value = ET.fromstring(
+            """
             <SELECT>
                 <DATA_RECORD>
                     <domain>somedomain</domain>
@@ -25,12 +25,12 @@ def test_migrate_a_programme_without_relations(mock_create_record, mock_get_prog
                 </DATA_RECORD>
             </SELECT>
     """
-    )
+        )
 
-    mock_create_record.return_value = CreateRecordSuccessResult(
-        "diva-programme:40103",
-        ET.fromstring(
-            """
+        mock_create_record.return_value = CreateRecordSuccessResult(
+            "diva-programme:40103",
+            ET.fromstring(
+                """
               <record>
                 <data>
                     <recordInfo>
@@ -39,20 +39,20 @@ def test_migrate_a_programme_without_relations(mock_create_record, mock_get_prog
                 </data> 
               </record>                   
             """
-        ),
-    )
+            ),
+        )
 
-    number_of_records = programmes_migrate(
-        MockContext(), "localhost", 5432, "auradb", "db_user", "db_password", "somedomain"
-    )
+        number_of_records = programmes_migrate(
+            MockContext(), "localhost", 5432, "auradb", "db_user", "db_password", "somedomain"
+        )
 
-    assert number_of_records == 1
-    mock_create_record.assert_called_once()
-    created_record = mock_create_record.call_args.args[0]
+        assert number_of_records == 1
+        mock_create_record.assert_called_once()
+        created_record = mock_create_record.call_args.args[0]
 
-    assert_equal_for_xml_and_xml_string(
-        created_record,
-        """
+        assert_equal_for_xml_and_xml_string(
+            created_record,
+            """
             <programme>
                 <recordInfo>
                     <validationType>
@@ -77,19 +77,18 @@ def test_migrate_a_programme_without_relations(mock_create_record, mock_get_prog
                 </authority>
             </programme>
             """,
+        )
+
+    @patch("db_to_cora.programmes_migrate.get_programmes")
+    @patch(
+        "db_to_cora.records_import.create_record",
     )
-
-
-@patch("db_to_cora.programmes_migrate.get_programmes")
-@patch(
-    "db_to_cora.records_import.create_record",
-)
-@patch("db_to_cora.update_relations.update_record")
-def test_migrates_a_programme_with_relations(
-    mock_update_record, mock_create_record, mock_get_programmes
-):
-    mock_get_programmes.return_value = ET.fromstring(
-        """
+    @patch("db_to_cora.update_relations.update_record")
+    def test_migrates_a_programme_with_relations(self, 
+        mock_update_record, mock_create_record, mock_get_programmes
+    ):
+        mock_get_programmes.return_value = ET.fromstring(
+            """
             <SELECT>
                 <DATA_RECORD>
                     <domain>somedomain</domain>
@@ -120,40 +119,40 @@ def test_migrates_a_programme_with_relations(
                 </DATA_RECORD>
             </SELECT>
     """
-    )
-
-    def create_record_side_effect(record, record_type, context):
-        old_id = record.findtext(".//oldId")
-        return CreateRecordSuccessResult(
-            f"diva-programme:{old_id}",
-            ET.fromstring(
-                f"""
-                <record>
-                    <data>
-                        <programme>
-                            <recordInfo>
-                                <id>diva-programme:{old_id}</id>
-                                <oldId>{old_id}</oldId>
-                            </recordInfo>
-                        </programme>
-                    </data> 
-                </record>                   
-                """
-            ),
         )
 
-    mock_create_record.side_effect = create_record_side_effect
+        def create_record_side_effect(record, record_type, context):
+            old_id = record.findtext(".//oldId")
+            return CreateRecordSuccessResult(
+                f"diva-programme:{old_id}",
+                ET.fromstring(
+                    f"""
+                    <record>
+                        <data>
+                            <programme>
+                                <recordInfo>
+                                    <id>diva-programme:{old_id}</id>
+                                    <oldId>{old_id}</oldId>
+                                </recordInfo>
+                            </programme>
+                        </data> 
+                    </record>                   
+                    """
+                ),
+            )
 
-    number_of_records = programmes_migrate(
-        MockContext(), "localhost", 5432, "auradb", "db_user", "db_password", "somedomain"
-    )
+        mock_create_record.side_effect = create_record_side_effect
 
-    assert number_of_records == 3
-    assert mock_create_record.call_count == 3
-    assert mock_update_record.call_count == 1
-    assert_equal_for_xml_and_xml_string(
-        mock_update_record.call_args_list[0].args[0],
-        """
+        number_of_records = programmes_migrate(
+            MockContext(), "localhost", 5432, "auradb", "db_user", "db_password", "somedomain"
+        )
+
+        assert number_of_records == 3
+        assert mock_create_record.call_count == 3
+        assert mock_update_record.call_count == 1
+        assert_equal_for_xml_and_xml_string(
+            mock_update_record.call_args_list[0].args[0],
+            """
         <programme>
             <recordInfo>
                 <id>diva-programme:1</id>
@@ -173,4 +172,4 @@ def test_migrates_a_programme_with_relations(
             </related>
         </programme>
     """,
-    )
+        )

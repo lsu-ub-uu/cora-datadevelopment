@@ -4,9 +4,9 @@ from fedora_to_cora.transform.transform_output_to_classic_quality import (
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_adds_internal_note_with_validation_errors():
-    cora_output = ET.fromstring("""
+class TestTransformOutputToClassicQuality:
+    def test_adds_internal_note_with_validation_errors(self):
+        cora_output = ET.fromstring("""
         <record>
             <recordInfo>
                 <validationType>
@@ -20,16 +20,16 @@ def test_adds_internal_note_with_validation_errors():
             <someChild2>someValue3</someChild2>
         </record>
         """)
-    validation_errors = [
-        "Missing required field",
-        "Invalid format",
-    ]
-    classic_quality_output = transform_output_to_classic_quality(
-        cora_output, validation_errors
-    )
-    assert_equal_for_xml_and_xml_string(
-        classic_quality_output,
-        """
+        validation_errors = [
+            "Missing required field",
+            "Invalid format",
+        ]
+        classic_quality_output = transform_output_to_classic_quality(
+            cora_output, validation_errors
+        )
+        assert_equal_for_xml_and_xml_string(
+            classic_quality_output,
+            """
         <record>
             <recordInfo>
                 <validationType>
@@ -46,11 +46,10 @@ def test_adds_internal_note_with_validation_errors():
             </adminInfo>
         </record>
         """,
-    )
+        )
 
-
-def test_adds_validation_errors_to_existing_internal_note():
-    cora_output = ET.fromstring("""
+    def test_adds_validation_errors_to_existing_internal_note(self):
+        cora_output = ET.fromstring("""
         <record>
             <recordInfo>
                 <validationType>
@@ -67,16 +66,16 @@ def test_adds_validation_errors_to_existing_internal_note():
             </adminInfo>
         </record>
         """)
-    validation_errors = [
-        "Missing required field",
-        "Invalid format",
-    ]
-    classic_quality_output = transform_output_to_classic_quality(
-        cora_output, validation_errors
-    )
-    assert_equal_for_xml_and_xml_string(
-        classic_quality_output,
-        """
+        validation_errors = [
+            "Missing required field",
+            "Invalid format",
+        ]
+        classic_quality_output = transform_output_to_classic_quality(
+            cora_output, validation_errors
+        )
+        assert_equal_for_xml_and_xml_string(
+            classic_quality_output,
+            """
         <record>
             <recordInfo>
                 <validationType>
@@ -93,11 +92,10 @@ def test_adds_validation_errors_to_existing_internal_note():
             </adminInfo>
         </record>
         """,
-    )
+        )
 
-
-def test_handles_related_conference_on_wrong_validation_type():
-    cora_output = ET.fromstring("""
+    def test_handles_related_conference_on_wrong_validation_type(self):
+        cora_output = ET.fromstring("""
         <record>
             <recordInfo>
                 <validationType>
@@ -114,15 +112,15 @@ def test_handles_related_conference_on_wrong_validation_type():
             </relatedItem>
         </record>
         """)
-    validation_errors = [
-        "Data is not valid: Could not find metadata for child with nameInData: relatedItem and attributes: type:conference",
-    ]
-    classic_quality_output = transform_output_to_classic_quality(
-        cora_output, validation_errors
-    )
-    assert_equal_for_xml_and_xml_string(
-        classic_quality_output,
-        """
+        validation_errors = [
+            "Data is not valid: Could not find metadata for child with nameInData: relatedItem and attributes: type:conference",
+        ]
+        classic_quality_output = transform_output_to_classic_quality(
+            cora_output, validation_errors
+        )
+        assert_equal_for_xml_and_xml_string(
+            classic_quality_output,
+            """
         <record>
             <recordInfo>
                 <validationType>
@@ -141,4 +139,4 @@ def test_handles_related_conference_on_wrong_validation_type():
             </adminInfo>
         </record>
         """,
-    )
+        )

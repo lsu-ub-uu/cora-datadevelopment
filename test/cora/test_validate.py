@@ -2,46 +2,46 @@ import xml.etree.ElementTree as ET
 
 from cora.validate import _create_validation_order
 
+class TestValidate:
+    def test_create_validation_order(self):
+        record = ET.fromstring(
+            "<diva-output><recordInfo><id>123</id></recordInfo></diva-output>"
+        )
 
-def test_create_validation_order():
-    record = ET.fromstring(
-        "<diva-output><recordInfo><id>123</id></recordInfo></diva-output>"
-    )
+        work_order = _create_validation_order("diva-output", record)
 
-    work_order = _create_validation_order("diva-output", record)
-
-    assert (
-        work_order.findtext(
-            "./order/validationOrder/recordInfo/dataDivider/linkedRecordType"
+        assert (
+            work_order.findtext(
+                "./order/validationOrder/recordInfo/dataDivider/linkedRecordType"
+            )
+            == "system"
         )
-        == "system"
-    )
-    assert (
-        work_order.findtext(
-            "./order/validationOrder/recordInfo/dataDivider/linkedRecordId"
+        assert (
+            work_order.findtext(
+                "./order/validationOrder/recordInfo/dataDivider/linkedRecordId"
+            )
+            == "divaData"
         )
-        == "divaData"
-    )
-    assert (
-        work_order.findtext(
-            "./order/validationOrder/recordInfo/validationType/linkedRecordType"
+        assert (
+            work_order.findtext(
+                "./order/validationOrder/recordInfo/validationType/linkedRecordType"
+            )
+            == "validationType"
         )
-        == "validationType"
-    )
-    assert (
-        work_order.findtext(
-            "./order/validationOrder/recordInfo/validationType/linkedRecordId"
+        assert (
+            work_order.findtext(
+                "./order/validationOrder/recordInfo/validationType/linkedRecordId"
+            )
+            == "validationOrder"
         )
-        == "validationOrder"
-    )
-    assert (
-        work_order.findtext("./order/validationOrder/recordType/linkedRecordType")
-        == "recordType"
-    )
-    assert (
-        work_order.findtext("./order/validationOrder/recordType/linkedRecordId")
-        == "diva-output"
-    )
-    assert work_order.findtext("./order/validationOrder/validateLinks") == "false"
-    assert work_order.findtext("./order/validationOrder/metadataToValidate") == "new"
-    assert work_order.find("./record/diva-output") is record
+        assert (
+            work_order.findtext("./order/validationOrder/recordType/linkedRecordType")
+            == "recordType"
+        )
+        assert (
+            work_order.findtext("./order/validationOrder/recordType/linkedRecordId")
+            == "diva-output"
+        )
+        assert work_order.findtext("./order/validationOrder/validateLinks") == "false"
+        assert work_order.findtext("./order/validationOrder/metadataToValidate") == "new"
+        assert work_order.find("./record/diva-output") is record

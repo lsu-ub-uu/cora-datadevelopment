@@ -7,20 +7,20 @@ from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.context import MockContext
 from scripts.one_off.CORA_3762_update_roles import fix_record, fix_records
 
+class TestCORA3762UpdateRoles:
+    @patch("scripts.one_off.CORA_3762_update_roles.list_records")
+    @patch("scripts.one_off.CORA_3762_update_roles.update_record")
+    @patch("scripts.one_off.CORA_3762_update_roles.run_with_threads")
+    def test_updates_outputs_with_role_terms_repeat_id(self, 
+        mock_run_with_threads, mock_update_record, mock_list_records
+    ):
+        mock_run_with_threads.side_effect = lambda iterable, function, *args: [
+            function(item) for item in iterable
+        ]
+        mock_update_record.return_value = Mock(success=True)
 
-@patch("scripts.one_off.CORA_3762_update_roles.list_records")
-@patch("scripts.one_off.CORA_3762_update_roles.update_record")
-@patch("scripts.one_off.CORA_3762_update_roles.run_with_threads")
-def test_updates_outputs_with_role_terms_repeat_id(
-    mock_run_with_threads, mock_update_record, mock_list_records
-):
-    mock_run_with_threads.side_effect = lambda iterable, function, *args: [
-        function(item) for item in iterable
-    ]
-    mock_update_record.return_value = Mock(success=True)
-
-    mock_list_records.return_value = [
-        ET.fromstring("""
+        mock_list_records.return_value = [
+            ET.fromstring("""
             <record>
                 <data>
                     <output>
@@ -36,7 +36,7 @@ def test_updates_outputs_with_role_terms_repeat_id(
                 </data>
             </record>
         """),
-        ET.fromstring("""
+            ET.fromstring("""
             <record>
                 <data>
                     <output>
@@ -53,7 +53,7 @@ def test_updates_outputs_with_role_terms_repeat_id(
                 </data>
             </record>
         """),
-        ET.fromstring("""
+            ET.fromstring("""
             <record>
                 <data>
                     <output>
@@ -64,15 +64,15 @@ def test_updates_outputs_with_role_terms_repeat_id(
                 </data>
             </record>
         """),
-    ]
+        ]
 
-    fix_records(MockContext(), apply=True)
+        fix_records(MockContext(), apply=True)
 
-    assert mock_update_record.call_count == 2
+        assert mock_update_record.call_count == 2
 
-    assert_equal_for_xml_and_xml_string(
-        mock_update_record.call_args_list[0].args[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            mock_update_record.call_args_list[0].args[0],
+            """
             <record>
                 <data>
                     <output>
@@ -88,10 +88,10 @@ def test_updates_outputs_with_role_terms_repeat_id(
                 </data>
             </record>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        mock_update_record.call_args_list[1].args[0],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            mock_update_record.call_args_list[1].args[0],
+            """
             <record>
                 <data>
                     <output>
@@ -110,12 +110,11 @@ def test_updates_outputs_with_role_terms_repeat_id(
                 </data>
             </record>
         """,
-    )
+        )
 
-
-@patch("scripts.one_off.CORA_3762_update_roles.update_record")
-def test_skips_record_without_personal_name(mock_update_record):
-    record = ET.fromstring("""
+    @patch("scripts.one_off.CORA_3762_update_roles.update_record")
+    def test_skips_record_without_personal_name(self, mock_update_record):
+        record = ET.fromstring("""
         <record>
             <data>
                 <output>
@@ -127,15 +126,14 @@ def test_skips_record_without_personal_name(mock_update_record):
         </record>
     """)
 
-    result = fix_record(record, MockContext(), apply=True)
+        result = fix_record(record, MockContext(), apply=True)
 
-    assert result == "skipped"
-    mock_update_record.assert_not_called()
+        assert result == "skipped"
+        mock_update_record.assert_not_called()
 
-
-@patch("scripts.one_off.CORA_3762_update_roles.update_record")
-def test_skips_record_without_role_terms_to_migrate(mock_update_record):
-    record = ET.fromstring("""
+    @patch("scripts.one_off.CORA_3762_update_roles.update_record")
+    def test_skips_record_without_role_terms_to_migrate(self, mock_update_record):
+        record = ET.fromstring("""
         <record>
             <data>
                 <output>
@@ -152,18 +150,17 @@ def test_skips_record_without_role_terms_to_migrate(mock_update_record):
         </record>
     """)
 
-    result = fix_record(record, MockContext(), apply=True)
+        result = fix_record(record, MockContext(), apply=True)
 
-    assert result == "skipped"
-    mock_update_record.assert_not_called()
+        assert result == "skipped"
+        mock_update_record.assert_not_called()
 
-
-@patch("scripts.one_off.CORA_3762_update_roles.update_record")
-def test_skips_person_without_role_terms_to_migrate_and_updates_other_person(
-    mock_update_record,
-):
-    mock_update_record.return_value = Mock(success=True)
-    record = ET.fromstring("""
+    @patch("scripts.one_off.CORA_3762_update_roles.update_record")
+    def test_skips_person_without_role_terms_to_migrate_and_updates_other_person(self, 
+        mock_update_record,
+    ):
+        mock_update_record.return_value = Mock(success=True)
+        record = ET.fromstring("""
         <record>
             <data>
                 <output>
@@ -185,13 +182,13 @@ def test_skips_person_without_role_terms_to_migrate_and_updates_other_person(
         </record>
     """)
 
-    result = fix_record(record, MockContext(), apply=True)
+        result = fix_record(record, MockContext(), apply=True)
 
-    assert result == "updated"
-    mock_update_record.assert_called_once()
-    assert_equal_for_xml_and_xml_string(
-        mock_update_record.call_args.args[0],
-        """
+        assert result == "updated"
+        mock_update_record.assert_called_once()
+        assert_equal_for_xml_and_xml_string(
+            mock_update_record.call_args.args[0],
+            """
             <record>
                 <data>
                     <output>
@@ -212,12 +209,11 @@ def test_skips_person_without_role_terms_to_migrate_and_updates_other_person(
                 </data>
             </record>
         """,
-    )
+        )
 
-
-@patch("scripts.one_off.CORA_3762_update_roles.update_record")
-def test_skips_person_with_multiple_roles(mock_update_record):
-    record = ET.fromstring("""
+    @patch("scripts.one_off.CORA_3762_update_roles.update_record")
+    def test_skips_person_with_multiple_roles(self, mock_update_record):
+        record = ET.fromstring("""
         <record>
             <data>
                 <output>
@@ -237,14 +233,13 @@ def test_skips_person_with_multiple_roles(mock_update_record):
         </record>
     """)
 
-    result = fix_record(record, MockContext(), apply=True)
+        result = fix_record(record, MockContext(), apply=True)
 
-    assert result == "skipped"
-    mock_update_record.assert_not_called()
+        assert result == "skipped"
+        mock_update_record.assert_not_called()
 
-
-def test_raises_when_failed_to_create_new_role():
-    record = ET.fromstring("""
+    def test_raises_when_failed_to_create_new_role(self):
+        record = ET.fromstring("""
         <record>
             <data>
                 <output>
@@ -261,22 +256,21 @@ def test_raises_when_failed_to_create_new_role():
         </record>
     """)
 
-    def create_group_side_effect(name, *args, **kwargs):
-        if name == "role":
-            return None
-        return ET.Element(name)
+        def create_group_side_effect(name, *args, **kwargs):
+            if name == "role":
+                return None
+            return ET.Element(name)
 
-    with patch(
-        "scripts.one_off.CORA_3762_update_roles.create_group",
-        side_effect=create_group_side_effect,
-    ):
-        with pytest.raises(AssertionError, match="Failed to create new role element"):
-            fix_record(record, MockContext(), apply=False)
+        with patch(
+            "scripts.one_off.CORA_3762_update_roles.create_group",
+            side_effect=create_group_side_effect,
+        ):
+            with pytest.raises(AssertionError, match="Failed to create new role element"):
+                fix_record(record, MockContext(), apply=False)
 
-
-@patch("scripts.one_off.CORA_3762_update_roles.update_record")
-def test_does_not_update_record_when_apply_is_false(mock_update_record):
-    record = ET.fromstring("""
+    @patch("scripts.one_off.CORA_3762_update_roles.update_record")
+    def test_does_not_update_record_when_apply_is_false(self, mock_update_record):
+        record = ET.fromstring("""
         <record><data><output>
             <recordInfo><id>output-1</id></recordInfo>
             <name type="personal"><role>
@@ -285,7 +279,7 @@ def test_does_not_update_record_when_apply_is_false(mock_update_record):
         </output></data></record>
     """)
 
-    result = fix_record(record, MockContext(), apply=False)
+        result = fix_record(record, MockContext(), apply=False)
 
-    assert result == "updated"
-    mock_update_record.assert_not_called()
+        assert result == "updated"
+        mock_update_record.assert_not_called()

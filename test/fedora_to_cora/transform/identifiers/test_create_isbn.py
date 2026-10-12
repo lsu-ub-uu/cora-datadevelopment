@@ -2,10 +2,10 @@ from xml.etree import ElementTree as ET
 from fedora_to_cora.transform.identifiers.create_isbn import create_identifier_type_isbn
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_create_identifier_type_isbn():
-    source_record = ET.fromstring(
-        """
+class TestCreateIsbn:
+    def test_create_identifier_type_isbn(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <isbnNumbers>
                 <isbn>
@@ -22,27 +22,27 @@ def test_create_identifier_type_isbn():
             </isbnNumbers>
         </publication>
         """
-    )
+        )
 
-    identifiers = create_identifier_type_isbn(source_record)
+        identifiers = create_identifier_type_isbn(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        identifiers[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            identifiers[0],
+            """
         <identifier type="isbn" displayLabel="print" repeatId="0">978-91-506-2649-0</identifier>
         """,
-    )
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        identifiers[1],
-        """
+        assert_equal_for_xml_and_xml_string(
+            identifiers[1],
+            """
         <identifier type="isbn" displayLabel="online" repeatId="1">978-92-893-7379-1</identifier>
         """,
-    )
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        identifiers[2],
-        """
+        assert_equal_for_xml_and_xml_string(
+            identifiers[2],
+            """
         <identifier type="isbn" displayLabel="undefined" repeatId="2">978-92-893-7380-7</identifier>
         """,
-    )
+        )

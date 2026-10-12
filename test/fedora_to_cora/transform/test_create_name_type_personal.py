@@ -10,9 +10,9 @@ from cora.context import MockContext
 
 mock_context = MockContext("https://example.org/rest/record/", "test-token")
 
-
-def test_creates_name_type_personal():
-    source_record = ET.fromstring("""
+class TestCreateNameTypePersonal:
+    def test_creates_name_type_personal(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -26,24 +26,23 @@ def test_creates_name_type_personal():
             </authors>
         </publication>
         """)
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
             <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
-    )
+        )
 
-
-def test_creates_name_type_personal_birth_year():
-    source_record = ET.fromstring("""
+    def test_creates_name_type_personal_birth_year(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -58,13 +57,13 @@ def test_creates_name_type_personal_birth_year():
             </authors>
         </publication>
         """)
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
@@ -72,11 +71,10 @@ def test_creates_name_type_personal_birth_year():
             <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
-    )
+        )
 
-
-def test_creates_name_type_personal_death_year():
-    source_record = ET.fromstring("""
+    def test_creates_name_type_personal_death_year(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -91,13 +89,13 @@ def test_creates_name_type_personal_death_year():
             </authors>
         </publication>
         """)
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
@@ -105,11 +103,10 @@ def test_creates_name_type_personal_death_year():
             <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
-    )
+        )
 
-
-def test_creates_name_type_personal_birth_and_death_year():
-    source_record = ET.fromstring("""
+    def test_creates_name_type_personal_birth_and_death_year(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -125,13 +122,13 @@ def test_creates_name_type_personal_birth_and_death_year():
             </authors>
         </publication>
         """)
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
@@ -139,11 +136,10 @@ def test_creates_name_type_personal_birth_and_death_year():
             <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
-    )
+        )
 
-
-def test_creates_persons_for_roles():
-    source_record = ET.fromstring("""
+    def test_creates_persons_for_roles(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -198,38 +194,38 @@ def test_creates_persons_for_roles():
             </otherContributors>
         </publication>
         """)
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
 
-    assert len(names) == 4
+        assert len(names) == 4
 
-    [abel, beata, fiona, gunnar] = names
+        [abel, beata, fiona, gunnar] = names
 
-    assert_equal_for_xml_and_xml_string(
-        abel,
-        """
+        assert_equal_for_xml_and_xml_string(
+            abel,
+            """
         <name type="personal" repeatId="0">
             <namePart type="family">The Author</namePart>
             <namePart type="given">Abel</namePart>
             <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        beata,
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            beata,
+            """
         <name type="personal" repeatId="1">
             <namePart type="family">The Editor</namePart>
             <namePart type="given">Beata</namePart>
             <role repeatId="0"><roleTerm>edt</roleTerm></role>
         </name>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        fiona,
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            fiona,
+            """
         <name type="personal" repeatId="2">
             <namePart type="family">The Woodcutter</namePart>
             <namePart type="given">Fiona</namePart>
@@ -237,21 +233,20 @@ def test_creates_persons_for_roles():
             <role repeatId="1"><roleTerm>act</roleTerm></role>
         </name>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        gunnar,
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            gunnar,
+            """
         <name type="personal" repeatId="3">
             <namePart type="family">The Dancer</namePart>
             <namePart type="given">Gunnar</namePart>
             <role repeatId="0"><roleTerm>dnc</roleTerm></role>
         </name>
         """,
-    )
+        )
 
-
-def test_creates_uncontrolled_affiliation():
-    source_record = ET.fromstring("""
+    def test_creates_uncontrolled_affiliation(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -271,13 +266,13 @@ def test_creates_uncontrolled_affiliation():
             </authors>
         </publication>
         """)
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
@@ -287,70 +282,68 @@ def test_creates_uncontrolled_affiliation():
             </affiliation>
         </name>
         """,
-    )
+        )
 
+    def test_creates_controlled_affiliation(self, monkeypatch):
+        mock_old_id = "985"
+        expected_cora_id = "diva-organisation:21861441014837120"
 
-def test_creates_controlled_affiliation(monkeypatch):
-    mock_old_id = "985"
-    expected_cora_id = "diva-organisation:21861441014837120"
+        def mock_get_org(old_id, *args, **kwargs):
+            if old_id == mock_old_id:
+                return expected_cora_id
+            else:
+                return None
 
-    def mock_get_org(old_id, *args, **kwargs):
-        if old_id == mock_old_id:
-            return expected_cora_id
-        else:
-            return None
+        monkeypatch.setattr(
+            "fedora_to_cora.transform.create_name_type_personal.get_cora_id_by_old_id",
+            mock_get_org,
+        )
 
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.create_name_type_personal.get_cora_id_by_old_id",
-        mock_get_org,
-    )
+        source_record = ET.fromstring(f"""
+            <publication>
+                <publicationType>
+                    <publicationTypeId>63</publicationTypeId>
+                    <publicationTypeCode>collection</publicationTypeCode>
+                </publicationType>
+                <authors>
+                    <person>
+                        <firstName>Michaela</firstName>
+                        <lastName>Schmanderson</lastName>
+                        <organisations>
+                            <organisation>
+                                <organisationId>{mock_old_id}</organisationId>
+                                <controlled>true</controlled>
+                            </organisation>
+                        </organisations>
+                    </person>
+                </authors>
+            </publication>
+            """)
 
-    source_record = ET.fromstring(f"""
-        <publication>
-            <publicationType>
-                <publicationTypeId>63</publicationTypeId>
-                <publicationTypeCode>collection</publicationTypeCode>
-            </publicationType>
-            <authors>
-                <person>
-                    <firstName>Michaela</firstName>
-                    <lastName>Schmanderson</lastName>
-                    <organisations>
-                        <organisation>
-                            <organisationId>{mock_old_id}</organisationId>
-                            <controlled>true</controlled>
-                        </organisation>
-                    </organisations>
-                </person>
-            </authors>
-        </publication>
-        """)
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
 
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            f"""
+            <name type="personal" repeatId="0">
+                <namePart type="family">Schmanderson</namePart>
+                <namePart type="given">Michaela</namePart>
+                <role repeatId="0"><roleTerm>aut</roleTerm></role>
+                <affiliation repeatId="0">
+                    <organisation>
+                        <linkedRecordType>diva-organisation</linkedRecordType>
+                        <linkedRecordId>{expected_cora_id}</linkedRecordId>
+                    </organisation>
+                </affiliation>
+            </name>
+            """,
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        f"""
-        <name type="personal" repeatId="0">
-            <namePart type="family">Schmanderson</namePart>
-            <namePart type="given">Michaela</namePart>
-            <role repeatId="0"><roleTerm>aut</roleTerm></role>
-            <affiliation repeatId="0">
-                <organisation>
-                    <linkedRecordType>diva-organisation</linkedRecordType>
-                    <linkedRecordId>{expected_cora_id}</linkedRecordId>
-                </organisation>
-            </affiliation>
-        </name>
-        """,
-    )
-
-
-def test_creates_for_author_only_validation_type():
-    source_record = ET.fromstring("""
+    def test_creates_for_author_only_validation_type(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>65</publicationTypeId>
@@ -365,24 +358,23 @@ def test_creates_for_author_only_validation_type():
             </authors>
         </publication>
         """)
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" repeatId="0">
             <namePart type="family">Doe</namePart>
             <namePart type="given">John</namePart>
             <role><roleTerm>aut</roleTerm></role>
         </name>
         """,
-    )
+        )
 
-
-def test_create_supervisors():
-    source_record = ET.fromstring("""
+    def test_create_supervisors(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -406,14 +398,14 @@ def test_create_supervisors():
             </supervisors>
         </publication>
         """)
-    names = create_thesis_advisor(
-        source_record,
-        mock_context,
-    )
+        names = create_thesis_advisor(
+            source_record,
+            mock_context,
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" otherType="thesisAdvisor" repeatId="0">
             <namePart type="family">Smith</namePart>
             <namePart type="given">Sarah</namePart>
@@ -423,22 +415,21 @@ def test_create_supervisors():
             </affiliation>
         </name>
         """,
-    )
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        names[1],
-        """
+        assert_equal_for_xml_and_xml_string(
+            names[1],
+            """
         <name type="personal" otherType="thesisAdvisor" repeatId="1">
             <namePart type="family">Kmith</namePart>
             <namePart type="given">Karah</namePart>
             <role><roleTerm>ths</roleTerm></role>
         </name>
         """,
-    )
+        )
 
-
-def test_create_opponents():
-    source_record = ET.fromstring("""
+    def test_create_opponents(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -452,25 +443,24 @@ def test_create_opponents():
             </opponents>
         </publication>
         """)
-    names = create_opponents(
-        source_record,
-        mock_context,
-    )
+        names = create_opponents(
+            source_record,
+            mock_context,
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" otherType="opponent" repeatId="0">
             <namePart type="family">Olsen</namePart>
             <namePart type="given">Oliver</namePart>
             <role><roleTerm>opn</roleTerm></role>
         </name>
         """,
-    )
+        )
 
-
-def test_create_examiners():
-    source_record = ET.fromstring("""
+    def test_create_examiners(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -484,25 +474,24 @@ def test_create_examiners():
             </examiners>
         </publication>
         """)
-    names = create_degree_supervisor(
-        source_record,
-        mock_context,
-    )
+        names = create_degree_supervisor(
+            source_record,
+            mock_context,
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" otherType="degreeSupervisor" repeatId="0">
             <namePart type="family">Eriksson</namePart>
             <namePart type="given">Erik</namePart>
             <role><roleTerm>dgs</roleTerm></role>
         </name>
         """,
-    )
+        )
 
-
-def test_creates_name_identifiers():
-    source_record = ET.fromstring("""
+    def test_creates_name_identifiers(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -526,13 +515,13 @@ def test_creates_name_identifiers():
             </authors>
         </publication>
         """)
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
@@ -541,11 +530,10 @@ def test_creates_name_identifiers():
             <nameIdentifier type="orcid">0000-0002-3134-8865</nameIdentifier>
         </name>
         """,
-    )
+        )
 
-
-def test_other_contributor_without_role():
-    source_record = ET.fromstring("""
+    def test_other_contributor_without_role(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -568,24 +556,23 @@ def test_other_contributor_without_role():
             </otherContributors>
         </publication>
         """)
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" repeatId="0">
             <namePart type="family">The Roleless</namePart>
             <namePart type="given">Fiona</namePart>
         </name>
         """,
-    )
+        )
 
-
-def test_creates_affiliation_from_research_group():
-    source_record = ET.fromstring("""
+    def test_creates_affiliation_from_research_group(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -601,16 +588,16 @@ def test_creates_affiliation_from_research_group():
         </publication>
         """)
 
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
 
-    assert len(names) == 1
+        assert len(names) == 1
 
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
@@ -621,11 +608,10 @@ def test_creates_affiliation_from_research_group():
             </affiliation>
         </name>
         """,
-    )
+        )
 
-
-def test_replaces_lowercase_x_in_orcid():
-    source_record = ET.fromstring("""
+    def test_replaces_lowercase_x_in_orcid(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>63</publicationTypeId>
@@ -648,13 +634,13 @@ def test_replaces_lowercase_x_in_orcid():
             </authors>
         </publication>
         """)
-    names = create_name_type_personals(
-        source_record,
-        mock_context,
-    )
-    assert_equal_for_xml_and_xml_string(
-        names[0],
-        """
+        names = create_name_type_personals(
+            source_record,
+            mock_context,
+        )
+        assert_equal_for_xml_and_xml_string(
+            names[0],
+            """
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
@@ -662,4 +648,4 @@ def test_replaces_lowercase_x_in_orcid():
             <nameIdentifier type="orcid">0000-0002-3134-886X</nameIdentifier>
         </name>
         """,
-    )
+        )

@@ -9,20 +9,20 @@ from cora.context import MockContext
 
 mock_context = MockContext("https://example.org/rest/record/", "test-token")
 
-
-@patch(
-    "fedora_to_cora.transform.create_degree_granting_institution.get_cora_id_by_old_id"
-)
-def test_create_degree_granting_institution_controlled(mock_get_cora_id_by_old_id):
-
-    mock_get_cora_id_by_old_id.side_effect = lambda old_id, *, record_type, context: (
-        "cora-id-for-1956"
-        if record_type == "diva-organisation" and old_id == "1956"
-        else None
+class TestCreateDegreeGrantingInstitution:
+    @patch(
+        "fedora_to_cora.transform.create_degree_granting_institution.get_cora_id_by_old_id"
     )
+    def test_create_degree_granting_institution_controlled(self, mock_get_cora_id_by_old_id):
 
-    source_record = ET.fromstring(
-        """
+        mock_get_cora_id_by_old_id.side_effect = lambda old_id, *, record_type, context: (
+            "cora-id-for-1956"
+            if record_type == "diva-organisation" and old_id == "1956"
+            else None
+        )
+
+        source_record = ET.fromstring(
+            """
         <publication>
             <defence>
                 <date>2022-07-31T16:19:00.000+02:00</date>
@@ -51,17 +51,17 @@ def test_create_degree_granting_institution_controlled(mock_get_cora_id_by_old_i
             </defence>
         </publication>
         """
-    )
+        )
 
-    degree_granting_institutions = create_degree_granting_institution(
-        source_record, mock_context
-    )
+        degree_granting_institutions = create_degree_granting_institution(
+            source_record, mock_context
+        )
 
-    assert len(degree_granting_institutions) == 1
+        assert len(degree_granting_institutions) == 1
 
-    assert_equal_for_xml_and_xml_string(
-        degree_granting_institutions[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            degree_granting_institutions[0],
+            """
            <name type="corporate" otherType="degreeGrantingInstitution">
                 <organisation>
                     <linkedRecordType>diva-organisation</linkedRecordType>
@@ -72,12 +72,11 @@ def test_create_degree_granting_institution_controlled(mock_get_cora_id_by_old_i
                 </role>
            </name>
         """,
-    )
+        )
 
-
-def test_create_degree_granting_institution_uncontrolled():
-    source_record = ET.fromstring(
-        """
+    def test_create_degree_granting_institution_uncontrolled(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <defence>
                 <date>2022-07-31T16:19:00.000+02:00</date>
@@ -95,16 +94,16 @@ def test_create_degree_granting_institution_uncontrolled():
             </defence>
         </publication>
         """
-    )
+        )
 
-    degree_granting_institutions = create_degree_granting_institution(
-        source_record, mock_context
-    )
-    assert len(degree_granting_institutions) == 1
+        degree_granting_institutions = create_degree_granting_institution(
+            source_record, mock_context
+        )
+        assert len(degree_granting_institutions) == 1
 
-    assert_equal_for_xml_and_xml_string(
-        degree_granting_institutions[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            degree_granting_institutions[0],
+            """
            <name type="corporate" otherType="degreeGrantingInstitution">
                 <namePart>Lunds universitet</namePart>
                 <role>
@@ -112,21 +111,20 @@ def test_create_degree_granting_institution_uncontrolled():
                 </role>
            </name>
         """,
+        )
+
+    @patch(
+        "fedora_to_cora.transform.create_degree_granting_institution.get_cora_id_by_old_id"
     )
+    def test_create_controlled_and_uncontrolled_institution(self, mock_get_cora_id_by_old_id):
+        mock_get_cora_id_by_old_id.side_effect = lambda old_id, *, record_type, context: (
+            "cora-id-for-1956"
+            if record_type == "diva-organisation" and old_id == "1956"
+            else None
+        )
 
-
-@patch(
-    "fedora_to_cora.transform.create_degree_granting_institution.get_cora_id_by_old_id"
-)
-def test_create_controlled_and_uncontrolled_institution(mock_get_cora_id_by_old_id):
-    mock_get_cora_id_by_old_id.side_effect = lambda old_id, *, record_type, context: (
-        "cora-id-for-1956"
-        if record_type == "diva-organisation" and old_id == "1956"
-        else None
-    )
-
-    source_record = ET.fromstring(
-        """
+        source_record = ET.fromstring(
+            """
         <publication>
             <defence>
                 <date>2022-07-31T16:19:00.000+02:00</date>
@@ -147,16 +145,16 @@ def test_create_controlled_and_uncontrolled_institution(mock_get_cora_id_by_old_
             </defence>
         </publication>
         """
-    )
+        )
 
-    degree_granting_institutions = create_degree_granting_institution(
-        source_record, mock_context
-    )
-    assert len(degree_granting_institutions) == 2
+        degree_granting_institutions = create_degree_granting_institution(
+            source_record, mock_context
+        )
+        assert len(degree_granting_institutions) == 2
 
-    assert_equal_for_xml_and_xml_string(
-        degree_granting_institutions[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            degree_granting_institutions[0],
+            """
             <name type="corporate" otherType="degreeGrantingInstitution">
                 <organisation>
                     <linkedRecordType>diva-organisation</linkedRecordType>
@@ -167,10 +165,10 @@ def test_create_controlled_and_uncontrolled_institution(mock_get_cora_id_by_old_
                 </role>
            </name>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        degree_granting_institutions[1],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            degree_granting_institutions[1],
+            """
            <name type="corporate" otherType="degreeGrantingInstitution">
                 <namePart>Lunds universitet</namePart>
                 <role>
@@ -178,4 +176,4 @@ def test_create_controlled_and_uncontrolled_institution(mock_get_cora_id_by_old_
                 </role>
            </name>
         """,
-    )
+        )

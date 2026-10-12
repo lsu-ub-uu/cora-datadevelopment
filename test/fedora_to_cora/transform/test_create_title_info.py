@@ -3,10 +3,10 @@ from xml.etree import ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from fedora_to_cora.transform.create_title_info import create_title_info
 
-
-def test_create_title_info():
-    source_record = ET.fromstring(
-        """
+class TestCreateTitleInfo:
+    def test_create_title_info(self):
+        source_record = ET.fromstring(
+            """
       <publication>
           <originalPublicationTitle>
               <title>Bulletin of the Museum of Far Eastern Antiquities (BMFEA)</title>
@@ -17,22 +17,21 @@ def test_create_title_info():
           </originalPublicationTitle>
       </publication>
   """
-    )
-    title_info = create_title_info(source_record)
+        )
+        title_info = create_title_info(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        title_info,
-        """
+        assert_equal_for_xml_and_xml_string(
+            title_info,
+            """
       <titleInfo lang="eng">
           <title>Bulletin of the Museum of Far Eastern Antiquities (BMFEA)</title>
       </titleInfo>
   """,
-    )
+        )
 
-
-def test_create_title_info_with_subtitle():
-    source_record_with_subtitle = ET.fromstring(
-        """
+    def test_create_title_info_with_subtitle(self):
+        source_record_with_subtitle = ET.fromstring(
+            """
         <publication>
             <originalPublicationTitle>
                 <title>Bulletin of the Museum of Far Eastern Antiquities (BMFEA)</title>
@@ -41,63 +40,59 @@ def test_create_title_info_with_subtitle():
             </originalPublicationTitle>
         </publication>
     """
-    )
-    title_info = create_title_info(source_record_with_subtitle)
+        )
+        title_info = create_title_info(source_record_with_subtitle)
 
-    assert_equal_for_xml_and_xml_string(
-        title_info,
-        """
+        assert_equal_for_xml_and_xml_string(
+            title_info,
+            """
         <titleInfo lang="eng">
             <title>Bulletin of the Museum of Far Eastern Antiquities (BMFEA)</title>
             <subtitle>subtitle</subtitle>
         </titleInfo>
     """,
-    )
+        )
 
-
-def test_create_title_info_missing_title():
-    source_record = ET.fromstring(
-        """
+    def test_create_title_info_missing_title(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <originalPublicationTitle>
                 <language><languageCode3>eng</languageCode3></language>
             </originalPublicationTitle>
         </publication>
     """
-    )
+        )
 
-    assert create_title_info(source_record) is None
+        assert create_title_info(source_record) is None
 
-
-def test_create_title_info_missing_language():
-    source_record_with_subtitle = ET.fromstring(
-        """
+    def test_create_title_info_missing_language(self):
+        source_record_with_subtitle = ET.fromstring(
+            """
         <publication>
             <originalPublicationTitle>
                 <title>Bulletin of the Museum of Far Eastern Antiquities (BMFEA)</title>
             </originalPublicationTitle>
         </publication>
     """
-    )
+        )
 
-    assert create_title_info(source_record_with_subtitle) is None
+        assert create_title_info(source_record_with_subtitle) is None
 
-
-def test_create_title_info_empty_tag():
-    source_record_with_subtitle = ET.fromstring(
-        """
+    def test_create_title_info_empty_tag(self):
+        source_record_with_subtitle = ET.fromstring(
+            """
         <publication>
             <originalPublicationTitle />
         </publication>
     """
-    )
+        )
 
-    assert create_title_info(source_record_with_subtitle) is None
+        assert create_title_info(source_record_with_subtitle) is None
 
-
-def test_create_title_with_html():
-    source_record_with_html = ET.fromstring(
-        """
+    def test_create_title_with_html(self):
+        source_record_with_html = ET.fromstring(
+            """
         <publication>
             <originalPublicationTitle>
                 <title>&lt;p&gt;Bulletin of the &lt;i&gt;Museum&lt;/i&gt; of Far Eastern Antiquities (BMFEA)&lt;/p&gt;</title>
@@ -106,15 +101,15 @@ def test_create_title_with_html():
             </originalPublicationTitle>
         </publication>
     """
-    )
+        )
 
-    title_info = create_title_info(source_record_with_html)
-    assert_equal_for_xml_and_xml_string(
-        title_info,
-        """
+        title_info = create_title_info(source_record_with_html)
+        assert_equal_for_xml_and_xml_string(
+            title_info,
+            """
         <titleInfo lang="eng">
             <title>Bulletin of the Museum of Far Eastern Antiquities (BMFEA)</title>
             <subtitle>A subtitle</subtitle>
         </titleInfo>
     """,
-    )
+        )

@@ -5,14 +5,14 @@ from cora.context import MockContext
 from cora.create import CreateRecordSuccessResult
 from db_to_cora.publishers_migrate import publishers_migrate
 
-
-@patch("db_to_cora.publishers_migrate.get_publishers")
-@patch(
-    "db_to_cora.records_import.create_record",
-)
-def test_migrate_a_publisher(mock_create_record, mock_get_publishers):
-    mock_get_publishers.return_value = ET.fromstring(
-        """
+class TestPublishersMigrate:
+    @patch("db_to_cora.publishers_migrate.get_publishers")
+    @patch(
+        "db_to_cora.records_import.create_record",
+    )
+    def test_migrate_a_publisher(self, mock_create_record, mock_get_publishers):
+        mock_get_publishers.return_value = ET.fromstring(
+            """
             <SELECT>
                 <DATA_RECORD>
                     <old_id>1234</old_id>
@@ -20,12 +20,12 @@ def test_migrate_a_publisher(mock_create_record, mock_get_publishers):
                 </DATA_RECORD>
             </SELECT>
     """
-    )
+        )
 
-    mock_create_record.return_value = CreateRecordSuccessResult(
-        "diva-publisher:1234",
-        ET.fromstring(
-            """
+        mock_create_record.return_value = CreateRecordSuccessResult(
+            "diva-publisher:1234",
+            ET.fromstring(
+                """
               <record>
                 <data>
                     <recordInfo>
@@ -34,18 +34,18 @@ def test_migrate_a_publisher(mock_create_record, mock_get_publishers):
                 </data> 
               </record>                   
             """
-        ),
-    )
+            ),
+        )
 
-    number_of_records = publishers_migrate(MockContext(), "localhost", 5432, "auradb", "db_user", "db_password")
+        number_of_records = publishers_migrate(MockContext(), "localhost", 5432, "auradb", "db_user", "db_password")
 
-    assert number_of_records == 1
-    mock_create_record.assert_called_once()
-    created_record = mock_create_record.call_args.args[0]
+        assert number_of_records == 1
+        mock_create_record.assert_called_once()
+        created_record = mock_create_record.call_args.args[0]
 
-    assert_equal_for_xml_and_xml_string(
-        created_record,
-        """
+        assert_equal_for_xml_and_xml_string(
+            created_record,
+            """
             <publisher>
                 <recordInfo>
                     <validationType>
@@ -63,4 +63,4 @@ def test_migrate_a_publisher(mock_create_record, mock_get_publishers):
                 </name>
             </publisher>
             """,
-    )
+        )

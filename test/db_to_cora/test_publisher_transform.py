@@ -4,20 +4,20 @@ from common.xml_validate import XMLValidationError
 from db_to_cora.publisher_transform import transform_publisher
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_element_xml():
-    source_record = ET.fromstring(
-        """
+class TestPublisherTransform:
+    def test_element_xml(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <old_id>1234</old_id>
             <name>Some name</name>
         </DATA_RECORD>       
         """
-    )
+        )
 
-    result = transform_publisher(source_record)
+        result = transform_publisher(source_record)
 
-    expected_xml = """
+        expected_xml = """
     <publisher>
         <recordInfo>
             <validationType>
@@ -36,22 +36,21 @@ def test_element_xml():
     </publisher>
     """
 
-    assert_equal_for_xml_and_xml_string(result, expected_xml)
+        assert_equal_for_xml_and_xml_string(result, expected_xml)
 
-
-def test_raises_error_when_unknown_element():
-    source_record = ET.fromstring(
-        """
+    def test_raises_error_when_unknown_element(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <old_id>1234</old_id>
             <name>some title</name>
             <some_unknown_element>some unknown value</some_unknown_element>
         </DATA_RECORD>       
         """
-    )
+        )
 
-    with pytest.raises(
-        XMLValidationError,
-        match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
-    ):
-        transform_publisher(source_record)
+        with pytest.raises(
+            XMLValidationError,
+            match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
+        ):
+            transform_publisher(source_record)

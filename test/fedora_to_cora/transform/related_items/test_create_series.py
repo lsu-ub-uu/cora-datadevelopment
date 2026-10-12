@@ -5,77 +5,76 @@ from fedora_to_cora.transform.related_items.create_series import (
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.context import MockContext
 
+class TestCreateSeries:
+    def test_create_controlled_series_link(self, monkeypatch):
+        series_old_id_1 = "17450"
+        series_old_id_2 = "17451"
+        series_cora_id_1 = "diva-series:17450"
+        series_cora_id_2 = "diva-series:17451"
 
-def test_create_controlled_series_link(monkeypatch):
-    series_old_id_1 = "17450"
-    series_old_id_2 = "17451"
-    series_cora_id_1 = "diva-series:17450"
-    series_cora_id_2 = "diva-series:17451"
+        def get_cora_id_by_old_id_mock(old_id, *args, **kwargs):
+            if old_id == series_old_id_1:
+                return series_cora_id_1
+            elif old_id == series_old_id_2:
+                return series_cora_id_2
+            else:
+                raise ValueError(f"Unexpected old ID: {old_id}")
 
-    def get_cora_id_by_old_id_mock(old_id, *args, **kwargs):
-        if old_id == series_old_id_1:
-            return series_cora_id_1
-        elif old_id == series_old_id_2:
-            return series_cora_id_2
-        else:
-            raise ValueError(f"Unexpected old ID: {old_id}")
+        monkeypatch.setattr(
+            "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
+            get_cora_id_by_old_id_mock,
+        )
 
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
-        get_cora_id_by_old_id_mock,
-    )
+        source_record = ET.fromstring(
+            f"""
+            <publication>
+                <seriesInfos>
+                    <seriesInfo>
+                        <series>
+                            <seriesId>{series_old_id_1}</seriesId>
+                        </series>
+                    </seriesInfo>
+                    <seriesInfo>
+                        <series>
+                            <seriesId>{series_old_id_2}</seriesId>
+                        </series>
+                        <numberInSeries>66</numberInSeries>
+                    </seriesInfo>
+                </seriesInfos>
+            </publication>
+            """
+        )
 
-    source_record = ET.fromstring(
-        f"""
-        <publication>
-            <seriesInfos>
-                <seriesInfo>
-                    <series>
-                        <seriesId>{series_old_id_1}</seriesId>
-                    </series>
-                </seriesInfo>
-                <seriesInfo>
-                    <series>
-                        <seriesId>{series_old_id_2}</seriesId>
-                    </series>
-                    <numberInSeries>66</numberInSeries>
-                </seriesInfo>
-            </seriesInfos>
-        </publication>
-        """
-    )
+        series_items = create_related_item_type_series(source_record, MockContext())
 
-    series_items = create_related_item_type_series(source_record, MockContext())
+        assert len(series_items) == 2
+        assert_equal_for_xml_and_xml_string(
+            series_items[0],
+            f"""
+            <relatedItem type="series" otherType="link" repeatId="controlled0">
+                <series>
+                    <linkedRecordType>diva-series</linkedRecordType>
+                    <linkedRecordId>{series_cora_id_1}</linkedRecordId>
+                </series>
+            </relatedItem>
+            """,
+        )
+        assert_equal_for_xml_and_xml_string(
+            series_items[1],
+            f"""
+            <relatedItem type="series" otherType="link" repeatId="controlled1">
+                <series>
+                    <linkedRecordType>diva-series</linkedRecordType>
+                    <linkedRecordId>{series_cora_id_2}</linkedRecordId>
+                </series>
+                <partNumber>66</partNumber>
+            </relatedItem>
+            """,
+        )
 
-    assert len(series_items) == 2
-    assert_equal_for_xml_and_xml_string(
-        series_items[0],
-        f"""
-        <relatedItem type="series" otherType="link" repeatId="controlled0">
-            <series>
-                <linkedRecordType>diva-series</linkedRecordType>
-                <linkedRecordId>{series_cora_id_1}</linkedRecordId>
-            </series>
-        </relatedItem>
-        """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        series_items[1],
-        f"""
-        <relatedItem type="series" otherType="link" repeatId="controlled1">
-            <series>
-                <linkedRecordType>diva-series</linkedRecordType>
-                <linkedRecordId>{series_cora_id_2}</linkedRecordId>
-            </series>
-            <partNumber>66</partNumber>
-        </relatedItem>
-        """,
-    )
-
-
-def test_create_uncontrolled_series():
-    source_record = ET.fromstring(
-        """
+    def test_create_uncontrolled_series(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <uncontrolledSeriesInfo>
                 <series>
@@ -88,13 +87,13 @@ def test_create_uncontrolled_series():
             </uncontrolledSeriesInfo>
         </publication>
         """
-    )
-    series = create_related_item_type_series(source_record, MockContext())
+        )
+        series = create_related_item_type_series(source_record, MockContext())
 
-    assert len(series) == 1
-    assert_equal_for_xml_and_xml_string(
-        series[0],
-        """
+        assert len(series) == 1
+        assert_equal_for_xml_and_xml_string(
+            series[0],
+            """
          <relatedItem type="series" otherType="text" repeatId="uncontrolled0">
             <titleInfo>
                 <title>Okontrollerad serie</title>
@@ -104,12 +103,11 @@ def test_create_uncontrolled_series():
             <partNumber>66</partNumber>
         </relatedItem>
         """,
-    )
+        )
 
-
-def test_create_uncontrolled_series_minimal():
-    source_record = ET.fromstring(
-        """
+    def test_create_uncontrolled_series_minimal(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <uncontrolledSeriesInfo>
                 <series>
@@ -119,17 +117,17 @@ def test_create_uncontrolled_series_minimal():
             </uncontrolledSeriesInfo>
         </publication>
         """
-    )
-    series = create_related_item_type_series(source_record, MockContext())
+        )
+        series = create_related_item_type_series(source_record, MockContext())
 
-    assert len(series) == 1
-    assert_equal_for_xml_and_xml_string(
-        series[0],
-        """
+        assert len(series) == 1
+        assert_equal_for_xml_and_xml_string(
+            series[0],
+            """
          <relatedItem type="series" otherType="text" repeatId="uncontrolled0">
             <titleInfo>
                 <title>Okontrollerad serie</title>
             </titleInfo>
         </relatedItem>
         """,
-    )
+        )

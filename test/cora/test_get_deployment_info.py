@@ -1,15 +1,6 @@
 from cora.get_deployment_info import get_deployment_info
 
 
-def test_get_deployment_info(requests_mock):
-    requests_mock.get(
-        "https://preview.diva.cora.epc.ub.uu.se/rest/",
-        headers={"Accept": "application/vnd.cora.deploymentInfo+json"},
-        json=mock_deployment_info,
-    )
-
-    deployment_info = get_deployment_info("preview")
-    deployment_info == mock_deployment_info
 
 
 mock_deployment_info = {
@@ -56,3 +47,14 @@ mock_deployment_info = {
         },
     ],
 }
+
+class TestGetDeploymentInfo:
+    def test_get_deployment_info(self, requests_mock):
+        requests_mock.get(
+            "https://preview.diva.cora.epc.ub.uu.se/rest/",
+            headers={"Accept": "application/vnd.cora.deploymentInfo+json"},
+            json=mock_deployment_info,
+        )
+
+        deployment_info = get_deployment_info("preview")
+        deployment_info == mock_deployment_info

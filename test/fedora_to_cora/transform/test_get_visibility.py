@@ -1,9 +1,9 @@
 import xml.etree.ElementTree as ET
 from fedora_to_cora.transform.get_visibility import get_visibility
 
-
-def test_return_published_when_last_update_is_published():
-    fedora_xml = """
+class TestGetVisibility:
+    def test_return_published_when_last_update_is_published(self):
+        fedora_xml = """
     <publication>
         <administrativeInfo>
             <updaters>
@@ -20,11 +20,10 @@ def test_return_published_when_last_update_is_published():
         </administrativeInfo>
     </publication>
     """
-    assert get_visibility(ET.fromstring(fedora_xml)) == "published"
+        assert get_visibility(ET.fromstring(fedora_xml)) == "published"
 
-
-def test_return_published_when_autopublished():
-    fedora_xml = """
+    def test_return_published_when_autopublished(self):
+        fedora_xml = """
     <publication>
         <administrativeInfo>
             <updaters>
@@ -35,11 +34,10 @@ def test_return_published_when_autopublished():
         </administrativeInfo>
     </publication>
     """
-    assert get_visibility(ET.fromstring(fedora_xml)) == "published"
+        assert get_visibility(ET.fromstring(fedora_xml)) == "published"
 
-
-def test_return_unpublished_when_last_update_unpublished():
-    fedora_xml = """
+    def test_return_unpublished_when_last_update_unpublished(self):
+        fedora_xml = """
     <publication>
         <administrativeInfo>
             <updaters>
@@ -56,11 +54,10 @@ def test_return_unpublished_when_last_update_unpublished():
         </administrativeInfo>
     </publication>
     """
-    assert get_visibility(ET.fromstring(fedora_xml)) == "unpublished"
+        assert get_visibility(ET.fromstring(fedora_xml)) == "unpublished"
 
-
-def test_return_unpublished_when_last_update_deleted():
-    fedora_xml = """
+    def test_return_unpublished_when_last_update_deleted(self):
+        fedora_xml = """
     <publication>
         <administrativeInfo>
             <updaters>
@@ -74,11 +71,10 @@ def test_return_unpublished_when_last_update_deleted():
         </administrativeInfo>
     </publication>
     """
-    assert get_visibility(ET.fromstring(fedora_xml)) == "unpublished"
+        assert get_visibility(ET.fromstring(fedora_xml)) == "unpublished"
 
-
-def test_ignores_updated_actions():
-    fedora_xml = """
+    def test_ignores_updated_actions(self):
+        fedora_xml = """
     <publication>
         <administrativeInfo>
             <updaters>
@@ -101,11 +97,10 @@ def test_ignores_updated_actions():
         </administrativeInfo>
     </publication>
     """
-    assert get_visibility(ET.fromstring(fedora_xml)) == "published"
+        assert get_visibility(ET.fromstring(fedora_xml)) == "published"
 
-
-def test_return_published_when_no_updaters_but_creator_info_has_userAction_created():
-    fedora_xml = """
+    def test_return_published_when_no_updaters_but_creator_info_has_userAction_created(self):
+        fedora_xml = """
     <publication>
         <administrativeInfo>
             <creatorInfo>
@@ -119,4 +114,4 @@ def test_return_published_when_no_updaters_but_creator_info_has_userAction_creat
         </administrativeInfo>
     </publication>
     """
-    assert get_visibility(ET.fromstring(fedora_xml)) == "published"
+        assert get_visibility(ET.fromstring(fedora_xml)) == "published"

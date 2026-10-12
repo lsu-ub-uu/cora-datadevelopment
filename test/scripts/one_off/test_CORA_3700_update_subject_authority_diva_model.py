@@ -4,19 +4,19 @@ from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.context import MockContext
 from scripts.one_off.CORA_3700_update_subject_authority_diva_model import fix_records
 
+class TestCORA3700UpdateSubjectAuthorityDivaModel:
+    @patch("scripts.one_off.CORA_3700_update_subject_authority_diva_model.list_records")
+    @patch("scripts.one_off.CORA_3700_update_subject_authority_diva_model.update_record")
+    @patch("scripts.one_off.CORA_3700_update_subject_authority_diva_model.run_with_threads")
+    def test_updates_outputs_with_subject_authority_diva(self, 
+        mock_run_with_threads, mock_update_record, mock_list_records
+    ):
+        mock_run_with_threads.side_effect = lambda iterable, function, *args: [
+            function(item) for item in iterable
+        ]
 
-@patch("scripts.one_off.CORA_3700_update_subject_authority_diva_model.list_records")
-@patch("scripts.one_off.CORA_3700_update_subject_authority_diva_model.update_record")
-@patch("scripts.one_off.CORA_3700_update_subject_authority_diva_model.run_with_threads")
-def test_updates_outputs_with_subject_authority_diva(
-    mock_run_with_threads, mock_update_record, mock_list_records
-):
-    mock_run_with_threads.side_effect = lambda iterable, function, *args: [
-        function(item) for item in iterable
-    ]
-
-    mock_list_records.return_value = [
-        ET.fromstring("""
+        mock_list_records.return_value = [
+            ET.fromstring("""
             <record>
                 <data>
                     <output>
@@ -33,7 +33,7 @@ def test_updates_outputs_with_subject_authority_diva(
                 </data>
             </record>
         """),
-        ET.fromstring("""
+            ET.fromstring("""
             <record>
                 <data>
                     <output>
@@ -54,7 +54,7 @@ def test_updates_outputs_with_subject_authority_diva(
                 </data>
             </record>
         """),
-        ET.fromstring("""
+            ET.fromstring("""
             <record>
                 <data>
                     <output>
@@ -65,15 +65,15 @@ def test_updates_outputs_with_subject_authority_diva(
                 </data>
             </record>
         """),
-    ]
+        ]
 
-    fix_records(MockContext())
+        fix_records(MockContext())
 
-    assert mock_update_record.call_count == 2
+        assert mock_update_record.call_count == 2
 
-    assert_equal_for_xml_and_xml_string(
-        mock_update_record.call_args_list[0].args[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            mock_update_record.call_args_list[0].args[0],
+            """
                 <record>
                     <data>
                         <output>
@@ -90,10 +90,10 @@ def test_updates_outputs_with_subject_authority_diva(
                     </data>
                 </record>
             """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        mock_update_record.call_args_list[1].args[0],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            mock_update_record.call_args_list[1].args[0],
+            """
                 <record>
                     <data>
                         <output>
@@ -116,4 +116,4 @@ def test_updates_outputs_with_subject_authority_diva(
                     </data>
                 </record>
                 """,
-    )
+        )

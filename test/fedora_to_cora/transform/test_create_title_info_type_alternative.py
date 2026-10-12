@@ -4,10 +4,10 @@ from fedora_to_cora.transform.create_title_info import (
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_create_title_info_type_alternative():
-    source_record = ET.fromstring(
-        """
+class TestCreateTitleInfoTypeAlternative:
+    def test_create_title_info_type_alternative(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <alternativePublicationTitles>
                 <title>
@@ -21,22 +21,21 @@ def test_create_title_info_type_alternative():
             </alternativePublicationTitles>
         </publication>
         """
-    )
-    alternative_titles = create_title_info_type_alternative(source_record)
+        )
+        alternative_titles = create_title_info_type_alternative(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        alternative_titles[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            alternative_titles[0],
+            """
         <titleInfo type="alternative" lang="eng" repeatId="0">
             <title>Alternative Title</title>
         </titleInfo>
         """,
-    )
+        )
 
-
-def test_create_title_info_type_alternative_with_subtitle():
-    source_record = ET.fromstring(
-        """
+    def test_create_title_info_type_alternative_with_subtitle(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <alternativePublicationTitles>
                 <title>
@@ -51,24 +50,23 @@ def test_create_title_info_type_alternative_with_subtitle():
             </alternativePublicationTitles>
         </publication>
         """
-    )
+        )
 
-    alternative_titles = create_title_info_type_alternative(source_record)
+        alternative_titles = create_title_info_type_alternative(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        alternative_titles[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            alternative_titles[0],
+            """
         <titleInfo type="alternative" lang="eng" repeatId="0">
             <title>Alternative Title</title>
             <subtitle>A subtitle</subtitle>
         </titleInfo>
         """,
-    )
+        )
 
-
-def test_create_multiple_alternative_titles():
-    source_record = ET.fromstring(
-        """
+    def test_create_multiple_alternative_titles(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <alternativePublicationTitles>
                 <title>
@@ -90,35 +88,34 @@ def test_create_multiple_alternative_titles():
             </alternativePublicationTitles>
         </publication>
         """
-    )
+        )
 
-    alternative_titles = create_title_info_type_alternative(source_record)
+        alternative_titles = create_title_info_type_alternative(source_record)
 
-    assert isinstance(alternative_titles, list)
-    assert len(alternative_titles) == 2
+        assert isinstance(alternative_titles, list)
+        assert len(alternative_titles) == 2
 
-    assert_equal_for_xml_and_xml_string(
-        alternative_titles[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            alternative_titles[0],
+            """
         <titleInfo type="alternative" lang="eng" repeatId="0">
             <title>Alternative Title 1</title>
         </titleInfo>
         """,
-    )
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        alternative_titles[1],
-        """
+        assert_equal_for_xml_and_xml_string(
+            alternative_titles[1],
+            """
         <titleInfo type="alternative" lang="swe" repeatId="1">
             <title>Alternative Title 2</title>
         </titleInfo>
         """,
-    )
+        )
 
-
-def test_empty_title():
-    source_record = ET.fromstring(
-        """
+    def test_empty_title(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <alternativePublicationTitles>
                 <title>
@@ -133,14 +130,14 @@ def test_empty_title():
             </alternativePublicationTitles>
         </publication>
         """
-    )
-    alternative_titles = create_title_info_type_alternative(source_record)
+        )
+        alternative_titles = create_title_info_type_alternative(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        alternative_titles[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            alternative_titles[0],
+            """
         <titleInfo type="alternative" lang="eng" repeatId="0">
             <subtitle>A subtitle</subtitle>
         </titleInfo>
         """,
-    )
+        )

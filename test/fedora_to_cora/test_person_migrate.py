@@ -10,24 +10,23 @@ from cora.context import MockContext
 from fedora_to_cora.person_migrate import migrate_person
 from cora.create import CreateRecordFailureResult, CreateRecordSuccessResult
 
+class TestPersonMigrate:
+    @patch("fedora_to_cora.person_migrate.get_authority_person")
+    def test_returns_error_when_failed_to_fetch_authority_pid(self, mock_get_authority_person):
+        mock_get_authority_person.side_effect = HTTPError("Connection refused")
 
-@patch("fedora_to_cora.person_migrate.get_authority_person")
-def test_returns_error_when_failed_to_fetch_authority_pid(mock_get_authority_person):
-    mock_get_authority_person.side_effect = HTTPError("Connection refused")
+        result = migrate_person("authority-person:11111", MockContext())
 
-    result = migrate_person("authority-person:11111", MockContext())
+        assert result.status == "FAILED"
+        assert result.cora_person_id is None
+        assert result.error == "Failed to fetch authority person: Connection refused"
 
-    assert result.status == "FAILED"
-    assert result.cora_person_id is None
-    assert result.error == "Failed to fetch authority person: Connection refused"
-
-
-@patch("fedora_to_cora.person_migrate.get_authority_person")
-@patch("fedora_to_cora.person_migrate.create_record")
-def test_returns_error_when_create_record_fails(
-    mock_create_record, mock_get_authority_person
-):
-    mock_get_authority_person.return_value = json.loads("""
+    @patch("fedora_to_cora.person_migrate.get_authority_person")
+    @patch("fedora_to_cora.person_migrate.create_record")
+    def test_returns_error_when_create_record_fails(self, 
+        mock_create_record, mock_get_authority_person
+    ):
+        mock_get_authority_person.return_value = json.loads("""
         {
             "authorityPerson": {
                 "defaultName": {
@@ -42,22 +41,21 @@ def test_returns_error_when_create_record_fails(
         }
     """)
 
-    mock_create_record.return_value = CreateRecordFailureResult("Unauthorized")
+        mock_create_record.return_value = CreateRecordFailureResult("Unauthorized")
 
-    result = migrate_person("authority-person:11111", MockContext())
+        result = migrate_person("authority-person:11111", MockContext())
 
-    assert result.status == "FAILED"
-    assert result.cora_person_id is None
-    assert result.error == "Failed to create person record: Unauthorized"
+        assert result.status == "FAILED"
+        assert result.cora_person_id is None
+        assert result.error == "Failed to create person record: Unauthorized"
 
+    @patch("fedora_to_cora.person_migrate.get_authority_person")
+    @patch("fedora_to_cora.person_migrate.create_record")
+    def test_returns_skipped_when_person_already_exists(self, 
+        mock_create_record, mock_get_authority_person
+    ):
 
-@patch("fedora_to_cora.person_migrate.get_authority_person")
-@patch("fedora_to_cora.person_migrate.create_record")
-def test_returns_skipped_when_person_already_exists(
-    mock_create_record, mock_get_authority_person
-):
-
-    mock_get_authority_person.return_value = json.loads("""
+        mock_get_authority_person.return_value = json.loads("""
         {
             "authorityPerson": {
                 "defaultName": {
@@ -71,24 +69,23 @@ def test_returns_skipped_when_person_already_exists(
             }
         }
     """)
-    mock_create_record.return_value = CreateRecordFailureResult(
-        "The record could not be created as it fails unique validation with the following 1 error messages: [A record matching the unique rule with [key: oldId, value: authority-person:11111] already exists in the system]",
-        status=409,
-    )
-    result = migrate_person("authority-person:11111", MockContext())
+        mock_create_record.return_value = CreateRecordFailureResult(
+            "The record could not be created as it fails unique validation with the following 1 error messages: [A record matching the unique rule with [key: oldId, value: authority-person:11111] already exists in the system]",
+            status=409,
+        )
+        result = migrate_person("authority-person:11111", MockContext())
 
-    assert result.status == "SKIPPED"
-    assert result.cora_person_id is None
-    assert result.error == "Cora diva-person record already exists"
+        assert result.status == "SKIPPED"
+        assert result.cora_person_id is None
+        assert result.error == "Cora diva-person record already exists"
 
+    @patch("fedora_to_cora.person_migrate.get_authority_person")
+    @patch("fedora_to_cora.person_migrate.create_record")
+    def test_returns_skipped_when_person_already_exists_and_other_error(self, 
+        mock_create_record, mock_get_authority_person
+    ):
 
-@patch("fedora_to_cora.person_migrate.get_authority_person")
-@patch("fedora_to_cora.person_migrate.create_record")
-def test_returns_skipped_when_person_already_exists_and_other_error(
-    mock_create_record, mock_get_authority_person
-):
-
-    mock_get_authority_person.return_value = json.loads("""
+        mock_get_authority_person.return_value = json.loads("""
         {
             "authorityPerson": {
                 "defaultName": {
@@ -102,23 +99,22 @@ def test_returns_skipped_when_person_already_exists_and_other_error(
             }
         }
     """)
-    mock_create_record.return_value = CreateRecordFailureResult(
-        "Failed to create record with status 409: The record could not be created as it fails unique validation with the following 3 error messages: [A record matching the unique rule with [key: oldId, value: authority-person:11111] already exists in the system, A record matching the unique rule with [key: nameIdentifierLocalId, value: smhi/a002217] already exists in the system, A record matching the unique rule with [key: nameIdentifierOrcid, value: 0000-0002-0542-7738] already exists in the system]",
-        status=409,
-    )
-    result = migrate_person("authority-person:11111", MockContext())
+        mock_create_record.return_value = CreateRecordFailureResult(
+            "Failed to create record with status 409: The record could not be created as it fails unique validation with the following 3 error messages: [A record matching the unique rule with [key: oldId, value: authority-person:11111] already exists in the system, A record matching the unique rule with [key: nameIdentifierLocalId, value: smhi/a002217] already exists in the system, A record matching the unique rule with [key: nameIdentifierOrcid, value: 0000-0002-0542-7738] already exists in the system]",
+            status=409,
+        )
+        result = migrate_person("authority-person:11111", MockContext())
 
-    assert result.status == "SKIPPED"
-    assert result.cora_person_id is None
-    assert result.error == "Cora diva-person record already exists"
+        assert result.status == "SKIPPED"
+        assert result.cora_person_id is None
+        assert result.error == "Cora diva-person record already exists"
 
-
-@patch("fedora_to_cora.person_migrate.get_authority_person")
-@patch("fedora_to_cora.person_migrate.create_record")
-def test_calls_create_person_with_transformed_person_and_returns_created_person(
-    mock_create_record, mock_get_authority_person
-):
-    mock_get_authority_person.return_value = json.loads("""
+    @patch("fedora_to_cora.person_migrate.get_authority_person")
+    @patch("fedora_to_cora.person_migrate.create_record")
+    def test_calls_create_person_with_transformed_person_and_returns_created_person(self, 
+        mock_create_record, mock_get_authority_person
+    ):
+        mock_get_authority_person.return_value = json.loads("""
         {
             "authorityPerson": {
                 "defaultName": {
@@ -133,7 +129,7 @@ def test_calls_create_person_with_transformed_person_and_returns_created_person(
         }
     """)
 
-    expected_cora_person = """
+        expected_cora_person = """
     <person>
         <recordInfo>
             <validationType>
@@ -155,26 +151,25 @@ def test_calls_create_person_with_transformed_person_and_returns_created_person(
     </person>
     """
 
-    mock_create_record.return_value = CreateRecordSuccessResult(
-        "some_cora_id",
-        ET.Element("record"),
-        201,
-    )
+        mock_create_record.return_value = CreateRecordSuccessResult(
+            "some_cora_id",
+            ET.Element("record"),
+            201,
+        )
 
-    result = migrate_person("authority-person:11111", MockContext())
+        result = migrate_person("authority-person:11111", MockContext())
 
-    assert result.status == "CREATED"
-    assert mock_create_record.call_count == 1
-    assert_equal_for_xml_and_xml_string(
-        mock_create_record.call_args[0][0], expected_cora_person
-    )
-    assert result.cora_person_id == "some_cora_id"
+        assert result.status == "CREATED"
+        assert mock_create_record.call_count == 1
+        assert_equal_for_xml_and_xml_string(
+            mock_create_record.call_args[0][0], expected_cora_person
+        )
+        assert result.cora_person_id == "some_cora_id"
 
-
-@patch("fedora_to_cora.person_migrate.get_authority_person")
-@patch("fedora_to_cora.person_migrate.create_record")
-def test_skips_non_public_record(mock_create_record, mock_get_authority_person):
-    mock_get_authority_person.return_value = json.loads("""
+    @patch("fedora_to_cora.person_migrate.get_authority_person")
+    @patch("fedora_to_cora.person_migrate.create_record")
+    def test_skips_non_public_record(self, mock_create_record, mock_get_authority_person):
+        mock_get_authority_person.return_value = json.loads("""
         {
             "authorityPerson": {
                 "defaultName": {
@@ -189,9 +184,9 @@ def test_skips_non_public_record(mock_create_record, mock_get_authority_person):
         }
     """)
 
-    result = migrate_person("authority-person:11111", MockContext())
+        result = migrate_person("authority-person:11111", MockContext())
 
-    assert mock_create_record.call_count == 0
-    assert result.status == "SKIPPED"
-    assert result.cora_person_id is None
-    assert result.error == "Skipped non-public authority record"
+        assert mock_create_record.call_count == 0
+        assert result.status == "SKIPPED"
+        assert result.cora_person_id is None
+        assert result.error == "Skipped non-public authority record"

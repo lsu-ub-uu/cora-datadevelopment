@@ -4,9 +4,9 @@ from fedora_to_cora.transform.thesis.create_defence_or_presentation import (
 import xml.etree.ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_create_defence():
-    source_record = ET.fromstring("""
+class TestCreateDefenceOrPresentation:
+    def test_create_defence(self):
+        source_record = ET.fromstring("""
          <publication>
             <publicationType>
                 <publicationTypeId>54</publicationTypeId>
@@ -27,11 +27,11 @@ def test_create_defence():
 
         """)
 
-    admin = create_defence_or_presentation(source_record)
+        admin = create_defence_or_presentation(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        admin,
-        """
+        assert_equal_for_xml_and_xml_string(
+            admin,
+            """
             <defence>
                 <language>
                     <languageTerm type="code" authority="iso639-2b">swe</languageTerm>
@@ -54,11 +54,10 @@ def test_create_defence():
                 </address>
             </defence>
         """,
-    )
+        )
 
-
-def test_create_empty_defence():
-    source_record = ET.fromstring("""
+    def test_create_empty_defence(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>54</publicationTypeId>
@@ -71,13 +70,12 @@ def test_create_empty_defence():
         </publication>
         """)
 
-    admin = create_defence_or_presentation(source_record)
+        admin = create_defence_or_presentation(source_record)
 
-    assert admin is None
+        assert admin is None
 
-
-def test_create_empty_presentation():
-    source_record = ET.fromstring("""
+    def test_create_empty_presentation(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>65</publicationTypeId>
@@ -90,13 +88,12 @@ def test_create_empty_presentation():
         </publication>
         """)
 
-    admin = create_defence_or_presentation(source_record)
+        admin = create_defence_or_presentation(source_record)
 
-    assert admin is None
+        assert admin is None
 
-
-def test_create_presentation_if_degree_project():
-    source_record = ET.fromstring("""
+    def test_create_presentation_if_degree_project(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationType>
                 <publicationTypeId>65</publicationTypeId>
@@ -116,11 +113,11 @@ def test_create_presentation_if_degree_project():
         </publication>
         """)
 
-    admin = create_defence_or_presentation(source_record)
+        admin = create_defence_or_presentation(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        admin,
-        """
+        assert_equal_for_xml_and_xml_string(
+            admin,
+            """
             <presentation>
                 <language>
                     <languageTerm type="code" authority="iso639-2b">swe</languageTerm>
@@ -143,4 +140,4 @@ def test_create_presentation_if_degree_project():
                 </address>
             </presentation>
         """,
-    )
+        )

@@ -17,24 +17,23 @@ source_record = ET.fromstring(
 """
 )
 
+class TestCreateGenreTypeOutputType:
+    def test_create_genre_type_output_type(self):
+        genre = create_genre_type_output_type(source_record)
 
-def test_create_genre_type_output_type():
-    genre = create_genre_type_output_type(source_record)
+        assert_equal_for_xml_and_xml_string(
+            genre,
+            """<genre type="outputType">publication_doctoral-thesis-compilation</genre>""",
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        genre,
-        """<genre type="outputType">publication_doctoral-thesis-compilation</genre>""",
-    )
-
-
-def test_create_genre_type_output_type_missing():
-    source_record = ET.fromstring(
-        """
+    def test_create_genre_type_output_type_missing(self):
+        source_record = ET.fromstring(
+            """
         <publication>
         </publication>
         """
-    )
+        )
 
-    genre = create_genre_type_output_type(source_record)
+        genre = create_genre_type_output_type(source_record)
 
-    assert genre is None
+        assert genre is None

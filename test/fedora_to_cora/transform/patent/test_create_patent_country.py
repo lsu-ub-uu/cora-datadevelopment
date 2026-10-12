@@ -2,10 +2,10 @@ from xml.etree import ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from fedora_to_cora.transform.patent.create_patent_country import create_patent_country
 
-
-def test_create_patent_country():
-    source_record = ET.fromstring(
-        """
+class TestCreatePatentCountry:
+    def test_create_patent_country(self):
+        source_record = ET.fromstring(
+            """
     <record>
         <patentCountry>
             <countryCode>au</countryCode>
@@ -30,17 +30,16 @@ def test_create_patent_country():
         </patentCountry>
     </record>
     """
-    )
-    patent_country = create_patent_country(source_record)
+        )
+        patent_country = create_patent_country(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        patent_country, """<patentCountry>au</patentCountry>"""
-    )
+        assert_equal_for_xml_and_xml_string(
+            patent_country, """<patentCountry>au</patentCountry>"""
+        )
 
-
-def test_empty_patent_country():
-    source_xml = ET.fromstring(
-        """
+    def test_empty_patent_country(self):
+        source_xml = ET.fromstring(
+            """
         <publication>
             <patentCountry>
             <countryNames />
@@ -48,8 +47,8 @@ def test_empty_patent_country():
         </patentCountry>
         </publication>
     """
-    )
+        )
 
-    patent_country = create_patent_country(source_xml)
+        patent_country = create_patent_country(source_xml)
 
-    assert patent_country is None
+        assert patent_country is None

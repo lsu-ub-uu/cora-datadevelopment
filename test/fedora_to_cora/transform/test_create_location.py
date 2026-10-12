@@ -5,9 +5,9 @@ from fedora_to_cora.transform.create_location import (
 from common.test_helper import assert_equal_for_xml_and_xml_string
 import xml.etree.ElementTree as ET
 
-
-def test_create_location():
-    source_record = ET.fromstring("""
+class TestCreateLocation:
+    def test_create_location(self):
+        source_record = ET.fromstring("""
         <publication>
             <urls>
                 <url>
@@ -24,30 +24,29 @@ def test_create_location():
         </publication>
         """)
 
-    location = create_locations(source_record)
+        location = create_locations(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        location[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            location[0],
+            """
         <location repeatId="0">
             <url>http://www.test.se</url>
             <displayLabel>En URL</displayLabel>
         </location>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        location[1],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            location[1],
+            """
         <location repeatId="1">
             <url>http://www.test2.se</url>
             <displayLabel>En annan URL</displayLabel>
         </location>
         """,
-    )
+        )
 
-
-def test_create_location_without_display_label():
-    source_record = ET.fromstring("""
+    def test_create_location_without_display_label(self):
+        source_record = ET.fromstring("""
         <publication>
             <urls>
                 <url>
@@ -57,20 +56,19 @@ def test_create_location_without_display_label():
         </publication>
         """)
 
-    location = create_locations(source_record)
+        location = create_locations(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        location[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            location[0],
+            """
         <location repeatId="0">
             <url>http://www.test.se</url>
         </location>
         """,
-    )
+        )
 
-
-def test_create_location_without_url():
-    source_record = ET.fromstring("""
+    def test_create_location_without_url(self):
+        source_record = ET.fromstring("""
         <publication>
             <urls>
                 <url>
@@ -80,20 +78,19 @@ def test_create_location_without_url():
         </publication>
         """)
 
-    location = create_locations(source_record)
+        location = create_locations(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        location[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            location[0],
+            """
         <location repeatId="0">
             <displayLabel>En URL utan URL</displayLabel>
         </location>
         """,
-    )
+        )
 
-
-def test_create_order_link():
-    source_record = ET.fromstring("""
+    def test_create_order_link(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationOrder>
                 <orderProfileId>OrderProfile-2</orderProfileId>
@@ -105,21 +102,20 @@ def test_create_order_link():
         </publication>
         """)
 
-    location = create_location_display_label_order_link(source_record)
+        location = create_location_display_label_order_link(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        location,
-        """
+        assert_equal_for_xml_and_xml_string(
+            location,
+            """
         <location displayLabel="orderLink" repeatId="0">
             <url>http://order.test.se</url>
             <displayLabel>Beställ/Order</displayLabel>
         </location>
         """,
-    )
+        )
 
-
-def test_create_order_link_no_order_url():
-    source_record = ET.fromstring("""
+    def test_create_order_link_no_order_url(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationOrder>
                 <orderProfileId>OrderProfile-2</orderProfileId>
@@ -130,13 +126,12 @@ def test_create_order_link_no_order_url():
         </publication>
         """)
 
-    location = create_location_display_label_order_link(source_record)
+        location = create_location_display_label_order_link(source_record)
 
-    assert location is None
+        assert location is None
 
-
-def test_create_order_link_empty_order_url():
-    source_record = ET.fromstring("""
+    def test_create_order_link_empty_order_url(self):
+        source_record = ET.fromstring("""
         <publication>
             <publicationOrder>
                 <orderProfileId>OrderProfile-2</orderProfileId>
@@ -148,6 +143,6 @@ def test_create_order_link_empty_order_url():
         </publication>
         """)
 
-    location = create_location_display_label_order_link(source_record)
+        location = create_location_display_label_order_link(source_record)
 
-    assert location is None
+        assert location is None

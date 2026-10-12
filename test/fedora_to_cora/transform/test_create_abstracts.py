@@ -2,10 +2,10 @@ import xml.etree.ElementTree as ET
 from fedora_to_cora.transform.create_abstracts import create_abstracts
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_create_abstracts():
-    source_record = ET.fromstring(
-        """
+class TestCreateAbstracts:
+    def test_create_abstracts(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <abstracts>
                 <abstract>
@@ -25,32 +25,31 @@ def test_create_abstracts():
                 </abstracts>
         </publication>
         """
-    )
+        )
 
-    abstracts = create_abstracts(source_record)
+        abstracts = create_abstracts(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        abstracts[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            abstracts[0],
+            """
         <abstract lang="swe" repeatId="0">
            Lorem ipsum dolor sit amet
         </abstract>
         """,
-    )
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        abstracts[1],
-        """
+        assert_equal_for_xml_and_xml_string(
+            abstracts[1],
+            """
         <abstract lang="eng" repeatId="1">
             Another summary, bold text, cursive text, to the power of text,subscript text\n\nAnother paragraph.
         </abstract>
         """,
-    )
+        )
 
-
-def test_create_abstracts_empty():
-    source_record = ET.fromstring(
-        """
+    def test_create_abstracts_empty(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <abstracts>
                 <abstract>
@@ -61,8 +60,8 @@ def test_create_abstracts_empty():
             </abstracts>
         </publication>
         """
-    )
+        )
 
-    abstracts = create_abstracts(source_record)
+        abstracts = create_abstracts(source_record)
 
-    assert len(abstracts) == 0
+        assert len(abstracts) == 0

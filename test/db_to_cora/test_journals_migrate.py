@@ -5,14 +5,14 @@ from cora.context import MockContext
 from cora.create import CreateRecordSuccessResult
 from db_to_cora.journals_migrate import journals_migrate
 
-
-@patch("db_to_cora.journals_migrate.get_journals")
-@patch(
-    "db_to_cora.records_import.create_record",
-)
-def test_migrate_a_journal(mock_create_record, mock_get_journals):
-    mock_get_journals.return_value = ET.fromstring(
-        """
+class TestJournalsMigrate:
+    @patch("db_to_cora.journals_migrate.get_journals")
+    @patch(
+        "db_to_cora.records_import.create_record",
+    )
+    def test_migrate_a_journal(self, mock_create_record, mock_get_journals):
+        mock_get_journals.return_value = ET.fromstring(
+            """
             <SELECT>
                 <DATA_RECORD>
                     <old_id>1234</old_id>
@@ -21,12 +21,12 @@ def test_migrate_a_journal(mock_create_record, mock_get_journals):
                 </DATA_RECORD>
             </SELECT>
     """
-    )
+        )
 
-    mock_create_record.return_value = CreateRecordSuccessResult(
-        "diva-journal:1234",
-        ET.fromstring(
-            """
+        mock_create_record.return_value = CreateRecordSuccessResult(
+            "diva-journal:1234",
+            ET.fromstring(
+                """
               <record>
                 <data>
                     <recordInfo>
@@ -35,18 +35,18 @@ def test_migrate_a_journal(mock_create_record, mock_get_journals):
                 </data> 
               </record>                   
             """
-        ),
-    )
+            ),
+        )
 
-    number_of_records = journals_migrate(MockContext(), "localhost", 5432, "auradb", "db_user", "db_password")
+        number_of_records = journals_migrate(MockContext(), "localhost", 5432, "auradb", "db_user", "db_password")
 
-    assert number_of_records == 1
-    mock_create_record.assert_called_once()
-    created_record = mock_create_record.call_args.args[0]
+        assert number_of_records == 1
+        mock_create_record.assert_called_once()
+        created_record = mock_create_record.call_args.args[0]
 
-    assert_equal_for_xml_and_xml_string(
-        created_record,
-        """
+        assert_equal_for_xml_and_xml_string(
+            created_record,
+            """
             <journal>
                 <recordInfo>
                     <validationType>
@@ -65,4 +65,4 @@ def test_migrate_a_journal(mock_create_record, mock_get_journals):
                 </titleInfo>
             </journal>
             """,
-    )
+        )

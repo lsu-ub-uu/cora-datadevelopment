@@ -5,20 +5,20 @@ from db_to_cora.funder_transform import transform_funder
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from common.xml_validate import XMLValidationError
 
-
-def test_required_xml():
-    source_record = ET.fromstring(
-        """
+class TestFunderTransform:
+    def test_required_xml(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <old_id>1234</old_id>
             <name_swe>Ett namn</name_swe>
         </DATA_RECORD>       
         """
-    )
+        )
 
-    result = transform_funder(source_record)
+        result = transform_funder(source_record)
 
-    expected_xml = """
+        expected_xml = """
     <funder>
         <recordInfo>
             <validationType>
@@ -39,21 +39,20 @@ def test_required_xml():
     </funder>
     """
 
-    assert_equal_for_xml_and_xml_string(result, expected_xml)
+        assert_equal_for_xml_and_xml_string(result, expected_xml)
 
-
-def test_without_name():
-    source_record = ET.fromstring(
-        """
+    def test_without_name(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <old_id>1234</old_id>
         </DATA_RECORD>       
         """
-    )
+        )
 
-    result = transform_funder(source_record)
+        result = transform_funder(source_record)
 
-    expected_xml = """
+        expected_xml = """
     <funder>
         <recordInfo>
             <validationType>
@@ -69,12 +68,11 @@ def test_without_name():
     </funder>
     """
 
-    assert_equal_for_xml_and_xml_string(result, expected_xml)
+        assert_equal_for_xml_and_xml_string(result, expected_xml)
 
-
-def test_with_with_empty_tag():
-    source_record = ET.fromstring(
-        """
+    def test_with_with_empty_tag(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <old_id>65</old_id>
             <name_swe>Ecosystem dynamics in the Baltic Sea in a changing climate perspective - ECOCHANGE</name_swe>
@@ -87,11 +85,11 @@ def test_with_with_empty_tag():
             <funder_name_id></funder_name_id>
         </DATA_RECORD>    
         """
-    )
+        )
 
-    result = transform_funder(source_record)
+        result = transform_funder(source_record)
 
-    expected_xml = """
+        expected_xml = """
     <funder>
         <recordInfo>
             <validationType>
@@ -112,12 +110,11 @@ def test_with_with_empty_tag():
     </funder>
     """
 
-    assert_equal_for_xml_and_xml_string(result, expected_xml)
+        assert_equal_for_xml_and_xml_string(result, expected_xml)
 
-
-def test_complete_xml():
-    source_record = ET.fromstring(
-        """
+    def test_complete_xml(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <old_id>1234</old_id>
             <name_swe>Ett namn</name_swe>
@@ -127,11 +124,11 @@ def test_complete_xml():
             <identifier_doi>10.1000/182</identifier_doi>
         </DATA_RECORD>       
         """
-    )
+        )
 
-    result = transform_funder(source_record)
+        result = transform_funder(source_record)
 
-    expected_xml = """
+        expected_xml = """
     <funder>
         <recordInfo>
             <validationType>
@@ -164,20 +161,19 @@ def test_complete_xml():
     </funder>
     """
 
-    assert_equal_for_xml_and_xml_string(result, expected_xml)
+        assert_equal_for_xml_and_xml_string(result, expected_xml)
 
-
-def test_raises_error_when_source_record_has_unknown_element():
-    source_record = ET.fromstring(
-        """
+    def test_raises_error_when_source_record_has_unknown_element(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <some_unknown_element>Some unhandled value</some_unknown_element>
         </DATA_RECORD>       
         """
-    )
+        )
 
-    with pytest.raises(
-        XMLValidationError,
-        match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
-    ):
-        transform_funder(source_record)
+        with pytest.raises(
+            XMLValidationError,
+            match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
+        ):
+            transform_funder(source_record)

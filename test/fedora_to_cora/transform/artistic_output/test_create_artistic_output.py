@@ -10,9 +10,9 @@ from fedora_to_cora.transform.artistic_output.create_artistic_output import (
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_create_types():
-    source_record = ET.fromstring("""
+class TestCreateArtisticOutput:
+    def test_create_types(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <types class="hashtable">
@@ -30,28 +30,27 @@ def test_create_types():
         </publication>
         """)
 
-    type = create_types(source_record)
+        type = create_types(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        type[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            type[0],
+            """
         <type lang="swe" repeatId="0">
             Typ01
         </type>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        type[1],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            type[1],
+            """
         <type lang="swe" repeatId="1">
             Typ02
         </type>
         """,
-    )
+        )
 
-
-def test_multiple_languages():
-    source_record = ET.fromstring("""
+    def test_multiple_languages(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <types class="hashtable">
@@ -78,46 +77,45 @@ def test_multiple_languages():
         </publication>
         """)
 
-    types = create_types(source_record)
+        types = create_types(source_record)
 
-    assert len(types) == 4
+        assert len(types) == 4
 
-    assert_equal_for_xml_and_xml_string(
-        types[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            types[0],
+            """
         <type lang="swe" repeatId="0">
             Swe01
         </type>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        types[1],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            types[1],
+            """
         <type lang="swe" repeatId="1">
             Swe02
         </type>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        types[2],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            types[2],
+            """
         <type lang="eng" repeatId="2">
             Eng01
         </type>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        types[3],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            types[3],
+            """
         <type lang="eng" repeatId="3">
             Eng02
         </type>
         """,
-    )
+        )
 
-
-def test_create_types_without_language():
-    source_record = ET.fromstring("""
+    def test_create_types_without_language(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <types class="hashtable">
@@ -131,44 +129,41 @@ def test_create_types_without_language():
         </publication>
         """)
 
-    types = create_types(source_record)
+        types = create_types(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        types[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            types[0],
+            """
         <type repeatId="0">
             Typ01
         </type>
         """,
-    )
+        )
 
-
-def test_create_types_empty_media_information():
-    source_record = ET.fromstring("""
+    def test_create_types_empty_media_information(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
             </mediaInformation>
         </publication>
         """)
 
-    types = create_types(source_record)
+        types = create_types(source_record)
 
-    assert len(types) == 0
+        assert len(types) == 0
 
-
-def test_create_types_missing_media_information():
-    source_record = ET.fromstring("""
+    def test_create_types_missing_media_information(self):
+        source_record = ET.fromstring("""
         <publication>
         </publication>
         """)
 
-    types = create_types(source_record)
+        types = create_types(source_record)
 
-    assert len(types) == 0
+        assert len(types) == 0
 
-
-def test_create_materials():
-    source_record = ET.fromstring("""
+    def test_create_materials(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <materials class="hashtable">
@@ -186,52 +181,49 @@ def test_create_materials():
         </publication>
         """)
 
-    material = create_materials(source_record)
+        material = create_materials(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        material[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            material[0],
+            """
         <material lang="swe" repeatId="0">
             Material01
         </material>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        material[1],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            material[1],
+            """
         <material lang="swe" repeatId="1">
             Material02
         </material>
         """,
-    )
+        )
 
-
-def test_create_materials_empty_media_information():
-    source_record = ET.fromstring("""
+    def test_create_materials_empty_media_information(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
             </mediaInformation>
         </publication>
         """)
 
-    materials = create_materials(source_record)
+        materials = create_materials(source_record)
 
-    assert len(materials) == 0
+        assert len(materials) == 0
 
-
-def test_create_materials_missing_media_information():
-    source_record = ET.fromstring("""
+    def test_create_materials_missing_media_information(self):
+        source_record = ET.fromstring("""
         <publication>
         </publication>
         """)
 
-    materials = create_materials(source_record)
+        materials = create_materials(source_record)
 
-    assert len(materials) == 0
+        assert len(materials) == 0
 
-
-def test_create_techniques():
-    source_record = ET.fromstring("""
+    def test_create_techniques(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <techniques class="hashtable">
@@ -249,52 +241,49 @@ def test_create_techniques():
         </publication>
         """)
 
-    technique = create_techniques(source_record)
+        technique = create_techniques(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        technique[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            technique[0],
+            """
         <technique lang="swe" repeatId="0">
             Teknik01
         </technique>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        technique[1],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            technique[1],
+            """
         <technique lang="swe" repeatId="1">
             Teknik02
         </technique>
         """,
-    )
+        )
 
-
-def test_create_techniques_empty_media_information():
-    source_record = ET.fromstring("""
+    def test_create_techniques_empty_media_information(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
             </mediaInformation>
         </publication>
         """)
 
-    techniques = create_techniques(source_record)
+        techniques = create_techniques(source_record)
 
-    assert len(techniques) == 0
+        assert len(techniques) == 0
 
-
-def test_create_techniques_missing_media_information():
-    source_record = ET.fromstring("""
+    def test_create_techniques_missing_media_information(self):
+        source_record = ET.fromstring("""
         <publication>
         </publication>
         """)
 
-    techniques = create_techniques(source_record)
+        techniques = create_techniques(source_record)
 
-    assert len(techniques) == 0
+        assert len(techniques) == 0
 
-
-def test_create_duration():
-    source_record = ET.fromstring("""
+    def test_create_duration(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <duration>01:10:00</duration>
@@ -302,46 +291,43 @@ def test_create_duration():
         </publication>
         """)
 
-    duration = create_duration(source_record)
+        duration = create_duration(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        duration,
-        """
+        assert_equal_for_xml_and_xml_string(
+            duration,
+            """
         <duration>
             <hh>01</hh>
             <mm>10</mm>
             <ss>00</ss>
         </duration>
         """,
-    )
+        )
 
-
-def test_create_duration_empty_media_information():
-    source_record = ET.fromstring("""
+    def test_create_duration_empty_media_information(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
             </mediaInformation>
         </publication>
         """)
 
-    duration = create_duration(source_record)
+        duration = create_duration(source_record)
 
-    assert duration is None
+        assert duration is None
 
-
-def test_create_duration_missing_media_information():
-    source_record = ET.fromstring("""
+    def test_create_duration_missing_media_information(self):
+        source_record = ET.fromstring("""
         <publication>
         </publication>
         """)
 
-    duration = create_duration(source_record)
+        duration = create_duration(source_record)
 
-    assert duration is None
+        assert duration is None
 
-
-def test_create_note_type_context():
-    source_record = ET.fromstring("""
+    def test_create_note_type_context(self):
+        source_record = ET.fromstring("""
         <publication>
             <descriptions>
                 <abstract>
@@ -360,34 +346,33 @@ def test_create_note_type_context():
         </publication>
         """)
 
-    note = create_note_type_context(source_record)
+        note = create_note_type_context(source_record)
 
-    assert len(note) == 2
-    assert_equal_for_xml_and_xml_string(
-        note[0],
-        """
+        assert len(note) == 2
+        assert_equal_for_xml_and_xml_string(
+            note[0],
+            """
         <note type="context" lang="swe" repeatId="0">
             Abstrakt på svenska
         </note>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        note[1],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            note[1],
+            """
         <note type="context" lang="eng" repeatId="1">
             Another abstract
         </note>
         """,
-    )
+        )
 
-
-def test_create_note_type_context_empty_descriptions():
-    source_record = ET.fromstring("""
+    def test_create_note_type_context_empty_descriptions(self):
+        source_record = ET.fromstring("""
         <publication>
             <descriptions />
         </publication>
         """)
 
-    note = create_note_type_context(source_record)
+        note = create_note_type_context(source_record)
 
-    assert len(note) == 0
+        assert len(note) == 0

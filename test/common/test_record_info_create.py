@@ -2,15 +2,15 @@ import xml.etree.ElementTree as ET
 from common.record_info_create import record_info_create
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
+class TestRecordInfoCreate:
+    def test_record_info_create(self):
+        record_info = record_info_create(
+            validation_type_id="someValidationType",
+            old_id="12345",
+            permission_unit_id="somePermissionUnit",
+        )
 
-def test_record_info_create():
-    record_info = record_info_create(
-        validation_type_id="someValidationType",
-        old_id="12345",
-        permission_unit_id="somePermissionUnit",
-    )
-
-    expected_xml = """
+        expected_xml = """
         <recordInfo>
             <validationType>
                 <linkedRecordType>validationType</linkedRecordType>
@@ -28,15 +28,14 @@ def test_record_info_create():
         </recordInfo>
     """
 
-    assert_equal_for_xml_and_xml_string(record_info, expected_xml)
+        assert_equal_for_xml_and_xml_string(record_info, expected_xml)
 
+    def test_record_info_create_without_permission_unit(self):
+        record_info = record_info_create(
+            validation_type_id="someValidationType", old_id="12345", permission_unit_id=None
+        )
 
-def test_record_info_create_without_permission_unit():
-    record_info = record_info_create(
-        validation_type_id="someValidationType", old_id="12345", permission_unit_id=None
-    )
-
-    expected_xml = """
+        expected_xml = """
         <recordInfo>
             <validationType>
                 <linkedRecordType>validationType</linkedRecordType>
@@ -50,13 +49,12 @@ def test_record_info_create_without_permission_unit():
         </recordInfo>
     """
 
-    assert_equal_for_xml_and_xml_string(record_info, expected_xml)
+        assert_equal_for_xml_and_xml_string(record_info, expected_xml)
 
+    def test_record_info_create_with_only_validation_type(self):
+        record_info = record_info_create(validation_type_id="someValidationType")
 
-def test_record_info_create_with_only_validation_type():
-    record_info = record_info_create(validation_type_id="someValidationType")
-
-    expected_xml = """
+        expected_xml = """
         <recordInfo>
             <validationType>
                 <linkedRecordType>validationType</linkedRecordType>
@@ -69,15 +67,14 @@ def test_record_info_create_with_only_validation_type():
         </recordInfo>
     """
 
-    assert_equal_for_xml_and_xml_string(record_info, expected_xml)
+        assert_equal_for_xml_and_xml_string(record_info, expected_xml)
 
+    def test_record_info_create_with_visibility(self):
+        record_info = record_info_create(
+            validation_type_id="someValidationType", visibility="published"
+        )
 
-def test_record_info_create_with_visibility():
-    record_info = record_info_create(
-        validation_type_id="someValidationType", visibility="published"
-    )
-
-    expected_xml = """
+        expected_xml = """
         <recordInfo>
             <validationType>
                 <linkedRecordType>validationType</linkedRecordType>
@@ -91,22 +88,21 @@ def test_record_info_create_with_visibility():
         </recordInfo>
     """
 
-    assert_equal_for_xml_and_xml_string(record_info, expected_xml)
+        assert_equal_for_xml_and_xml_string(record_info, expected_xml)
 
+    def test_record_info_create_with_host_record(self):
+        host_record = ET.fromstring(
+            "<hostRecord><linkedRecordType>someType</linkedRecordType><linkedRecordId>someId</linkedRecordId></hostRecord>"
+        )
 
-def test_record_info_create_with_host_record():
-    host_record = ET.fromstring(
-        "<hostRecord><linkedRecordType>someType</linkedRecordType><linkedRecordId>someId</linkedRecordId></hostRecord>"
-    )
+        record_info = record_info_create(
+            validation_type_id="someValidationType",
+            old_id="12345",
+            permission_unit_id="somePermissionUnit",
+            host_record_link=host_record,
+        )
 
-    record_info = record_info_create(
-        validation_type_id="someValidationType",
-        old_id="12345",
-        permission_unit_id="somePermissionUnit",
-        host_record_link=host_record,
-    )
-
-    expected_xml = """
+        expected_xml = """
         <recordInfo>
             <validationType>
                 <linkedRecordType>validationType</linkedRecordType>
@@ -128,18 +124,17 @@ def test_record_info_create_with_host_record():
         </recordInfo>
     """
 
-    assert_equal_for_xml_and_xml_string(record_info, expected_xml)
+        assert_equal_for_xml_and_xml_string(record_info, expected_xml)
 
+    def test_record_info_create_with_urn(self):
+        record_info = record_info_create(
+            validation_type_id="someValidationType",
+            old_id="12345",
+            permission_unit_id="somePermissionUnit",
+            urn="urn:nbn:se:nordiskamuseet:some-nbn",
+        )
 
-def test_record_info_create_with_urn():
-    record_info = record_info_create(
-        validation_type_id="someValidationType",
-        old_id="12345",
-        permission_unit_id="somePermissionUnit",
-        urn="urn:nbn:se:nordiskamuseet:some-nbn",
-    )
-
-    expected_xml = """
+        expected_xml = """
         <recordInfo>
             <validationType>
                 <linkedRecordType>validationType</linkedRecordType>
@@ -158,4 +153,4 @@ def test_record_info_create_with_urn():
         </recordInfo>
     """
 
-    assert_equal_for_xml_and_xml_string(record_info, expected_xml)
+        assert_equal_for_xml_and_xml_string(record_info, expected_xml)

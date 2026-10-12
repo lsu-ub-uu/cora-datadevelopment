@@ -5,14 +5,14 @@ from cora.context import MockContext
 from cora.create import CreateRecordSuccessResult
 from db_to_cora.funders_migrate import funders_migrate
 
-
-@patch("db_to_cora.funders_migrate.get_funders")
-@patch(
-    "db_to_cora.records_import.create_record",
-)
-def test_migrate_a_funder(mock_create_record, mock_get_funders):
-    mock_get_funders.return_value = ET.fromstring(
-        """
+class TestFundersMigrate:
+    @patch("db_to_cora.funders_migrate.get_funders")
+    @patch(
+        "db_to_cora.records_import.create_record",
+    )
+    def test_migrate_a_funder(self, mock_create_record, mock_get_funders):
+        mock_get_funders.return_value = ET.fromstring(
+            """
             <SELECT>
                 <DATA_RECORD>
                     <old_id>1234</old_id>
@@ -21,12 +21,12 @@ def test_migrate_a_funder(mock_create_record, mock_get_funders):
                 </DATA_RECORD>
             </SELECT>
     """
-    )
+        )
 
-    mock_create_record.return_value = CreateRecordSuccessResult(
-        "diva-funder:1234",
-        ET.fromstring(
-            """
+        mock_create_record.return_value = CreateRecordSuccessResult(
+            "diva-funder:1234",
+            ET.fromstring(
+                """
               <record>
                 <data>
                     <recordInfo>
@@ -35,18 +35,18 @@ def test_migrate_a_funder(mock_create_record, mock_get_funders):
                 </data> 
               </record>                   
             """
-        ),
-    )
+            ),
+        )
 
-    number_of_records = funders_migrate(MockContext(), "localhost", 5432, "auradb", "db_user", "db_password")
+        number_of_records = funders_migrate(MockContext(), "localhost", 5432, "auradb", "db_user", "db_password")
 
-    assert number_of_records == 1
-    mock_create_record.assert_called_once()
-    created_record = mock_create_record.call_args.args[0]
+        assert number_of_records == 1
+        mock_create_record.assert_called_once()
+        created_record = mock_create_record.call_args.args[0]
 
-    assert_equal_for_xml_and_xml_string(
-        created_record,
-        """
+        assert_equal_for_xml_and_xml_string(
+            created_record,
+            """
             <funder>
                 <recordInfo>
                     <validationType>
@@ -71,4 +71,4 @@ def test_migrate_a_funder(mock_create_record, mock_get_funders):
                 </authority>
             </funder>
             """,
-    )
+        )

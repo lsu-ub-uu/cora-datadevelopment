@@ -4,10 +4,10 @@ from fedora_to_cora.transform.create_classification_authority_ssif import (
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_create_classification_authority_ssif():
-    source_record = ET.fromstring(
-        """
+class TestCreateClassificationAuthoritySsif:
+    def test_create_classification_authority_ssif(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <nationalCategories>
                 <subject>
@@ -42,50 +42,49 @@ def test_create_classification_authority_ssif():
             </nationalCategories>
         </publication>
         """
-    )
+        )
 
-    classifications = create_classification_authority_ssif(source_record)
+        classifications = create_classification_authority_ssif(source_record)
 
-    assert len(classifications) == 3
+        assert len(classifications) == 3
 
-    assert_equal_for_xml_and_xml_string(
-        classifications[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            classifications[0],
+            """
         <classification authority="ssif" repeatId="0">
             30224
         </classification>
         """,
-    )
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        classifications[1],
-        """
+        assert_equal_for_xml_and_xml_string(
+            classifications[1],
+            """
         <classification authority="ssif" repeatId="1">
             60301
         </classification>
         """,
-    )
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        classifications[2],
-        """        
+        assert_equal_for_xml_and_xml_string(
+            classifications[2],
+            """        
         <classification authority="ssif" repeatId="2">
             6
         </classification>
         """,
-    )
+        )
 
-
-def test_create_classification_authority_ssif_empty():
-    source_record = ET.fromstring(
-        """
+    def test_create_classification_authority_ssif_empty(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <nationalCategories>
             </nationalCategories>
         </publication>
         """
-    )
+        )
 
-    classifications = create_classification_authority_ssif(source_record)
+        classifications = create_classification_authority_ssif(source_record)
 
-    assert len(classifications) == 0
+        assert len(classifications) == 0

@@ -4,10 +4,10 @@ from fedora_to_cora.transform.create_subject_authority_sdg import (
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_create_subject_authority_sdg():
-    source_record = ET.fromstring(
-        """
+class TestCreateSubjectAuthoritySdg:
+    def test_create_subject_authority_sdg(self):
+        source_record = ET.fromstring(
+            """
        <publication>
             <sustainableDevelopments>
                 <sustainableDevelopment>
@@ -16,23 +16,22 @@ def test_create_subject_authority_sdg():
             </sustainableDevelopments>
         </publication>
         """
-    )
+        )
 
-    subject = create_subject_authority_sdg(source_record)
+        subject = create_subject_authority_sdg(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        subject,
-        """
+        assert_equal_for_xml_and_xml_string(
+            subject,
+            """
         <subject authority="sdg">
             <topic repeatId="0">sdg1</topic>
         </subject>
         """,
-    )
+        )
 
-
-def test_create_subject_authority_sdg_none():
-    source_record = ET.fromstring(
-        """
+    def test_create_subject_authority_sdg_none(self):
+        source_record = ET.fromstring(
+            """
        <publication>
             <sustainableDevelopments>
                 <sustainableDevelopment>
@@ -40,16 +39,15 @@ def test_create_subject_authority_sdg_none():
             </sustainableDevelopments>
         </publication>
         """
-    )
+        )
 
-    subject = create_subject_authority_sdg(source_record)
+        subject = create_subject_authority_sdg(source_record)
 
-    assert subject is None
+        assert subject is None
 
-
-def test_create_subject_authority_sdg_all():
-    source_record = ET.fromstring(
-        """
+    def test_create_subject_authority_sdg_all(self):
+        source_record = ET.fromstring(
+            """
        <publication>
             <sustainableDevelopments>
                 <sustainableDevelopment>
@@ -58,13 +56,13 @@ def test_create_subject_authority_sdg_all():
             </sustainableDevelopments>
         </publication>
         """
-    )
+        )
 
-    subject = create_subject_authority_sdg(source_record)
+        subject = create_subject_authority_sdg(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        subject,
-        """
+        assert_equal_for_xml_and_xml_string(
+            subject,
+            """
         <subject authority="sdg">
             <topic repeatId="0">sdg1</topic>
             <topic repeatId="1">sdg2</topic>
@@ -85,12 +83,11 @@ def test_create_subject_authority_sdg_all():
             <topic repeatId="16">sdg17</topic>
         </subject>
         """,
-    )
+        )
 
-
-def test_create_subject_authority_sdg_with_text():
-    source_record = ET.fromstring(
-        """
+    def test_create_subject_authority_sdg_with_text(self):
+        source_record = ET.fromstring(
+            """
        <publication>
             <sustainableDevelopments>
                 <sustainableDevelopment>
@@ -99,25 +96,24 @@ def test_create_subject_authority_sdg_with_text():
             </sustainableDevelopments>
         </publication>
         """
-    )
+        )
 
-    subject = create_subject_authority_sdg(source_record)
+        subject = create_subject_authority_sdg(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        subject,
-        """
+        assert_equal_for_xml_and_xml_string(
+            subject,
+            """
     <subject authority="sdg">
         <topic repeatId="0">Uppsatsen/examensarbetet handlar till övervägande del om hållbar utveckling enligt högskolans kriterier</topic>
     </subject>
     """,
-    )
+        )
 
-
-def test_create_subject_authority_sdg_filters_duplicates_when_all_and_one_more():
-    # 801 = all sdgs
-    # 818 = sdg16
-    source_record = ET.fromstring(
-        """
+    def test_create_subject_authority_sdg_filters_duplicates_when_all_and_one_more(self):
+        # 801 = all sdgs
+        # 818 = sdg16
+        source_record = ET.fromstring(
+            """
        <publication>
             <sustainableDevelopments>
                 <sustainableDevelopment>
@@ -129,13 +125,13 @@ def test_create_subject_authority_sdg_filters_duplicates_when_all_and_one_more()
             </sustainableDevelopments>
         </publication> 
         """
-    )
+        )
 
-    subject = create_subject_authority_sdg(source_record)
+        subject = create_subject_authority_sdg(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        subject,
-        """
+        assert_equal_for_xml_and_xml_string(
+            subject,
+            """
         <subject authority="sdg">
             <topic repeatId="0">sdg1</topic>
             <topic repeatId="1">sdg2</topic>
@@ -156,4 +152,4 @@ def test_create_subject_authority_sdg_filters_duplicates_when_all_and_one_more()
             <topic repeatId="16">sdg17</topic>
         </subject>
         """,
-    )
+        )

@@ -6,9 +6,9 @@ from fedora_to_cora.transform.degree_project.create_student_degree import (
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.context import MockContext
 
-
-def test_create_student_degree_thesis_level():
-    source_record = ET.fromstring("""
+class TestCreateStudentDegree:
+    def test_create_student_degree_thesis_level(self):
+        source_record = ET.fromstring("""
       <publication>
             <studentDegrees>
                 <studentDegree>
@@ -20,20 +20,19 @@ def test_create_student_degree_thesis_level():
         </publication>
     """)
 
-    student_degrees = create_student_degrees(source_record, MockContext())
+        student_degrees = create_student_degrees(source_record, MockContext())
 
-    assert len(student_degrees) == 1
-    assert_equal_for_xml_and_xml_string(
-        student_degrees[0],
-        """
+        assert len(student_degrees) == 1
+        assert_equal_for_xml_and_xml_string(
+            student_degrees[0],
+            """
         <studentDegree repeatId="0">
             <degreeLevel>H2</degreeLevel>
         </studentDegree>""",
-    )
+        )
 
-
-def test_create_student_multiple_degree_thesis_level():
-    source_record = ET.fromstring("""
+    def test_create_student_multiple_degree_thesis_level(self):
+        source_record = ET.fromstring("""
       <publication>
             <studentDegrees>
                 <studentDegree>
@@ -50,27 +49,26 @@ def test_create_student_multiple_degree_thesis_level():
         </publication>
     """)
 
-    student_degrees = create_student_degrees(source_record, MockContext())
+        student_degrees = create_student_degrees(source_record, MockContext())
 
-    assert len(student_degrees) == 2
-    assert_equal_for_xml_and_xml_string(
-        student_degrees[0],
-        """
+        assert len(student_degrees) == 2
+        assert_equal_for_xml_and_xml_string(
+            student_degrees[0],
+            """
         <studentDegree repeatId="0">
             <degreeLevel>H2</degreeLevel>
         </studentDegree>""",
-    )
-    assert_equal_for_xml_and_xml_string(
-        student_degrees[1],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            student_degrees[1],
+            """
         <studentDegree repeatId="1">
             <degreeLevel>H4</degreeLevel>
         </studentDegree>""",
-    )
+        )
 
-
-def test_create_student_degree_hp():
-    source_record = ET.fromstring("""
+    def test_create_student_degree_hp(self):
+        source_record = ET.fromstring("""
       <publication>
             <studentDegrees>
                 <studentDegree>
@@ -82,93 +80,91 @@ def test_create_student_degree_hp():
         </publication>
     """)
 
-    student_degrees = create_student_degrees(source_record, MockContext())
+        student_degrees = create_student_degrees(source_record, MockContext())
 
-    assert len(student_degrees) == 1
-    assert_equal_for_xml_and_xml_string(
-        student_degrees[0],
-        """
+        assert len(student_degrees) == 1
+        assert_equal_for_xml_and_xml_string(
+            student_degrees[0],
+            """
         <studentDegree repeatId="0">
             <credits>20</credits>
         </studentDegree>""",
-    )
+        )
 
+    def test_create_linked_course(self, monkeypatch):
+        old_id = "123"
+        cora_id = "cora-course:12345678901234567"
 
-def test_create_linked_course(monkeypatch):
-    old_id = "123"
-    cora_id = "cora-course:12345678901234567"
+        def mock_get_cora_id_by_old_id(old_id, *args, **kwargs):
+            if old_id == "123":
+                return "cora-course:12345678901234567"
+            return None
 
-    def mock_get_cora_id_by_old_id(old_id, *args, **kwargs):
-        if old_id == "123":
-            return "cora-course:12345678901234567"
-        return None
+        monkeypatch.setattr(
+            "fedora_to_cora.transform.degree_project.create_student_degree.get_cora_id_by_old_id",
+            mock_get_cora_id_by_old_id,
+        )
 
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.degree_project.create_student_degree.get_cora_id_by_old_id",
-        mock_get_cora_id_by_old_id,
-    )
+        source_record = ET.fromstring(f"""
+            <publication>
+                <studentDegrees>
+                    <studentDegree>
+                        <undergraduateSubject>
+                            <subjectId>{old_id}</subjectId>
+                        </undergraduateSubject>
+                    </studentDegree>
+                </studentDegrees>
+            </publication>
+        """)
 
-    source_record = ET.fromstring(f"""
-        <publication>
-            <studentDegrees>
-                <studentDegree>
-                    <undergraduateSubject>
-                        <subjectId>{old_id}</subjectId>
-                    </undergraduateSubject>
-                </studentDegree>
-            </studentDegrees>
-        </publication>
-    """)
+        student_degrees = create_student_degrees(source_record, MockContext())
+        assert len(student_degrees) == 1
+        assert_equal_for_xml_and_xml_string(
+            student_degrees[0],
+            f"""
+            <studentDegree repeatId="0">
+                <course>
+                    <linkedRecordType>diva-course</linkedRecordType>
+                    <linkedRecordId>{cora_id}</linkedRecordId>
+                </course>
+            </studentDegree>""",
+        )
 
-    student_degrees = create_student_degrees(source_record, MockContext())
-    assert len(student_degrees) == 1
-    assert_equal_for_xml_and_xml_string(
-        student_degrees[0],
-        f"""
-        <studentDegree repeatId="0">
-            <course>
-                <linkedRecordType>diva-course</linkedRecordType>
-                <linkedRecordId>{cora_id}</linkedRecordId>
-            </course>
-        </studentDegree>""",
-    )
+    def test_create_linked_programme(self, monkeypatch):
+        old_id = "123"
+        cora_id = "cora-course:12345678901234567"
 
+        def mock_get_cora_id_by_old_id(old_id, *args, **kwargs):
+            if old_id == "123":
+                return "cora-course:12345678901234567"
+            return None
 
-def test_create_linked_programme(monkeypatch):
-    old_id = "123"
-    cora_id = "cora-course:12345678901234567"
+        monkeypatch.setattr(
+            "fedora_to_cora.transform.degree_project.create_student_degree.get_cora_id_by_old_id",
+            mock_get_cora_id_by_old_id,
+        )
 
-    def mock_get_cora_id_by_old_id(old_id, *args, **kwargs):
-        if old_id == "123":
-            return "cora-course:12345678901234567"
-        return None
+        source_record = ET.fromstring(f"""
+            <publication>
+                <studentDegrees>
+                    <studentDegree>
+                        <educationalProgramme>
+                            <subjectId>{old_id}</subjectId>
+                        </educationalProgramme>
+                    </studentDegree>
+                </studentDegrees>
+            </publication>
+        """)
 
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.degree_project.create_student_degree.get_cora_id_by_old_id",
-        mock_get_cora_id_by_old_id,
-    )
-
-    source_record = ET.fromstring(f"""
-        <publication>
-            <studentDegrees>
-                <studentDegree>
-                    <educationalProgramme>
-                        <subjectId>{old_id}</subjectId>
-                    </educationalProgramme>
-                </studentDegree>
-            </studentDegrees>
-        </publication>
-    """)
-
-    student_degrees = create_student_degrees(source_record, MockContext())
-    assert len(student_degrees) == 1
-    assert_equal_for_xml_and_xml_string(
-        student_degrees[0],
-        f"""
-        <studentDegree repeatId="0">
-            <programme>
-                <linkedRecordType>diva-programme</linkedRecordType>
-                <linkedRecordId>{cora_id}</linkedRecordId>
-            </programme>
-        </studentDegree>""",
-    )
+        student_degrees = create_student_degrees(source_record, MockContext())
+        assert len(student_degrees) == 1
+        assert_equal_for_xml_and_xml_string(
+            student_degrees[0],
+            f"""
+            <studentDegree repeatId="0">
+                <programme>
+                    <linkedRecordType>diva-programme</linkedRecordType>
+                    <linkedRecordId>{cora_id}</linkedRecordId>
+                </programme>
+            </studentDegree>""",
+        )

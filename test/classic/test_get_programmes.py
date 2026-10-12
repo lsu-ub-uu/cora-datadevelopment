@@ -3,10 +3,10 @@ from unittest.mock import patch
 from classic.get_programmes import get_programmes
 from common.test_helper import assert_equal_for_sql
 
-
-@patch("classic.get_programmes.execute_sql")
-def test_get_programmes(mock_execute_sql):
-    expected_query = """
+class TestGetProgrammes:
+    @patch("classic.get_programmes.execute_sql")
+    def test_get_programmes(self, mock_execute_sql):
+        expected_query = """
 SELECT
     s.domain,
     s.subject_id as old_id,
@@ -34,21 +34,21 @@ GROUP BY
     sn_eng.subject_name;
 """
 
-    mock_programme = ET.Element("programme")
-    mock_execute_sql.return_value = mock_programme
+        mock_programme = ET.Element("programme")
+        mock_execute_sql.return_value = mock_programme
 
-    result = get_programmes(
-        domain="norden", db_host="localhost", db_port=5432, db_name="auradb",
-        db_user="test_user", db_password="test_password",
-    )
+        result = get_programmes(
+            domain="norden", db_host="localhost", db_port=5432, db_name="auradb",
+            db_user="test_user", db_password="test_password",
+        )
 
-    assert result == mock_programme
-    mock_execute_sql.assert_called_once()
+        assert result == mock_programme
+        mock_execute_sql.assert_called_once()
 
-    assert_equal_for_sql(mock_execute_sql.mock_calls[0].args[0], expected_query)
-    assert mock_execute_sql.mock_calls[0].kwargs["params"] == {
-        "domain": "norden",
-        "subject_type_id": "56",
-    }
-    assert mock_execute_sql.mock_calls[0].kwargs["db_user"] == "test_user"
-    assert mock_execute_sql.mock_calls[0].kwargs["db_password"] == "test_password"
+        assert_equal_for_sql(mock_execute_sql.mock_calls[0].args[0], expected_query)
+        assert mock_execute_sql.mock_calls[0].kwargs["params"] == {
+            "domain": "norden",
+            "subject_type_id": "56",
+        }
+        assert mock_execute_sql.mock_calls[0].kwargs["db_user"] == "test_user"
+        assert mock_execute_sql.mock_calls[0].kwargs["db_password"] == "test_password"

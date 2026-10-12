@@ -1,47 +1,44 @@
 import pytest
 from cora import cora_json_utils
 
+class TestCoraJsonUtils:
+    def test_findChildWithNameInData(self):
+        children = [
+            {"name": "child1", "value": "value1"},
+            {"name": "child2", "value": "value2"},
+            {"name": "child3", "value": "value3"},
+        ]
+        assert cora_json_utils.find_child_with_name_in_data(children, "child2") == {
+            "name": "child2",
+            "value": "value2",
+        }
+        assert cora_json_utils.find_child_with_name_in_data(children, "child4") is None
 
-def test_findChildWithNameInData():
-    children = [
-        {"name": "child1", "value": "value1"},
-        {"name": "child2", "value": "value2"},
-        {"name": "child3", "value": "value3"},
-    ]
-    assert cora_json_utils.find_child_with_name_in_data(children, "child2") == {
-        "name": "child2",
-        "value": "value2",
-    }
-    assert cora_json_utils.find_child_with_name_in_data(children, "child4") is None
+    def test_getValueWithNameInData(self):
+        child = {"name": "child1", "value": "value1"}
+        assert cora_json_utils.get_value_with_name_in_data(child) == "value1"
+        assert cora_json_utils.get_value_with_name_in_data(None) is None
 
+    def test_getFirstAtomicValueWithNameInData(self):
+        children = [
+            {"name": "child1", "value": "value1"},
+            {"name": "child2", "value": "value2"},
+        ]
+        assert (
+            cora_json_utils.get_first_atomic_value_with_name_in_data(children, "child2")
+            == "value2"
+        )
+        assert (
+            cora_json_utils.get_first_atomic_value_with_name_in_data(children, "child3")
+            is None
+        )
 
-def test_getValueWithNameInData():
-    child = {"name": "child1", "value": "value1"}
-    assert cora_json_utils.get_value_with_name_in_data(child) == "value1"
-    assert cora_json_utils.get_value_with_name_in_data(None) is None
-
-
-def test_getFirstAtomicValueWithNameInData():
-    children = [
-        {"name": "child1", "value": "value1"},
-        {"name": "child2", "value": "value2"},
-    ]
-    assert (
-        cora_json_utils.get_first_atomic_value_with_name_in_data(children, "child2")
-        == "value2"
-    )
-    assert (
-        cora_json_utils.get_first_atomic_value_with_name_in_data(children, "child3")
-        is None
-    )
-
-
-def test_getLinkedRecordIdWithNameInData():
-    children = [
-        {"name": "link1", "children": [{"name": "linkedRecordId", "value": "ID1"}]},
-        {"name": "link2", "children": [{"name": "linkedRecordId", "value": "ID2"}]},
-    ]
-    assert (
-        cora_json_utils.get_linked_record_id_with_name_in_data(children, "link2")
-        == "ID2"
-    )
+    def test_getLinkedRecordIdWithNameInData(self):
+        children = [
+            {"name": "link1", "children": [{"name": "linkedRecordId", "value": "ID1"}]},
+            {"name": "link2", "children": [{"name": "linkedRecordId", "value": "ID2"}]},
+        ]
+        assert (
+            cora_json_utils.get_linked_record_id_with_name_in_data(children, "link2")
+            == "ID2"
+        )

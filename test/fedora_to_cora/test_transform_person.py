@@ -5,9 +5,9 @@ from fedora_to_cora.transform_person import (
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_transform_minimal_person():
-    minimal_old_person = json.loads("""{
+class TestTransformPerson:
+    def test_transform_minimal_person(self):
+        minimal_old_person = json.loads("""{
             "authorityPerson": {
                 "defaultName": {
                     "lastname": "Andréasson",
@@ -19,11 +19,11 @@ def test_transform_minimal_person():
             }
         }""")
 
-    transformed_person = transform_person(minimal_old_person)
+        transformed_person = transform_person(minimal_old_person)
 
-    assert_equal_for_xml_and_xml_string(
-        transformed_person,
-        """<person>
+        assert_equal_for_xml_and_xml_string(
+            transformed_person,
+            """<person>
             <recordInfo>
                 <validationType>
                     <linkedRecordType>validationType</linkedRecordType>
@@ -42,11 +42,10 @@ def test_transform_minimal_person():
                 </name>
             </authority>
             </person>""",
-    )
+        )
 
-
-def test_transform_person_with_only_swe_biography():
-    minimal_old_person = json.loads("""{
+    def test_transform_person_with_only_swe_biography(self):
+        minimal_old_person = json.loads("""{
             "authorityPerson": {
                 "defaultName": {
                     "lastname": "Andréasson",
@@ -61,11 +60,11 @@ def test_transform_person_with_only_swe_biography():
             }
         }""")
 
-    transformed_person = transform_person(minimal_old_person)
+        transformed_person = transform_person(minimal_old_person)
 
-    assert_equal_for_xml_and_xml_string(
-        transformed_person,
-        """<person>
+        assert_equal_for_xml_and_xml_string(
+            transformed_person,
+            """<person>
             <recordInfo>
                 <validationType>
                     <linkedRecordType>validationType</linkedRecordType>
@@ -85,11 +84,10 @@ def test_transform_person_with_only_swe_biography():
             </authority>
             <note type="biographical" lang="swe" repeatId="swe">Hej hopp</note>
             </person>""",
-    )
+        )
 
-
-def test_transform_person_ignores_identifier_without_value():
-    minimal_old_person = json.loads("""{
+    def test_transform_person_ignores_identifier_without_value(self):
+        minimal_old_person = json.loads("""{
             "authorityPerson": {
                 "defaultName": {
                     "lastname": "Andréasson",
@@ -114,11 +112,11 @@ def test_transform_person_ignores_identifier_without_value():
             }
         }""")
 
-    transformed_person = transform_person(minimal_old_person)
+        transformed_person = transform_person(minimal_old_person)
 
-    assert_equal_for_xml_and_xml_string(
-        transformed_person,
-        """<person>
+        assert_equal_for_xml_and_xml_string(
+            transformed_person,
+            """<person>
             <recordInfo>
                 <validationType>
                     <linkedRecordType>validationType</linkedRecordType>
@@ -138,15 +136,14 @@ def test_transform_person_ignores_identifier_without_value():
             </authority>
             <nameIdentifier type="orcid" repeatId="0">0000-1111-2222-3333</nameIdentifier>
             </person>""",
-    )
+        )
 
+    @patch("fedora_to_cora.transform_person.get_cora_id_by_old_id")
+    def test_transform_maximal_person(self, mock_get_cora_id_by_old_id):
 
-@patch("fedora_to_cora.transform_person.get_cora_id_by_old_id")
-def test_transform_maximal_person(mock_get_cora_id_by_old_id):
+        mock_get_cora_id_by_old_id.side_effect = lambda old_id, **kwargs: "cora-" + old_id
 
-    mock_get_cora_id_by_old_id.side_effect = lambda old_id, **kwargs: "cora-" + old_id
-
-    maximal_old_person = json.loads("""{
+        maximal_old_person = json.loads("""{
   "authorityPerson": {
     "defaultName": {
       "lastname": "Andersson",
@@ -516,11 +513,11 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
   }
 }""")
 
-    transformed_person = transform_person(maximal_old_person, context=Mock())
+        transformed_person = transform_person(maximal_old_person, context=Mock())
 
-    assert_equal_for_xml_and_xml_string(
-        transformed_person,
-        """<person>
+        assert_equal_for_xml_and_xml_string(
+            transformed_person,
+            """<person>
             <recordInfo>
                 <validationType>
                     <linkedRecordType>validationType</linkedRecordType>
@@ -668,43 +665,42 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
                 </endDate>
             </affiliation>
         </person>""",
-    )
+        )
 
-
-def test_transform_person_numbers_identifiers_per_type():
-    old_person = {
-        "authorityPerson": {
-            "defaultName": {
-                "firstname": "Sara",
-                "lastname": "Andersson",
-                "addition": "",
-            },
-            "pid": "authority-person:11111",
-            "identifiers": [
-                {"type": "LOCAL", "domain": "kau", "value": "test123"},
-                {"type": "ORCID", "domain": "", "value": "0000-1111-2222-3333"},
-                {"type": "LOCAL", "domain": "uu", "value": " "},
-                {"type": "LIBRIS", "domain": "", "value": "2541478441254"},
-                {"type": "LOCAL", "domain": "smhi", "value": "test123"},
-                {"type": "VIAF", "domain": "", "value": "12aer458"},
-                {"type": "ORCID", "domain": "", "value": "0000-4444-5555-6666"},
-                {"type": "LOCAL", "domain": "uu", "value": "sarto903"},
-            ],
+    def test_transform_person_numbers_identifiers_per_type(self):
+        old_person = {
+            "authorityPerson": {
+                "defaultName": {
+                    "firstname": "Sara",
+                    "lastname": "Andersson",
+                    "addition": "",
+                },
+                "pid": "authority-person:11111",
+                "identifiers": [
+                    {"type": "LOCAL", "domain": "kau", "value": "test123"},
+                    {"type": "ORCID", "domain": "", "value": "0000-1111-2222-3333"},
+                    {"type": "LOCAL", "domain": "uu", "value": " "},
+                    {"type": "LIBRIS", "domain": "", "value": "2541478441254"},
+                    {"type": "LOCAL", "domain": "smhi", "value": "test123"},
+                    {"type": "VIAF", "domain": "", "value": "12aer458"},
+                    {"type": "ORCID", "domain": "", "value": "0000-4444-5555-6666"},
+                    {"type": "LOCAL", "domain": "uu", "value": "sarto903"},
+                ],
+            }
         }
-    }
 
-    transformed_person = transform_person(old_person)
+        transformed_person = transform_person(old_person)
 
-    identifiers = transformed_person.findall("nameIdentifier")
-    assert [
-        (identifier.attrib["type"], identifier.attrib["repeatId"])
-        for identifier in identifiers
-    ] == [
-        ("localId", "0"),
-        ("localId", "1"),
-        ("localId", "2"),
-        ("orcid", "0"),
-        ("orcid", "1"),
-        ("se-libr", "0"),
-        ("viaf", "0"),
-    ]
+        identifiers = transformed_person.findall("nameIdentifier")
+        assert [
+            (identifier.attrib["type"], identifier.attrib["repeatId"])
+            for identifier in identifiers
+        ] == [
+            ("localId", "0"),
+            ("localId", "1"),
+            ("localId", "2"),
+            ("orcid", "0"),
+            ("orcid", "1"),
+            ("se-libr", "0"),
+            ("viaf", "0"),
+        ]

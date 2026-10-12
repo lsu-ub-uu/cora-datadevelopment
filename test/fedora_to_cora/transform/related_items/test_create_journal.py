@@ -7,12 +7,12 @@ from fedora_to_cora.transform.related_items.create_journal import (
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.context import MockContext
 
+class TestCreateJournal:
+    def test_create_related_item_type_journal_with_title(self):
+        mock_context = MockContext()
 
-def test_create_related_item_type_journal_with_title():
-    mock_context = MockContext()
-
-    source_record = ET.fromstring(
-        """
+        source_record = ET.fromstring(
+            """
         <publication>
             <uncontrolledJournal>
                 <journalNameUncontrolled>
@@ -22,27 +22,26 @@ def test_create_related_item_type_journal_with_title():
             </uncontrolledJournal>
         </publication>
         """
-    )
+        )
 
-    journals = create_related_item_type_journal(source_record, mock_context)
+        journals = create_related_item_type_journal(source_record, mock_context)
 
-    assert_equal_for_xml_and_xml_string(
-        journals[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            journals[0],
+            """
         <relatedItem type="journal" otherType="text">
             <titleInfo>
                 <title>Design, Automation and Test in Europe</title>
             </titleInfo>
         </relatedItem>
         """,
-    )
+        )
 
+    def test_create_related_item_type_journal_with_identifiers(self):
+        mock_context = MockContext()
 
-def test_create_related_item_type_journal_with_identifiers():
-    mock_context = MockContext()
-
-    source_record = ET.fromstring(
-        """
+        source_record = ET.fromstring(
+            """
         <publication>
             <uncontrolledJournal>
                 <printedIssn>1530-1591</printedIssn>
@@ -51,13 +50,13 @@ def test_create_related_item_type_journal_with_identifiers():
             </uncontrolledJournal>
         </publication>
         """
-    )
+        )
 
-    journals = create_related_item_type_journal(source_record, mock_context)
+        journals = create_related_item_type_journal(source_record, mock_context)
 
-    assert_equal_for_xml_and_xml_string(
-        journals[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            journals[0],
+            """
         <relatedItem type="journal" otherType="text">
             <identifier type="issn" displayLabel="pissn">
                 1530-1591
@@ -67,14 +66,13 @@ def test_create_related_item_type_journal_with_identifiers():
             </identifier>
         </relatedItem>
         """,
-    )
+        )
 
+    def test_create_related_item_type_journal_with_part(self):
+        mock_context = MockContext()
 
-def test_create_related_item_type_journal_with_part():
-    mock_context = MockContext()
-
-    source_record = ET.fromstring(
-        """
+        source_record = ET.fromstring(
+            """
         <publication>
             <uncontrolledJournal>
                 <journalNameUncontrolled>
@@ -88,13 +86,13 @@ def test_create_related_item_type_journal_with_part():
             <endPage>110</endPage>
         </publication>
         """
-    )
+        )
 
-    journals = create_related_item_type_journal(source_record, mock_context)
+        journals = create_related_item_type_journal(source_record, mock_context)
 
-    assert_equal_for_xml_and_xml_string(
-        journals[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            journals[0],
+            """
         <relatedItem type="journal" otherType="text">
             <titleInfo>
                 <title>Design, Automation and Test in Europe</title>
@@ -116,14 +114,13 @@ def test_create_related_item_type_journal_with_part():
             </part>
         </relatedItem>
         """,
-    )
+        )
 
+    def test_create_related_item_type_journal_with_part_without_extent(self):
+        mock_context = MockContext()
 
-def test_create_related_item_type_journal_with_part_without_extent():
-    mock_context = MockContext()
-
-    source_record = ET.fromstring(
-        """
+        source_record = ET.fromstring(
+            """
         <publication>
             <uncontrolledJournal>
                 <journalNameUncontrolled>
@@ -135,13 +132,13 @@ def test_create_related_item_type_journal_with_part_without_extent():
             <articleId>123456</articleId>
         </publication>
         """
-    )
+        )
 
-    journals = create_related_item_type_journal(source_record, mock_context)
+        journals = create_related_item_type_journal(source_record, mock_context)
 
-    assert_equal_for_xml_and_xml_string(
-        journals[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            journals[0],
+            """
         <relatedItem type="journal" otherType="text">
             <titleInfo>
                 <title>Design, Automation and Test in Europe</title>
@@ -159,118 +156,115 @@ def test_create_related_item_type_journal_with_part_without_extent():
             </part>
         </relatedItem>
         """,
-    )
+        )
 
+    def test_create_controlled_journal(self, monkeypatch):
+        journal_old_id = "985"
+        journal_cora_id = "diva-journal:21849327760208536"
 
-def test_create_controlled_journal(monkeypatch):
-    journal_old_id = "985"
-    journal_cora_id = "diva-journal:21849327760208536"
+        mock_context = MockContext()
 
-    mock_context = MockContext()
+        def mock_get_id(old_id, *args, **kwargs):
+            if old_id == journal_old_id:
+                return journal_cora_id
+            else:
+                return None
 
-    def mock_get_id(old_id, *args, **kwargs):
-        if old_id == journal_old_id:
-            return journal_cora_id
-        else:
-            return None
+        monkeypatch.setattr(
+            "fedora_to_cora.transform.related_items.create_journal.get_cora_id_by_old_id",
+            mock_get_id,
+        )
 
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.related_items.create_journal.get_cora_id_by_old_id",
-        mock_get_id,
-    )
+        source_record = ET.fromstring(
+            f"""
+            <publication>
+                <journal>
+                    <journalId>{journal_old_id}</journalId>
+                </journal>
+                <volume>2021</volume>
+                <issueNumber>4</issueNumber>
+                <articleId>123456</articleId>
+                <startPage>100</startPage>
+                <endPage>110</endPage>
+            </publication>
+            """
+        )
 
-    source_record = ET.fromstring(
-        f"""
-        <publication>
-            <journal>
-                <journalId>{journal_old_id}</journalId>
-            </journal>
-            <volume>2021</volume>
-            <issueNumber>4</issueNumber>
-            <articleId>123456</articleId>
-            <startPage>100</startPage>
-            <endPage>110</endPage>
-        </publication>
-        """
-    )
+        journals = create_related_item_type_journal(source_record, mock_context)
 
-    journals = create_related_item_type_journal(source_record, mock_context)
+        assert_equal_for_xml_and_xml_string(
+            journals[0],
+            f"""
+            <relatedItem type="journal" otherType="link">
+                <journal>
+                    <linkedRecordType>diva-journal</linkedRecordType>
+                    <linkedRecordId>{journal_cora_id}</linkedRecordId>
+                </journal>
+                 <part>
+                    <detail type="volume">
+                        <number>2021</number>
+                    </detail>
+                    <detail type="issue">
+                        <number>4</number>
+                    </detail>
+                    <detail type="artNo">
+                        <number>123456</number>
+                    </detail>
+                    <extent>
+                        <start>100</start>
+                        <end>110</end>
+                    </extent>
+                </part>
+            </relatedItem>
+            """,
+        )
 
-    assert_equal_for_xml_and_xml_string(
-        journals[0],
-        f"""
-        <relatedItem type="journal" otherType="link">
-            <journal>
-                <linkedRecordType>diva-journal</linkedRecordType>
-                <linkedRecordId>{journal_cora_id}</linkedRecordId>
-            </journal>
-             <part>
-                <detail type="volume">
-                    <number>2021</number>
-                </detail>
-                <detail type="issue">
-                    <number>4</number>
-                </detail>
-                <detail type="artNo">
-                    <number>123456</number>
-                </detail>
-                <extent>
-                    <start>100</start>
-                    <end>110</end>
-                </extent>
-            </part>
-        </relatedItem>
-        """,
-    )
+    def test_create_controlled_journal_with_part(self, monkeypatch):
+        journal_old_id = "985"
+        journal_cora_id = "diva-journal:21849327760208536"
 
+        mock_context = MockContext()
 
-def test_create_controlled_journal_with_part(monkeypatch):
-    journal_old_id = "985"
-    journal_cora_id = "diva-journal:21849327760208536"
+        def mock_get_id(old_id, *args, **kwargs):
+            if old_id == journal_old_id:
+                return journal_cora_id
+            else:
+                return None
 
-    mock_context = MockContext()
+        monkeypatch.setattr(
+            "fedora_to_cora.transform.related_items.create_journal.get_cora_id_by_old_id",
+            mock_get_id,
+        )
 
-    def mock_get_id(old_id, *args, **kwargs):
-        if old_id == journal_old_id:
-            return journal_cora_id
-        else:
-            return None
+        source_record = ET.fromstring(
+            f"""
+            <publication>
+                <journal>
+                    <journalId>{journal_old_id}</journalId>
+                </journal>
+            </publication>
+            """
+        )
 
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.related_items.create_journal.get_cora_id_by_old_id",
-        mock_get_id,
-    )
+        journals = create_related_item_type_journal(source_record, mock_context)
 
-    source_record = ET.fromstring(
-        f"""
-        <publication>
-            <journal>
-                <journalId>{journal_old_id}</journalId>
-            </journal>
-        </publication>
-        """
-    )
+        assert_equal_for_xml_and_xml_string(
+            journals[0],
+            f"""
+            <relatedItem type="journal" otherType="link">
+                <journal>
+                    <linkedRecordType>diva-journal</linkedRecordType>
+                    <linkedRecordId>{journal_cora_id}</linkedRecordId>
+                </journal>
+            </relatedItem>
+            """,
+        )
 
-    journals = create_related_item_type_journal(source_record, mock_context)
+    def test_empty_uncontrolled_journal(self):
+        mock_context = MockContext()
 
-    assert_equal_for_xml_and_xml_string(
-        journals[0],
-        f"""
-        <relatedItem type="journal" otherType="link">
-            <journal>
-                <linkedRecordType>diva-journal</linkedRecordType>
-                <linkedRecordId>{journal_cora_id}</linkedRecordId>
-            </journal>
-        </relatedItem>
-        """,
-    )
-
-
-def test_empty_uncontrolled_journal():
-    mock_context = MockContext()
-
-    source_record = ET.fromstring(
-        """
+        source_record = ET.fromstring(
+            """
         <publication>
             <uncontrolledJournal>
                 <controlled>false</controlled>
@@ -280,31 +274,30 @@ def test_empty_uncontrolled_journal():
             </uncontrolledJournal>
         </publication>
         """
-    )
+        )
 
-    journals = create_related_item_type_journal(source_record, mock_context)
-    assert len(journals) == 0
+        journals = create_related_item_type_journal(source_record, mock_context)
+        assert len(journals) == 0
 
+    def test_create_uncontrolled_and_controlled_journal(self, monkeypatch):
+        journal_old_id = "985"
+        journal_cora_id = "diva-journal:21849327760208536"
 
-def test_create_uncontrolled_and_controlled_journal(monkeypatch):
-    journal_old_id = "985"
-    journal_cora_id = "diva-journal:21849327760208536"
+        mock_context = MockContext()
 
-    mock_context = MockContext()
+        def mock_get_id(old_id, *args, **kwargs):
+            if old_id == journal_old_id:
+                return journal_cora_id
+            else:
+                return None
 
-    def mock_get_id(old_id, *args, **kwargs):
-        if old_id == journal_old_id:
-            return journal_cora_id
-        else:
-            return None
+        monkeypatch.setattr(
+            "fedora_to_cora.transform.related_items.create_journal.get_cora_id_by_old_id",
+            mock_get_id,
+        )
 
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.related_items.create_journal.get_cora_id_by_old_id",
-        mock_get_id,
-    )
-
-    source_record = ET.fromstring(
-        """
+        source_record = ET.fromstring(
+            """
         <publication>
             <journal>
                 <journalId>{journal_old_id}</journalId>
@@ -333,8 +326,8 @@ def test_create_uncontrolled_and_controlled_journal(monkeypatch):
             </part>
         </publication>
         """
-    )
+        )
 
-    journals = create_related_item_type_journal(source_record, mock_context)
+        journals = create_related_item_type_journal(source_record, mock_context)
 
-    assert len(journals) == 2
+        assert len(journals) == 2

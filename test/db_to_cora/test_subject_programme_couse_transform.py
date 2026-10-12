@@ -9,21 +9,21 @@ from db_to_cora.subject_programme_course_transform import (
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_create_tag_for_subject():
-    source_record = ET.fromstring(
-        """
+class TestSubjectProgrammeCouseTransform:
+    def test_create_tag_for_subject(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <domain>varldskulturmuseerna</domain>
             <old_id>40102</old_id>
             <name_swe>En test</name_swe>
         </DATA_RECORD>      
         """
-    )
+        )
 
-    result = transform_subject(source_record)
+        result = transform_subject(source_record)
 
-    expected_xml = """
+        expected_xml = """
         <subject>
             <recordInfo>
                 <validationType>
@@ -46,23 +46,22 @@ def test_create_tag_for_subject():
         </subject>
     """
 
-    assert_equal_for_xml_and_xml_string(result, expected_xml)
+        assert_equal_for_xml_and_xml_string(result, expected_xml)
 
-
-def test_create_tag_for_programme():
-    source_record = ET.fromstring(
-        """
+    def test_create_tag_for_programme(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <domain>varldskulturmuseerna</domain>
             <old_id>40102</old_id>
             <name_swe>En test</name_swe>
         </DATA_RECORD>      
         """
-    )
+        )
 
-    result = transform_programme(source_record)
+        result = transform_programme(source_record)
 
-    expected_xml = """
+        expected_xml = """
         <programme>
             <recordInfo>
                 <validationType>
@@ -85,23 +84,22 @@ def test_create_tag_for_programme():
         </programme>
     """
 
-    assert_equal_for_xml_and_xml_string(result, expected_xml)
+        assert_equal_for_xml_and_xml_string(result, expected_xml)
 
-
-def test_create_tag_for_course():
-    source_record = ET.fromstring(
-        """
+    def test_create_tag_for_course(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <domain>varldskulturmuseerna</domain>
             <old_id>40102</old_id>
             <name_swe>En test</name_swe>
         </DATA_RECORD>      
         """
-    )
+        )
 
-    result = transform_course(source_record)
+        result = transform_course(source_record)
 
-    expected_xml = """
+        expected_xml = """
         <course>
             <recordInfo>
                 <validationType>
@@ -124,12 +122,11 @@ def test_create_tag_for_course():
         </course>
     """
 
-    assert_equal_for_xml_and_xml_string(result, expected_xml)
+        assert_equal_for_xml_and_xml_string(result, expected_xml)
 
-
-def test_complete_without_links_xml():
-    source_record = ET.fromstring(
-        """
+    def test_complete_without_links_xml(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <domain>varldskulturmuseerna</domain>
             <old_id>40102</old_id>
@@ -138,12 +135,12 @@ def test_complete_without_links_xml():
             <name_eng>en testpost</name_eng>
         </DATA_RECORD>  
         """
-    )
+        )
 
-    result = transform_subject(source_record)
-    secondResultSameRun = transform_subject(source_record)
+        result = transform_subject(source_record)
+        secondResultSameRun = transform_subject(source_record)
 
-    expected_xml = """
+        expected_xml = """
         <subject>
             <recordInfo>
                 <validationType>
@@ -174,13 +171,12 @@ def test_complete_without_links_xml():
         </subject>
     """
 
-    assert_equal_for_xml_and_xml_string(result, expected_xml)
-    assert_equal_for_xml_and_xml_string(secondResultSameRun, expected_xml)
+        assert_equal_for_xml_and_xml_string(result, expected_xml)
+        assert_equal_for_xml_and_xml_string(secondResultSameRun, expected_xml)
 
-
-def test_complete_xml():
-    source_record = ET.fromstring(
-        """
+    def test_complete_xml(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <domain>varldskulturmuseerna</domain>
             <old_id>40102</old_id>
@@ -191,11 +187,11 @@ def test_complete_xml():
             <earlier_id>9876</earlier_id>
         </DATA_RECORD>  
         """
-    )
+        )
 
-    result = transform_subject(source_record)
+        result = transform_subject(source_record)
 
-    expected_xml = """
+        expected_xml = """
         <subject>
             <recordInfo>
                 <validationType>
@@ -226,23 +222,22 @@ def test_complete_xml():
         </subject>
     """
 
-    assert_equal_for_xml_and_xml_string(result, expected_xml)
+        assert_equal_for_xml_and_xml_string(result, expected_xml)
 
-
-def test_no_name_swe():
-    source_record = ET.fromstring(
-        """
+    def test_no_name_swe(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <domain>varldskulturmuseerna</domain>
             <old_id>40102</old_id>
             <name_swe></name_swe>
         </DATA_RECORD>      
         """
-    )
+        )
 
-    result = transform_subject(source_record)
+        result = transform_subject(source_record)
 
-    expected_xml = """
+        expected_xml = """
         <subject>
             <recordInfo>
                 <validationType>
@@ -262,12 +257,11 @@ def test_no_name_swe():
         </subject>
     """
 
-    assert_equal_for_xml_and_xml_string(result, expected_xml)
+        assert_equal_for_xml_and_xml_string(result, expected_xml)
 
-
-def test_raises_error_when_unknown_element():
-    source_record = ET.fromstring(
-        """
+    def test_raises_error_when_unknown_element(self):
+        source_record = ET.fromstring(
+            """
         <DATA_RECORD>
             <domain>varldskulturmuseerna</domain>
             <old_id>40100</old_id>
@@ -280,10 +274,10 @@ def test_raises_error_when_unknown_element():
             <some_unknown_element>some unknown value</some_unknown_element>
         </DATA_RECORD>       
         """
-    )
+        )
 
-    with pytest.raises(
-        XMLValidationError,
-        match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
-    ):
-        transform_course(source_record)
+        with pytest.raises(
+            XMLValidationError,
+            match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
+        ):
+            transform_course(source_record)

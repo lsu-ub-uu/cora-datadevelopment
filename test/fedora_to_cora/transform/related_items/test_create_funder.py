@@ -6,17 +6,16 @@ from fedora_to_cora.transform.related_items.create_funder import (
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from unittest.mock import patch
 
+class TestCreateFunder:
+    def test_create_funder_link(self):
+        pass
 
-def test_create_funder_link():
-    pass
+    @patch("fedora_to_cora.transform.related_items.create_funder.get_cora_id_by_old_id")
+    def test_create_funder_with_project_id(self, mock_get_cora_id_by_old_id):
+        mock_get_cora_id_by_old_id.return_value = "funder:2"
 
-
-@patch("fedora_to_cora.transform.related_items.create_funder.get_cora_id_by_old_id")
-def test_create_funder_with_project_id(mock_get_cora_id_by_old_id):
-    mock_get_cora_id_by_old_id.return_value = "funder:2"
-
-    source_record = ET.fromstring(
-        """
+        source_record = ET.fromstring(
+            """
         <publication>
             <funderInfos>
                 <funderInfo>
@@ -41,12 +40,12 @@ def test_create_funder_with_project_id(mock_get_cora_id_by_old_id):
             </funderInfos>
         </publication>
         """
-    )
-    result = create_name_type_corporate_othertype_funder(source_record, MockContext())
+        )
+        result = create_name_type_corporate_othertype_funder(source_record, MockContext())
 
-    assert_equal_for_xml_and_xml_string(
-        result[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            result[0],
+            """
         <name type="corporate" otherType="funder" repeatId="0">
             <funder>
                 <linkedRecordType>diva-funder</linkedRecordType>
@@ -57,26 +56,23 @@ def test_create_funder_with_project_id(mock_get_cora_id_by_old_id):
             </role>
         </name>
         """,
-    )
+        )
 
+    def test_create_no_funder_infos(self):
+        source_record = ET.fromstring("""<publication></publication>""")
+        result = create_name_type_corporate_othertype_funder(source_record, MockContext())
+        assert len(result) == 0
 
-def test_create_no_funder_infos():
-    source_record = ET.fromstring("""<publication></publication>""")
-    result = create_name_type_corporate_othertype_funder(source_record, MockContext())
-    assert len(result) == 0
+    def test_create_empty_funder_infos(self):
+        source_record = ET.fromstring(
+            """<publication><funderInfos></funderInfos></publication>"""
+        )
+        result = create_name_type_corporate_othertype_funder(source_record, MockContext())
+        assert len(result) == 0
 
-
-def test_create_empty_funder_infos():
-    source_record = ET.fromstring(
-        """<publication><funderInfos></funderInfos></publication>"""
-    )
-    result = create_name_type_corporate_othertype_funder(source_record, MockContext())
-    assert len(result) == 0
-
-
-def test_create_empty_funder_info():
-    source_record = ET.fromstring(
-        """<publication><funderInfos><funderInfo></funderInfo></funderInfos></publication>"""
-    )
-    result = create_name_type_corporate_othertype_funder(source_record, MockContext())
-    assert len(result) == 0
+    def test_create_empty_funder_info(self):
+        source_record = ET.fromstring(
+            """<publication><funderInfos><funderInfo></funderInfo></funderInfos></publication>"""
+        )
+        result = create_name_type_corporate_othertype_funder(source_record, MockContext())
+        assert len(result) == 0

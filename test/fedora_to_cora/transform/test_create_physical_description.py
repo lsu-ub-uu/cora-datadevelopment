@@ -4,51 +4,48 @@ from fedora_to_cora.transform.create_physical_description import (
     create_physical_description,
 )
 
-
-def test_create_physical_description_from_pages():
-    source_record = ET.fromstring("""
+class TestCreatePhysicalDescription:
+    def test_create_physical_description_from_pages(self):
+        source_record = ET.fromstring("""
         <publication>
             <pages>208</pages>
         </publication>
         """)
 
-    physical_description = create_physical_description(source_record)
+        physical_description = create_physical_description(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        physical_description,
-        """
+        assert_equal_for_xml_and_xml_string(
+            physical_description,
+            """
         <physicalDescription>
             <extent unit="pages">208</extent>
         </physicalDescription>
         """,
-    )
+        )
 
-
-def test_create_physical_description_empty_pages():
-    source_record = ET.fromstring("""
+    def test_create_physical_description_empty_pages(self):
+        source_record = ET.fromstring("""
         <publication>
             <pages />
         </publication>
         """)
 
-    physical_description = create_physical_description(source_record)
+        physical_description = create_physical_description(source_record)
 
-    assert physical_description is None
+        assert physical_description is None
 
-
-def test_create_physical_description_empty_data():
-    source_record = ET.fromstring("""
+    def test_create_physical_description_empty_data(self):
+        source_record = ET.fromstring("""
         <publication>
         </publication>
         """)
 
-    physical_description = create_physical_description(source_record)
+        physical_description = create_physical_description(source_record)
 
-    assert physical_description is None
+        assert physical_description is None
 
-
-def test_create_physical_description_from_media_information():
-    source_record = ET.fromstring("""
+    def test_create_physical_description_from_media_information(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <physicalDescriptions>
@@ -60,22 +57,21 @@ def test_create_physical_description_from_media_information():
         </publication>
         """)
 
-    description = create_physical_description(source_record)
+        description = create_physical_description(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        description,
-        """
+        assert_equal_for_xml_and_xml_string(
+            description,
+            """
         <physicalDescription>
             <extent unit="other">
                 Fysisk beskrivning Fysisk beskrivning Fysisk beskrivning
             </extent>
         </physicalDescription>
         """,
-    )
+        )
 
-
-def test_create_physical_description_from_media_information_multiple():
-    source_record = ET.fromstring("""
+    def test_create_physical_description_from_media_information_multiple(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <physicalDescriptions>
@@ -90,22 +86,21 @@ def test_create_physical_description_from_media_information_multiple():
         </publication>
         """)
 
-    description = create_physical_description(source_record)
+        description = create_physical_description(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        description,
-        """
+        assert_equal_for_xml_and_xml_string(
+            description,
+            """
         <physicalDescription>
             <extent unit="other">
                 123, 456
             </extent>
         </physicalDescription>
         """,
-    )
+        )
 
-
-def test_create_physical_description_from_size():
-    source_record = ET.fromstring("""
+    def test_create_physical_description_from_size(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
                 <size>22*32 km2</size>
@@ -113,20 +108,19 @@ def test_create_physical_description_from_size():
         </publication>
         """)
 
-    description = create_physical_description(source_record)
+        description = create_physical_description(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        description,
-        """
+        assert_equal_for_xml_and_xml_string(
+            description,
+            """
         <physicalDescription>
             <extent unit="other">22*32 km2</extent>
         </physicalDescription>
         """,
-    )
+        )
 
-
-def test_create_physical_description_from_media_information_and_pages():
-    source_record = ET.fromstring("""
+    def test_create_physical_description_from_media_information_and_pages(self):
+        source_record = ET.fromstring("""
         <publication>
             <pages>208</pages>
             <mediaInformation>
@@ -140,11 +134,11 @@ def test_create_physical_description_from_media_information_and_pages():
         </publication>
         """)
 
-    description = create_physical_description(source_record)
+        description = create_physical_description(source_record)
 
-    assert_equal_for_xml_and_xml_string(
-        description,
-        """
+        assert_equal_for_xml_and_xml_string(
+            description,
+            """
         <physicalDescription>
             <extent unit="pages">208</extent>
             <extent unit="other">
@@ -152,17 +146,16 @@ def test_create_physical_description_from_media_information_and_pages():
             </extent>
         </physicalDescription>
         """,
-    )
+        )
 
-
-def test_create_physical_description_empty_media_information():
-    source_record = ET.fromstring("""
+    def test_create_physical_description_empty_media_information(self):
+        source_record = ET.fromstring("""
         <publication>
             <mediaInformation>
             </mediaInformation>
         </publication>
         """)
 
-    description = create_physical_description(source_record)
+        description = create_physical_description(source_record)
 
-    assert description is None
+        assert description is None

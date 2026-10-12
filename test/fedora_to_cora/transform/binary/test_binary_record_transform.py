@@ -4,10 +4,10 @@ from fedora_to_cora.transform.binary.binary_record_transform import (
 import xml.etree.ElementTree as ET
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-
-def test_binary_record_transform():
-    source_record = ET.fromstring(
-        """
+class TestBinaryRecordTransform:
+    def test_binary_record_transform(self):
+        source_record = ET.fromstring(
+            """
         <attachment>
             <mimeType>
                 <mimeTypeId>62</mimeTypeId>
@@ -63,15 +63,15 @@ def test_binary_record_transform():
             <hasCoverPage>false</hasCoverPage>
         </attachment>
         """
-    )
-    host_record = ET.fromstring("<hostRecord><linkedRecordType>someType</linkedRecordType><linkedRecordId>someId</linkedRecordId></hostRecord>")
+        )
+        host_record = ET.fromstring("<hostRecord><linkedRecordType>someType</linkedRecordType><linkedRecordId>someId</linkedRecordId></hostRecord>")
 
 
-    admin = binary_record_transform(source_record, host_record)
+        admin = binary_record_transform(source_record, host_record)
 
-    assert_equal_for_xml_and_xml_string(
-        admin,
-        """
+        assert_equal_for_xml_and_xml_string(
+            admin,
+            """
             <binary type="generic">
                 <recordInfo>
                     <validationType>
@@ -93,4 +93,4 @@ def test_binary_record_transform():
                 <expectedChecksum>5d516c67a580b689fb27c49b388faf6c50575cdf2a98a1e4b028772801b7f76d1865f24d050dc3d3d835cf23d298f987f8b29c6fd394246b884f0b3554fcd0d4</expectedChecksum>
             </binary>
         """,
-    )
+        )

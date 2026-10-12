@@ -5,10 +5,10 @@ from fedora_to_cora.transform.binary.get_binary_requested_visibility import (
     get_binary_requested_visibility,
 )
 
-
-def test_returns_published_when_no_flag_is_true():
-    source_attachment = ET.fromstring(
-        """
+class TestGetBinaryRequestedVisibility:
+    def test_returns_published_when_no_flag_is_true(self):
+        source_attachment = ET.fromstring(
+            """
         <attachment>
             <toBePublished>false</toBePublished>
             <toBeArchived>false</toBeArchived>
@@ -17,15 +17,14 @@ def test_returns_published_when_no_flag_is_true():
             </secrecyInfo>
         </attachment>
         """
-    )
+        )
 
-    availability = get_binary_requested_visibility(source_attachment)
-    assert availability == "published"
+        availability = get_binary_requested_visibility(source_attachment)
+        assert availability == "published"
 
-
-def test_returns_published_when_to_be_published_is_true():
-    source_attachment = ET.fromstring(
-        """
+    def test_returns_published_when_to_be_published_is_true(self):
+        source_attachment = ET.fromstring(
+            """
         <attachment>
             <toBePublished>true</toBePublished>
             <toBeArchived>false</toBeArchived>
@@ -34,15 +33,14 @@ def test_returns_published_when_to_be_published_is_true():
             </secrecyInfo>
         </attachment>
         """
-    )
+        )
 
-    availability = get_binary_requested_visibility(source_attachment)
-    assert availability == "published"
+        availability = get_binary_requested_visibility(source_attachment)
+        assert availability == "published"
 
-
-def test_returns_unpublished_when_to_be_archived_is_true():
-    source_attachment = ET.fromstring(
-        """
+    def test_returns_unpublished_when_to_be_archived_is_true(self):
+        source_attachment = ET.fromstring(
+            """
         <attachment>
             <toBePublished>false</toBePublished>
             <toBeArchived>true</toBeArchived>
@@ -51,15 +49,14 @@ def test_returns_unpublished_when_to_be_archived_is_true():
             </secrecyInfo>
         </attachment>
         """
-    )
+        )
 
-    availability = get_binary_requested_visibility(source_attachment)
-    assert availability == "unpublished"
+        availability = get_binary_requested_visibility(source_attachment)
+        assert availability == "unpublished"
 
-
-def test_returns_confidential_when_secrecy_is_true():
-    source_attachment = ET.fromstring(
-        """
+    def test_returns_confidential_when_secrecy_is_true(self):
+        source_attachment = ET.fromstring(
+            """
         <attachment>
             <toBePublished>false</toBePublished>
             <toBeArchived>false</toBeArchived>
@@ -68,15 +65,14 @@ def test_returns_confidential_when_secrecy_is_true():
             </secrecyInfo>
         </attachment>
         """
-    )
+        )
 
-    availability = get_binary_requested_visibility(source_attachment)
-    assert availability == "confidential"
+        availability = get_binary_requested_visibility(source_attachment)
+        assert availability == "confidential"
 
-
-def test_returns_secrecy_when_all_flags_are_true():
-    source_attachment = ET.fromstring(
-        """
+    def test_returns_secrecy_when_all_flags_are_true(self):
+        source_attachment = ET.fromstring(
+            """
         <attachment>
             <toBePublished>true</toBePublished>
             <toBeArchived>true</toBeArchived>
@@ -85,15 +81,14 @@ def test_returns_secrecy_when_all_flags_are_true():
             </secrecyInfo>
         </attachment>
         """
-    )
+        )
 
-    availability = get_binary_requested_visibility(source_attachment)
-    assert availability == "confidential"
+        availability = get_binary_requested_visibility(source_attachment)
+        assert availability == "confidential"
 
-
-def test_returns_unpublished_when_to_be_archived_and_to_be_published_are_true():
-    source_attachment = ET.fromstring(
-        """
+    def test_returns_unpublished_when_to_be_archived_and_to_be_published_are_true(self):
+        source_attachment = ET.fromstring(
+            """
         <attachment>
             <toBePublished>true</toBePublished>
             <toBeArchived>true</toBeArchived>
@@ -102,15 +97,14 @@ def test_returns_unpublished_when_to_be_archived_and_to_be_published_are_true():
             </secrecyInfo>
         </attachment>
         """
-    )
+        )
 
-    availability = get_binary_requested_visibility(source_attachment)
-    assert availability == "unpublished"
+        availability = get_binary_requested_visibility(source_attachment)
+        assert availability == "unpublished"
 
-
-def test_returns_confidential_when_secrecy_and_to_be_published_are_true():
-    source_attachment = ET.fromstring(
-        """
+    def test_returns_confidential_when_secrecy_and_to_be_published_are_true(self):
+        source_attachment = ET.fromstring(
+            """
         <attachment>
             <toBePublished>true</toBePublished>
             <toBeArchived>false</toBeArchived>
@@ -119,15 +113,14 @@ def test_returns_confidential_when_secrecy_and_to_be_published_are_true():
             </secrecyInfo>
         </attachment>
         """
-    )
+        )
 
-    availability = get_binary_requested_visibility(source_attachment)
-    assert availability == "confidential"
+        availability = get_binary_requested_visibility(source_attachment)
+        assert availability == "confidential"
 
-
-def test_returns_secrecy_when_secrecy_and_to_be_archived_are_true():
-    source_attachment = ET.fromstring(
-        """
+    def test_returns_secrecy_when_secrecy_and_to_be_archived_are_true(self):
+        source_attachment = ET.fromstring(
+            """
         <attachment>
             <toBePublished>false</toBePublished>
             <toBeArchived>true</toBeArchived>
@@ -136,29 +129,27 @@ def test_returns_secrecy_when_secrecy_and_to_be_archived_are_true():
             </secrecyInfo>
         </attachment>
         """
-    )
+        )
 
-    availability = get_binary_requested_visibility(source_attachment)
-    assert availability == "confidential"
+        availability = get_binary_requested_visibility(source_attachment)
+        assert availability == "confidential"
 
-
-def test_handles_missing_secrecy_info():
-    source_attachment = ET.fromstring(
-        """
+    def test_handles_missing_secrecy_info(self):
+        source_attachment = ET.fromstring(
+            """
         <attachment>
             <toBePublished>true</toBePublished>
             <toBeArchived>false</toBeArchived>
         </attachment>
         """
-    )
+        )
 
-    availability = get_binary_requested_visibility(source_attachment)
-    assert availability == "published"
+        availability = get_binary_requested_visibility(source_attachment)
+        assert availability == "published"
 
-
-def test_returns_published_when_no_secrecy_and_binary_visibility_is_published():
-    source_attachment = ET.fromstring(
-        """
+    def test_returns_published_when_no_secrecy_and_binary_visibility_is_published(self):
+        source_attachment = ET.fromstring(
+            """
         <attachment>
             <toBePublished>false</toBePublished>
             <toBeArchived>false</toBeArchived>
@@ -168,7 +159,7 @@ def test_returns_published_when_no_secrecy_and_binary_visibility_is_published():
             <availableFrom>2020-01-01T00:00:00+00:00</availableFrom>
         </attachment>
         """
-    )
+        )
 
-    availability = get_binary_requested_visibility(source_attachment)
-    assert availability == "published"
+        availability = get_binary_requested_visibility(source_attachment)
+        assert availability == "published"

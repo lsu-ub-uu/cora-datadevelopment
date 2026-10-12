@@ -6,9 +6,9 @@ from fedora_to_cora.transform.related_items.create_proceeding import (
 )
 from unittest.mock import MagicMock
 
-
-def test_title_only():
-    source_record = ET.fromstring("""
+class TestCreateProceeding:
+    def test_title_only(self):
+        source_record = ET.fromstring("""
         <publication>
             <proceedingsTitle>
                 <title>Proceedings of the International Conference on Testing</title>
@@ -17,11 +17,11 @@ def test_title_only():
         </publication>
         """)
 
-    conference = create_related_item_type_proceeding(source_record, MockContext())
+        conference = create_related_item_type_proceeding(source_record, MockContext())
 
-    assert_equal_for_xml_and_xml_string(
-        conference,
-        """
+        assert_equal_for_xml_and_xml_string(
+            conference,
+            """
         <relatedItem type="proceeding" otherType="text">
             <titleInfo>
                 <title>Proceedings of the International Conference on Testing</title>
@@ -29,17 +29,16 @@ def test_title_only():
             </titleInfo>
         </relatedItem>   
         """,
-    )
+        )
 
+    def test_complete_conference_maximal(self, monkeypatch):
+        get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")
+        monkeypatch.setattr(
+            "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
+            get_cora_id_by_old_id_mock,
+        )
 
-def test_complete_conference_maximal(monkeypatch):
-    get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
-        get_cora_id_by_old_id_mock,
-    )
-
-    source_record = ET.fromstring("""
+        source_record = ET.fromstring("""
         <publication>
             <conference>En fiktiv konferens</conference>
             <proceedingsTitle>
@@ -106,11 +105,11 @@ def test_complete_conference_maximal(monkeypatch):
         </publication>
         """)
 
-    conference = create_related_item_type_proceeding(source_record, MockContext())
+        conference = create_related_item_type_proceeding(source_record, MockContext())
 
-    assert_equal_for_xml_and_xml_string(
-        conference,
-        """
+        assert_equal_for_xml_and_xml_string(
+            conference,
+            """
         <relatedItem type="proceeding" otherType="text">
             <titleInfo>
                 <title>Proceedings of the International Conference on Testing</title>
@@ -148,11 +147,10 @@ def test_complete_conference_maximal(monkeypatch):
             </name>
         </relatedItem>   
         """,
-    )
+        )
 
-
-def test_html_title():
-    source_record = ET.fromstring("""
+    def test_html_title(self):
+        source_record = ET.fromstring("""
         <publication>
             <proceedingsTitle>
                 <title>&lt;p&gt;Proceedings of the International Conference on Testing&lt;/p&gt;</title>
@@ -161,11 +159,11 @@ def test_html_title():
         </publication>
         """)
 
-    conference = create_related_item_type_proceeding(source_record, MockContext())
+        conference = create_related_item_type_proceeding(source_record, MockContext())
 
-    assert_equal_for_xml_and_xml_string(
-        conference,
-        """
+        assert_equal_for_xml_and_xml_string(
+            conference,
+            """
         <relatedItem type="proceeding" otherType="text">
             <titleInfo>
                 <title>Proceedings of the International Conference on Testing</title>
@@ -173,4 +171,4 @@ def test_html_title():
             </titleInfo>
         </relatedItem>   
         """,
-    )
+        )

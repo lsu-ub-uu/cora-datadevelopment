@@ -4,10 +4,10 @@ from common.test_helper import assert_equal_for_xml_and_xml_string
 from fedora_to_cora.transform.related_items.create_book import create_book
 from cora.context import MockContext
 
-
-def test_create_minimal_book():
-    source_record = ET.fromstring(
-        """
+class TestCreateBook:
+    def test_create_minimal_book(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <bookTitle>
                 <title>En boktitel</title>
@@ -15,53 +15,50 @@ def test_create_minimal_book():
 
         </publication>
         """
-    )
-    result = create_book(source_record, MockContext())
-    assert_equal_for_xml_and_xml_string(
-        result,
-        """
+        )
+        result = create_book(source_record, MockContext())
+        assert_equal_for_xml_and_xml_string(
+            result,
+            """
         <relatedItem type="book" otherType="text">
             <titleInfo><title>En boktitel</title></titleInfo>
         </relatedItem>
     """,
-    )
+        )
 
-
-def test_create_no_book():
-    source_record = ET.fromstring(
-        """
+    def test_create_no_book(self):
+        source_record = ET.fromstring(
+            """
         <publication>
         </publication>
         """
-    )
-    result = create_book(source_record, MockContext())
-    assert result is None
+        )
+        result = create_book(source_record, MockContext())
+        assert result is None
 
-
-def test_create_book_with_empty_title():
-    source_record = ET.fromstring(
-        """
+    def test_create_book_with_empty_title(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <bookTitle>
                 <title></title>
             </bookTitle>
         </publication>
         """
-    )
-    result = create_book(source_record, MockContext())
-    assert result is None
+        )
+        result = create_book(source_record, MockContext())
+        assert result is None
 
+    def test_create_maximal_book(self, monkeypatch):
 
-def test_create_maximal_book(monkeypatch):
+        get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")
+        monkeypatch.setattr(
+            "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
+            get_cora_id_by_old_id_mock,
+        )
 
-    get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
-        get_cora_id_by_old_id_mock,
-    )
-
-    source_record = ET.fromstring(
-        """
+        source_record = ET.fromstring(
+            """
         <publication>
             <bookTitle>
                 <title>En boktitel</title>
@@ -116,11 +113,11 @@ def test_create_maximal_book(monkeypatch):
             </seriesInfos>
         </publication>
         """
-    )
-    result = create_book(source_record, MockContext())
-    assert_equal_for_xml_and_xml_string(
-        result,
-        """
+        )
+        result = create_book(source_record, MockContext())
+        assert_equal_for_xml_and_xml_string(
+            result,
+            """
         <relatedItem type="book" otherType="text">
             <titleInfo>
                 <title>En boktitel</title>
@@ -148,44 +145,41 @@ def test_create_maximal_book(monkeypatch):
             </relatedItem>
         </relatedItem>
     """,
-    )
+        )
 
-
-def test_returns_none_if_no_book_title():
-    source_record = ET.fromstring(
-        """
+    def test_returns_none_if_no_book_title(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <startPage>10</startPage>
             <endPage>30</endPage>
         </publication>
         """
-    )
-    result = create_book(source_record, MockContext())
-    assert result is None
+        )
+        result = create_book(source_record, MockContext())
+        assert result is None
 
+    def test_create_weird_book(self, monkeypatch):
 
-def test_create_weird_book(monkeypatch):
+        get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")
+        monkeypatch.setattr(
+            "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
+            get_cora_id_by_old_id_mock,
+        )
 
-    get_cora_id_by_old_id_mock = MagicMock(return_value="diva-series:12345")
-    monkeypatch.setattr(
-        "fedora_to_cora.transform.related_items.create_series.get_cora_id_by_old_id",
-        get_cora_id_by_old_id_mock,
-    )
-
-    source_record = ET.fromstring(
-        """
+        source_record = ET.fromstring(
+            """
         <publication>
             <bookTitle />
         </publication>
         """
-    )
-    result = create_book(source_record, MockContext())
-    assert result is None
+        )
+        result = create_book(source_record, MockContext())
+        assert result is None
 
-
-def test_create_book_with_html_in_title():
-    source_record = ET.fromstring(
-        """
+    def test_create_book_with_html_in_title(self):
+        source_record = ET.fromstring(
+            """
         <publication>
             <bookTitle>
                 <title>&lt;p&gt;En boktitel&lt;/p&gt;</title>
@@ -193,11 +187,11 @@ def test_create_book_with_html_in_title():
             </bookTitle>
         </publication>
         """
-    )
-    result = create_book(source_record, MockContext())
-    assert_equal_for_xml_and_xml_string(
-        result,
-        """
+        )
+        result = create_book(source_record, MockContext())
+        assert_equal_for_xml_and_xml_string(
+            result,
+            """
         <relatedItem type="book" otherType="text">
             <titleInfo>
                 <title>En boktitel</title>
@@ -205,4 +199,4 @@ def test_create_book_with_html_in_title():
             </titleInfo>
         </relatedItem>
     """,
-    )
+        )

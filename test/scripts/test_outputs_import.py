@@ -9,32 +9,8 @@ from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResul
 from scripts import outputs_import
 
 
-def test_parse_args_defers_environment_defaults(monkeypatch):
-    monkeypatch.setenv("CORA_APP_TOKEN", "test-token")
-    monkeypatch.setattr(sys, "argv", ["outputs-import", "--xml-dir", "xml"])
-
-    args = outputs_import._parse_args()
-
-    assert (args.system, args.login_id, args.app_token) == (None, None, None)
 
 
-def test_main_resolves_environment_before_import(monkeypatch):
-    monkeypatch.setenv("CORA_SYSTEM", "dev")
-    monkeypatch.setenv("CORA_LOGIN_ID", "test-login")
-    monkeypatch.setenv("CORA_APP_TOKEN", "test-token")
-    monkeypatch.setattr(sys, "argv", ["outputs-import", "--xml-dir", "xml"])
-    monkeypatch.setattr(outputs_import, "print_logo", lambda: None)
-    monkeypatch.setattr(outputs_import, "configure_logging", lambda: None)
-    captured = {}
-    monkeypatch.setattr(
-        outputs_import, "outputs_import", lambda **kwargs: captured.update(kwargs)
-    )
-
-    outputs_import.main()
-
-    assert captured["system"] == "dev"
-    assert captured["login_id"] == "test-login"
-    assert captured["app_token"] is None
 
 
 class _FakePool:
@@ -89,258 +65,275 @@ class _FakeTqdm:
     def update(self, count):
         self.updated += count
 
+class TestOutputsImport:
+    def test_parse_args_defers_environment_defaults(self, monkeypatch):
+        monkeypatch.setenv("CORA_APP_TOKEN", "test-token")
+        monkeypatch.setattr(sys, "argv", ["outputs-import", "--xml-dir", "xml"])
 
-def test_read_source_record_paths_applies_limit_and_filters_non_xml(tmp_path):
-    with patch(
-        "scripts.outputs_import.os.listdir",
-        return_value=["a.xml", "ignore.txt", "b.xml"],
-    ):
-        result = outputs_import._read_source_record_paths(str(tmp_path), limit=1)
+        args = outputs_import._parse_args()
 
-    assert result == [str(tmp_path / "a.xml")]
+        assert (args.system, args.login_id, args.app_token) == (None, None, None)
 
-
-def test_filter_source_record_paths_by_pids_filters_by_record_pid(tmp_path):
-    first_xml = tmp_path / "first.xml"
-    first_xml.write_text("<publication><pid>diva2:111</pid></publication>")
-
-    second_xml = tmp_path / "second.xml"
-    second_xml.write_text("<publication><pid>diva2:222</pid></publication>")
-
-    result = outputs_import._filter_source_record_paths_by_pids(
-        [str(first_xml), str(second_xml)],
-        ["diva2:222"],
-    )
-
-    assert result == [str(second_xml)]
-
-
-@patch("scripts.outputs_import.output_migrate")
-@patch("scripts.outputs_import.read_source_xml")
-def test_migrate_record_reads_source_xml_from_path(
-    mock_read_source_xml, mock_output_migrate
-):
-    source_record = ET.fromstring("<publication><pid>diva2:123</pid></publication>")
-    mock_read_source_xml.return_value = source_record
-    mock_output_migrate.return_value = OutputMigrationResult("diva2:123", "SUCCESS")
-
-    outputs_import.context = MockContext()
-    outputs_import.apply = False
-    outputs_import.with_binaries = True
-    outputs_import.fedora_url = "http://fedora.example"
-
-    source_path = "/tmp/publication.xml"
-    result = outputs_import._migrate_record(source_path)
-
-    mock_read_source_xml.assert_called_once_with(source_path)
-    mock_output_migrate.assert_called_once_with(
-        source_record,
-        outputs_import.context,
-        False,
-        with_binaries=True,
-        fedora_url="http://fedora.example",
-    )
-    assert result.status == "SUCCESS"
-
-
-@patch("scripts.outputs_import.save_reports")
-@patch("scripts.outputs_import._filter_source_record_paths_by_pids")
-@patch("scripts.outputs_import._read_source_record_paths")
-@patch("scripts.outputs_import.tqdm", side_effect=lambda **kwargs: _FakeTqdm(**kwargs))
-@patch("scripts.outputs_import.Pool", _FakePool)
-def test_outputs_import_orchestrates_loading_filtering_pool_and_reports(
-    mock_tqdm,
-    mock_read_source_record_paths,
-    mock_filter_source_record_paths_by_pids,
-    mock_save_reports,
-):
-    _FakeTqdm.instances = []
-    _FakePool.captured_iterables = []
-    _FakePool.captured_processes_list = []
-    _FakePool.captured_initargs_list = []
-    _FakePool.test_results_batches = [
-        [
-            OutputMigrationResult("diva2:1", "SUCCESS"),
-            OutputMigrationResult("diva2:2", "FAILED", errors=["x"]),
-        ],
-        [
-            OutputRelationMigrationResult(
-                status="UPDATED", pid="diva2:1", cora_id="1", error=None
-            ),
-            OutputRelationMigrationResult(
-                status="FAILED", pid="diva2:2", cora_id="2", error="relation"
-            ),
-        ],
-    ]
-
-    mock_read_source_record_paths.return_value = ["a.xml", "b.xml", "c.xml"]
-    mock_filter_source_record_paths_by_pids.return_value = ["b.xml", "c.xml"]
-
-    outputs_import.outputs_import(
-        xml_dir="/tmp/xml",
-        system="pre",
-        login_id="user",
-        app_token="token",
-        processes=2,
-        apply=False,
-        limit=10,
-        binaries=False,
-        pids=["diva2:2"],
-        fedora_url="",
-        cora_url="",
-    )
-
-    mock_read_source_record_paths.assert_called_once_with("/tmp/xml", 10)
-    mock_filter_source_record_paths_by_pids.assert_called_once_with(
-        ["a.xml", "b.xml", "c.xml"], ["diva2:2"]
-    )
-    assert _FakePool.captured_processes == 2
-    assert _FakePool.captured_iterables[0] == ["b.xml", "c.xml"]
-    assert _FakePool.captured_initargs_list[0] == (
-        "pre",
-        "user",
-        "token",
-        "",
-        False,
-        False,
-        "",
-    )
-    assert _FakePool.captured_initargs_list[1] == ("pre", "user", "token", "")
-    assert [result.pid for result in _FakePool.captured_iterables[1]] == [
-        "diva2:1",
-        "diva2:2",
-    ]
-    assert _FakeTqdm.instances[0].total == 2
-    assert _FakeTqdm.instances[0].updated == 2
-    assert "✅ 1" in _FakeTqdm.instances[0].postfixes[-1]
-    assert "❌ 1" in _FakeTqdm.instances[0].postfixes[-1]
-    assert _FakeTqdm.instances[1].desc == "Importing output relations"
-
-    results_arg = mock_save_reports.call_args.args[0]
-    assert [result.status for result in results_arg] == ["SUCCESS", "FAILED"]
-    save_reports_kwargs = mock_save_reports.call_args.kwargs
-    relation_results = save_reports_kwargs.pop("relation_results")
-    assert save_reports_kwargs == {
-        "xml_dir": "/tmp/xml",
-        "system": "pre",
-        "apply": False,
-        "binaries": False,
-        "cora_url": "",
-        "output_dir": "reports",
-    }
-    assert [(r.status, r.pid, r.error) for r in relation_results] == [
-        ("UPDATED", "diva2:1", None),
-        ("FAILED", "diva2:2", "relation"),
-    ]
-
-
-def test_migrate_record_raises_assertion_when_context_not_initialized():
-    outputs_import.context = None
-
-    with pytest.raises(
-        AssertionError,
-        match="Context must be initialized before migrating records",
-    ):
-        outputs_import._migrate_record("/tmp/publication.xml")
-
-
-def test_filter_source_record_paths_by_pids_returns_empty_for_empty_pid_list(tmp_path):
-    xml_file = tmp_path / "publication.xml"
-    xml_file.write_text("<publication><pid>diva2:111</pid></publication>")
-
-    result = outputs_import._filter_source_record_paths_by_pids([str(xml_file)], [])
-
-    assert result == []
-
-
-def test_filter_source_record_paths_by_pids_ignores_missing_pid_and_duplicate_input_pids(
-    tmp_path,
-):
-    with_pid = tmp_path / "with_pid.xml"
-    with_pid.write_text("<publication><pid>diva2:222</pid></publication>")
-
-    without_pid = tmp_path / "without_pid.xml"
-    without_pid.write_text("<publication><title>No PID</title></publication>")
-
-    result = outputs_import._filter_source_record_paths_by_pids(
-        [str(with_pid), str(without_pid)],
-        ["diva2:222", "diva2:222"],
-    )
-
-    assert result == [str(with_pid)]
-
-
-def test_filter_source_record_paths_by_pids_raises_for_malformed_xml(tmp_path):
-    malformed_xml = tmp_path / "broken.xml"
-    malformed_xml.write_text("<publication><pid>diva2:1</pid>")
-
-    with pytest.raises(ET.ParseError):
-        outputs_import._filter_source_record_paths_by_pids(
-            [str(malformed_xml)],
-            ["diva2:1"],
+    def test_main_resolves_environment_before_import(self, monkeypatch):
+        monkeypatch.setenv("CORA_SYSTEM", "dev")
+        monkeypatch.setenv("CORA_LOGIN_ID", "test-login")
+        monkeypatch.setenv("CORA_APP_TOKEN", "test-token")
+        monkeypatch.setattr(sys, "argv", ["outputs-import", "--xml-dir", "xml"])
+        monkeypatch.setattr(outputs_import, "print_logo", lambda: None)
+        monkeypatch.setattr(outputs_import, "configure_logging", lambda: None)
+        captured = {}
+        monkeypatch.setattr(
+            outputs_import, "outputs_import", lambda **kwargs: captured.update(kwargs)
         )
 
+        outputs_import.main()
 
-@patch("scripts.outputs_import.read_source_xml", side_effect=ET.ParseError("bad xml"))
-def test_migrate_record_propagates_xml_parse_error(mock_read_source_xml):
-    outputs_import.context = MockContext()
+        assert captured["system"] == "dev"
+        assert captured["login_id"] == "test-login"
+        assert captured["app_token"] is None
 
-    with pytest.raises(ET.ParseError):
-        outputs_import._migrate_record("/tmp/broken.xml")
+    def test_read_source_record_paths_applies_limit_and_filters_non_xml(self, tmp_path):
+        with patch(
+            "scripts.outputs_import.os.listdir",
+            return_value=["a.xml", "ignore.txt", "b.xml"],
+        ):
+            result = outputs_import._read_source_record_paths(str(tmp_path), limit=1)
 
-    mock_read_source_xml.assert_called_once_with("/tmp/broken.xml")
+        assert result == [str(tmp_path / "a.xml")]
 
+    def test_filter_source_record_paths_by_pids_filters_by_record_pid(self, tmp_path):
+        first_xml = tmp_path / "first.xml"
+        first_xml.write_text("<publication><pid>diva2:111</pid></publication>")
 
-@patch("scripts.outputs_import.save_reports")
-@patch("scripts.outputs_import._filter_source_record_paths_by_pids")
-@patch("scripts.outputs_import._read_source_record_paths")
-@patch("scripts.outputs_import.tqdm", side_effect=lambda **kwargs: _FakeTqdm(**kwargs))
-@patch("scripts.outputs_import.Pool", _FakePool)
-def test_outputs_import_preserves_reporting_contract_without_pid_filter(
-    mock_tqdm,
-    mock_read_source_record_paths,
-    mock_filter_source_record_paths_by_pids,
-    mock_save_reports,
-):
-    _FakeTqdm.instances = []
-    _FakePool.captured_iterables = []
-    _FakePool.captured_processes_list = []
-    _FakePool.captured_initargs_list = []
-    _FakePool.test_results_batches = [
-        [
-            OutputMigrationResult("diva2:1", "SUCCESS"),
-            OutputMigrationResult("diva2:2", "CLASSIC_QUALITY", errors=["warning"]),
-        ],
-        [
-            OutputRelationMigrationResult(
-                status="UPDATED", pid="diva2:1", cora_id="1", error=None
-            ),
-            OutputRelationMigrationResult(
-                status="NO_RELATIONS", pid="diva2:2", cora_id="2", error=None
-            ),
-        ],
-    ]
+        second_xml = tmp_path / "second.xml"
+        second_xml.write_text("<publication><pid>diva2:222</pid></publication>")
 
-    mock_read_source_record_paths.return_value = ["a.xml", "b.xml"]
+        result = outputs_import._filter_source_record_paths_by_pids(
+            [str(first_xml), str(second_xml)],
+            ["diva2:222"],
+        )
 
-    outputs_import.outputs_import(
-        xml_dir="/tmp/xml",
-        system="pre",
-        login_id="user",
-        app_token="token",
-        processes=4,
-        apply=False,
-        limit=None,
-        binaries=False,
-        pids=None,
-        fedora_url="",
-        cora_url="",
-    )
+        assert result == [str(second_xml)]
 
-    mock_filter_source_record_paths_by_pids.assert_not_called()
-    assert _FakePool.captured_iterables[0] == ["a.xml", "b.xml"]
-    assert _FakeTqdm.instances[0].total == 2
-    assert _FakeTqdm.instances[0].updated == 2
+    @patch("scripts.outputs_import.output_migrate")
+    @patch("scripts.outputs_import.read_source_xml")
+    def test_migrate_record_reads_source_xml_from_path(self, 
+        mock_read_source_xml, mock_output_migrate
+    ):
+        source_record = ET.fromstring("<publication><pid>diva2:123</pid></publication>")
+        mock_read_source_xml.return_value = source_record
+        mock_output_migrate.return_value = OutputMigrationResult("diva2:123", "SUCCESS")
 
-    results_arg = mock_save_reports.call_args.args[0]
-    assert [result.status for result in results_arg] == ["SUCCESS", "CLASSIC_QUALITY"]
+        outputs_import.context = MockContext()
+        outputs_import.apply = False
+        outputs_import.with_binaries = True
+        outputs_import.fedora_url = "http://fedora.example"
+
+        source_path = "/tmp/publication.xml"
+        result = outputs_import._migrate_record(source_path)
+
+        mock_read_source_xml.assert_called_once_with(source_path)
+        mock_output_migrate.assert_called_once_with(
+            source_record,
+            outputs_import.context,
+            False,
+            with_binaries=True,
+            fedora_url="http://fedora.example",
+        )
+        assert result.status == "SUCCESS"
+
+    @patch("scripts.outputs_import.save_reports")
+    @patch("scripts.outputs_import._filter_source_record_paths_by_pids")
+    @patch("scripts.outputs_import._read_source_record_paths")
+    @patch("scripts.outputs_import.tqdm", side_effect=lambda **kwargs: _FakeTqdm(**kwargs))
+    @patch("scripts.outputs_import.Pool", _FakePool)
+    def test_outputs_import_orchestrates_loading_filtering_pool_and_reports(self, 
+        mock_tqdm,
+        mock_read_source_record_paths,
+        mock_filter_source_record_paths_by_pids,
+        mock_save_reports,
+    ):
+        _FakeTqdm.instances = []
+        _FakePool.captured_iterables = []
+        _FakePool.captured_processes_list = []
+        _FakePool.captured_initargs_list = []
+        _FakePool.test_results_batches = [
+            [
+                OutputMigrationResult("diva2:1", "SUCCESS"),
+                OutputMigrationResult("diva2:2", "FAILED", errors=["x"]),
+            ],
+            [
+                OutputRelationMigrationResult(
+                    status="UPDATED", pid="diva2:1", cora_id="1", error=None
+                ),
+                OutputRelationMigrationResult(
+                    status="FAILED", pid="diva2:2", cora_id="2", error="relation"
+                ),
+            ],
+        ]
+
+        mock_read_source_record_paths.return_value = ["a.xml", "b.xml", "c.xml"]
+        mock_filter_source_record_paths_by_pids.return_value = ["b.xml", "c.xml"]
+
+        outputs_import.outputs_import(
+            xml_dir="/tmp/xml",
+            system="pre",
+            login_id="user",
+            app_token="token",
+            processes=2,
+            apply=False,
+            limit=10,
+            binaries=False,
+            pids=["diva2:2"],
+            fedora_url="",
+            cora_url="",
+        )
+
+        mock_read_source_record_paths.assert_called_once_with("/tmp/xml", 10)
+        mock_filter_source_record_paths_by_pids.assert_called_once_with(
+            ["a.xml", "b.xml", "c.xml"], ["diva2:2"]
+        )
+        assert _FakePool.captured_processes == 2
+        assert _FakePool.captured_iterables[0] == ["b.xml", "c.xml"]
+        assert _FakePool.captured_initargs_list[0] == (
+            "pre",
+            "user",
+            "token",
+            "",
+            False,
+            False,
+            "",
+        )
+        assert _FakePool.captured_initargs_list[1] == ("pre", "user", "token", "")
+        assert [result.pid for result in _FakePool.captured_iterables[1]] == [
+            "diva2:1",
+            "diva2:2",
+        ]
+        assert _FakeTqdm.instances[0].total == 2
+        assert _FakeTqdm.instances[0].updated == 2
+        assert "✅ 1" in _FakeTqdm.instances[0].postfixes[-1]
+        assert "❌ 1" in _FakeTqdm.instances[0].postfixes[-1]
+        assert _FakeTqdm.instances[1].desc == "Importing output relations"
+
+        results_arg = mock_save_reports.call_args.args[0]
+        assert [result.status for result in results_arg] == ["SUCCESS", "FAILED"]
+        save_reports_kwargs = mock_save_reports.call_args.kwargs
+        relation_results = save_reports_kwargs.pop("relation_results")
+        assert save_reports_kwargs == {
+            "xml_dir": "/tmp/xml",
+            "system": "pre",
+            "apply": False,
+            "binaries": False,
+            "cora_url": "",
+            "output_dir": "reports",
+        }
+        assert [(r.status, r.pid, r.error) for r in relation_results] == [
+            ("UPDATED", "diva2:1", None),
+            ("FAILED", "diva2:2", "relation"),
+        ]
+
+    def test_migrate_record_raises_assertion_when_context_not_initialized(self):
+        outputs_import.context = None
+
+        with pytest.raises(
+            AssertionError,
+            match="Context must be initialized before migrating records",
+        ):
+            outputs_import._migrate_record("/tmp/publication.xml")
+
+    def test_filter_source_record_paths_by_pids_returns_empty_for_empty_pid_list(self, tmp_path):
+        xml_file = tmp_path / "publication.xml"
+        xml_file.write_text("<publication><pid>diva2:111</pid></publication>")
+
+        result = outputs_import._filter_source_record_paths_by_pids([str(xml_file)], [])
+
+        assert result == []
+
+    def test_filter_source_record_paths_by_pids_ignores_missing_pid_and_duplicate_input_pids(self, 
+        tmp_path,
+    ):
+        with_pid = tmp_path / "with_pid.xml"
+        with_pid.write_text("<publication><pid>diva2:222</pid></publication>")
+
+        without_pid = tmp_path / "without_pid.xml"
+        without_pid.write_text("<publication><title>No PID</title></publication>")
+
+        result = outputs_import._filter_source_record_paths_by_pids(
+            [str(with_pid), str(without_pid)],
+            ["diva2:222", "diva2:222"],
+        )
+
+        assert result == [str(with_pid)]
+
+    def test_filter_source_record_paths_by_pids_raises_for_malformed_xml(self, tmp_path):
+        malformed_xml = tmp_path / "broken.xml"
+        malformed_xml.write_text("<publication><pid>diva2:1</pid>")
+
+        with pytest.raises(ET.ParseError):
+            outputs_import._filter_source_record_paths_by_pids(
+                [str(malformed_xml)],
+                ["diva2:1"],
+            )
+
+    @patch("scripts.outputs_import.read_source_xml", side_effect=ET.ParseError("bad xml"))
+    def test_migrate_record_propagates_xml_parse_error(self, mock_read_source_xml):
+        outputs_import.context = MockContext()
+
+        with pytest.raises(ET.ParseError):
+            outputs_import._migrate_record("/tmp/broken.xml")
+
+        mock_read_source_xml.assert_called_once_with("/tmp/broken.xml")
+
+    @patch("scripts.outputs_import.save_reports")
+    @patch("scripts.outputs_import._filter_source_record_paths_by_pids")
+    @patch("scripts.outputs_import._read_source_record_paths")
+    @patch("scripts.outputs_import.tqdm", side_effect=lambda **kwargs: _FakeTqdm(**kwargs))
+    @patch("scripts.outputs_import.Pool", _FakePool)
+    def test_outputs_import_preserves_reporting_contract_without_pid_filter(self, 
+        mock_tqdm,
+        mock_read_source_record_paths,
+        mock_filter_source_record_paths_by_pids,
+        mock_save_reports,
+    ):
+        _FakeTqdm.instances = []
+        _FakePool.captured_iterables = []
+        _FakePool.captured_processes_list = []
+        _FakePool.captured_initargs_list = []
+        _FakePool.test_results_batches = [
+            [
+                OutputMigrationResult("diva2:1", "SUCCESS"),
+                OutputMigrationResult("diva2:2", "CLASSIC_QUALITY", errors=["warning"]),
+            ],
+            [
+                OutputRelationMigrationResult(
+                    status="UPDATED", pid="diva2:1", cora_id="1", error=None
+                ),
+                OutputRelationMigrationResult(
+                    status="NO_RELATIONS", pid="diva2:2", cora_id="2", error=None
+                ),
+            ],
+        ]
+
+        mock_read_source_record_paths.return_value = ["a.xml", "b.xml"]
+
+        outputs_import.outputs_import(
+            xml_dir="/tmp/xml",
+            system="pre",
+            login_id="user",
+            app_token="token",
+            processes=4,
+            apply=False,
+            limit=None,
+            binaries=False,
+            pids=None,
+            fedora_url="",
+            cora_url="",
+        )
+
+        mock_filter_source_record_paths_by_pids.assert_not_called()
+        assert _FakePool.captured_iterables[0] == ["a.xml", "b.xml"]
+        assert _FakeTqdm.instances[0].total == 2
+        assert _FakeTqdm.instances[0].updated == 2
+
+        results_arg = mock_save_reports.call_args.args[0]
+        assert [result.status for result in results_arg] == ["SUCCESS", "CLASSIC_QUALITY"]

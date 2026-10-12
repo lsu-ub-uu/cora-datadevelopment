@@ -40,41 +40,40 @@ source_record = ET.fromstring(
 """
 )
 
+class TestCreateSubject:
+    def test_create_subject_sets_language(self):
+        subject = create_subjects(source_record)
 
-def test_create_subject_sets_language():
-    subject = create_subjects(source_record)
-
-    assert_equal_for_xml_and_xml_string(
-        subject[0],
-        """
+        assert_equal_for_xml_and_xml_string(
+            subject[0],
+            """
         <subject lang="eng" repeatId="0">
             <topic>Sinologi</topic>
         </subject>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        subject[1],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            subject[1],
+            """
         <subject lang="eng" repeatId="1">
             <topic>Arkeologi</topic>
         </subject>
         """,
-    )
+        )
 
-def test_handles_no_keywords():
-    source_record_no_keywords = ET.fromstring(
-        """
+    def test_handles_no_keywords(self):
+        source_record_no_keywords = ET.fromstring(
+            """
         <publication>
         </publication>
         """
-    )
-    subjects = create_subjects(source_record_no_keywords)
-    assert subjects == []
+        )
+        subjects = create_subjects(source_record_no_keywords)
+        assert subjects == []
 
-
-def test_create_subject_sets_topic_with_multiple_languages():
-    source_record_multi_lang = ET.fromstring(
-        """
+    def test_create_subject_sets_topic_with_multiple_languages(self):
+        source_record_multi_lang = ET.fromstring(
+            """
     <publication>
         <keyWords class="hashtable">
             <entry>
@@ -98,38 +97,38 @@ def test_create_subject_sets_topic_with_multiple_languages():
         </keyWords>
     </publication>
     """
-    )
+        )
 
-    subjects = create_subjects(source_record_multi_lang)
-    assert_equal_for_xml_and_xml_string(
-        subjects[0],
-        """
+        subjects = create_subjects(source_record_multi_lang)
+        assert_equal_for_xml_and_xml_string(
+            subjects[0],
+            """
         <subject lang="eng" repeatId="0">
             <topic>enKeyword1</topic>
         </subject>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        subjects[1],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            subjects[1],
+            """
         <subject lang="eng" repeatId="1">
             <topic>enKeyword2</topic>
         </subject>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        subjects[2],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            subjects[2],
+            """
         <subject lang="swe" repeatId="2">
             <topic>svKeyword3</topic>
         </subject>
         """,
-    )
-    assert_equal_for_xml_and_xml_string(
-        subjects[3],
-        """
+        )
+        assert_equal_for_xml_and_xml_string(
+            subjects[3],
+            """
         <subject lang="swe" repeatId="3">
             <topic>svKeyword4</topic>
         </subject>
         """,
-    )
+        )
