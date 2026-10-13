@@ -1,4 +1,5 @@
 from xml.etree import ElementTree as ET
+from unittest.mock import patch
 from fedora_to_cora.transform.create_name_type_personal import (
     create_degree_supervisor,
     create_name_type_personals,
@@ -36,6 +37,63 @@ def test_creates_name_type_personal():
         <name type="personal" repeatId="0">
             <namePart type="family">Schmanderson</namePart>
             <namePart type="given">Michaela</namePart>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
+        </name>
+        """,
+    )
+
+
+@patch("fedora_to_cora.transform.create_name_type_personal.get_cora_id_by_old_id")
+def test_creates_name_type_personal_with_linked_person(_mock_get_cora_id_by_old_id):
+    _mock_get_cora_id_by_old_id.side_effect = ["coraId:22222", "coraId:33333"]
+    source_record = ET.fromstring("""
+            <publication>
+                <publicationType>
+                    <publicationTypeId>63</publicationTypeId>
+                    <publicationTypeCode>collection</publicationTypeCode>
+                </publicationType>
+                <authors>
+                    <person>
+                        <firstName>Michaela</firstName>
+                        <lastName>Schmanderson</lastName>   
+                        <authorityPid>authority-person:111111</authorityPid>   
+                    </person>
+                    <person>
+                        <firstName>Bob</firstName>
+                        <lastName>Bobsson2</lastName>   
+                        <authorityPid>authority-person:222222</authorityPid>   
+                    </person>
+                </authors>
+            </publication>
+            """)
+    names = create_name_type_personals(
+        source_record,
+        mock_context,
+    )
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <name type="personal" repeatId="0">
+            <person>
+                <linkedRecordType>diva-person</linkedRecordType>
+                <linkedRecordId>coraId:22222</linkedRecordId>
+            </person>
+            <namePart type="family">Schmanderson</namePart>
+            <namePart type="given">Michaela</namePart>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
+        </name>
+        """,
+    )
+    assert_equal_for_xml_and_xml_string(
+        names[1],
+        """
+        <name type="personal" repeatId="1">
+            <person>
+                <linkedRecordType>diva-person</linkedRecordType>
+                <linkedRecordId>coraId:33333</linkedRecordId>
+            </person>
+            <namePart type="family">Bobsson2</namePart>
+            <namePart type="given">Bob</namePart>
             <role repeatId="0"><roleTerm>aut</roleTerm></role>
         </name>
         """,
