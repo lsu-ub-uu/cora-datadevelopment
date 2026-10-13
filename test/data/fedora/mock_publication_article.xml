@@ -1,0 +1,893 @@
+<?xml version='1.0' encoding='utf-8'?>
+<publication>
+  <contentType>
+    <contentTypeId>50</contentTypeId>
+    <contentTypeCode>refereed</contentTypeCode>
+    <contentTypeNames>
+      <contentTypeName>
+        <contentTypeNameId>106</contentTypeNameId>
+        <locale>no</locale>
+        <contentTypeName>Fagfellevurdert</contentTypeName>
+      </contentTypeName>
+      <contentTypeName>
+        <contentTypeNameId>101</contentTypeNameId>
+        <locale>sv</locale>
+        <contentTypeName>Refereegranskat</contentTypeName>
+      </contentTypeName>
+      <contentTypeName>
+        <contentTypeNameId>100</contentTypeNameId>
+        <locale>en</locale>
+        <contentTypeName>Refereed</contentTypeName>
+      </contentTypeName>
+    </contentTypeNames>
+    <sortOrder>1</sortOrder>
+  </contentType>
+  <publicationType>
+    <publicationTypeId>50</publicationTypeId>
+    <publicationTypeCode>article</publicationTypeCode>
+    <openUrlType>article</openUrlType>
+    <publicationTypeNames>
+      <publicationTypeName>
+        <publicationTypeNameId>234</publicationTypeNameId>
+        <locale>no</locale>
+        <publicationTypeName>Artikkel i tidsskrift</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>201</publicationTypeNameId>
+        <locale>en</locale>
+        <publicationTypeName>Article in journal</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>200</publicationTypeNameId>
+        <locale>sv</locale>
+        <publicationTypeName>Artikel i tidskrift</publicationTypeName>
+      </publicationTypeName>
+    </publicationTypeNames>
+    <roles />
+    <comprehensiveSummary>false</comprehensiveSummary>
+    <domainAdminOnly>false</domainAdminOnly>
+  </publicationType>
+  <pid>diva2:798188</pid>
+  <administrativeInfo>
+    <domain>smhi</domain>
+    <creatorInfo>
+      <userId>b004444</userId>
+      <ip>44.44.44.44</ip>
+      <name>A Swensson</name>
+      <date>2015-03-26T10:22:37.725+01:00</date>
+      <userType>DOMAINADMIN</userType>
+      <userAction>CREATED</userAction>
+    </creatorInfo>
+    <updaters>
+      <userInformation>
+        <userId>b000526</userId>
+        <ip>55.55.55.55</ip>
+        <name>A Swensson</name>
+        <date>2015-03-26T10:22:37.652+01:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>AUTOPUBLISHED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>b004444</userId>
+        <ip />
+        <name>A Swensson</name>
+        <date>2015-03-26T10:22:37.752+01:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>b004444</userId>
+        <ip />
+        <name>A Swensson</name>
+        <date>2015-03-26T10:23:18.718+01:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>a001766</userId>
+        <ip>91.192.31.128</ip>
+        <name>Pontus Matstoms</name>
+        <date>2015-03-26T10:59:14.208+01:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>b004444</userId>
+        <ip />
+        <name>A Swensson</name>
+        <date>2015-03-31T10:51:35.402+02:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>system</userId>
+        <ip>55.55.55.55</ip>
+        <name>System</name>
+        <date>2017-12-04T20:58:46.542+01:00</date>
+        <userType>SERVICE</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>system</userId>
+        <ip>66.66.66.66</ip>
+        <name>System</name>
+        <date>2025-02-01T18:13:59.059+01:00</date>
+        <userType>SERVICE</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>system</userId>
+        <ip>77.77.77.77</ip>
+        <name>System</name>
+        <date>2025-02-07T19:55:09.247+01:00</date>
+        <userType>SERVICE</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>system</userId>
+        <ip>88.88.88.88</ip>
+        <name>System</name>
+        <date>2025-06-12T23:34:03.536+02:00</date>
+        <userType>SERVICE</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+    </updaters>
+    <createdDate>2015-03-26T10:15:22.301+01:00</createdDate>
+    <updatedDate>2025-06-12T23:34:03.536+02:00</updatedDate>
+    <importSource>ISI</importSource>
+  </administrativeInfo>
+  <publicationDate>2015-03-26T10:22:00.000+01:00</publicationDate>
+  <authors>
+    <person>
+      <firstName>J. C.</firstName>
+      <lastName>Refsgaard</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>H.</firstName>
+      <lastName>Madsen</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>V.</firstName>
+      <lastName>Andreassian</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>K.</firstName>
+      <lastName>Arnbjerg-Nielsen</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>T. A.</firstName>
+      <lastName>Davidson</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>M.</firstName>
+      <lastName>Drews</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>D. P.</firstName>
+      <lastName>Hamilton</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>E.</firstName>
+      <lastName>Jeppesen</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>Erik</firstName>
+      <lastName>Kjellstrom</lastName>
+      <localId>a001165</localId>
+      <organisations>
+        <organisation>
+          <organisationId>872553</organisationId>
+          <organisationType>
+            <organisationTypeId>55</organisationTypeId>
+            <organisationTypeCode>unit</organisationTypeCode>
+            <organisationTypeNames>
+              <organisationTypeName>
+                <organisationTypeNameId>1910</organisationTypeNameId>
+                <locale>sv</locale>
+                <organisationTypeName>Enhet</organisationTypeName>
+              </organisationTypeName>
+              <organisationTypeName>
+                <organisationTypeNameId>1911</organisationTypeNameId>
+                <locale>en</locale>
+                <organisationTypeName>Unit</organisationTypeName>
+              </organisationTypeName>
+            </organisationTypeNames>
+          </organisationType>
+          <organisationName>
+            <name>Klimatforskning - Rossby Centre</name>
+            <locale>sv</locale>
+          </organisationName>
+          <domain>smhi</domain>
+          <organisationAlternativeNames>
+            <organisationName>
+              <organisationNameId>52203</organisationNameId>
+              <locale>en</locale>
+              <organisationName>Climate research - Rossby Centre</organisationName>
+            </organisationName>
+          </organisationAlternativeNames>
+          <organisationContacts />
+          <organisationParents>
+            <organisation>
+              <organisationId>872550</organisationId>
+              <organisationType>
+                <organisationTypeId>61</organisationTypeId>
+                <organisationTypeCode>division</organisationTypeCode>
+                <organisationTypeNames>
+                  <organisationTypeName>
+                    <organisationTypeNameId>1923</organisationTypeNameId>
+                    <locale>en</locale>
+                    <organisationTypeName>Division</organisationTypeName>
+                  </organisationTypeName>
+                  <organisationTypeName>
+                    <organisationTypeNameId>1922</organisationTypeNameId>
+                    <locale>sv</locale>
+                    <organisationTypeName>Avdelning</organisationTypeName>
+                  </organisationTypeName>
+                </organisationTypeNames>
+              </organisationType>
+              <organisationName>
+                <name>Forskningsavdelningen</name>
+                <locale>sv</locale>
+              </organisationName>
+              <domain>smhi</domain>
+              <organisationAlternativeNames>
+                <organisationName>
+                  <organisationNameId>52200</organisationNameId>
+                  <locale>en</locale>
+                  <organisationName>Research Department</organisationName>
+                </organisationName>
+              </organisationAlternativeNames>
+              <organisationContacts />
+              <organisationParents>
+                <organisation>
+                  <organisationId>16501</organisationId>
+                  <organisationType>
+                    <organisationTypeId>64</organisationTypeId>
+                    <organisationTypeCode>authority</organisationTypeCode>
+                    <organisationTypeNames>
+                      <organisationTypeName>
+                        <organisationTypeNameId>1931</organisationTypeNameId>
+                        <locale>en</locale>
+                        <organisationTypeName>Authority</organisationTypeName>
+                      </organisationTypeName>
+                      <organisationTypeName>
+                        <organisationTypeNameId>1930</organisationTypeNameId>
+                        <locale>sv</locale>
+                        <organisationTypeName>Myndighet</organisationTypeName>
+                      </organisationTypeName>
+                    </organisationTypeNames>
+                  </organisationType>
+                  <organisationName>
+                    <name>SMHI</name>
+                    <locale>sv</locale>
+                  </organisationName>
+                  <organisationHomepage>http://www.smhi.se</organisationHomepage>
+                  <domain>smhi</domain>
+                  <organisationAlternativeNames>
+                    <organisationName>
+                      <organisationNameId>47351</organisationNameId>
+                      <locale>en</locale>
+                      <organisationName>SMHI</organisationName>
+                    </organisationName>
+                  </organisationAlternativeNames>
+                  <organisationContacts />
+                  <organisationParents />
+                  <organisationPredecessors />
+                  <organisationPredecessorDescriptions />
+                  <controlled>true</controlled>
+                  <notEligible>false</notEligible>
+                  <showInPortal>true</showInPortal>
+                  <showInDefence>true</showInDefence>
+                  <topLevel>false</topLevel>
+                </organisation>
+              </organisationParents>
+              <organisationPredecessors />
+              <organisationPredecessorDescriptions />
+              <controlled>true</controlled>
+              <notEligible>false</notEligible>
+              <showInPortal>false</showInPortal>
+              <showInDefence>false</showInDefence>
+              <topLevel>false</topLevel>
+            </organisation>
+          </organisationParents>
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <controlled>true</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value>0000-0002-6495-1038</value>
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+      <authorityPid>authority-person:44162</authorityPid>
+    </person>
+    <person>
+      <firstName>J. E.</firstName>
+      <lastName>Olesen</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>T. O.</firstName>
+      <lastName>Sonnenborg</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>D.</firstName>
+      <lastName>Trolle</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>P.</firstName>
+      <lastName>Willems</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>J. H.</firstName>
+      <lastName>Christensen</lastName>
+      <organisations />
+      <birthYear />
+      <deathYear />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+  </authors>
+  <originalPublicationTitle>
+    <title>A framework for testing the ability of models to project climate change and its impacts</title>
+    <subTitle />
+    <language>
+      <languageCode3>eng</languageCode3>
+      <languageCode2>en</languageCode2>
+      <languageNames>
+        <languageName>
+          <languageNameId>1145</languageNameId>
+          <locale>en</locale>
+          <languageName>English</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>1144</languageNameId>
+          <locale>sv</locale>
+          <languageName>Engelska</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>10120</languageNameId>
+          <locale>no</locale>
+          <languageName>engelsk</languageName>
+        </languageName>
+      </languageNames>
+      <showsOnList>true</showsOnList>
+    </language>
+  </originalPublicationTitle>
+  <journal>
+    <journalId>3700</journalId>
+    <nordicListId>343352</nordicListId>
+    <journalType>
+      <journalTypeId>50</journalTypeId>
+      <journalTypeCode>frida</journalTypeCode>
+      <journalTypeNames>
+        <journalTypeName>
+          <journalTypeNameId>9901</journalTypeNameId>
+          <locale>en</locale>
+          <journalTypeName>FRIDA</journalTypeName>
+        </journalTypeName>
+        <journalTypeName>
+          <journalTypeNameId>9900</journalTypeNameId>
+          <locale>sv</locale>
+          <journalTypeName>FRIDA</journalTypeName>
+        </journalTypeName>
+      </journalTypeNames>
+    </journalType>
+    <journalTitle>
+      <titleId>4550</titleId>
+      <mainTitle>Climatic Change</mainTitle>
+      <locale>und</locale>
+    </journalTitle>
+    <printedIssn>0165-0009</printedIssn>
+    <electronicIssn>1573-1480</electronicIssn>
+    <url>http://www.kluweronline.com/issn/0165-0009/contents</url>
+    <fridaLevel>
+      <fridaLevelId>50</fridaLevelId>
+      <fridaLevelCode>1</fridaLevelCode>
+      <fridaLevelNames>
+        <fridaLevelName>
+          <fridaLevelNameId>10001</fridaLevelNameId>
+          <locale>sv</locale>
+          <fridaLevelName>Vetenskaplig, nivå 1</fridaLevelName>
+        </fridaLevelName>
+        <fridaLevelName>
+          <fridaLevelNameId>10000</fridaLevelNameId>
+          <locale>en</locale>
+          <fridaLevelName>Scholarly, level 1</fridaLevelName>
+        </fridaLevelName>
+      </fridaLevelNames>
+    </fridaLevel>
+    <controlled>false</controlled>
+    <openAccess>false</openAccess>
+    <subjects />
+    <relationships />
+  </journal>
+  <uncontrolledJournal>
+    <controlled>false</controlled>
+    <openAccess>false</openAccess>
+    <subjects />
+    <relationships />
+  </uncontrolledJournal>
+  <dateIssued>2014</dateIssued>
+  <volume>122</volume>
+  <issueNumber>1-2</issueNumber>
+  <startPage>271</startPage>
+  <endPage>282</endPage>
+  <publisher />
+  <isi>000328622900021</isi>
+  <nbn>urn:nbn:se:smhi:diva-167</nbn>
+  <oai>oai:DiVA.org:smhi-167</oai>
+  <identifiers>
+    <entry>
+      <publicationIdentifierType>doi</publicationIdentifierType>
+      <publicationIdentifier>
+        <value>10.1007/s10584-013-0990-2</value>
+        <type>doi</type>
+        <openAccess>true</openAccess>
+      </publicationIdentifier>
+    </entry>
+  </identifiers>
+  <categories />
+  <nationalCategories>
+    <subject>
+      <subjectId>11538</subjectId>
+      <subjectType>
+        <subjectTypeId>57</subjectTypeId>
+        <subjectTypeCode>hsv</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3722</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>HSV categories</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3721</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3723</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>28226</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Klimatvetenskap</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>28227</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Climate Science</subjectName>
+        </subjectName>
+      </subjectNames>
+      <subjectCode>10501</subjectCode>
+      <parents>
+        <subject>
+          <subjectId>11537</subjectId>
+          <subjectType>
+            <subjectTypeId>57</subjectTypeId>
+            <subjectTypeCode>hsv</subjectTypeCode>
+            <subjectTypeNames>
+              <subjectTypeName>
+                <subjectTypeNameId>3722</subjectTypeNameId>
+                <locale>en</locale>
+                <subjectTypeName>HSV categories</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3721</subjectTypeNameId>
+                <locale>sv</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3723</subjectTypeNameId>
+                <locale>no</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+            </subjectTypeNames>
+          </subjectType>
+          <subjectNames>
+            <subjectName>
+              <subjectNameId>28224</subjectNameId>
+              <locale>sv</locale>
+              <subjectName>Geovetenskap och relaterad miljövetenskap</subjectName>
+            </subjectName>
+            <subjectName>
+              <subjectNameId>28225</subjectNameId>
+              <locale>en</locale>
+              <subjectName>Earth and Related Environmental Sciences</subjectName>
+            </subjectName>
+          </subjectNames>
+          <subjectCode>105</subjectCode>
+          <parents>
+            <subject>
+              <subjectId>11500</subjectId>
+              <subjectType>
+                <subjectTypeId>57</subjectTypeId>
+                <subjectTypeCode>hsv</subjectTypeCode>
+                <subjectTypeNames>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3722</subjectTypeNameId>
+                    <locale>en</locale>
+                    <subjectTypeName>HSV categories</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3721</subjectTypeNameId>
+                    <locale>sv</locale>
+                    <subjectTypeName>HSV kategorier</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3723</subjectTypeNameId>
+                    <locale>no</locale>
+                    <subjectTypeName>HSV kategorier</subjectTypeName>
+                  </subjectTypeName>
+                </subjectTypeNames>
+              </subjectType>
+              <subjectNames>
+                <subjectName>
+                  <subjectNameId>28150</subjectNameId>
+                  <locale>sv</locale>
+                  <subjectName>Naturvetenskap</subjectName>
+                </subjectName>
+                <subjectName>
+                  <subjectNameId>28151</subjectNameId>
+                  <locale>en</locale>
+                  <subjectName>Natural Sciences</subjectName>
+                </subjectName>
+              </subjectNames>
+              <subjectCode>1</subjectCode>
+              <parents />
+              <predecessors />
+              <domain>diva</domain>
+              <notEligible>false</notEligible>
+              <organisations />
+            </subject>
+          </parents>
+          <predecessors />
+          <domain>diva</domain>
+          <notEligible>false</notEligible>
+          <organisations />
+        </subject>
+      </parents>
+      <predecessors />
+      <domain>diva</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+  </nationalCategories>
+  <researchSubjects>
+    <subject>
+      <subjectId>22603</subjectId>
+      <subjectType>
+        <subjectTypeId>53</subjectTypeId>
+        <subjectTypeCode>researchSubject</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3709</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>Forskningsämne</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3711</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3710</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>52157</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Climate</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>52156</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Klimat</subjectName>
+        </subjectName>
+      </subjectNames>
+      <parents />
+      <predecessors />
+      <domain>smhi</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+  </researchSubjects>
+  <abstracts>
+    <abstract>
+      <language>
+        <languageCode3>eng</languageCode3>
+        <languageCode2>en</languageCode2>
+        <languageNames>
+          <languageName>
+            <languageNameId>1145</languageNameId>
+            <locale>en</locale>
+            <languageName>English</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1144</languageNameId>
+            <locale>sv</locale>
+            <languageName>Engelska</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>10120</languageNameId>
+            <locale>no</locale>
+            <languageName>engelsk</languageName>
+          </languageName>
+        </languageNames>
+        <showsOnList>true</showsOnList>
+      </language>
+      <text>&lt;p&gt;Models used for climate change impact projections are typically not tested for simulation beyond current climate conditions. Since we have no data truly reflecting future conditions, a key challenge in this respect is to rigorously test models using proxies of future conditions. This paper presents a validation framework and guiding principles applicable across earth science disciplines for testing the capability of models to project future climate change and its impacts. Model test schemes comprising split-sample tests, differential split-sample tests and proxy site tests are discussed in relation to their application for projections by use of single models, ensemble modelling and space-time-substitution and in relation to use of different data from historical time series, paleo data and controlled experiments. We recommend that differential-split sample tests should be performed with best available proxy data in order to build further confidence in model projections.&lt;/p&gt;</text>
+    </abstract>
+  </abstracts>
+  <note />
+  <internalNote />
+  <attachments class="tree-set">
+    <no-comparator />
+    <attachment>
+      <mimeType>
+        <mimeTypeId>50</mimeTypeId>
+        <mimeTypeName>application/pdf</mimeTypeName>
+        <fileSuffix>pdf</fileSuffix>
+        <datasetOnly>false</datasetOnly>
+      </mimeType>
+      <fileLabel>
+        <fileLabelId>50</fileLabelId>
+        <fileLabelCode>fulltext</fileLabelCode>
+        <fileLabelNames>
+          <fileLabelName>
+            <fileLabelNameId>3674</fileLabelNameId>
+            <locale>no</locale>
+            <fileLabelName>fulltekst</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3651</fileLabelNameId>
+            <locale>sv</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3650</fileLabelNameId>
+            <locale>en</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+        </fileLabelNames>
+      </fileLabel>
+      <fileName>FULLTEXT01</fileName>
+      <fileSize>299138</fileSize>
+      <selectedFileName>fulltext</selectedFileName>
+      <path>e8289ce87d97b326cc7c6d5d8c98/A framework for testing.pdf</path>
+      <checksums>
+        <checksum>
+          <type>SHA512</type>
+          <digest>daa695762fa9eddf0c79d5216b62be52663f31c828f025dc02919d5598660b2846fc1230c709d6106cf0a220260b2e054747dfda2a2065d1a3226c2c0c56b99d</digest>
+        </checksum>
+      </checksums>
+      <order>1</order>
+      <uploadDate>2015-03-31T10:51:35.326+02:00</uploadDate>
+      <asyncUpload>false</asyncUpload>
+      <availableFrom>2015-03-31T10:51:35.031+02:00</availableFrom>
+      <onHold>false</onHold>
+      <deleted>false</deleted>
+      <prePrint>false</prePrint>
+      <postPrint>false</postPrint>
+      <print>true</print>
+      <archiveOnly>false</archiveOnly>
+      <printOnDemand>false</printOnDemand>
+      <toBePublished>false</toBePublished>
+      <toBeArchived>false</toBeArchived>
+      <digitized>false</digitized>
+      <hasCoverPage>false</hasCoverPage>
+      <coverPageConditions />
+    </attachment>
+  </attachments>
+  <formatElectronic>false</formatElectronic>
+  <formatPrint>false</formatPrint>
+  <agreementAccepted>true</agreementAccepted>
+  <reviewed>true</reviewed>
+  <reviewedBefore>true</reviewedBefore>
+  <migrated>false</migrated>
+  <importDuplicate>false</importDuplicate>
+  <registratedDuplicate>false</registratedDuplicate>
+  <publicationStatus>
+    <publicationStatusId>53</publicationStatusId>
+    <publicationStatusNames>
+      <publicationStatusName>
+        <publicationStatusNameId>159</publicationStatusNameId>
+        <locale>sv</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+      <publicationStatusName>
+        <publicationStatusNameId>161</publicationStatusNameId>
+        <locale>no</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+      <publicationStatusName>
+        <publicationStatusNameId>160</publicationStatusNameId>
+        <locale>en</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+    </publicationStatusNames>
+    <code>published</code>
+  </publicationStatus>
+  <artisticWork>false</artisticWork>
+  <cooperation>
+    <external>false</external>
+    <partner />
+  </cooperation>
+  <failed>false</failed>
+  <hidden>false</hidden>
+  <publicationOrder>
+    <orderLink>false</orderLink>
+    <parameters />
+  </publicationOrder>
+  <canOrderOnline>false</canOrderOnline>
+</publication>

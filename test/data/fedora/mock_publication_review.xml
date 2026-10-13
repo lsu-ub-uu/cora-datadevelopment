@@ -1,0 +1,784 @@
+<?xml version='1.0' encoding='utf-8'?>
+<publication>
+  <contentType>
+    <contentTypeId>50</contentTypeId>
+    <contentTypeCode>refereed</contentTypeCode>
+    <contentTypeNames>
+      <contentTypeName>
+        <contentTypeNameId>106</contentTypeNameId>
+        <locale>no</locale>
+        <contentTypeName>Fagfellevurdert</contentTypeName>
+      </contentTypeName>
+      <contentTypeName>
+        <contentTypeNameId>101</contentTypeNameId>
+        <locale>sv</locale>
+        <contentTypeName>Refereegranskat</contentTypeName>
+      </contentTypeName>
+      <contentTypeName>
+        <contentTypeNameId>100</contentTypeNameId>
+        <locale>en</locale>
+        <contentTypeName>Refereed</contentTypeName>
+      </contentTypeName>
+    </contentTypeNames>
+    <sortOrder>1</sortOrder>
+  </contentType>
+  <publicationType>
+    <publicationTypeId>51</publicationTypeId>
+    <publicationTypeCode>review</publicationTypeCode>
+    <openUrlType>article</openUrlType>
+    <publicationTypeNames>
+      <publicationTypeName>
+        <publicationTypeNameId>202</publicationTypeNameId>
+        <locale>sv</locale>
+        <publicationTypeName>Artikel, forskningsöversikt</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>235</publicationTypeNameId>
+        <locale>no</locale>
+        <publicationTypeName>Artikkel, forskningsoversikt</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>203</publicationTypeNameId>
+        <locale>en</locale>
+        <publicationTypeName>Article, review/survey</publicationTypeName>
+      </publicationTypeName>
+    </publicationTypeNames>
+    <roles />
+    <comprehensiveSummary>false</comprehensiveSummary>
+    <domainAdminOnly>false</domainAdminOnly>
+  </publicationType>
+  <pid>diva2:857774</pid>
+  <administrativeInfo>
+    <domain>polar</domain>
+    <creatorInfo>
+      <userId>asdfasdf</userId>
+      <ip>ddd.dd.dd.dd</ip>
+      <name>Förnamn Efternamn</name>
+      <date>2015-09-30T10:25:25.577+02:00</date>
+      <userType>DOMAINADMIN</userType>
+      <userAction>CREATED</userAction>
+    </creatorInfo>
+    <updaters>
+      <userInformation>
+        <userId>asdfasdf</userId>
+            <ip>217.13.232.250</ip>
+        <name>Förnamn Efternamn</name>
+        <date>2015-09-30T10:25:25.508+02:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>AUTOPUBLISHED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>asdfasdf</userId>
+        <ip />
+        <name>Förnamn Efternamn</name>
+        <date>2015-09-30T10:25:25.584+02:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>asdfasdf</userId>
+        <ip />
+        <name>Förnamn Efternamn</name>
+        <date>2016-11-28T13:54:43.221+01:00</date>
+        <userType>ADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>system</userId>
+        <ip>eee.eee.eee.ee</ip>
+        <name>System</name>
+        <date>2017-12-01T07:55:56.853+01:00</date>
+        <userType>SERVICE</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>system</userId>
+        <ip>eee.eee.eee.ee</ip>
+        <name>System</name>
+        <date>2025-06-12T19:13:28.860+02:00</date>
+        <userType>SERVICE</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+    </updaters>
+    <createdDate>2015-09-30T10:23:06.578+02:00</createdDate>
+    <updatedDate>2025-06-12T19:13:28.860+02:00</updatedDate>
+    <importSource>ISI</importSource>
+  </administrativeInfo>
+  <publicationDate>2015-09-30T10:25:25.508+02:00</publicationDate>
+  <authors>
+    <person>
+      <firstName>Marika</firstName>
+      <lastName>Marnela</lastName>
+      <organisations>
+        <organisation>
+          <organisationAlternativeNames />
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <organisationNameUncontrolled>Finnish Inst Marine Res, Helsinki 00561, Finland.</organisationNameUncontrolled>
+          <controlled>false</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>Bert</firstName>
+      <lastName>Rudels</lastName>
+      <organisations>
+        <organisation>
+          <organisationAlternativeNames />
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <organisationNameUncontrolled>Finnish Inst Marine Res, Helsinki 00561, Finland.;Univ Helsinki, Dept Phys, FIN-00014 Helsinki, Finland.</organisationNameUncontrolled>
+          <controlled>false</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>K. Anders</firstName>
+      <lastName>Olsson</lastName>
+      <organisations>
+        <organisation>
+          <organisationAlternativeNames />
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <organisationNameUncontrolled>Univ Bergen, Bjerknes Ctr Climate Res, N-5020 Bergen, Norway.;Univ Gothenburg, Dept Chem, Gothenburg, Sweden.</organisationNameUncontrolled>
+          <controlled>false</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>Leif G.</firstName>
+      <lastName>Anderson</lastName>
+      <organisations>
+        <organisation>
+          <organisationAlternativeNames />
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <organisationNameUncontrolled>Univ Gothenburg, Dept Chem, Gothenburg, Sweden.</organisationNameUncontrolled>
+          <controlled>false</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>Emil</firstName>
+      <lastName>Jeansson</lastName>
+      <organisations>
+        <organisation>
+          <organisationAlternativeNames />
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <organisationNameUncontrolled>Univ Bergen, Bjerknes Ctr Climate Res, N-5020 Bergen, Norway.;Univ Gothenburg, Dept Chem, Gothenburg, Sweden.</organisationNameUncontrolled>
+          <controlled>false</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>Daniel J.</firstName>
+      <lastName>Torres</lastName>
+      <organisations>
+        <organisation>
+          <organisationAlternativeNames />
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <organisationNameUncontrolled>Woods Hole Oceanog Inst, Dept Phys Oceanog, Woods Hole, MA USA.</organisationNameUncontrolled>
+          <controlled>false</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>Marie-Jose</firstName>
+      <lastName>Messias</lastName>
+      <organisations>
+        <organisation>
+          <organisationAlternativeNames />
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <organisationNameUncontrolled>Univ E Anglia, Norwich NR4 7TJ, Norfolk, England.</organisationNameUncontrolled>
+          <controlled>false</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>James H.</firstName>
+      <lastName>Swift</lastName>
+      <organisations>
+        <organisation>
+          <organisationAlternativeNames />
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <organisationNameUncontrolled>Univ Calif San Diego, Scripps Inst Oceanog, La Jolla, CA 92093 USA.</organisationNameUncontrolled>
+          <controlled>false</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+    <person>
+      <firstName>Andrew J.</firstName>
+      <lastName>Watson</lastName>
+      <organisations>
+        <organisation>
+          <organisationAlternativeNames />
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <organisationNameUncontrolled>Univ E Anglia, Norwich NR4 7TJ, Norfolk, England.</organisationNameUncontrolled>
+          <controlled>false</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+  </authors>
+  <originalPublicationTitle>
+    <title>Transports of Nordic Seas water masses and excess SF6 through Fram Strait to the Arctic Ocean</title>
+    <subTitle />
+    <language>
+      <languageCode3>eng</languageCode3>
+      <languageCode2>en</languageCode2>
+      <languageNames>
+        <languageName>
+          <languageNameId>1145</languageNameId>
+          <locale>en</locale>
+          <languageName>English</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>1144</languageNameId>
+          <locale>sv</locale>
+          <languageName>Engelska</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>10120</languageNameId>
+          <locale>no</locale>
+          <languageName>engelsk</languageName>
+        </languageName>
+      </languageNames>
+      <showsOnList>true</showsOnList>
+    </language>
+  </originalPublicationTitle>
+  <journal>
+    <journalId>3945</journalId>
+    <nordicListId>446118</nordicListId>
+    <journalType>
+      <journalTypeId>50</journalTypeId>
+      <journalTypeCode>frida</journalTypeCode>
+      <journalTypeNames>
+        <journalTypeName>
+          <journalTypeNameId>9901</journalTypeNameId>
+          <locale>en</locale>
+          <journalTypeName>FRIDA</journalTypeName>
+        </journalTypeName>
+        <journalTypeName>
+          <journalTypeNameId>9900</journalTypeNameId>
+          <locale>sv</locale>
+          <journalTypeName>FRIDA</journalTypeName>
+        </journalTypeName>
+      </journalTypeNames>
+    </journalType>
+    <journalTitle>
+      <titleId>4795</titleId>
+      <mainTitle>Progress in Oceanography</mainTitle>
+      <locale>und</locale>
+    </journalTitle>
+    <printedIssn>0079-6611</printedIssn>
+    <electronicIssn>1873-4472</electronicIssn>
+    <fridaLevel>
+      <fridaLevelId>50</fridaLevelId>
+      <fridaLevelCode>1</fridaLevelCode>
+      <fridaLevelNames>
+        <fridaLevelName>
+          <fridaLevelNameId>10001</fridaLevelNameId>
+          <locale>sv</locale>
+          <fridaLevelName>Vetenskaplig, nivå 1</fridaLevelName>
+        </fridaLevelName>
+        <fridaLevelName>
+          <fridaLevelNameId>10000</fridaLevelNameId>
+          <locale>en</locale>
+          <fridaLevelName>Scholarly, level 1</fridaLevelName>
+        </fridaLevelName>
+      </fridaLevelNames>
+    </fridaLevel>
+    <controlled>false</controlled>
+    <openAccess>false</openAccess>
+    <subjects />
+    <relationships />
+  </journal>
+  <uncontrolledJournal>
+    <controlled>false</controlled>
+    <openAccess>false</openAccess>
+    <subjects />
+    <relationships />
+  </uncontrolledJournal>
+  <dateIssued>2008</dateIssued>
+  <volume>78</volume>
+  <issueNumber>1</issueNumber>
+  <startPage>1</startPage>
+  <endPage>11</endPage>
+  <publisher />
+  <isi>000258356000001</isi>
+  <nbn>urn:nbn:se:polar:diva-2271</nbn>
+  <oai>oai:DiVA.org:polar-2271</oai>
+  <identifiers>
+    <entry>
+      <publicationIdentifierType>doi</publicationIdentifierType>
+      <publicationIdentifier>
+        <value>10.1016/j.pocean.2007.06.004</value>
+        <type>doi</type>
+        <openAccess>false</openAccess>
+      </publicationIdentifier>
+    </entry>
+  </identifiers>
+  <categories />
+  <nationalCategories>
+    <subject>
+      <subjectId>11500</subjectId>
+      <subjectType>
+        <subjectTypeId>57</subjectTypeId>
+        <subjectTypeCode>hsv</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3722</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>HSV categories</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3721</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3723</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>28150</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Naturvetenskap</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>28151</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Natural Sciences</subjectName>
+        </subjectName>
+      </subjectNames>
+      <subjectCode>1</subjectCode>
+      <parents />
+      <predecessors />
+      <domain>diva</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+  </nationalCategories>
+  <researchSubjects>
+    <subject>
+      <subjectId>23373</subjectId>
+      <subjectType>
+        <subjectTypeId>53</subjectTypeId>
+        <subjectTypeCode>researchSubject</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3709</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>Forskningsämne</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3711</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3710</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>53446</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Arctic Ocean 2002</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>53447</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Arctic Ocean 2002</subjectName>
+        </subjectName>
+      </subjectNames>
+      <parents>
+        <subject>
+          <subjectId>23166</subjectId>
+          <subjectType>
+            <subjectTypeId>53</subjectTypeId>
+            <subjectTypeCode>researchSubject</subjectTypeCode>
+            <subjectTypeNames>
+              <subjectTypeName>
+                <subjectTypeNameId>3709</subjectTypeNameId>
+                <locale>sv</locale>
+                <subjectTypeName>Forskningsämne</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3711</subjectTypeNameId>
+                <locale>no</locale>
+                <subjectTypeName>Research subject</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3710</subjectTypeNameId>
+                <locale>en</locale>
+                <subjectTypeName>Research subject</subjectTypeName>
+              </subjectTypeName>
+            </subjectTypeNames>
+          </subjectType>
+          <subjectNames>
+            <subjectName>
+              <subjectNameId>53132</subjectNameId>
+              <locale>sv</locale>
+              <subjectName>SWEDARCTIC 2002</subjectName>
+            </subjectName>
+            <subjectName>
+              <subjectNameId>53133</subjectNameId>
+              <locale>en</locale>
+              <subjectName>SWEDARCTIC 2002</subjectName>
+            </subjectName>
+          </subjectNames>
+          <parents>
+            <subject>
+              <subjectId>23152</subjectId>
+              <subjectType>
+                <subjectTypeId>53</subjectTypeId>
+                <subjectTypeCode>researchSubject</subjectTypeCode>
+                <subjectTypeNames>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3709</subjectTypeNameId>
+                    <locale>sv</locale>
+                    <subjectTypeName>Forskningsämne</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3711</subjectTypeNameId>
+                    <locale>no</locale>
+                    <subjectTypeName>Research subject</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3710</subjectTypeNameId>
+                    <locale>en</locale>
+                    <subjectTypeName>Research subject</subjectTypeName>
+                  </subjectTypeName>
+                </subjectTypeNames>
+              </subjectType>
+              <subjectNames>
+                <subjectName>
+                  <subjectNameId>53105</subjectNameId>
+                  <locale>en</locale>
+                  <subjectName>SWEDARCTIC</subjectName>
+                </subjectName>
+                <subjectName>
+                  <subjectNameId>53104</subjectNameId>
+                  <locale>sv</locale>
+                  <subjectName>SWEDARCTIC</subjectName>
+                </subjectName>
+              </subjectNames>
+              <parents />
+              <predecessors />
+              <domain>polar</domain>
+              <notEligible>false</notEligible>
+              <organisations />
+            </subject>
+          </parents>
+          <predecessors />
+          <domain>polar</domain>
+          <notEligible>false</notEligible>
+          <organisations />
+        </subject>
+      </parents>
+      <predecessors />
+      <domain>polar</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+  </researchSubjects>
+  <keyWords class="hashtable">
+    <entry>
+      <language>
+        <languageCode3>eng</languageCode3>
+        <languageCode2>en</languageCode2>
+        <languageNames>
+          <languageName>
+            <languageNameId>1145</languageNameId>
+            <locale>en</locale>
+            <languageName>English</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1144</languageNameId>
+            <locale>sv</locale>
+            <languageName>Engelska</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>10120</languageNameId>
+            <locale>no</locale>
+            <languageName>engelsk</languageName>
+          </languageName>
+        </languageNames>
+        <showsOnList>true</showsOnList>
+      </language>
+      <list>
+        <string>water masses</string>
+        <string>AIW</string>
+        <string>transient tracers</string>
+        <string>SF6</string>
+        <string>geostrophy</string>
+        <string>LADCP</string>
+        <string>North Atlantic</string>
+        <string>Arctic Ocean</string>
+        <string>Nordic Seas</string>
+        <string>Fram Strait</string>
+      </list>
+    </entry>
+  </keyWords>
+  <abstracts>
+    <abstract>
+      <language>
+        <languageCode3>eng</languageCode3>
+        <languageCode2>en</languageCode2>
+        <languageNames>
+          <languageName>
+            <languageNameId>1145</languageNameId>
+            <locale>en</locale>
+            <languageName>English</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1144</languageNameId>
+            <locale>sv</locale>
+            <languageName>Engelska</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>10120</languageNameId>
+            <locale>no</locale>
+            <languageName>engelsk</languageName>
+          </languageName>
+        </languageNames>
+        <showsOnList>true</showsOnList>
+      </language>
+      <text>&lt;p&gt;To determine the exchanges between the Nordic Seas and the Arctic Ocean through Fram Strait is one of the most important aspects, and one of the major challenges, in describing the circulation in the Arctic Mediterranean Sea. Especially the northward transport of Arctic Intermediate Water (AIW) from the Nordic Seas into the Arctic Ocean is little known. In the two-ship study of the circulation in the Nordic Seas, Arctic Ocean - 2002, the Swedish icebreaker Oden operated in the ice-covered areas in and north of Fram Strait and in the western margins of Greenland and Iceland seas, while RV Knorr of Woods Hole worked in the ice free part of the Nordic Seas. Here two hydrographic sections obtained by Oden, augmented by tracer and velocity measurements with Lowered Acoustic Doppler Current Profiler (LADCP), are examined. The first section, reaching from the Svalbard shelf across the Yermak Plateau, covers the region north of Svalbard where inflow to the Arctic Ocean takes place. The second, western, section spans the outflow area extending from west of the Yermak Plateau onto the Greenland shelf. Geostrophic and LADCP derived velocities are both used to estimate the exchanges of water masses between the Nordic Seas and the Arctic Ocean. The geostrophic computations indicate a total flow of 3.6 Sv entering the Arctic on the eastern section. The southward flow on the western section is found to be 5.1 Sv. The total inflow to the Arctic Ocean obtained using the LADCP derived velocities is much larger, 13.6 Sv, and the southward transport on the western section is 13.7 Sv, equal to the northward transport north of Svalbard. Sulphur hexafluoricle (SF6) originating from a tracer release experiment in the Greenland Sea in 1996 has become a marker for the circulation of AIW. From the geostrophic velocities we obtain 0.5 Sv and from the LADCP derived velocities 2.8 Sv of AIW flowing into the Arctic. The annual transport of SF6 into the Arctic Ocean derived from geostrophy is 5 kg/year, which is of the same magnitude as the observed total annual transport into the North Atlantic, while the LADCP measurements (19 kg/year) imply that it is substantially larger. Little SF6 was found on the western section, confirming the dominance of the Arctic Ocean water masses and indicating that the major recirculation in Fram Strait takes place farther to the south. (C) 2008 Elsevier Ltd. All rights reserved.&lt;/p&gt;</text>
+    </abstract>
+  </abstracts>
+  <note />
+  <internalNote />
+  <formatElectronic>false</formatElectronic>
+  <formatPrint>false</formatPrint>
+  <responsibleOrganisations>
+    <organisation>
+      <organisationId>10905</organisationId>
+      <organisationType>
+        <organisationTypeId>50</organisationTypeId>
+        <organisationTypeCode>university</organisationTypeCode>
+        <organisationTypeNames>
+          <organisationTypeName>
+            <organisationTypeNameId>1901</organisationTypeNameId>
+            <locale>en</locale>
+            <organisationTypeName>University</organisationTypeName>
+          </organisationTypeName>
+          <organisationTypeName>
+            <organisationTypeNameId>1900</organisationTypeNameId>
+            <locale>sv</locale>
+            <organisationTypeName>Universitet</organisationTypeName>
+          </organisationTypeName>
+        </organisationTypeNames>
+      </organisationType>
+      <organisationName>
+        <name>Polarforskningssekretariatet</name>
+        <locale>sv</locale>
+      </organisationName>
+      <organisationHomepage>http://www.polar.se</organisationHomepage>
+      <domain>polar</domain>
+      <organisationAlternativeNames>
+        <organisationName>
+          <organisationNameId>33105</organisationNameId>
+          <locale>en</locale>
+          <organisationName>Swedish Polar Research Secretariat</organisationName>
+        </organisationName>
+      </organisationAlternativeNames>
+      <organisationContacts />
+      <organisationParents />
+      <organisationPredecessors />
+      <organisationPredecessorDescriptions />
+      <controlled>true</controlled>
+      <notEligible>false</notEligible>
+      <showInPortal>true</showInPortal>
+      <showInDefence>false</showInDefence>
+      <topLevel>true</topLevel>
+    </organisation>
+  </responsibleOrganisations>
+  <agreementAccepted>false</agreementAccepted>
+  <reviewed>false</reviewed>
+  <reviewedBefore>false</reviewedBefore>
+  <migrated>false</migrated>
+  <importDuplicate>false</importDuplicate>
+  <registratedDuplicate>false</registratedDuplicate>
+  <publicationStatus>
+    <publicationStatusId>53</publicationStatusId>
+    <publicationStatusNames>
+      <publicationStatusName>
+        <publicationStatusNameId>159</publicationStatusNameId>
+        <locale>sv</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+      <publicationStatusName>
+        <publicationStatusNameId>161</publicationStatusNameId>
+        <locale>no</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+      <publicationStatusName>
+        <publicationStatusNameId>160</publicationStatusNameId>
+        <locale>en</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+    </publicationStatusNames>
+    <code>published</code>
+  </publicationStatus>
+  <artisticWork>false</artisticWork>
+  <cooperation>
+    <external>false</external>
+    <partner />
+  </cooperation>
+  <failed>false</failed>
+  <hidden>false</hidden>
+  <publicationOrder>
+    <orderLink>false</orderLink>
+    <validFrom>2016-11-28T13:54:38.967+01:00</validFrom>
+    <parameters />
+  </publicationOrder>
+  <canOrderOnline>false</canOrderOnline>
+</publication>
