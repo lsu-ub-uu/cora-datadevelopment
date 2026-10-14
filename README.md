@@ -38,6 +38,25 @@ This repository contains scripts for creating and migrating data.
 - [Outputs export from Classic](docs/outputs_export.md)
 - [Outputs import to Cora](docs/outputs_import.md)
 
+### Persons
+
+Migrate persons referenced by `<authorityPid>` elements in publication XML files:
+
+```sh
+migrate-persons --xml-dir data/fedora_xml/smhi/2026-02-17T10:20:53.436633 --workers 16
+```
+
+This command writes immediately to the configured Cora target; there is no dry run
+or `--apply` flag. It reads the directory's `*.xml` files (not subdirectories) using
+threads, deduplicates authority PIDs across all files, and migrates each unique person
+once. It prints XML and created/skipped/failed person counts, continues after
+individual failures, and exits nonzero if any file or person fails.
+
+Set `AUTHORITY_SERVICE_URL` to the Classic authority service base URL and configure
+Cora credentials as described below. `--system`, `--login-id`, `--app-token`, and
+`--cora-url` override Cora configuration; `--workers` overrides `CORA_WORKERS` (default
+16). Migrate organisations first, since persons can reference them.
+
 ### Common record type scripts
 
 - Publisher

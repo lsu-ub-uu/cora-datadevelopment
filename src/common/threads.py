@@ -8,16 +8,25 @@ DEFAULT_WORKERS = 16
 
 
 def run_with_threads(
-    iterable, function, workers=DEFAULT_WORKERS, desc="Processing"
+    iterable, function, workers=DEFAULT_WORKERS, desc="Processing", status_order=None
 ) -> list:
+    counts = {status: 0 for status, _ in status_order or []}
     with ThreadPool(workers) as pool:
-        results = list(
-            tqdm(
-                pool.imap_unordered(function, iterable),
-                total=len(iterable),
-                desc=desc,
-            )
+        progress = tqdm(
+            pool.imap_unordered(function, iterable),
+            total=len(iterable),
+            desc=desc,
         )
+        results = []
+        for result in progress:
+            results.append(result)
+            if status_order:
+                counts[result.status] = counts.get(result.status, 0) + 1
+                progress.set_postfix_str(
+                    " | ".join(
+                        f"{icon} {counts[status]}" for status, icon in status_order
+                    )
+                )
     return results
 
 

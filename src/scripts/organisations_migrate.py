@@ -12,9 +12,9 @@ def main():
         arguments={
             **common_arguments,
             "--domain": {
-                "help": "Domain to migrate organisations for",
+                "help": "Domain to migrate organisations for (omit to migrate all domains)",
                 "type": str,
-                "required": True,
+                "required": False,
             },
         },
     )
