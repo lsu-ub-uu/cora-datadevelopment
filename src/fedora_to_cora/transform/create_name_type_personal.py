@@ -122,6 +122,11 @@ def create_name_type_personal(
         otherType=otherType,
         repeatId=str(repeatId),
         children=[
+            (
+                _create_person_link(person, context)
+                if _has_authority_pid(person)
+                else None
+            ),
             create_text("namePart", type="family", value=person.findtext("./lastName")),
             create_text("namePart", type="given", value=person.findtext("./firstName")),
             _create_date_part(person),
@@ -135,6 +140,15 @@ def create_name_type_personal(
             _create_affiliations(person, context),
         ],
     )
+
+
+def _create_person_link(person: ET.Element, context: Context) -> ET.Element | None:
+    authority_pid = person.findtext("./authorityPid")
+    assert authority_pid is not None
+    cora_id = get_cora_id_by_old_id(
+        authority_pid, record_type="diva-person", context=context
+    )
+    return create_record_link("person", "diva-person", cora_id)
 
 
 def _create_date_part(person: ET.Element) -> ET.Element | None:
@@ -289,3 +303,10 @@ def _create_name_identifier_local_id(local_id: ET.Element | None):
         return None
 
     return create_text("nameIdentifier", type="localId", value=local_id.text)
+
+
+def _has_authority_pid(
+    source_record: ET.Element,
+) -> bool:
+    authority_pid = source_record.findtext("./authorityPid")
+    return authority_pid is not None and len(authority_pid) > 0

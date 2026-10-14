@@ -52,7 +52,7 @@
     <domain>nordiskamuseet</domain>
     <creatorInfo>
       <userId>mock.mockson@nordiskamuseet.se</userId>
-      <ip>193.10.45.2</ip>
+      <ip>33.33.33.2</ip>
       <name>Mock Mockson</name>
       <date>2019-10-25T15:53:04.462+02:00</date>
       <userType>ADMIN</userType>
@@ -61,7 +61,7 @@
     <updaters>
       <userInformation>
         <userId>mock.mockson@nordiskamuseet.se</userId>
-        <ip>193.10.45.2</ip>
+        <ip>44.44.45.2</ip>
         <name>Mock Mockson</name>
         <date>2019-10-25T15:53:04.379+02:00</date>
         <userType>ADMIN</userType>
@@ -69,7 +69,7 @@
       </userInformation>
       <userInformation>
         <userId>mock.mockson@nordiskamuseet.se</userId>
-        <ip>193.10.45.2</ip>
+        <ip>55.55.55.2</ip>
         <name>Mock Mockson</name>
         <date>2019-10-28T14:59:19.803+01:00</date>
         <userType>ADMIN</userType>

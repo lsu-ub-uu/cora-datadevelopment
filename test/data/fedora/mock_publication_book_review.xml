@@ -1,0 +1,575 @@
+<?xml version='1.0' encoding='utf-8'?>
+<publication>
+  <contentType>
+    <contentTypeId>51</contentTypeId>
+    <contentTypeCode>science</contentTypeCode>
+    <contentTypeNames>
+      <contentTypeName>
+        <contentTypeNameId>107</contentTypeNameId>
+        <locale>no</locale>
+        <contentTypeName>Annet vitenskapelig</contentTypeName>
+      </contentTypeName>
+      <contentTypeName>
+        <contentTypeNameId>102</contentTypeNameId>
+        <locale>en</locale>
+        <contentTypeName>Other academic</contentTypeName>
+      </contentTypeName>
+      <contentTypeName>
+        <contentTypeNameId>103</contentTypeNameId>
+        <locale>sv</locale>
+        <contentTypeName>Övrigt vetenskapligt</contentTypeName>
+      </contentTypeName>
+    </contentTypeNames>
+    <sortOrder>2</sortOrder>
+  </contentType>
+  <publicationType>
+    <publicationTypeId>52</publicationTypeId>
+    <publicationTypeCode>bookReview</publicationTypeCode>
+    <openUrlType>article</openUrlType>
+    <publicationTypeNames>
+      <publicationTypeName>
+        <publicationTypeNameId>236</publicationTypeNameId>
+        <locale>no</locale>
+        <publicationTypeName>Artikkel, omtale</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>205</publicationTypeNameId>
+        <locale>en</locale>
+        <publicationTypeName>Article, book review</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>204</publicationTypeNameId>
+        <locale>sv</locale>
+        <publicationTypeName>Artikel, recension</publicationTypeName>
+      </publicationTypeName>
+    </publicationTypeNames>
+    <roles />
+    <comprehensiveSummary>false</comprehensiveSummary>
+    <domainAdminOnly>false</domainAdminOnly>
+  </publicationType>
+  <pid>diva2:1985255</pid>
+  <administrativeInfo>
+    <domain>smhi</domain>
+    <creatorInfo>
+      <userId>b004444</userId>
+      <ip>44.44.44.44</ip>
+      <name>A Swensson</name>
+      <date>2025-07-23T08:22:42.673+02:00</date>
+      <userType>DOMAINADMIN</userType>
+      <userAction>CREATED</userAction>
+    </creatorInfo>
+    <createdDate>2025-07-23T08:22:42.673+02:00</createdDate>
+  </administrativeInfo>
+  <publicationDate>2025-07-29T08:20:00.000+02:00</publicationDate>
+  <authors>
+    <person>
+      <firstName>Mehdi</firstName>
+      <lastName>Eshagh</lastName>
+      <localId>a002647</localId>
+      <organisations>
+        <organisation>
+          <organisationId>872555</organisationId>
+          <organisationType>
+            <organisationTypeId>55</organisationTypeId>
+            <organisationTypeCode>unit</organisationTypeCode>
+            <organisationTypeNames>
+              <organisationTypeName>
+                <organisationTypeNameId>1911</organisationTypeNameId>
+                <locale>en</locale>
+                <organisationTypeName>Unit</organisationTypeName>
+              </organisationTypeName>
+              <organisationTypeName>
+                <organisationTypeNameId>1910</organisationTypeNameId>
+                <locale>sv</locale>
+                <organisationTypeName>Enhet</organisationTypeName>
+              </organisationTypeName>
+            </organisationTypeNames>
+          </organisationType>
+          <organisationName>
+            <name>Meteorologi</name>
+            <locale>sv</locale>
+          </organisationName>
+          <domain>smhi</domain>
+          <organisationAlternativeNames>
+            <organisationName>
+              <organisationNameId>52205</organisationNameId>
+              <locale>en</locale>
+              <organisationName>Meteorology</organisationName>
+            </organisationName>
+          </organisationAlternativeNames>
+          <organisationContacts />
+          <organisationParents>
+            <organisation>
+              <organisationId>872550</organisationId>
+              <organisationType>
+                <organisationTypeId>61</organisationTypeId>
+                <organisationTypeCode>division</organisationTypeCode>
+                <organisationTypeNames>
+                  <organisationTypeName>
+                    <organisationTypeNameId>1923</organisationTypeNameId>
+                    <locale>en</locale>
+                    <organisationTypeName>Division</organisationTypeName>
+                  </organisationTypeName>
+                  <organisationTypeName>
+                    <organisationTypeNameId>1922</organisationTypeNameId>
+                    <locale>sv</locale>
+                    <organisationTypeName>Avdelning</organisationTypeName>
+                  </organisationTypeName>
+                </organisationTypeNames>
+              </organisationType>
+              <organisationName>
+                <name>Forskningsavdelningen</name>
+                <locale>sv</locale>
+              </organisationName>
+              <domain>smhi</domain>
+              <organisationAlternativeNames>
+                <organisationName>
+                  <organisationNameId>52200</organisationNameId>
+                  <locale>en</locale>
+                  <organisationName>Research Department</organisationName>
+                </organisationName>
+              </organisationAlternativeNames>
+              <organisationContacts />
+              <organisationParents>
+                <organisation>
+                  <organisationId>16501</organisationId>
+                  <organisationType>
+                    <organisationTypeId>64</organisationTypeId>
+                    <organisationTypeCode>authority</organisationTypeCode>
+                    <organisationTypeNames>
+                      <organisationTypeName>
+                        <organisationTypeNameId>1931</organisationTypeNameId>
+                        <locale>en</locale>
+                        <organisationTypeName>Authority</organisationTypeName>
+                      </organisationTypeName>
+                      <organisationTypeName>
+                        <organisationTypeNameId>1930</organisationTypeNameId>
+                        <locale>sv</locale>
+                        <organisationTypeName>Myndighet</organisationTypeName>
+                      </organisationTypeName>
+                    </organisationTypeNames>
+                  </organisationType>
+                  <organisationName>
+                    <name>SMHI</name>
+                    <locale>sv</locale>
+                  </organisationName>
+                  <organisationHomepage>http://www.smhi.se</organisationHomepage>
+                  <domain>smhi</domain>
+                  <organisationNumber>202100-0696</organisationNumber>
+                  <organisationAlternativeNames>
+                    <organisationName>
+                      <organisationNameId>47351</organisationNameId>
+                      <locale>en</locale>
+                      <organisationName>SMHI</organisationName>
+                    </organisationName>
+                  </organisationAlternativeNames>
+                  <organisationContacts />
+                  <organisationParents />
+                  <organisationPredecessors />
+                  <organisationPredecessorDescriptions />
+                  <controlled>true</controlled>
+                  <notEligible>false</notEligible>
+                  <showInPortal>true</showInPortal>
+                  <showInDefence>false</showInDefence>
+                  <topLevel>true</topLevel>
+                </organisation>
+              </organisationParents>
+              <organisationPredecessors />
+              <organisationPredecessorDescriptions />
+              <controlled>true</controlled>
+              <notEligible>false</notEligible>
+              <showInPortal>false</showInPortal>
+              <showInDefence>false</showInDefence>
+              <topLevel>false</topLevel>
+            </organisation>
+          </organisationParents>
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <controlled>true</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <title />
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value>0000-0003-0067-8631</value>
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+      <authorityPid>authority-person:114309</authorityPid>
+    </person>
+  </authors>
+  <originalPublicationTitle>
+    <title>Book Review</title>
+    <subTitle>Earth System Modeling, Data Assimilation, and Predictability:Atmosphere,Oceans, Land and Human Systems. 2nd Edition</subTitle>
+    <language>
+      <languageCode3>eng</languageCode3>
+      <languageCode2>en</languageCode2>
+      <languageNames>
+        <languageName>
+          <languageNameId>1145</languageNameId>
+          <locale>en</locale>
+          <languageName>English</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>10120</languageNameId>
+          <locale>no</locale>
+          <languageName>engelsk</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>1144</languageNameId>
+          <locale>sv</locale>
+          <languageName>Engelska</languageName>
+        </languageName>
+      </languageNames>
+      <showsOnList>true</showsOnList>
+    </language>
+  </originalPublicationTitle>
+  <journal>
+    <journalId>21795</journalId>
+    <nordicListId>450439</nordicListId>
+    <journalType>
+      <journalTypeId>50</journalTypeId>
+      <journalTypeCode>frida</journalTypeCode>
+      <journalTypeNames>
+        <journalTypeName>
+          <journalTypeNameId>9901</journalTypeNameId>
+          <locale>en</locale>
+          <journalTypeName>FRIDA</journalTypeName>
+        </journalTypeName>
+        <journalTypeName>
+          <journalTypeNameId>9900</journalTypeNameId>
+          <locale>sv</locale>
+          <journalTypeName>FRIDA</journalTypeName>
+        </journalTypeName>
+      </journalTypeNames>
+    </journalType>
+    <journalTitle>
+      <titleId>30745</titleId>
+      <mainTitle>Weather</mainTitle>
+      <locale>und</locale>
+    </journalTitle>
+    <printedIssn>0043-1656</printedIssn>
+    <electronicIssn>1477-8696</electronicIssn>
+    <fridaLevel>
+      <fridaLevelId>52</fridaLevelId>
+      <fridaLevelCode>0</fridaLevelCode>
+      <fridaLevelNames>
+        <fridaLevelName>
+          <fridaLevelNameId>10004</fridaLevelNameId>
+          <locale>en</locale>
+          <fridaLevelName>Other</fridaLevelName>
+        </fridaLevelName>
+        <fridaLevelName>
+          <fridaLevelNameId>10005</fridaLevelNameId>
+          <locale>sv</locale>
+          <fridaLevelName>Övriga</fridaLevelName>
+        </fridaLevelName>
+      </fridaLevelNames>
+    </fridaLevel>
+    <controlled>false</controlled>
+    <openAccess>false</openAccess>
+    <subjects />
+    <relationships />
+  </journal>
+  <uncontrolledJournal>
+    <controlled>false</controlled>
+    <openAccess>false</openAccess>
+    <subjects />
+    <relationships />
+  </uncontrolledJournal>
+  <dateIssued>2025</dateIssued>
+  <volume>99</volume>
+  <issueNumber>9</issueNumber>
+  <publisher />
+  <nbn>urn:nbn:se:smhi:diva-6789</nbn>
+  <oai>oai:DiVA.org:smhi-6789</oai>
+  <identifiers>
+    <entry>
+      <publicationIdentifierType>doi</publicationIdentifierType>
+      <publicationIdentifier>
+        <value>10.1002/wea.7729</value>
+        <type>doi</type>
+        <openAccess>false</openAccess>
+      </publicationIdentifier>
+    </entry>
+  </identifiers>
+  <categories />
+  <nationalCategories>
+    <subject>
+      <subjectId>11545</subjectId>
+      <subjectType>
+        <subjectTypeId>57</subjectTypeId>
+        <subjectTypeCode>hsv</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3723</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3722</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>HSV categories</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3721</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>28240</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Meteorologi och atmosfärsvetenskap</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>28241</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Meteorology and Atmospheric Sciences</subjectName>
+        </subjectName>
+      </subjectNames>
+      <subjectCode>10508</subjectCode>
+      <parents>
+        <subject>
+          <subjectId>11537</subjectId>
+          <subjectType>
+            <subjectTypeId>57</subjectTypeId>
+            <subjectTypeCode>hsv</subjectTypeCode>
+            <subjectTypeNames>
+              <subjectTypeName>
+                <subjectTypeNameId>3723</subjectTypeNameId>
+                <locale>no</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3722</subjectTypeNameId>
+                <locale>en</locale>
+                <subjectTypeName>HSV categories</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3721</subjectTypeNameId>
+                <locale>sv</locale>
+                <subjectTypeName>HSV kategorier</subjectTypeName>
+              </subjectTypeName>
+            </subjectTypeNames>
+          </subjectType>
+          <subjectNames>
+            <subjectName>
+              <subjectNameId>28225</subjectNameId>
+              <locale>en</locale>
+              <subjectName>Earth and Related Environmental Sciences</subjectName>
+            </subjectName>
+            <subjectName>
+              <subjectNameId>28224</subjectNameId>
+              <locale>sv</locale>
+              <subjectName>Geovetenskap och relaterad miljövetenskap</subjectName>
+            </subjectName>
+          </subjectNames>
+          <subjectCode>105</subjectCode>
+          <parents>
+            <subject>
+              <subjectId>11500</subjectId>
+              <subjectType>
+                <subjectTypeId>57</subjectTypeId>
+                <subjectTypeCode>hsv</subjectTypeCode>
+                <subjectTypeNames>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3723</subjectTypeNameId>
+                    <locale>no</locale>
+                    <subjectTypeName>HSV kategorier</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3722</subjectTypeNameId>
+                    <locale>en</locale>
+                    <subjectTypeName>HSV categories</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3721</subjectTypeNameId>
+                    <locale>sv</locale>
+                    <subjectTypeName>HSV kategorier</subjectTypeName>
+                  </subjectTypeName>
+                </subjectTypeNames>
+              </subjectType>
+              <subjectNames>
+                <subjectName>
+                  <subjectNameId>28151</subjectNameId>
+                  <locale>en</locale>
+                  <subjectName>Natural Sciences</subjectName>
+                </subjectName>
+                <subjectName>
+                  <subjectNameId>28150</subjectNameId>
+                  <locale>sv</locale>
+                  <subjectName>Naturvetenskap</subjectName>
+                </subjectName>
+              </subjectNames>
+              <subjectCode>1</subjectCode>
+              <parents />
+              <predecessors />
+              <domain>diva</domain>
+              <notEligible>false</notEligible>
+              <organisations />
+            </subject>
+          </parents>
+          <predecessors />
+          <domain>diva</domain>
+          <notEligible>false</notEligible>
+          <organisations />
+        </subject>
+      </parents>
+      <predecessors />
+      <domain>diva</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+  </nationalCategories>
+  <researchSubjects>
+    <subject>
+      <subjectId>22600</subjectId>
+      <subjectType>
+        <subjectTypeId>53</subjectTypeId>
+        <subjectTypeCode>researchSubject</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3711</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3710</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3709</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>Forskningsämne</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>52151</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Meteorologi</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>52150</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Meteorology</subjectName>
+        </subjectName>
+      </subjectNames>
+      <parents />
+      <predecessors />
+      <domain>smhi</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+  </researchSubjects>
+  <note>&lt;p&gt;Det är en publicerad bokrecension &lt;/p&gt;</note>
+  <internalNote />
+  <attachments class="tree-set">
+    <no-comparator />
+    <attachment>
+      <mimeType>
+        <mimeTypeId>50</mimeTypeId>
+        <mimeTypeName>application/pdf</mimeTypeName>
+        <fileSuffix>pdf</fileSuffix>
+        <datasetOnly>false</datasetOnly>
+      </mimeType>
+      <fileLabel>
+        <fileLabelId>50</fileLabelId>
+        <fileLabelCode>fulltext</fileLabelCode>
+        <fileLabelNames>
+          <fileLabelName>
+            <fileLabelNameId>3674</fileLabelNameId>
+            <locale>no</locale>
+            <fileLabelName>fulltekst</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3651</fileLabelNameId>
+            <locale>sv</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3650</fileLabelNameId>
+            <locale>en</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+        </fileLabelNames>
+      </fileLabel>
+      <fileName>FULLTEXT01</fileName>
+      <fileSize>266059</fileSize>
+      <selectedFileName>fulltext</selectedFileName>
+      <path>5dcfc00cd1c4f04b3dfbda015940/Book_review.pdf</path>
+      <checksums>
+        <checksum>
+          <type>SHA512</type>
+          <digest>4124f753a25a419e56306a0afed9384fd3cbcaa1db15ec6ea65299d4961a7b9603410a863b26918f5fd87c9709ba849c1c64fcc99cf45c5b341b073a3c14d0b3</digest>
+        </checksum>
+      </checksums>
+      <order>1</order>
+      <uploadDate>2025-07-23T08:22:42.902+02:00</uploadDate>
+      <asyncUpload>false</asyncUpload>
+      <availableFrom>2025-07-29T08:20:00.000+02:00</availableFrom>
+      <onHold>false</onHold>
+      <deleted>false</deleted>
+      <prePrint>false</prePrint>
+      <postPrint>false</postPrint>
+      <print>true</print>
+      <archiveOnly>false</archiveOnly>
+      <printOnDemand>false</printOnDemand>
+      <toBePublished>false</toBePublished>
+      <toBeArchived>false</toBeArchived>
+      <digitized>false</digitized>
+      <hasCoverPage>false</hasCoverPage>
+      <coverPageConditions />
+    </attachment>
+  </attachments>
+  <formatElectronic>false</formatElectronic>
+  <formatPrint>false</formatPrint>
+  <agreementAccepted>true</agreementAccepted>
+  <reviewed>true</reviewed>
+  <reviewedBefore>true</reviewedBefore>
+  <migrated>false</migrated>
+  <importDuplicate>false</importDuplicate>
+  <registratedDuplicate>false</registratedDuplicate>
+  <publicationStatus>
+    <publicationStatusId>53</publicationStatusId>
+    <publicationStatusNames>
+      <publicationStatusName>
+        <publicationStatusNameId>161</publicationStatusNameId>
+        <locale>no</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+      <publicationStatusName>
+        <publicationStatusNameId>160</publicationStatusNameId>
+        <locale>en</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+      <publicationStatusName>
+        <publicationStatusNameId>159</publicationStatusNameId>
+        <locale>sv</locale>
+        <publicationStatusName>Published</publicationStatusName>
+      </publicationStatusName>
+    </publicationStatusNames>
+    <code>published</code>
+  </publicationStatus>
+  <artisticWork>false</artisticWork>
+  <failed>false</failed>
+  <hidden>false</hidden>
+  <publicationOrder>
+    <orderLink>false</orderLink>
+    <parameters />
+  </publicationOrder>
+  <canOrderOnline>false</canOrderOnline>
+  <publicationChannel />
+</publication>

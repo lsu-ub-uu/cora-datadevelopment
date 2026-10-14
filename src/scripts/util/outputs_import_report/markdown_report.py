@@ -1,17 +1,22 @@
 import os
+from html import escape
 
 from fedora_to_cora.output_migrate import OutputMigrationResult
 from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResult
+from fedora_to_cora.persons_migrate import PersonMigrationSummary
 from scripts.util.outputs_import_report.report_data import (
     ERROR_CATEGORIES_IN_ORDER,
     RELATION_ERRORS_LABEL,
     STATUS_LABELS,
+    PERSON_FAILURE_NOTICE,
     extract_export_date,
     format_publication_type_pid_groups,
     format_yes_no,
     generate_relation_error_data,
+    generate_person_report_data,
     generate_report_data,
     generate_setup_for_report,
+    generate_summary_tables,
     group_error_pids_by_publication_type,
     resolve_target_system,
 )
@@ -26,6 +31,7 @@ def save_markdown_report(
     cora_url: str | None,
     output_dir: str = ".",
     relation_results: list[OutputRelationMigrationResult] | None = None,
+    person_summary: PersonMigrationSummary | None = None,
 ):
     status_counts, errors = generate_report_data(results)
     grouped_error_pids = group_error_pids_by_publication_type(results)
@@ -49,12 +55,16 @@ def save_markdown_report(
     lines.append(f"**With binaries:** {with_binaries}  ")
     lines.append("")
 
-    lines.append("## Status Counts\n")
-    lines.append("| Status | Count |")
-    lines.append("|--------|-------|")
-    for status, count in status_counts.items():
-        lines.append(f"| {STATUS_LABELS[status]} | {count} |")
-    lines.append("")
+    lines.append("## Summary\n")
+    for migration, counts in generate_summary_tables(
+        status_counts, relation_results or [], person_summary
+    ).items():
+        lines.append(f"### {migration}\n")
+        lines.append("| Status | Count |")
+        lines.append("|--------|-------|")
+        for status, count in counts.items():
+            lines.append(f"| {status} | {count} |")
+        lines.append("")
 
     for category in ERROR_CATEGORIES_IN_ORDER:
         error_dict = errors.get(category, {})
@@ -74,11 +84,36 @@ def save_markdown_report(
                 )
             lines.append("")
 
+    if person_summary is not None:
+        _append_person_migration_section(lines, person_summary)
+
     _append_relation_errors_section(lines, relation_results or [])
 
     with open(filepath, "w", encoding="utf-8") as file_obj:
         file_obj.write("\n".join(lines))
     print(f"Markdown report saved to {filepath}")
+
+
+def _append_person_migration_section(lines: list[str], summary: PersonMigrationSummary):
+    counts, errors = generate_person_report_data(summary)
+    lines.extend(["## Person Migration\n", "| Metric | Count |", "|--------|-------|"])
+    lines.extend(f"| {label} | {count} |" for label, count in counts.items())
+    lines.append("")
+    if summary.has_failures:
+        lines.extend([PERSON_FAILURE_NOTICE, ""])
+    if errors:
+        lines.extend(
+            [
+                "| Error Message | Occurrences | Authority PIDs / XML files |",
+                "|---------------|-------------|----------------------------|",
+            ]
+        )
+        for error in errors:
+            cells = [
+                escape(value.replace("|", " ").replace("\n", " ")) for value in error
+            ]
+            lines.append("| " + " | ".join(cells) + " |")
+        lines.append("")
 
 
 def _append_relation_errors_section(

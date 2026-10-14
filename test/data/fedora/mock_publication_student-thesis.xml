@@ -30,7 +30,7 @@
     <domain>nordiskamuseet</domain>
     <creatorInfo>
       <userId>mock.mockson@nordiskamuseet.se</userId>
-      <ip>193.10.45.2</ip>
+      <ip>XXX.10.45.2</ip>
       <name>Mock Mockson</name>
       <date>2019-03-19T17:58:24.857+01:00</date>
       <userType>DOMAINADMIN</userType>
@@ -39,7 +39,7 @@
     <updaters>
       <userInformation>
         <userId>mock.mockson@nordiskamuseet.se</userId>
-        <ip>193.10.45.2</ip>
+        <ip>XXX.10.45.2</ip>
         <name>Mock Mockson</name>
         <date>2019-03-19T17:59:16.180+01:00</date>
         <userType>DOMAINADMIN</userType>
@@ -47,7 +47,7 @@
       </userInformation>
       <userInformation>
         <userId>mock.mockson@nordiskamuseet.se</userId>
-        <ip>193.10.45.2</ip>
+        <ip>XXX.10.45.2</ip>
         <name>Mock Mockson</name>
         <date>2019-03-19T18:02:27.735+01:00</date>
         <userType>DOMAINADMIN</userType>
@@ -55,7 +55,7 @@
       </userInformation>
       <userInformation>
         <userId>mock.mockson@nordiskamuseet.se</userId>
-        <ip>193.10.45.2</ip>
+        <ip>XXX.10.45.2</ip>
         <name>Mock Mockson</name>
         <date>2019-03-19T18:07:25.953+01:00</date>
         <userType>DOMAINADMIN</userType>
@@ -63,7 +63,7 @@
       </userInformation>
       <userInformation>
         <userId>mock.mockson@nordiskamuseet.se</userId>
-        <ip>193.10.45.2</ip>
+        <ip>XXX.10.45.2</ip>
         <name>Mock Mockson</name>
         <date>2019-03-26T11:33:17.474+01:00</date>
         <userType>ADMIN</userType>
@@ -71,7 +71,7 @@
       </userInformation>
       <userInformation>
         <userId>mock.mockson@nordiskamuseet.se</userId>
-        <ip>193.10.45.2</ip>
+        <ip>XXX.10.45.2</ip>
         <name>Mock Mockson</name>
         <date>2019-03-26T11:34:31.350+01:00</date>
         <userType>ADMIN</userType>
@@ -79,7 +79,7 @@
       </userInformation>
       <userInformation>
         <userId>mock.mockson@nordiskamuseet.se</userId>
-        <ip>193.10.45.2</ip>
+        <ip>XXX.10.45.2</ip>
         <name>Mock Mockson</name>
         <date>2019-03-26T11:35:30.722+01:00</date>
         <userType>ADMIN</userType>
@@ -87,7 +87,7 @@
       </userInformation>
       <userInformation>
         <userId>system</userId>
-        <ip>130.238.171.117</ip>
+        <ip>XXX.XXX.XXX.XXX</ip>
         <name>System</name>
         <date>2025-06-12T18:35:50.258+02:00</date>
         <userType>SERVICE</userType>

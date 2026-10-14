@@ -1,11 +1,18 @@
 import xml.etree.ElementTree as ET
 import sys
-from unittest.mock import patch
+from pathlib import Path
+from unittest.mock import Mock, patch
 import pytest
 
 from cora.context import MockContext
 from fedora_to_cora.output_migrate import OutputMigrationResult
 from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResult
+from fedora_to_cora.persons_migrate import (
+    PersonMigrationOutcome,
+    PersonMigrationSummary,
+)
+from fedora_to_cora.person_migrate import MigratePersonResult
+from fedora_to_cora import persons_migrate
 from scripts import outputs_import
 
 
@@ -16,6 +23,186 @@ def test_parse_args_defers_environment_defaults(monkeypatch):
     args = outputs_import._parse_args()
 
     assert (args.system, args.login_id, args.app_token) == (None, None, None)
+
+
+@pytest.mark.parametrize(
+    "extra", [[], ["--apply", "--processes", "0"], ["--apply", "--processes", "-1"]]
+)
+def test_persons_rejects_invalid_cli_options(monkeypatch, extra):
+    monkeypatch.setattr(
+        sys, "argv", ["outputs-import", "--xml-dir", "xml", "--persons", *extra]
+    )
+
+    with pytest.raises(SystemExit) as error:
+        outputs_import._parse_args()
+
+    assert error.value.code == 2
+
+
+def test_main_forwards_persons(monkeypatch):
+    monkeypatch.setattr(
+        sys, "argv", ["outputs-import", "--xml-dir", "xml", "--persons", "--apply"]
+    )
+    monkeypatch.setattr(outputs_import, "print_logo", Mock())
+    monkeypatch.setattr(outputs_import, "configure_logging", Mock())
+    migrate = Mock()
+    monkeypatch.setattr(outputs_import, "outputs_import", migrate)
+
+    outputs_import.main()
+
+    assert migrate.call_args.kwargs["persons"] is True
+
+
+@pytest.mark.parametrize("apply, processes", [(False, 2), (True, 0), (True, -1)])
+def test_persons_validates_api_options_before_side_effects(
+    monkeypatch, apply, processes
+):
+    migrate = Mock()
+    monkeypatch.setattr(outputs_import, "migrate_persons", migrate)
+
+    with pytest.raises(ValueError):
+        outputs_import.outputs_import(
+            "xml", "pre", "user", None, processes, apply, persons=True
+        )
+
+    migrate.assert_not_called()
+
+
+@pytest.mark.parametrize("mode", ["success", "migration", "scan", "auth"])
+def test_persons_runs_before_outputs_and_passes_summary(monkeypatch, mode):
+    summary = PersonMigrationSummary()
+    if mode == "migration":
+        summary.outcomes = [
+            PersonMigrationOutcome(
+                "person:1", MigratePersonResult("FAILED", None, "Rejected")
+            )
+        ]
+    elif mode == "scan":
+        summary.xml_files = 1
+        summary.scan_errors = {"broken.xml": "Invalid XML"}
+    elif mode == "auth":
+        summary.initialization_error = "Login failed"
+    events = []
+    migrate = Mock(side_effect=lambda **kwargs: events.append("persons") or summary)
+    monkeypatch.setattr(outputs_import, "migrate_persons", migrate)
+    read = Mock(side_effect=lambda *args: events.append("read") or ["selected.xml"])
+    monkeypatch.setattr(outputs_import, "_read_source_record_paths", read)
+    monkeypatch.setattr(
+        outputs_import, "_filter_source_record_paths_by_pids", Mock(return_value=[])
+    )
+    migrate_outputs = Mock(side_effect=lambda **kwargs: events.append("outputs") or [])
+    monkeypatch.setattr(outputs_import, "_migrate_outputs", migrate_outputs)
+    relations = Mock(side_effect=lambda **kwargs: events.append("relations") or [])
+    monkeypatch.setattr(outputs_import, "_migrate_output_relations", relations)
+    reports = Mock(side_effect=lambda *args, **kwargs: events.append("reports"))
+    monkeypatch.setattr(outputs_import, "save_reports", reports)
+
+    outputs_import.outputs_import(
+        "xml",
+        "pre",
+        "user",
+        "token",
+        3,
+        True,
+        limit=1,
+        pids=["pid:1"],
+        cora_url="https://example.org",
+        persons=True,
+    )
+
+    assert events == ["persons", "read", "outputs", "relations", "reports"]
+    migrate_outputs.assert_called_once()
+    relations.assert_called_once()
+    reports.assert_called_once()
+    migrate.assert_called_once_with(
+        xml_dir=Path("xml"),
+        system="pre",
+        login_id="user",
+        app_token="token",
+        workers=3,
+        cora_url="https://example.org",
+    )
+    assert reports.call_args.kwargs["person_summary"] is summary
+
+
+def test_person_failure_continues_outputs_and_saves_real_reports(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    xml_dir = tmp_path / "xml"
+    xml_dir.mkdir()
+    (xml_dir / "publication.xml").write_text(
+        "<publication><pid>pid:1</pid>"
+        "<authorityPid>person:1</authorityPid></publication>"
+    )
+    monkeypatch.setattr(persons_migrate, "CoraContext", Mock())
+    monkeypatch.setattr(
+        persons_migrate,
+        "migrate_person",
+        Mock(return_value=MigratePersonResult("FAILED", None, "Rejected")),
+    )
+    output_result = OutputMigrationResult("pid:1", "article", status="SUCCESS")
+    migrate_outputs = Mock(return_value=[output_result])
+    monkeypatch.setattr(outputs_import, "_migrate_outputs", migrate_outputs)
+    relations = Mock(return_value=[])
+    monkeypatch.setattr(outputs_import, "_migrate_output_relations", relations)
+
+    outputs_import.outputs_import(
+        str(xml_dir), "pre", "user", None, 1, True, persons=True
+    )
+
+    migrate_outputs.assert_called_once()
+    assert migrate_outputs.call_args.kwargs["source_record_paths"] == [
+        str(xml_dir / "publication.xml")
+    ]
+    relations.assert_called_once()
+    assert relations.call_args.kwargs["migration_results"] == [output_result]
+    for extension in ("html", "md"):
+        text = next((tmp_path / "reports").glob(f"*.{extension}")).read_text()
+        assert "Person Migration" in text
+        assert "person:1" in text
+        assert "Rejected" in text
+        assert "Successfully imported" in text
+        assert "output and relation migration continued" in text
+        assert "Output and relation migration not run" not in text
+
+
+def test_persons_scans_entire_directory_despite_output_filters(tmp_path, monkeypatch):
+    for number in (1, 2):
+        (tmp_path / f"{number}.xml").write_text(
+            f"<publication><pid>pid:{number}</pid>"
+            f"<authorityPid>person:{number}</authorityPid></publication>"
+        )
+    (tmp_path / "ignored.txt").write_text("not XML")
+    monkeypatch.setattr(persons_migrate, "CoraContext", Mock())
+    migrate = Mock(return_value=MigratePersonResult("SKIPPED", None, "Exists"))
+    monkeypatch.setattr(persons_migrate, "migrate_person", migrate)
+    outputs = Mock(return_value=[])
+    monkeypatch.setattr(outputs_import, "_migrate_outputs", outputs)
+    monkeypatch.setattr(
+        outputs_import, "_migrate_output_relations", Mock(return_value=[])
+    )
+    reports = Mock()
+    monkeypatch.setattr(outputs_import, "save_reports", reports)
+
+    outputs_import.outputs_import(
+        str(tmp_path),
+        "pre",
+        "user",
+        "token",
+        2,
+        True,
+        limit=1,
+        pids=["pid:missing"],
+        persons=True,
+    )
+
+    assert {invocation.args[0] for invocation in migrate.call_args_list} == {
+        "person:1",
+        "person:2",
+    }
+    assert outputs.call_args.kwargs["source_record_paths"] == []
+    summary = reports.call_args.kwargs["person_summary"]
+    assert summary.xml_files == 2
+    assert summary.counts["SKIPPED"] == 2
 
 
 def test_main_resolves_environment_before_import(monkeypatch):
@@ -227,6 +414,7 @@ def test_outputs_import_orchestrates_loading_filtering_pool_and_reports(
         "binaries": False,
         "cora_url": "",
         "output_dir": "reports",
+        "person_summary": None,
     }
     assert [(r.status, r.pid, r.error) for r in relation_results] == [
         ("UPDATED", "diva2:1", None),
