@@ -66,6 +66,7 @@ def output_migrate(
         )
 
     if apply:
+
         create_record_result = create_record(
             cora_output,
             record_type="diva-output",
