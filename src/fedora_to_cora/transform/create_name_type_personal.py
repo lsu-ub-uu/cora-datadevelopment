@@ -122,7 +122,11 @@ def create_name_type_personal(
         otherType=otherType,
         repeatId=str(repeatId),
         children=[
-            _create_person(person, context) if _has_authority_pid(person) else None,
+            (
+                _create_person_link(person, context)
+                if _has_authority_pid(person)
+                else None
+            ),
             create_text("namePart", type="family", value=person.findtext("./lastName")),
             create_text("namePart", type="given", value=person.findtext("./firstName")),
             _create_date_part(person),
@@ -138,7 +142,7 @@ def create_name_type_personal(
     )
 
 
-def _create_person(person: ET.Element, context: Context) -> ET.Element | None:
+def _create_person_link(person: ET.Element, context: Context) -> ET.Element | None:
     authority_pid = person.findtext("./authorityPid")
     assert authority_pid is not None
     cora_id = get_cora_id_by_old_id(
