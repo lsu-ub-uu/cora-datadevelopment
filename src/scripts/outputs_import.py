@@ -2,6 +2,7 @@ import os
 import sys
 import time
 from collections.abc import Callable
+from pathlib import Path
 from xml.etree import ElementTree as ET
 from common.arg_parser import (
     create_argument_parser,
@@ -14,6 +15,7 @@ from cora.context import CoraContext, resolve_cora_system, resolve_cora_login_id
 from fedora_to_cora.output_migrate import output_migrate
 from fedora_to_cora.output_migration_result import OutputMigrationResult
 from fedora_to_cora.output_relations_migrate import migrate_output_relations
+from fedora_to_cora.persons_migrate import migrate_persons
 from common.common_data import read_source_xml
 from common.print_logo import print_logo
 from multiprocessing import Pool
@@ -40,6 +42,7 @@ def main():
         apply=args.apply,
         limit=args.limit,
         binaries=args.binaries,
+        persons=args.persons,
         pids=args.pids.split(",") if args.pids else None,
         fedora_url=args.fedora_url,
         cora_url=args.cora_url,
@@ -58,10 +61,26 @@ def outputs_import(
     pids: list[str] | None = None,
     fedora_url: str | None = None,
     cora_url: str | None = None,
+    persons: bool = False,
 ):
+    if persons and not apply:
+        raise ValueError("--persons requires --apply")
+    if persons and processes < 1:
+        raise ValueError("Processes must be a positive integer")
     system = resolve_cora_system(system)
     login_id = resolve_cora_login_id(login_id)
     start_time = time.perf_counter()
+
+    person_summary = None
+    if persons:
+        person_summary = migrate_persons(
+            xml_dir=Path(xml_dir),
+            system=system,
+            login_id=login_id,
+            app_token=app_token,
+            workers=processes,
+            cora_url=cora_url,
+        )
 
     source_record_paths = _read_source_record_paths(xml_dir, limit)
 
@@ -71,7 +90,7 @@ def outputs_import(
         )
 
     print(
-        f"Starting migration of {len(source_record_paths)} records to {system} system..."
+        f"Starting migration of {len(source_record_paths)} records to {cora_url if cora_url else system}..."
     )
 
     migration_results = _migrate_outputs(
@@ -112,6 +131,7 @@ def outputs_import(
         cora_url=cora_url,
         output_dir="reports",
         relation_results=relation_migration_results,
+        person_summary=person_summary,
     )
 
 
@@ -220,13 +240,23 @@ def _parse_args():
                 "help": "Also migrate binaries associated with the publications",
                 "default": False,
             },
+            "--persons": {
+                "action": "store_true",
+                "help": "Migrate persons from all XML files before outputs (requires --apply)",
+                "default": False,
+            },
             "--pids": {
                 "help": "Comma-separated list of PIDs to process (for testing purposes)",
             },
         },
     )
 
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.persons and not args.apply:
+        parser.error("--persons requires --apply")
+    if args.persons and args.processes < 1:
+        parser.error("Processes must be a positive integer")
+    return args
 
 
 def _init_context(

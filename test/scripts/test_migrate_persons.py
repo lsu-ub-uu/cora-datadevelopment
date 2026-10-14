@@ -6,8 +6,65 @@ from unittest.mock import Mock, call
 import pytest
 
 import common.threads as threads
+from fedora_to_cora import persons_migrate
 from fedora_to_cora.person_migrate import MigratePersonResult
 from scripts import migrate_persons
+
+
+def test_reusable_migration_returns_failures_without_exiting(tmp_path, monkeypatch):
+    (tmp_path / "broken.xml").write_text("<publication>")
+    (tmp_path / "valid.xml").write_text(
+        "<publication><authorityPid>person:1</authorityPid></publication>"
+    )
+    monkeypatch.setattr(persons_migrate, "CoraContext", Mock())
+    monkeypatch.setattr(
+        persons_migrate,
+        "migrate_person",
+        Mock(return_value=MigratePersonResult("FAILED", None, "Rejected")),
+    )
+
+    summary = persons_migrate.migrate_persons(tmp_path, workers=1)
+
+    assert summary.xml_files == 2
+    assert summary.files_read == 1
+    assert str(tmp_path / "broken.xml") in summary.scan_errors
+    assert summary.unique_persons == 1
+    assert summary.counts == {"CREATED": 0, "SKIPPED": 0, "FAILED": 1}
+    assert summary.errors == {"Rejected": ["person:1"]}
+    assert summary.has_failures
+
+
+@pytest.mark.parametrize("invalid_directory", [False, True])
+def test_reusable_migration_validates_inputs(tmp_path, monkeypatch, invalid_directory):
+    context = Mock()
+    monkeypatch.setattr(persons_migrate, "CoraContext", context)
+    directory = tmp_path / "missing" if invalid_directory else tmp_path
+
+    with pytest.raises(ValueError):
+        persons_migrate.migrate_persons(
+            directory, workers=0 if not invalid_directory else 1
+        )
+
+    context.assert_not_called()
+
+
+def test_scan_errors_follow_paths_when_threads_finish_out_of_order(
+    tmp_path, monkeypatch
+):
+    broken = tmp_path / "broken.xml"
+    valid = tmp_path / "valid.xml"
+    broken.write_text("<publication>")
+    valid.write_text("<publication/>")
+    monkeypatch.setattr(
+        persons_migrate,
+        "run_with_threads",
+        lambda paths, function, **kwargs: [function(path) for path in reversed(paths)],
+    )
+
+    summary = persons_migrate.migrate_persons(tmp_path)
+
+    assert list(summary.scan_errors) == [str(broken)]
+    assert summary.files_read == 1
 
 
 @pytest.fixture
@@ -26,7 +83,12 @@ def dependencies():
 def cli(monkeypatch, tmp_path, dependencies):
     monkeypatch.setattr(sys, "argv", ["migrate-persons", "--xml-dir", str(tmp_path)])
     for name, dependency in dependencies.items():
-        monkeypatch.setattr(migrate_persons, name, dependency)
+        module = (
+            persons_migrate
+            if name in ("CoraContext", "migrate_person")
+            else migrate_persons
+        )
+        monkeypatch.setattr(module, name, dependency)
     monkeypatch.setenv("CORA_WORKERS", "2")
     return tmp_path, dependencies["CoraContext"].return_value
 
@@ -172,10 +234,10 @@ def test_skipped_person_is_success(cli, capsys, dependencies):
 def test_unreadable_xml(monkeypatch, tmp_path, caplog):
     xml_path = tmp_path / "unreadable.xml"
     monkeypatch.setattr(
-        migrate_persons, "read_source_xml", Mock(side_effect=PermissionError("Denied"))
+        persons_migrate, "read_source_xml", Mock(side_effect=PermissionError("Denied"))
     )
 
-    assert migrate_persons._read_authority_pids(xml_path) == (set(), False)
+    assert persons_migrate._read_authority_pids(xml_path) == (xml_path, set(), "Denied")
     assert "unreadable.xml" in caplog.text
     assert "Denied" in caplog.text
 
@@ -251,8 +313,8 @@ def test_forwards_configuration_and_workers(
     if cli_workers is not None:
         arguments.extend(["--workers", cli_workers])
     monkeypatch.setattr(sys, "argv", arguments)
-    run_with_threads = Mock(wraps=migrate_persons.run_with_threads)
-    monkeypatch.setattr(migrate_persons, "run_with_threads", run_with_threads)
+    run_with_threads = Mock(wraps=persons_migrate.run_with_threads)
+    monkeypatch.setattr(persons_migrate, "run_with_threads", run_with_threads)
 
     migrate_persons.main()
 

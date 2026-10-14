@@ -7,7 +7,7 @@ This script imports outputs from XML files exported from Diva Classic database, 
 - Python 3 and PIP installed
 - An XML file with exported outputs from DiVA Classic Database
 - Binaries that are referenced by attachments are saved in the `binaries` subdirectory
-- **Important**: Publishers, Funders, Journals, Subjects, Series, Organisations, and Persons that are referenced by the outputs that are to be imported, have already been imported to the Cora system. 
+- **Important**: Publishers, Funders, Journals, Subjects, Series, and Organisations referenced by the outputs must already be imported to Cora. Persons must also be imported beforehand, or migrated using `--persons` as described below.
 
 ## Installing the package
 
@@ -26,6 +26,32 @@ outputs-import --xml-dir path/to/outputs --system mig
 ```bash
 outputs-import --xml-dir path/to/outputs --system mig --apply
 ```
+
+## Migrate persons before outputs
+
+```bash
+outputs-import --xml-dir path/to/outputs --system mig --apply --persons
+```
+
+`--persons` requires `--apply`. It first migrates unique persons referenced in all
+XML files directly inside `--xml-dir`, using the same system, login, app token,
+and Cora URL settings as the output import. `--processes` controls the number of
+person migration threads as well as output import processes.
+
+Person migration scans the entire directory even when `--limit` or `--pids`
+restricts the subsequent output import. Persons already present in Cora are
+skipped successfully.
+
+If any XML file cannot be read, authentication fails, or a person cannot be
+migrated, output and relation migration still proceed. Person migration errors
+are included alongside the output results in both HTML and Markdown reports.
+Persons already created are not rolled back.
+
+Both reports start with a Summary section containing separate Status/Count
+tables for outputs, persons (when requested), and output relations. Person
+counts are limited to Created, Skipped, and Failed. The Person Migration section
+includes these counts and errors with authority PIDs or XML file paths, and is
+omitted when `--persons` is not supplied.
 
 ## Show script help, with all available parameters
 
