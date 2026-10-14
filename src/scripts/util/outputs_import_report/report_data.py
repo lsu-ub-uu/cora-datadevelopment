@@ -1,26 +1,89 @@
 import datetime
 import os
 import re
+from collections import Counter
 
 from fedora_to_cora.output_migrate import OutputMigrationResult
 from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResult
+from fedora_to_cora.persons_migrate import PersonMigrationSummary
 
 STATUS_LABELS = {
     "SUCCESS": "✅ Successfully imported as data quality DiVA 2026",
     "CLASSIC_QUALITY": "⚠️ Validation errors (imported as classic data quality)",
     "FAILED": "❌ Failed to import",
-    "SKIPPED": "➡️ Skipped",
+    "SKIPPED": "➡️ Skipped (record already migrated)",
     "INPUT_VALIDATION_FAILED": "⛔ Source XML validation failed",
+}
+
+PERSON_STATUS_LABELS = {
+    "CREATED": "✅ Created",
+    "SKIPPED": "➡️ Skipped",
+    "FAILED": "❌ Failed",
 }
 
 ERROR_CATEGORIES_IN_ORDER = [
     "INPUT_VALIDATION_FAILED",
     "FAILED",
     "CLASSIC_QUALITY",
-    "SKIPPED",
 ]
 
 RELATION_ERRORS_LABEL = "❌ Failed to migrate relations"
+
+PERSON_FAILURE_NOTICE = (
+    "Person migration encountered errors; output and relation migration continued."
+)
+
+
+def generate_summary_tables(
+    output_counts: dict[str, int],
+    relation_results: list[OutputRelationMigrationResult],
+    person_summary: PersonMigrationSummary | None,
+) -> dict[str, dict[str, int]]:
+    tables = {
+        "Outputs": {
+            STATUS_LABELS[status]: count for status, count in output_counts.items()
+        }
+    }
+    if person_summary is not None:
+        tables["Persons"] = {
+            PERSON_STATUS_LABELS[status]: count
+            for status, count in person_summary.counts.items()
+        }
+    relation_counts = Counter(result.status for result in relation_results)
+    tables["Output relations"] = {
+        label: relation_counts[status]
+        for status, label in (
+            ("UPDATED", "✅ Updated"),
+            ("NO_RELATIONS", "➡️ No relations"),
+            ("FAILED", "❌ Failed"),
+        )
+    }
+    return tables
+
+
+def generate_person_report_data(
+    summary: PersonMigrationSummary,
+) -> tuple[dict[str, int], list[tuple[str, str, str]]]:
+    counts = {
+        PERSON_STATUS_LABELS[status]: count for status, count in summary.counts.items()
+    }
+    errors = [
+        (error, str(len(pids)), ", ".join(pids))
+        for error, pids in summary.errors.items()
+    ]
+    errors.extend(
+        (f"Failed to read XML: {error}", "1", path)
+        for path, error in sorted(summary.scan_errors.items())
+    )
+    if summary.initialization_error is not None:
+        errors.append(
+            (
+                f"Failed to initialize Cora context: {summary.initialization_error}",
+                "1",
+                "",
+            )
+        )
+    return counts, errors
 
 
 def generate_relation_error_data(

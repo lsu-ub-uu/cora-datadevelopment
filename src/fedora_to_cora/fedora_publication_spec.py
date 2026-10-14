@@ -125,7 +125,7 @@ fedora_person_spec: XMLSpec = {
             },
         }
     },
-    "authorityPid": "$IGNORE$",  # TODO implement
+    "authorityPid": "$ANY_TEXT$",
 }
 
 

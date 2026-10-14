@@ -562,9 +562,9 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
             </location>
             <note type="biographical" lang="eng" repeatId="eng">Min biografi, en jätte lång text med olika formateringar. På engelska.</note>
             <note type="biographical" lang="swe" repeatId="swe">Min biografi, en jätte lång text med olika formateringar. På svenska.</note>
-            <nameIdentifier type="localId" repeatId="0">test123</nameIdentifier>
-            <nameIdentifier type="localId" repeatId="1">test123</nameIdentifier>
-            <nameIdentifier type="localId" repeatId="2">sarto903</nameIdentifier>
+            <nameIdentifier type="localId" repeatId="0">kau-test123</nameIdentifier>
+            <nameIdentifier type="localId" repeatId="1">smhi-test123</nameIdentifier>
+            <nameIdentifier type="localId" repeatId="2">uu-sarto903</nameIdentifier>
             <nameIdentifier type="orcid" repeatId="0">0000-1111-2222-3333</nameIdentifier>
             <nameIdentifier repeatId="0" type="se-libr">2541478441254</nameIdentifier>
             <nameIdentifier type="viaf" repeatId="0">12aer458</nameIdentifier>
@@ -668,6 +668,33 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
                 </endDate>
             </affiliation>
         </person>""",
+    )
+
+
+def test_transform_person_prefixes_local_identifier_with_domain():
+    old_person = {
+        "authorityPerson": {
+            "defaultName": {
+                "firstname": "Sara",
+                "lastname": "Andersson",
+                "addition": "",
+            },
+            "pid": "authority-person:11111",
+            "identifiers": [
+                {"type": "LOCAL", "domain": "uu", "value": "sarto903"},
+                {"type": "ORCID", "domain": "", "value": "0000-1111-2222-3333"},
+            ],
+        }
+    }
+
+    transformed_person = transform_person(old_person)
+
+    assert (
+        transformed_person.findtext("nameIdentifier[@type='localId']") == "uu-sarto903"
+    )
+    assert (
+        transformed_person.findtext("nameIdentifier[@type='orcid']")
+        == "0000-1111-2222-3333"
     )
 
 

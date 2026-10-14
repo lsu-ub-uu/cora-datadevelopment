@@ -46,7 +46,9 @@ def test_save_html_report_creates_expected_file(tmp_path):
     )
     assert "✅ Successfully imported as data quality DiVA 2026" in report_text
     assert "❌ Failed to import" in report_text
-    assert "➡️ Skipped" in report_text
+    assert "<td>➡️ Skipped (record already migrated)</td><td>1</td>" in report_text
+    assert "already exists" not in report_text
+    assert "<h2>➡️ Skipped" not in report_text
 
     sanitized_error = "bad | error\nline".replace("|", " ").replace("\n", " ")
     assert sanitized_error in report_text

@@ -1,0 +1,762 @@
+<?xml version='1.0' encoding='utf-8'?>
+<publication>
+  <contentType>
+    <contentTypeId>51</contentTypeId>
+    <contentTypeCode>science</contentTypeCode>
+    <contentTypeNames>
+      <contentTypeName>
+        <contentTypeNameId>107</contentTypeNameId>
+        <locale>no</locale>
+        <contentTypeName>Annet vitenskapelig</contentTypeName>
+      </contentTypeName>
+      <contentTypeName>
+        <contentTypeNameId>103</contentTypeNameId>
+        <locale>sv</locale>
+        <contentTypeName>Övrigt vetenskapligt</contentTypeName>
+      </contentTypeName>
+      <contentTypeName>
+        <contentTypeNameId>102</contentTypeNameId>
+        <locale>en</locale>
+        <contentTypeName>Other academic</contentTypeName>
+      </contentTypeName>
+    </contentTypeNames>
+    <sortOrder>2</sortOrder>
+  </contentType>
+  <publicationType>
+    <publicationTypeId>53</publicationTypeId>
+    <publicationTypeCode>comprehensiveDoctoralThesis</publicationTypeCode>
+    <openUrlType>dissertation</openUrlType>
+    <publicationTypeNames>
+      <publicationTypeName>
+        <publicationTypeNameId>206</publicationTypeNameId>
+        <locale>sv</locale>
+        <publicationTypeName>Doktorsavhandling, sammanläggning</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>237</publicationTypeNameId>
+        <locale>no</locale>
+        <publicationTypeName>Doktoravhandling, med artikler</publicationTypeName>
+      </publicationTypeName>
+      <publicationTypeName>
+        <publicationTypeNameId>207</publicationTypeNameId>
+        <locale>en</locale>
+        <publicationTypeName>Doctoral thesis, comprehensive summary</publicationTypeName>
+      </publicationTypeName>
+    </publicationTypeNames>
+    <roles />
+    <comprehensiveSummary>true</comprehensiveSummary>
+    <domainAdminOnly>false</domainAdminOnly>
+  </publicationType>
+  <pid>diva2:647333</pid>
+  <administrativeInfo>
+    <domain>polar</domain>
+    <creatorInfo>
+      <userId>asdfasdf</userId>
+      <ip>111.111.111.111</ip>
+      <name>G Jophnsson</name>
+      <date>2013-09-11T10:25:16.801+02:00</date>
+      <userType>DOMAINADMIN</userType>
+      <userAction>CREATED</userAction>
+    </creatorInfo>
+    <updaters>
+      <userInformation>
+        <userId>asdfasdf</userId>
+        <ip />
+        <name>G Jophnsson</name>
+        <date>2013-09-11T10:25:16.806+02:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>asdfasdf</userId>
+        <ip />
+        <name>G Jophnsson</name>
+        <date>2013-11-21T13:32:03.300+01:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>PUBLISHED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>asdfasdf</userId>
+        <ip />
+        <name>G Jophnsson</name>
+        <date>2015-06-15T08:16:51.749+02:00</date>
+        <userType>DOMAINADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>asdfasdf</userId>
+        <ip>22.22.22.222</ip>
+        <name>G Jophnsson</name>
+        <date>2022-04-12T15:05:01.992+02:00</date>
+        <userType>SYSTEMADMIN</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+      <userInformation>
+        <userId>system</userId>
+        <ip>33.33.33.333</ip>
+        <name>System</name>
+        <date>2025-06-12T19:18:19.255+02:00</date>
+        <userType>SERVICE</userType>
+        <userAction>UPDATED</userAction>
+      </userInformation>
+    </updaters>
+    <createdDate>2013-09-11T09:59:05.555+02:00</createdDate>
+    <updatedDate>2025-06-12T19:18:19.255+02:00</updatedDate>
+    <importSource>MODS3</importSource>
+  </administrativeInfo>
+  <publicationDate>2013-11-21T13:31:00.000+01:00</publicationDate>
+  <authors>
+    <person>
+      <firstName>Hanna</firstName>
+      <lastName>Farnelid</lastName>
+      <organisations>
+        <organisation>
+          <organisationAlternativeNames />
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <organisationNameUncontrolled>Linnéuniversitetet, Institutionen för naturvetenskap, NV</organisationNameUncontrolled>
+          <controlled>false</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <birthYear>1983</birthYear>
+      <researchGroup>Ecology and Evolution in Microbial model Systems (EEMiS)</researchGroup>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+      <authorityPid>authority-person:41461</authorityPid>
+    </person>
+  </authors>
+  <originalPublicationTitle>
+    <title>Distribution and activity of nitrogen-fixing bacteria in marine and estuarine waters</title>
+    <subTitle />
+    <language>
+      <languageCode3>eng</languageCode3>
+      <languageCode2>en</languageCode2>
+      <languageNames>
+        <languageName>
+          <languageNameId>1145</languageNameId>
+          <locale>en</locale>
+          <languageName>English</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>1144</languageNameId>
+          <locale>sv</locale>
+          <languageName>Engelska</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>10120</languageNameId>
+          <locale>no</locale>
+          <languageName>engelsk</languageName>
+        </languageName>
+      </languageNames>
+      <showsOnList>true</showsOnList>
+    </language>
+  </originalPublicationTitle>
+  <seriesInfos>
+    <seriesInfo>
+      <series>
+        <seriesId>3452</seriesId>
+        <seriesTitle>
+          <titleId>21002</titleId>
+          <mainTitle>Linnaeus University Dissertations</mainTitle>
+          <locale>sv</locale>
+        </seriesTitle>
+        <seriesAlternativeTitles />
+        <keyTitle>Linnaeus University Dissertations</keyTitle>
+        <contentType>
+          <contentTypeId>50</contentTypeId>
+          <contentTypeCode>refereed</contentTypeCode>
+          <contentTypeNames>
+            <contentTypeName>
+              <contentTypeNameId>106</contentTypeNameId>
+              <locale>no</locale>
+              <contentTypeName>Fagfellevurdert</contentTypeName>
+            </contentTypeName>
+            <contentTypeName>
+              <contentTypeNameId>101</contentTypeNameId>
+              <locale>sv</locale>
+              <contentTypeName>Refereegranskat</contentTypeName>
+            </contentTypeName>
+            <contentTypeName>
+              <contentTypeNameId>100</contentTypeNameId>
+              <locale>en</locale>
+              <contentTypeName>Refereed</contentTypeName>
+            </contentTypeName>
+          </contentTypeNames>
+          <sortOrder>1</sortOrder>
+        </contentType>
+        <subjects />
+        <relationships />
+        <organisation>
+          <organisationId>4853</organisationId>
+          <organisationType>
+            <organisationTypeId>50</organisationTypeId>
+            <organisationTypeCode>university</organisationTypeCode>
+            <organisationTypeNames>
+              <organisationTypeName>
+                <organisationTypeNameId>1901</organisationTypeNameId>
+                <locale>en</locale>
+                <organisationTypeName>University</organisationTypeName>
+              </organisationTypeName>
+              <organisationTypeName>
+                <organisationTypeNameId>1900</organisationTypeNameId>
+                <locale>sv</locale>
+                <organisationTypeName>Universitet</organisationTypeName>
+              </organisationTypeName>
+            </organisationTypeNames>
+          </organisationType>
+          <organisationName>
+            <name>Linnéuniversitetet</name>
+            <locale>sv</locale>
+          </organisationName>
+          <organisationHomepage>http://lnu.se/</organisationHomepage>
+          <domain>lnu</domain>
+          <organisationNumber>202100-6271</organisationNumber>
+          <organisationAlternativeNames>
+            <organisationName>
+              <organisationNameId>17602</organisationNameId>
+              <locale>en</locale>
+              <organisationName>Linnaeus University</organisationName>
+            </organisationName>
+          </organisationAlternativeNames>
+          <organisationContacts />
+          <organisationParents>
+            <organisation>
+              <organisationId>4852</organisationId>
+              <organisationType>
+                <organisationTypeId>49</organisationTypeId>
+                <organisationTypeCode>root</organisationTypeCode>
+                <organisationTypeNames>
+                  <organisationTypeName>
+                    <organisationTypeNameId>1925</organisationTypeNameId>
+                    <locale>en</locale>
+                    <organisationTypeName>Root organisation</organisationTypeName>
+                  </organisationTypeName>
+                  <organisationTypeName>
+                    <organisationTypeNameId>1924</organisationTypeNameId>
+                    <locale>sv</locale>
+                    <organisationTypeName>Rotorganisation</organisationTypeName>
+                  </organisationTypeName>
+                </organisationTypeNames>
+              </organisationType>
+              <organisationName>
+                <name>LNU</name>
+                <locale>sv</locale>
+              </organisationName>
+              <domain>lnu</domain>
+              <organisationAlternativeNames>
+                <organisationName>
+                  <organisationNameId>17603</organisationNameId>
+                  <locale>en</locale>
+                  <organisationName>LNU</organisationName>
+                </organisationName>
+              </organisationAlternativeNames>
+              <organisationContacts />
+              <organisationParents />
+              <organisationPredecessors />
+              <organisationPredecessorDescriptions />
+              <controlled>true</controlled>
+              <notEligible>true</notEligible>
+              <showInPortal>false</showInPortal>
+              <showInDefence>false</showInDefence>
+              <topLevel>false</topLevel>
+            </organisation>
+          </organisationParents>
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <controlled>true</controlled>
+          <notEligible>true</notEligible>
+          <showInPortal>true</showInPortal>
+          <showInDefence>true</showInDefence>
+          <topLevel>true</topLevel>
+        </organisation>
+        <domain>lnu</domain>
+        <controlled>true</controlled>
+      </series>
+      <numberInSeries>110/2013</numberInSeries>
+    </seriesInfo>
+  </seriesInfos>
+  <dateIssued>2013</dateIssued>
+  <distributor>
+    <organisationAlternativeNames />
+    <organisationContacts />
+    <organisationParents />
+    <organisationPredecessors />
+    <organisationPredecessorDescriptions />
+    <controlled>true</controlled>
+    <notEligible>false</notEligible>
+    <showInPortal>false</showInPortal>
+    <showInDefence>false</showInDefence>
+    <topLevel>false</topLevel>
+  </distributor>
+  <publisher>
+    <city>Växjö, Kalmar</city>
+    <publisherName>Linnaeus University Press</publisherName>
+  </publisher>
+  <isbnNumbers>
+    <isbn>
+      <number>978-91-86983-96-3</number>
+      <type>print</type>
+    </isbn>
+  </isbnNumbers>
+  <nbn>urn:nbn:se:polar:diva-1814</nbn>
+  <oai>oai:DiVA.org:polar-1814</oai>
+  <identifiers />
+  <categories />
+  <nationalCategories>
+    <subject>
+      <subjectId>11500</subjectId>
+      <subjectType>
+        <subjectTypeId>57</subjectTypeId>
+        <subjectTypeCode>hsv</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3722</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>HSV categories</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3721</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3723</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>HSV kategorier</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>28150</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Naturvetenskap</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>28151</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Natural Sciences</subjectName>
+        </subjectName>
+      </subjectNames>
+      <subjectCode>1</subjectCode>
+      <parents />
+      <predecessors />
+      <domain>diva</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+  </nationalCategories>
+  <researchSubjects>
+    <subject>
+      <subjectId>23282</subjectId>
+      <subjectType>
+        <subjectTypeId>53</subjectTypeId>
+        <subjectTypeCode>researchSubject</subjectTypeCode>
+        <subjectTypeNames>
+          <subjectTypeName>
+            <subjectTypeNameId>3709</subjectTypeNameId>
+            <locale>sv</locale>
+            <subjectTypeName>Forskningsämne</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3711</subjectTypeNameId>
+            <locale>no</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+          <subjectTypeName>
+            <subjectTypeNameId>3710</subjectTypeNameId>
+            <locale>en</locale>
+            <subjectTypeName>Research subject</subjectTypeName>
+          </subjectTypeName>
+        </subjectTypeNames>
+      </subjectType>
+      <subjectNames>
+        <subjectName>
+          <subjectNameId>53365</subjectNameId>
+          <locale>sv</locale>
+          <subjectName>Oden Southern Ocean 2007/08</subjectName>
+        </subjectName>
+        <subjectName>
+          <subjectNameId>53364</subjectNameId>
+          <locale>en</locale>
+          <subjectName>Oden Southern Ocean 2007/08</subjectName>
+        </subjectName>
+      </subjectNames>
+      <parents>
+        <subject>
+          <subjectId>23176</subjectId>
+          <subjectType>
+            <subjectTypeId>53</subjectTypeId>
+            <subjectTypeCode>researchSubject</subjectTypeCode>
+            <subjectTypeNames>
+              <subjectTypeName>
+                <subjectTypeNameId>3709</subjectTypeNameId>
+                <locale>sv</locale>
+                <subjectTypeName>Forskningsämne</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3711</subjectTypeNameId>
+                <locale>no</locale>
+                <subjectTypeName>Research subject</subjectTypeName>
+              </subjectTypeName>
+              <subjectTypeName>
+                <subjectTypeNameId>3710</subjectTypeNameId>
+                <locale>en</locale>
+                <subjectTypeName>Research subject</subjectTypeName>
+              </subjectTypeName>
+            </subjectTypeNames>
+          </subjectType>
+          <subjectNames>
+            <subjectName>
+              <subjectNameId>53153</subjectNameId>
+              <locale>sv</locale>
+              <subjectName>SWEDARP 2007/08</subjectName>
+            </subjectName>
+            <subjectName>
+              <subjectNameId>53152</subjectNameId>
+              <locale>en</locale>
+              <subjectName>SWEDARP 2007/08</subjectName>
+            </subjectName>
+          </subjectNames>
+          <parents>
+            <subject>
+              <subjectId>23150</subjectId>
+              <subjectType>
+                <subjectTypeId>53</subjectTypeId>
+                <subjectTypeCode>researchSubject</subjectTypeCode>
+                <subjectTypeNames>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3709</subjectTypeNameId>
+                    <locale>sv</locale>
+                    <subjectTypeName>Forskningsämne</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3711</subjectTypeNameId>
+                    <locale>no</locale>
+                    <subjectTypeName>Research subject</subjectTypeName>
+                  </subjectTypeName>
+                  <subjectTypeName>
+                    <subjectTypeNameId>3710</subjectTypeNameId>
+                    <locale>en</locale>
+                    <subjectTypeName>Research subject</subjectTypeName>
+                  </subjectTypeName>
+                </subjectTypeNames>
+              </subjectType>
+              <subjectNames>
+                <subjectName>
+                  <subjectNameId>53101</subjectNameId>
+                  <locale>sv</locale>
+                  <subjectName>SWEDARP</subjectName>
+                </subjectName>
+                <subjectName>
+                  <subjectNameId>53100</subjectNameId>
+                  <locale>en</locale>
+                  <subjectName>SWEDARP</subjectName>
+                </subjectName>
+              </subjectNames>
+              <subjectCode>12</subjectCode>
+              <parents />
+              <predecessors />
+              <domain>polar</domain>
+              <notEligible>false</notEligible>
+              <organisations />
+            </subject>
+          </parents>
+          <predecessors />
+          <domain>polar</domain>
+          <notEligible>false</notEligible>
+          <organisations />
+        </subject>
+      </parents>
+      <predecessors />
+      <domain>polar</domain>
+      <notEligible>false</notEligible>
+      <organisations />
+    </subject>
+  </researchSubjects>
+  <keyWords class="hashtable">
+    <entry>
+      <language>
+        <languageCode3>eng</languageCode3>
+        <languageCode2>en</languageCode2>
+        <languageNames>
+          <languageName>
+            <languageNameId>1145</languageNameId>
+            <locale>en</locale>
+            <languageName>English</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1144</languageNameId>
+            <locale>sv</locale>
+            <languageName>Engelska</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>10120</languageNameId>
+            <locale>no</locale>
+            <languageName>engelsk</languageName>
+          </languageName>
+        </languageNames>
+        <showsOnList>true</showsOnList>
+      </language>
+      <list>
+        <string>454-pyrosequencing</string>
+        <string>diazotrophs</string>
+        <string>heterotrophic bacteria</string>
+        <string>marine bacteria</string>
+        <string>marine microbial ecology</string>
+        <string>microbiology</string>
+        <string>nifH</string>
+        <string>nitrogenase</string>
+        <string>nitrogen fixation</string>
+        <string>PCR</string>
+        <string>qPCR</string>
+        <string>SWEDARP 2007/08</string>
+        <string>OSO 2007/08</string>
+      </list>
+    </entry>
+  </keyWords>
+  <abstracts>
+    <abstract>
+      <language>
+        <languageCode3>eng</languageCode3>
+        <languageCode2>en</languageCode2>
+        <languageNames>
+          <languageName>
+            <languageNameId>1145</languageNameId>
+            <locale>en</locale>
+            <languageName>English</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>1144</languageNameId>
+            <locale>sv</locale>
+            <languageName>Engelska</languageName>
+          </languageName>
+          <languageName>
+            <languageNameId>10120</languageNameId>
+            <locale>no</locale>
+            <languageName>engelsk</languageName>
+          </languageName>
+        </languageNames>
+        <showsOnList>true</showsOnList>
+      </language>
+      <text>&lt;p&gt;In aquatic environments the availability of nitrogen (N) generally limits primary production. N&lt;sub&gt;2&lt;/sub&gt;-fixing prokaryotes (diazotrophs) can convert N&lt;sub&gt;2&lt;/sub&gt; gas into ammonium and provide significant input of N into the oceans. Cyanobacteria are thought to be the main N&lt;sub&gt;2&lt;/sub&gt;-fixers but diazotrophs also include a wide range of heterotrophic bacteria. However, their activity and regulation in the water column is largely unknown.&lt;/p&gt;&lt;p&gt;In this thesis the distribution, diversity, abundance, and activity of marine and estuarine heterotrophic diazotrophs was investigated. With molecular methods targeting the &lt;em&gt;nifH&lt;/em&gt; gene, encoding the nitrogenase enzyme for N&lt;sub&gt;2&lt;/sub&gt; fixation, it was shown that diverse &lt;em&gt;nifH&lt;/em&gt; genes affiliating with heterotrophic bacteria were ubiquitous in surface waters from ten marine locations world-wide and the estuarine Baltic Sea. Through enrichment cultures of Baltic Sea surface water in anaerobic N-free medium, heterotrophic N&lt;sub&gt;2&lt;/sub&gt; fixation was induced showing that there was a functional N&lt;sub&gt;2&lt;/sub&gt;-fixing community present and isolates of heterotrophic diazotrophs were obtained. In Sargasso Sea surface waters, transcripts of &lt;em&gt;nifH&lt;/em&gt; related to heterotrophic bacteria were detected indicating heterotrophic N&lt;sub&gt;2&lt;/sub&gt;-fixing activity.&lt;/p&gt;&lt;p&gt;Nitrogenase expression is thought to be highly regulated by the availability of inorganic N and the presence of oxygen. Low oxygen zones within the water column can be found in association with plankton. The presence of diazotrophs as symbionts of heterotrophic dinoflagellates was investigated and &lt;em&gt;nifH&lt;/em&gt; genes related to heterotrophic diazotrophs rather than the cyanobacterial symbionts were found, suggesting that a symbiotic co-existence prevailed. Oxic-anoxic interfaces could also be potential sites for heterotrophic N&lt;sub&gt;2&lt;/sub&gt; fixation. The Baltic Sea contains large areas of anoxic bottom water. At the chemocline and in anoxic deep water heterotrophic diazotrophs were diverse, abundant and active. These findings extend the currently known regime of N&lt;sub&gt;2&lt;/sub&gt; fixation to also include ammonium-rich anaerobic waters.&lt;/p&gt;&lt;p&gt;The results of this thesis suggest that heterotrophic diazotrophs are diverse and widely distributed in marine and estuarine waters and that they can also be active. However, limits in the knowledge on their physiology and factors which regulate their N&lt;sub&gt;2&lt;/sub&gt; fixation activity currently prevent an evaluation of their importance in the global marine N budget.&lt;/p&gt;</text>
+    </abstract>
+  </abstracts>
+  <supervisors>
+    <person>
+      <firstName>Lasse</firstName>
+      <lastName>Riemann</lastName>
+      <localId>nrila</localId>
+      <organisations />
+      <title>Docent</title>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+  </supervisors>
+  <opponents>
+    <person>
+      <firstName>Jonathan</firstName>
+      <lastName>Zehr</lastName>
+      <organisations>
+        <organisation>
+          <organisationAlternativeNames />
+          <organisationContacts />
+          <organisationParents />
+          <organisationPredecessors />
+          <organisationPredecessorDescriptions />
+          <organisationNameUncontrolled>University of California</organisationNameUncontrolled>
+          <controlled>false</controlled>
+          <notEligible>false</notEligible>
+          <showInPortal>false</showInPortal>
+          <showInDefence>false</showInDefence>
+          <topLevel>false</topLevel>
+        </organisation>
+      </organisations>
+      <title>Professor</title>
+      <identifiers>
+        <entry>
+          <personIdentifierType>orcid</personIdentifierType>
+          <personIdentifier>
+            <value />
+            <type>orcid</type>
+          </personIdentifier>
+        </entry>
+      </identifiers>
+    </person>
+  </opponents>
+  <defence>
+    <date>2013-01-25T09:00:00.000+01:00</date>
+    <language>
+      <languageCode3>eng</languageCode3>
+      <languageCode2>en</languageCode2>
+      <languageNames>
+        <languageName>
+          <languageNameId>1145</languageNameId>
+          <locale>en</locale>
+          <languageName>English</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>1144</languageNameId>
+          <locale>sv</locale>
+          <languageName>Engelska</languageName>
+        </languageName>
+        <languageName>
+          <languageNameId>10120</languageNameId>
+          <locale>no</locale>
+          <languageName>engelsk</languageName>
+        </languageName>
+      </languageNames>
+      <showsOnList>true</showsOnList>
+    </language>
+    <room>
+      <name>Fullriggaren</name>
+      <street>Barlastgatan 11</street>
+      <city>Kalmar</city>
+    </room>
+  </defence>
+  <note />
+  <internalNote />
+  <attachments class="tree-set">
+    <no-comparator />
+    <attachment>
+      <mimeType>
+        <mimeTypeId>50</mimeTypeId>
+        <mimeTypeName>application/pdf</mimeTypeName>
+        <fileSuffix>pdf</fileSuffix>
+        <datasetOnly>false</datasetOnly>
+      </mimeType>
+      <fileLabel>
+        <fileLabelId>50</fileLabelId>
+        <fileLabelCode>fulltext</fileLabelCode>
+        <fileLabelNames>
+          <fileLabelName>
+            <fileLabelNameId>3674</fileLabelNameId>
+            <locale>no</locale>
+            <fileLabelName>fulltekst</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3651</fileLabelNameId>
+            <locale>sv</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+          <fileLabelName>
+            <fileLabelNameId>3650</fileLabelNameId>
+            <locale>en</locale>
+            <fileLabelName>fulltext</fileLabelName>
+          </fileLabelName>
+        </fileLabelNames>
+      </fileLabel>
+      <fileName>FULLTEXT01</fileName>
+      <fileSize>605050</fileSize>
+      <path>http://lnu.diva-portal.org/smash/get/diva2:578021/FULLTEXT01.pdf</path>
+      <checksums>
+        <checksum>
+          <type>SHA512</type>
+          <digest>6dce02b90563ac2c32deb9531037c1e0c28ecda79fece8ee6799da686cc46688ef44a0be6baa3009c1e65b010c95ed0050d053597242fe5d1d4c239bf445de5a</digest>
+        </checksum>
+      </checksums>
+      <order>1</order>
+      <uploadDate>2013-09-11T09:59:05.997+02:00</uploadDate>
+      <asyncUpload>false</asyncUpload>
+      <availableFrom>2013-11-21T13:32:03.294+01:00</availableFrom>
+      <onHold>false</onHold>
+      <deleted>false</deleted>
+      <prePrint>false</prePrint>
+      <postPrint>false</postPrint>
+      <print>false</print>
+      <archiveOnly>false</archiveOnly>
+      <printOnDemand>false</printOnDemand>
+      <toBePublished>false</toBePublished>
+      <toBeArchived>false</toBeArchived>
+      <digitized>false</digitized>
+      <hasCoverPage>false</hasCoverPage>
+    </attachment>
+  </attachments>
+  <formatElectronic>false</formatElectronic>
+  <formatPrint>false</formatPrint>
+  <distributorAsDist>
+    <distributorNames />
+  </distributorAsDist>
+  <responsibleOrganisations>
+    <organisation>
+      <organisationId>10905</organisationId>
+      <organisationType>
+        <organisationTypeId>50</organisationTypeId>
+        <organisationTypeCode>university</organisationTypeCode>
+        <organisationTypeNames>
+          <organisationTypeName>
+            <organisationTypeNameId>1901</organisationTypeNameId>
+            <locale>en</locale>
+            <organisationTypeName>University</organisationTypeName>
+          </organisationTypeName>
+          <organisationTypeName>
+            <organisationTypeNameId>1900</organisationTypeNameId>
+            <locale>sv</locale>
+            <organisationTypeName>Universitet</organisationTypeName>
+          </organisationTypeName>
+        </organisationTypeNames>
+      </organisationType>
+      <organisationName>
+        <name>Polarforskningssekretariatet</name>
+        <locale>sv</locale>
+      </organisationName>
+      <organisationHomepage>http://www.polar.se</organisationHomepage>
+      <domain>polar</domain>
+      <organisationAlternativeNames>
+        <organisationName>
+          <organisationNameId>33105</organisationNameId>
+          <locale>en</locale>
+          <organisationName>Swedish Polar Research Secretariat</organisationName>
+        </organisationName>
+      </organisationAlternativeNames>
+      <organisationContacts />
+      <organisationParents />
+      <organisationPredecessors />
+      <organisationPredecessorDescriptions />
+      <controlled>true</controlled>
+      <notEligible>false</notEligible>
+      <showInPortal>true</showInPortal>
+      <showInDefence>false</showInDefence>
+      <topLevel>true</topLevel>
+    </organisation>
+  </responsibleOrganisations>
+  <agreementAccepted>true</agreementAccepted>
+  <reviewed>true</reviewed>
+  <reviewedBefore>true</reviewedBefore>
+  <migrated>false</migrated>
+  <importDuplicate>false</importDuplicate>
+  <registratedDuplicate>false</registratedDuplicate>
+  <artisticWork>false</artisticWork>
+  <cooperation>
+    <external>false</external>
+    <partner />
+  </cooperation>
+  <failed>false</failed>
+  <hidden>false</hidden>
+  <publicationOrder>
+    <orderLink>false</orderLink>
+    <parameters />
+  </publicationOrder>
+  <canOrderOnline>false</canOrderOnline>
+  <publicationChannel />
+</publication>

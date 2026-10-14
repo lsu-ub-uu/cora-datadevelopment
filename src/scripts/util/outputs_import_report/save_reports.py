@@ -1,5 +1,6 @@
 from fedora_to_cora.output_migrate import OutputMigrationResult
 from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResult
+from fedora_to_cora.persons_migrate import PersonMigrationSummary
 from scripts.util.outputs_import_report.console_report import print_console_report
 from scripts.util.outputs_import_report.html_report import save_html_report
 from scripts.util.outputs_import_report.markdown_report import save_markdown_report
@@ -14,6 +15,7 @@ def save_reports(
     cora_url: str | None,
     output_dir: str = ".",
     relation_results: list[OutputRelationMigrationResult] | None = None,
+    person_summary: PersonMigrationSummary | None = None,
 ):
     relation_results = relation_results or []
     save_html_report(
@@ -25,6 +27,7 @@ def save_reports(
         cora_url=cora_url,
         output_dir=output_dir,
         relation_results=relation_results,
+        person_summary=person_summary,
     )
     save_markdown_report(
         results,
@@ -35,6 +38,7 @@ def save_reports(
         cora_url=cora_url,
         output_dir=output_dir,
         relation_results=relation_results,
+        person_summary=person_summary,
     )
     print_console_report(
         results,
