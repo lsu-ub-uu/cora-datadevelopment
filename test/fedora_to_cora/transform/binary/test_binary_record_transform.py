@@ -6,8 +6,7 @@ from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
 def test_binary_record_transform():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <attachment>
             <mimeType>
                 <mimeTypeId>62</mimeTypeId>
@@ -62,10 +61,10 @@ def test_binary_record_transform():
             <digitized>true</digitized>
             <hasCoverPage>false</hasCoverPage>
         </attachment>
-        """
+        """)
+    host_record = ET.fromstring(
+        "<hostRecord><linkedRecordType>someType</linkedRecordType><linkedRecordId>someId</linkedRecordId></hostRecord>"
     )
-    host_record = ET.fromstring("<hostRecord><linkedRecordType>someType</linkedRecordType><linkedRecordId>someId</linkedRecordId></hostRecord>")
-
 
     admin = binary_record_transform(source_record, host_record)
 
@@ -87,6 +86,7 @@ def test_binary_record_transform():
                         <linkedRecordType>someType</linkedRecordType>
                         <linkedRecordId>someId</linkedRecordId>
                     </hostRecord>
+                    <status>created</status>
                 </recordInfo>
                 <originalFileName>BMFEA 81_HR + Low (210215).zip</originalFileName>
                 <expectedFileSize>93598848</expectedFileSize>
