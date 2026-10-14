@@ -125,7 +125,7 @@ fedora_person_spec: XMLSpec = {
             },
         }
     },
-    "authorityPid": "$NOT_YET_IMPLEMENTED$",
+    "authorityPid": "$ANY_TEXT$",
 }
 
 

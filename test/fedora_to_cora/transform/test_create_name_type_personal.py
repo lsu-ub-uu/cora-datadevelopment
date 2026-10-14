@@ -100,6 +100,40 @@ def test_creates_name_type_personal_with_linked_person(_mock_get_cora_id_by_old_
     )
 
 
+@patch("fedora_to_cora.transform.create_name_type_personal.get_cora_id_by_old_id")
+def test_ignores_empty_authority_pid_tag(_mock_get_cora_id_by_old_id):
+    source_record = ET.fromstring("""
+            <publication>
+                <publicationType>
+                    <publicationTypeId>63</publicationTypeId>
+                    <publicationTypeCode>collection</publicationTypeCode>
+                </publicationType>
+                <authors>
+                    <person>
+                        <firstName>Michaela</firstName>
+                        <lastName>Schmanderson</lastName>   
+                        <authorityPid />   
+                    </person>
+                </authors>
+            </publication>
+            """)
+    names = create_name_type_personals(
+        source_record,
+        mock_context,
+    )
+    assert _mock_get_cora_id_by_old_id.call_count == 0
+    assert_equal_for_xml_and_xml_string(
+        names[0],
+        """
+        <name type="personal" repeatId="0">
+            <namePart type="family">Schmanderson</namePart>
+            <namePart type="given">Michaela</namePart>
+            <role repeatId="0"><roleTerm>aut</roleTerm></role>
+        </name>
+        """,
+    )
+
+
 def test_creates_name_type_personal_birth_year():
     source_record = ET.fromstring("""
         <publication>

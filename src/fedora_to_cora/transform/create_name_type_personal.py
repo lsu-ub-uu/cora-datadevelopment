@@ -308,4 +308,5 @@ def _create_name_identifier_local_id(local_id: ET.Element | None):
 def _has_authority_pid(
     source_record: ET.Element,
 ) -> bool:
-    return len(ET.Element.findall(source_record, "./authorityPid")) > 0
+    authority_pid = source_record.findtext("./authorityPid")
+    return authority_pid is not None and len(authority_pid) > 0
