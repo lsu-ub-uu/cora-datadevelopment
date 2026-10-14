@@ -77,7 +77,7 @@ def output_migrate(
         if is_success_result(create_record_result):
             cora_id = create_record_result.record_id
             relations = create_relations(source_record)
-            success, errors = _migrate_old_record_with_rollback(
+            success, errors = _migrate_old_record(
                 source_record, create_record_result.response_data, context
             )
             if not success:
@@ -120,7 +120,7 @@ def output_migrate(
     )
 
 
-def _migrate_old_record_with_rollback(
+def _migrate_old_record(
     source_record: ET.Element,
     created_record: ET.Element,
     context: Context,
@@ -140,12 +140,6 @@ def _migrate_old_record_with_rollback(
     elif success:
         success = False
         errors = ["Old record migration succeeded without a record ID"]
-
-    if not success:
-        logger.error(
-            f"❌ Failed to migrate old record for record with old id {source_record.findtext('./pid')} Rolling back."
-        )
-        delete_record(created_record, context)
 
     return success, errors
 

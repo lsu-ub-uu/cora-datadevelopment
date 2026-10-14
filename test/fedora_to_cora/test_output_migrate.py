@@ -5,7 +5,7 @@ from common.xml_validate import XMLValidationError
 from cora.create import CreateRecordFailureResult, CreateRecordSuccessResult
 from cora.update import UpdateRecordResult
 from fedora_to_cora.output_migrate import (
-    _migrate_old_record_with_rollback,
+    _migrate_old_record,
     output_migrate,
 )
 from cora.context import MockContext
@@ -400,7 +400,6 @@ def test_rollback_when_failed_to_migrate_attachment(
 @patch("fedora_to_cora.output_migrate.transform_to_cora_output")
 @patch("fedora_to_cora.output_migrate.validate_record")
 @patch("fedora_to_cora.output_migrate.create_record")
-@patch("fedora_to_cora.output_migrate.delete_record")
 @patch("fedora_to_cora.output_migrate.validate_xml")
 @patch(
     "fedora_to_cora.output_migrate.old_record_migrate",
@@ -409,7 +408,6 @@ def test_rollback_when_failed_to_migrate_attachment(
 def test_rollback_when_old_record_migration_fails(
     mock_old_record_migrate,
     mock_validate_xml,
-    mock_delete_record,
     mock_create_record,
     mock_validate_record,
     mock_transform,
@@ -427,18 +425,14 @@ def test_rollback_when_old_record_migration_fails(
 
     assert result.status == "FAILED"
     assert result.errors == ["old record create failed"]
-    mock_delete_record.assert_called_once_with(created_record, mock_context)
 
 
 @patch("fedora_to_cora.output_migrate.update_record")
-@patch("fedora_to_cora.output_migrate.delete_record")
 @patch(
     "fedora_to_cora.output_migrate.old_record_migrate",
     return_value=(True, None, "old-record-id"),
 )
-def test_rollback_when_output_update_fails(
-    mock_old_record_migrate, mock_delete_record, mock_update_record
-):
+def test_rollback_when_output_update_fails(mock_old_record_migrate, mock_update_record):
     mock_update_record.return_value = UpdateRecordResult(
         success=False, error="update failed"
     )
@@ -446,9 +440,7 @@ def test_rollback_when_output_update_fails(
     created_record = ET.fromstring("<record><recordInfo /></record>")
     context = MockContext()
 
-    success, errors = _migrate_old_record_with_rollback(
-        source_record, created_record, context
-    )
+    success, errors = _migrate_old_record(source_record, created_record, context)
 
     assert success is False
     assert errors == ["update failed"]
@@ -457,7 +449,6 @@ def test_rollback_when_output_update_fails(
         == "old-record-id"
     )
     mock_update_record.assert_called_once_with(created_record, context)
-    mock_delete_record.assert_called_once_with(created_record, context)
 
 
 @patch("fedora_to_cora.output_migrate.validate_record")

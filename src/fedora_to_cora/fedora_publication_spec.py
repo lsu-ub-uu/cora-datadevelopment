@@ -125,7 +125,7 @@ fedora_person_spec: XMLSpec = {
             },
         }
     },
-    "authorityPid": "$IGNORE$",
+    "authorityPid": "$ANY_TEXT$",
 }
 
 fedora_language_spec: XMLSpec = {
