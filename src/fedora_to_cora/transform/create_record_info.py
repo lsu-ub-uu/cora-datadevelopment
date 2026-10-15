@@ -22,9 +22,12 @@ from fedora_to_cora.transform.get_validation_type import (
 )
 from fedora_to_cora.transform.get_visibility import get_visibility
 from common.record_info_create import record_info_create
+from common.common_data import create_record_link
+from cora.context import Context
+from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 
 
-def create_record_info(source_record: ET.Element) -> ET.Element:
+def create_record_info(source_record: ET.Element, context: Context) -> ET.Element:
     validation_type = get_validation_type_from_fedora_record(source_record)
     assert (
         validation_type is not None
@@ -36,13 +39,18 @@ def create_record_info(source_record: ET.Element) -> ET.Element:
 
     old_id = _create_old_id(source_record)
 
-    return record_info_create(
+    record_info = record_info_create(
         validation_type_id=validation_type,
         old_id=old_id,
         permission_unit_id=permission_unit,
         visibility=visibility,
         urn=source_record.findtext("./nbn"),
     )
+    old_record_id = get_cora_id_by_old_id(
+        old_id, record_type="diva-oldRecord", context=context
+    )
+    record_info.append(create_record_link("oldRecord", "diva-oldRecord", old_record_id))
+    return record_info
 
 
 def _create_permission_unit(source_record: ET.Element) -> str:

@@ -86,7 +86,8 @@ Cora credentials as described below. `--system`, `--login-id`, `--app-token`, an
 3.  - Persons (references organisations)
     - Series (references organisations)
 4.  - Projects (refefrences persons, organisatoions, funders, subjects)
-5.  - Outputs (references all the other types and outputs)
+5.  - Old records (automatically migrated from all XML files before outputs with `outputs-import --apply`)
+6.  - Outputs (references all the other types and outputs)
 
 ## Configuration
 

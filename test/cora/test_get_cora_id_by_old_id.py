@@ -32,6 +32,21 @@ def test_get_cora_id_by_old_id(requests_mock):
     assert response == expected_cora_id
 
 
+@pytest.mark.parametrize("record_id", ["old-record:123", None])
+def test_get_old_record_id(requests_mock, record_id):
+    old_id = "diva2:123"
+    requests_mock.get(
+        f"{base_url}searchResult/diva-oldRecordSearch?searchData={create_search_data(old_id)}",
+        request_headers={"Authtoken": test_token},
+        text=create_mock_response(record_id) if record_id else "<dataList />",
+    )
+
+    result = get_cora_id_by_old_id(old_id, record_type="diva-oldRecord", context=mock_context)
+
+    assert result == (record_id or f"diva-oldRecord not found for old ID: {old_id}")
+    assert requests_mock.call_count == 1
+
+
 def test_return_cache_when_id_exists(requests_mock):
     old_id = "878550"
     expected_cora_id = "123"

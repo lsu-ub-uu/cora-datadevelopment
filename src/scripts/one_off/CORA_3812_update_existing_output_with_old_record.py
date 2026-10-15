@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 import logging
 from pathlib import Path
+from common.common_data import read_source_xml
 from common.environment import load_environment
 from common.logging_config import configure_logging
 from common.arg_parser import create_argument_parser, common_arguments
@@ -9,7 +10,11 @@ from common.xml_utils import pretty_print_xml
 from cora.context import Context, CoraContext
 from cora.list_records import list_records
 from cora.update import update_record
-from fedora_to_cora.migrate_old_record import old_record_migrate, update_record_info
+from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
+from fedora_to_cora.migrate_old_record import (
+    old_record_migrate,
+    update_record_info_with_old_record_link,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -28,16 +33,16 @@ def main():
     )
     logger.info(f"==== system={context.get_system()} ====")
 
-    fix_records(context, apply=args.apply)
+    fix_records(context, apply=args.apply, xml_dir=args.xml_dir)
 
 
-def fix_records(context: Context, apply: bool):
+def fix_records(context: Context, apply: bool, xml_dir: str):
     output_records = list_records(context, "diva-output")
     logger.info(f"Number of diva-output records: {len(output_records)}")
 
     results = run_with_threads(
         output_records,
-        lambda record: fix_record(record, context, apply),
+        lambda record: fix_record(record, context, apply, xml_dir),
         context.get_workers(),
         "Updating diva-output records",
     )
@@ -50,25 +55,44 @@ def fix_records(context: Context, apply: bool):
     )
 
 
-def fix_record(record: ET.Element, context: Context, apply: bool) -> str:
-    old_id = record.findtext(".//oldId")
-    assert old_id is not None, "old_id should not be None"
-    old_record = _get_old_record(old_id)
+def fix_record(record: ET.Element, context: Context, apply: bool, xml_dir: str) -> str:
+    output = record.find("./data/output")
+    assert output is not None, "output should not be None"
+
+    old_id = output.findtext("./recordInfo/oldId")
+    if old_id is None:
+        logger.info(
+            f"old_id is missing in the output record with id {record.findtext('./data/output/recordInfo/id')}"
+        )
+        return "skipped"
+
+    try:
+        old_record_xml = _get_old_record_xml(old_id, xml_dir)
+    except FileNotFoundError:
+        logger.warning(
+            f"Skipping output {old_id}: old record XML not found at {Path(xml_dir) / f'{old_id}.xml'}"
+        )
+        return "skipped"
 
     if not apply:
         logger.info(
             f"Dry-run mode: would create an old record and link it to output {old_id}"
         )
-        print(old_id)
         return "updated"
 
-    success, error, record_id = old_record_migrate(old_record, context)
-    if not success or record_id is None:
-        logger.error(f"Failed to create old record for {old_id}: {error}")
+    migration_result = old_record_migrate(old_record_xml, context)
+    if migration_result.status == "FAILED":
+        logger.error(f"Failed to create old record for {old_id}: {migration_result.error}")
         return "failed"
+    record_id = migration_result.cora_old_record_id
+    if migration_result.status == "SKIPPED":
+        record_id = get_cora_id_by_old_id(
+            old_id, record_type="diva-oldRecord", context=context
+        )
+    assert record_id is not None, "Created old record should have an ID"
 
-    output = update_record_info(record_id, record)
-    result = update_record(output, context)
+    update_record_info_with_old_record_link(record_id, output)
+    result = update_record(record, context)
     if not result.success:
         logger.error(
             f"Failed to update record {old_id} with data\n\n: {pretty_print_xml(record)}"
@@ -99,15 +123,21 @@ def _log_summary(total: int, updated: int, failed: int, skipped: int, apply: boo
     print("================================================")
 
 
-def _get_old_record(old_id: str) -> ET.Element:
-    old_record_path = Path("data/fedora_xml/nordiskamuseet") / f"{old_id}.xml"
-    return ET.parse(old_record_path).getroot()
+def _get_old_record_xml(old_id: str, xml_dir: str) -> ET.Element:
+    old_record_path = Path(xml_dir) / f"{old_id}.xml"
+    return read_source_xml(old_record_path)
 
 
 def _parse_args():
     parser = create_argument_parser(
         description="Processes fedora XML publication files for a domain, transforms them to Cora format and imports them to the specified Cora system",
-        arguments=common_arguments,
+        arguments={
+            "--xml-dir": {
+                "help": "Directory containing XML files to process",
+                "required": True,
+            },
+            **common_arguments,
+        },
     )
     return parser.parse_args()
 

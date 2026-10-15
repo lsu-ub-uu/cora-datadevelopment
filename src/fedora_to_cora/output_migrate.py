@@ -1,13 +1,10 @@
-from typing import Literal, cast
 import xml.etree.ElementTree as ET
 import logging
 from common.xml_utils import pretty_print_xml
 from common.xml_validate import validate_xml, XMLValidationError
 from cora.context import Context
-from fedora_to_cora.migrate_old_record import old_record_migrate, update_record_info
 from fedora_to_cora.output_migration_result import OutputMigrationResult
 from cora.delete import delete_record
-from cora.update import update_record
 from fedora_to_cora.attachments_migrate import attachments_migrate
 from fedora_to_cora.output_transform import transform_to_cora_output
 from cora.validate import validate_record
@@ -78,16 +75,6 @@ def output_migrate(
         if is_success_result(create_record_result):
             cora_id = create_record_result.record_id
             relations = create_relations(source_record)
-            success, errors = _migrate_old_record(
-                source_record, create_record_result.response_data, context
-            )
-            if not success:
-                return OutputMigrationResult(
-                    pid,
-                    publication_type=publication_type,
-                    status="FAILED",
-                    errors=errors,
-                )
         else:
             return OutputMigrationResult(
                 pid,
@@ -119,30 +106,6 @@ def output_migrate(
         cora_id=cora_id,
         relations=relations,
     )
-
-
-def _migrate_old_record(
-    source_record: ET.Element,
-    created_record: ET.Element,
-    context: Context,
-) -> tuple[bool, list[str] | None]:
-    success, errors, old_record_id = old_record_migrate(source_record, context)
-
-    if success and old_record_id is not None:
-        updated_record = update_record_info(old_record_id, created_record)
-        update_result = update_record(updated_record, context)
-        if not update_result.success:
-            success = False
-            errors = (
-                [update_result.error]
-                if update_result.error
-                else ["Failed to update output with oldRecord link"]
-            )
-    elif success:
-        success = False
-        errors = ["Old record migration succeeded without a record ID"]
-
-    return success, errors
 
 
 def _migrate_attachments_with_rollback(

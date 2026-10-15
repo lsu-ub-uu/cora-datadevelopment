@@ -16,6 +16,7 @@ from fedora_to_cora.output_migrate import output_migrate
 from fedora_to_cora.output_migration_result import OutputMigrationResult
 from fedora_to_cora.output_relations_migrate import migrate_output_relations
 from fedora_to_cora.persons_migrate import migrate_persons
+from fedora_to_cora.old_records_migrate import migrate_old_records
 from common.common_data import read_source_xml
 from common.print_logo import print_logo
 from multiprocessing import Pool
@@ -65,7 +66,7 @@ def outputs_import(
 ):
     if persons and not apply:
         raise ValueError("--persons requires --apply")
-    if persons and processes < 1:
+    if (persons or apply) and processes < 1:
         raise ValueError("Processes must be a positive integer")
     system = resolve_cora_system(system)
     login_id = resolve_cora_login_id(login_id)
@@ -74,6 +75,16 @@ def outputs_import(
     person_summary = None
     if persons:
         person_summary = migrate_persons(
+            xml_dir=Path(xml_dir),
+            system=system,
+            login_id=login_id,
+            app_token=app_token,
+            workers=processes,
+            cora_url=cora_url,
+        )
+
+    if apply:
+        migrate_old_records(
             xml_dir=Path(xml_dir),
             system=system,
             login_id=login_id,
@@ -254,7 +265,7 @@ def _parse_args():
     args = parser.parse_args()
     if args.persons and not args.apply:
         parser.error("--persons requires --apply")
-    if args.persons and args.processes < 1:
+    if (args.persons or args.apply) and args.processes < 1:
         parser.error("Processes must be a positive integer")
     return args
 

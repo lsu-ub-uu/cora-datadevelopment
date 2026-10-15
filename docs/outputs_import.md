@@ -27,6 +27,25 @@ outputs-import --xml-dir path/to/outputs --system mig
 outputs-import --xml-dir path/to/outputs --system mig --apply
 ```
 
+## Old records before outputs
+
+With `--apply`, all XML files directly inside `--xml-dir` are migrated as
+`diva-oldRecord` records before output migration starts. This phase uses the
+same connection settings and `--processes` worker count as the output import.
+It processes the entire directory even when `--limit` or `--pids` restricts
+the outputs. Records already migrated with the same oldId are skipped.
+
+The order is optional persons, old records, outputs, then output relations.
+Old-record status counts are shown during migration and logged on completion;
+file and authentication failures are logged without stopping output migration.
+Old records are not rolled back if an output fails or is excluded by a filter.
+
+During transformation, output `recordInfo/oldRecord` links are resolved from
+the source `pid` using `diva-oldRecordSearch`. This also applies to classic-quality
+outputs. A missing record's lookup error string is retained as `linkedRecordId`
+so backend validation can report the error. Dry runs create no old records,
+but still resolve and validate these links against records already in Cora.
+
 ## Migrate persons before outputs
 
 ```bash
@@ -67,6 +86,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - validationType <- Mapping from `publicationType/publicationTypeCode` and `subtype/publicationSubtypeCode`
   - permissionUnit <- `administrativeInfo/domain`
   - oldId <- `pid`
+  - oldRecord <- Link to the migrated `diva-oldRecord`, looked up by `pid`
   - visibility <- Logic based on `administrativeInfo/updaters/userInformation/userAction` and `administrativeInfo/creatorInfo/userAction` ❓ Check that mapping is correct.
 - dataQuality <- `2026` if validation passes, otherwise `classic`
 - genre type="contentType" <- Mapping from `contentType/contentTypeCode`,

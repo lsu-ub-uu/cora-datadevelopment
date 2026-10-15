@@ -8,7 +8,7 @@ from cora.create import CreateRecordFailureResult, CreateRecordSuccessResult
 from fedora_to_cora.migrate_old_record import (
     old_record_migrate,
     transform_old_record,
-    update_record_info,
+    update_record_info_with_old_record_link,
 )
 
 
@@ -76,7 +76,7 @@ def test_create_full_publication_old_record():
     assert cora_record.findtext("./recordXml") == f"<![CDATA[{expected_source_xml}]]>"
 
 
-def test_old_record_migrate_returns_success_tuple(monkeypatch):
+def test_old_record_migrate_returns_created_result(monkeypatch):
     monkeypatch.setattr(
         "fedora_to_cora.migrate_old_record.create_record",
         lambda *args, **kwargs: CreateRecordSuccessResult(
@@ -88,10 +88,12 @@ def test_old_record_migrate_returns_success_tuple(monkeypatch):
         ET.fromstring("<record><pid>123</pid></record>"), MagicMock()
     )
 
-    assert result == (True, None, "123")
+    assert (result.status, result.cora_old_record_id, result.error) == (
+        "CREATED", "123", None
+    )
 
 
-def test_old_record_migrate_returns_failure_tuple(monkeypatch):
+def test_old_record_migrate_returns_failed_result(monkeypatch):
     monkeypatch.setattr(
         "fedora_to_cora.migrate_old_record.create_record",
         lambda *args, **kwargs: CreateRecordFailureResult("create failed"),
@@ -101,7 +103,9 @@ def test_old_record_migrate_returns_failure_tuple(monkeypatch):
         ET.fromstring("<record><pid>123</pid></record>"), MagicMock()
     )
 
-    assert result == (False, ["create failed"], None)
+    assert (result.status, result.cora_old_record_id, result.error) == (
+        "FAILED", None, "create failed"
+    )
 
 
 def test_old_record_migrate_returns_exception_as_error(monkeypatch):
@@ -116,7 +120,38 @@ def test_old_record_migrate_returns_exception_as_error(monkeypatch):
         ET.fromstring("<record><pid>123</pid></record>"), MagicMock()
     )
 
-    assert result == (False, ["create raised"], None)
+    assert (result.status, result.cora_old_record_id, result.error) == (
+        "FAILED", None, "create raised"
+    )
+
+
+@pytest.mark.parametrize("pid, expected_status", [("123", "SKIPPED"), ("456", "FAILED")])
+def test_old_record_migrate_checks_duplicate_for_source_pid(monkeypatch, pid, expected_status):
+    error = "A record matching the unique rule with [key: oldId, value: 123] already exists in the system"
+    monkeypatch.setattr(
+        "fedora_to_cora.migrate_old_record.create_record",
+        lambda *args, **kwargs: CreateRecordFailureResult(error, status=409),
+    )
+
+    result = old_record_migrate(
+        ET.fromstring(f"<record><pid>{pid}</pid></record>"), MagicMock()
+    )
+
+    assert result.status == expected_status
+    assert result.cora_old_record_id is None
+    assert result.error is not None
+
+
+def test_old_record_migrate_failure_without_error(monkeypatch):
+    monkeypatch.setattr(
+        "fedora_to_cora.migrate_old_record.create_record",
+        lambda *args, **kwargs: CreateRecordFailureResult(None),
+    )
+
+    result = old_record_migrate(ET.fromstring("<record><pid>123</pid></record>"), MagicMock())
+
+    assert result.status == "FAILED"
+    assert result.error is None
 
 
 def test_update_record_info():
@@ -124,20 +159,21 @@ def test_update_record_info():
     record = ET.fromstring("""
         <output>
             <recordInfo>
-            <id>some_id</id>
-            <type>
-                <linkedRecordType>recordType</linkedRecordType>
-                <linkedRecordId>diva-output</linkedRecordId>
-            </type>
-            <validationType>
-                <linkedRecordType>validationType</linkedRecordType>
-                <linkedRecordId>diva-output</linkedRecordId>
-            </validationType>
+                <id>some_id</id>
+                <type>
+                    <linkedRecordType>recordType</linkedRecordType>
+                    <linkedRecordId>diva-output</linkedRecordId>
+                </type>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>diva-output</linkedRecordId>
+                </validationType>
             </recordInfo>
         </output>""")
-    updated_record = update_record_info(pid, record)
+
+    update_record_info_with_old_record_link(pid, record)
     assert_equal_for_xml_and_xml_string(
-        updated_record,
+        record,
         pretty_print_xml(ET.fromstring(f"""<output>
                         <recordInfo>
                             <id>some_id</id>
@@ -170,4 +206,4 @@ def test_update_record_info_rejects_missing_required_values(
     cora_old_record_id, output, error_message
 ):
     with pytest.raises(AssertionError, match=error_message):
-        update_record_info(cora_old_record_id, output)
+        update_record_info_with_old_record_link(cora_old_record_id, output)

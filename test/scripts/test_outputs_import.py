@@ -14,6 +14,50 @@ from fedora_to_cora.persons_migrate import (
 from fedora_to_cora.person_migrate import MigratePersonResult
 from fedora_to_cora import persons_migrate
 from scripts import outputs_import
+from fedora_to_cora.old_records_migrate import OldRecordMigrationSummary
+
+
+@pytest.fixture(autouse=True)
+def mock_old_record_batch(monkeypatch):
+    migrate = Mock(return_value=OldRecordMigrationSummary())
+    monkeypatch.setattr(outputs_import, "migrate_old_records", migrate, raising=False)
+    return migrate
+
+
+@pytest.mark.parametrize("apply", [True, False])
+@pytest.mark.parametrize("initialization_error", [None, "Login failed"])
+def test_old_records_run_before_output_filters(
+    monkeypatch, mock_old_record_batch, apply, initialization_error
+):
+    events = []
+    mock_old_record_batch.side_effect = lambda **kwargs: events.append("old_records") or OldRecordMigrationSummary(initialization_error=initialization_error)
+    monkeypatch.setattr(outputs_import, "migrate_persons", Mock(side_effect=lambda **kwargs: events.append("persons")))
+    monkeypatch.setattr(outputs_import, "_read_source_record_paths", Mock(side_effect=lambda *args: events.append("read") or ["selected.xml"]))
+    monkeypatch.setattr(outputs_import, "_filter_source_record_paths_by_pids", Mock(side_effect=lambda *args: events.append("filter") or []))
+    monkeypatch.setattr(outputs_import, "_migrate_outputs", Mock(side_effect=lambda **kwargs: events.append("outputs") or []))
+    monkeypatch.setattr(outputs_import, "_migrate_output_relations", Mock(return_value=[]))
+    monkeypatch.setattr(outputs_import, "save_reports", Mock())
+
+    outputs_import.outputs_import(
+        "xml", "pre", "user", "token", 3, apply,
+        limit=1, pids=["pid:1"], cora_url="https://example.org", persons=apply,
+    )
+
+    assert events == (["persons", "old_records"] if apply else []) + ["read", "filter", "outputs"]
+    if apply:
+        mock_old_record_batch.assert_called_once_with(
+            xml_dir=Path("xml"), system="pre", login_id="user", app_token="token",
+            workers=3, cora_url="https://example.org",
+        )
+    else:
+        mock_old_record_batch.assert_not_called()
+
+
+@pytest.mark.parametrize("processes", [0, -1])
+def test_applied_import_rejects_invalid_processes(mock_old_record_batch, processes):
+    with pytest.raises(ValueError, match="Processes must be a positive integer"):
+        outputs_import.outputs_import("xml", "pre", "user", None, processes, True)
+    mock_old_record_batch.assert_not_called()
 
 
 def test_parse_args_defers_environment_defaults(monkeypatch):
