@@ -1,11 +1,47 @@
 import xml.etree.ElementTree as ET
 from unittest.mock import patch
+import pytest
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from common.xml_validate import XMLValidationError
 from cora.create import CreateRecordFailureResult, CreateRecordSuccessResult
-from fedora_to_cora.output_migrate import output_migrate
+from cora.update import UpdateRecordResult
+from fedora_to_cora.output_migrate import (
+    output_migrate,
+)
 from cora.context import MockContext
 from fedora_to_cora.output_migration_result import OutputRelation
+
+
+@pytest.mark.parametrize("classic_quality", [False, True])
+def test_old_record_link_exists_before_validation_and_creation(monkeypatch, classic_quality):
+    from unittest.mock import Mock
+    from fedora_to_cora import output_migrate as module
+    source_record = ET.fromstring("<publication><pid>diva2:123</pid></publication>")
+    transformed = ET.fromstring("""
+        <output><recordInfo>
+            <validationType><linkedRecordType>validationType</linkedRecordType><linkedRecordId>publication_report</linkedRecordId></validationType>
+            <oldRecord><linkedRecordType>diva-oldRecord</linkedRecordType><linkedRecordId>existing-old-record</linkedRecordId></oldRecord>
+        </recordInfo><dataQuality>2026</dataQuality></output>
+    """)
+    monkeypatch.setattr(module, "validate_xml", Mock())
+    monkeypatch.setattr(module, "transform_to_cora_output", Mock(return_value=transformed))
+    validate = Mock(return_value=(not classic_quality, ["Invalid field"] if classic_quality else []))
+    monkeypatch.setattr(module, "validate_record", validate)
+    create = Mock(return_value=CreateRecordSuccessResult("output:123", transformed))
+    monkeypatch.setattr(module, "create_record", create)
+    old_migrate = Mock(side_effect=AssertionError("Must not create old records"))
+    monkeypatch.setattr("fedora_to_cora.migrate_old_record.old_record_migrate", old_migrate)
+    update = Mock(side_effect=AssertionError("Must not update output for oldRecord"))
+    monkeypatch.setattr("cora.update.update_record", update)
+
+    result = output_migrate(source_record, MockContext(), apply=True)
+
+    assert result.status == ("CLASSIC_QUALITY" if classic_quality else "SUCCESS")
+    assert validate.call_args.args[0].findtext("recordInfo/oldRecord/linkedRecordId") == "existing-old-record"
+    assert create.call_args.args[0].findtext("recordInfo/oldRecord/linkedRecordId") == "existing-old-record"
+    assert create.call_args.kwargs["record_type"] == "diva-output"
+    old_migrate.assert_not_called()
+    update.assert_not_called()
 
 
 @patch("fedora_to_cora.output_migrate.transform_to_cora_output")
@@ -53,17 +89,27 @@ def test_migrate_with_apply_false(
     mock_create.assert_not_called()
 
 
+@patch(
+    "cora.update.update_record",
+    return_value=UpdateRecordResult(success=True),
+)
 @patch("fedora_to_cora.output_migrate.transform_to_cora_output")
 @patch("fedora_to_cora.output_migrate.validate_record")
 @patch("fedora_to_cora.output_migrate.create_record")
 @patch("fedora_to_cora.output_migrate.attachments_migrate")
 @patch("fedora_to_cora.output_migrate.validate_xml")
+@patch(
+    "fedora_to_cora.migrate_old_record.old_record_migrate",
+    return_value=(True, None, "old-record-id"),
+)
 def test_success_migrate_with_apply_true_and_with_binaries_true(
+    mock_old_record_migrate,
     mock_validate_xml,
     mock_attachments_migrate,
     mock_create_record,
     mock_validate_record,
     mock_transform,
+    mock_update_record,
 ):
     mock_context = MockContext()
 
@@ -85,7 +131,7 @@ def test_success_migrate_with_apply_true_and_with_binaries_true(
 
     mock_validate_record.return_value = (True, [])
 
-    mock_created_record = ET.Element("record")
+    mock_created_record = ET.fromstring("<record><recordInfo /></record>")
     mock_create_record.return_value = CreateRecordSuccessResult(
         record_id="123", response_data=mock_created_record
     )
@@ -115,21 +161,33 @@ def test_success_migrate_with_apply_true_and_with_binaries_true(
     mock_attachments_migrate.assert_called_once_with(
         source_record, mock_created_record, mock_context, fedora_url=""
     )
+    mock_update_record.assert_not_called()
+    mock_old_record_migrate.assert_not_called()
 
 
+@patch(
+    "cora.update.update_record",
+    return_value=UpdateRecordResult(success=True),
+)
 @patch("fedora_to_cora.output_migrate.transform_to_cora_output")
 @patch("fedora_to_cora.output_migrate.validate_record")
 @patch("fedora_to_cora.output_migrate.create_record")
 @patch("fedora_to_cora.output_migrate.attachments_migrate")
 @patch("fedora_to_cora.output_migrate.validate_xml")
 @patch("fedora_to_cora.output_migrate.create_relations")
+@patch(
+    "fedora_to_cora.migrate_old_record.old_record_migrate",
+    return_value=(True, None, "old-record-id"),
+)
 def test_success_migrate_with_apply_true_and_with_binaries_true_with_relations(
+    mock_old_record_migrate,
     mock_create_relations,
     mock_validate_xml,
     mock_attachments_migrate,
     mock_create_record,
     mock_validate_record,
     mock_transform,
+    mock_update_record,
 ):
     mock_context = MockContext()
 
@@ -155,7 +213,7 @@ def test_success_migrate_with_apply_true_and_with_binaries_true_with_relations(
 
     mock_create_relations.return_value = mock_relations
 
-    mock_created_record = ET.Element("record")
+    mock_created_record = ET.fromstring("<record><recordInfo /></record>")
     mock_create_record.return_value = CreateRecordSuccessResult(
         record_id="123", response_data=mock_created_record
     )
@@ -170,17 +228,27 @@ def test_success_migrate_with_apply_true_and_with_binaries_true_with_relations(
     assert result.errors is None
 
 
+@patch(
+    "cora.update.update_record",
+    return_value=UpdateRecordResult(success=True),
+)
 @patch("fedora_to_cora.output_migrate.transform_to_cora_output")
 @patch("fedora_to_cora.output_migrate.validate_record")
 @patch("fedora_to_cora.output_migrate.create_record")
 @patch("fedora_to_cora.output_migrate.attachments_migrate")
 @patch("fedora_to_cora.output_migrate.validate_xml")
+@patch(
+    "fedora_to_cora.migrate_old_record.old_record_migrate",
+    return_value=(True, None, "old-record-id"),
+)
 def test_success_migrate_with_apply_true_and_with_binaries_false(
+    mock_old_record_migrate,
     mock_validate_xml,
     mock_attachments_migrate,
     mock_create_record,
     mock_validate_record,
     mock_transform,
+    mock_update_record,
 ):
     mock_context = MockContext()
 
@@ -202,7 +270,7 @@ def test_success_migrate_with_apply_true_and_with_binaries_false(
 
     mock_validate_record.return_value = (True, [])
 
-    mock_created_record = ET.Element("record")
+    mock_created_record = ET.fromstring("<record><recordInfo /></record>")
     mock_create_record.return_value = CreateRecordSuccessResult(
         record_id="123", response_data=mock_created_record
     )
@@ -235,19 +303,29 @@ def test_success_migrate_with_apply_true_and_with_binaries_false(
     mock_attachments_migrate.assert_not_called()
 
 
+@patch(
+    "cora.update.update_record",
+    return_value=UpdateRecordResult(success=True),
+)
 @patch("fedora_to_cora.output_migrate.transform_to_cora_output")
 @patch("fedora_to_cora.output_migrate.validate_record")
 @patch("fedora_to_cora.output_migrate.create_record")
 @patch("fedora_to_cora.output_migrate.attachments_migrate")
 @patch("fedora_to_cora.output_migrate.validate_xml")
 @patch("fedora_to_cora.output_migrate.create_relations")
+@patch(
+    "fedora_to_cora.migrate_old_record.old_record_migrate",
+    return_value=(True, None, "old-record-id"),
+)
 def test_success_migrate_with_apply_true_and_with_binaries_false_with_relations(
+    mock_old_record_migrate,
     mock_create_relations,
     mock_validate_xml,
     mock_attachments_migrate,
     mock_create_record,
     mock_validate_record,
     mock_transform,
+    mock_update_record,
 ):
     mock_context = MockContext()
 
@@ -272,7 +350,7 @@ def test_success_migrate_with_apply_true_and_with_binaries_false_with_relations(
     mock_relations = [OutputRelation(type="constituent", pid="diva2:12345")]
     mock_create_relations.return_value = mock_relations
 
-    mock_created_record = ET.Element("record")
+    mock_created_record = ET.fromstring("<record><recordInfo /></record>")
     mock_create_record.return_value = CreateRecordSuccessResult(
         record_id="123", response_data=mock_created_record
     )
@@ -289,19 +367,29 @@ def test_success_migrate_with_apply_true_and_with_binaries_false_with_relations(
     assert result.errors is None
 
 
+@patch(
+    "cora.update.update_record",
+    return_value=UpdateRecordResult(success=True),
+)
 @patch("fedora_to_cora.output_migrate.transform_to_cora_output")
 @patch("fedora_to_cora.output_migrate.validate_record")
 @patch("fedora_to_cora.output_migrate.create_record")
 @patch("fedora_to_cora.output_migrate.attachments_migrate")
 @patch("fedora_to_cora.output_migrate.delete_record")
 @patch("fedora_to_cora.output_migrate.validate_xml")
+@patch(
+    "fedora_to_cora.migrate_old_record.old_record_migrate",
+    return_value=(True, None, "old-record-id"),
+)
 def test_rollback_when_failed_to_migrate_attachment(
+    mock_old_record_migrate,
     mock_validate_xml,
     mock_delete_record,
     mock_attachments_migrate,
     mock_create,
     mock_validate,
     mock_transform,
+    mock_update_record,
 ):
     mock_context = MockContext()
 
@@ -322,7 +410,7 @@ def test_rollback_when_failed_to_migrate_attachment(
     mock_transform.return_value = mock_cora_output
     mock_validate.return_value = (True, [])
 
-    mock_created_record = ET.Element("record")
+    mock_created_record = ET.fromstring("<record><recordInfo /></record>")
     mock_create.return_value = CreateRecordSuccessResult(
         record_id="123", response_data=mock_created_record
     )
@@ -336,6 +424,37 @@ def test_rollback_when_failed_to_migrate_attachment(
     assert result.relations == []
     assert result.errors == ["Failed to upload file"]
     mock_delete_record.assert_called_once_with(mock_created_record, mock_context)
+
+
+@patch("fedora_to_cora.output_migrate.transform_to_cora_output")
+@patch("fedora_to_cora.output_migrate.validate_record")
+@patch("fedora_to_cora.output_migrate.create_record")
+@patch("fedora_to_cora.output_migrate.validate_xml")
+@patch(
+    "fedora_to_cora.migrate_old_record.old_record_migrate",
+    return_value=(False, ["old record create failed"], None),
+)
+def test_output_migration_does_not_create_old_records(
+    mock_old_record_migrate,
+    mock_validate_xml,
+    mock_create_record,
+    mock_validate_record,
+    mock_transform,
+):
+    mock_context = MockContext()
+    source_record = ET.fromstring("<publication><pid>diva2:12345</pid></publication>")
+    mock_transform.return_value = ET.Element("record")
+    mock_validate_record.return_value = (True, [])
+    created_record = ET.Element("record")
+    mock_create_record.return_value = CreateRecordSuccessResult(
+        record_id="123", response_data=created_record
+    )
+
+    result = output_migrate(source_record, mock_context, apply=True)
+
+    assert result.status == "SUCCESS"
+    assert result.errors is None
+    mock_old_record_migrate.assert_not_called()
 
 
 @patch("fedora_to_cora.output_migrate.validate_record")

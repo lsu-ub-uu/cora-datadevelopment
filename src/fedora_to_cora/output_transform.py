@@ -122,7 +122,7 @@ def transform_to_cora_output(source_record: ET.Element, context: Context) -> ET.
     output = create_group(
         "output",
         children=[
-            create_record_info(source_record),
+            create_record_info(source_record, context),
             create_text("dataQuality", "2026"),
             create_genre_type_output_type(source_record),
             create_genre_type_subcategory(source_record),

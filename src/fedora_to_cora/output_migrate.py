@@ -1,4 +1,3 @@
-from typing import Literal, cast
 import xml.etree.ElementTree as ET
 import logging
 from common.xml_utils import pretty_print_xml
@@ -85,7 +84,6 @@ def output_migrate(
                     [create_record_result.error] if create_record_result.error else []
                 ),
             )
-
         if with_binaries:
             success, errors = _migrate_attachments_with_rollback(
                 source_record,

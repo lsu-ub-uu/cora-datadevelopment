@@ -128,7 +128,6 @@ fedora_person_spec: XMLSpec = {
     "authorityPid": "$ANY_TEXT$",
 }
 
-
 fedora_language_spec: XMLSpec = {
     "languageCode3": "$ANY_TEXT$",
     "languageCode2": "$ANY_TEXT$",
