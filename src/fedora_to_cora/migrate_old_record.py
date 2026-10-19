@@ -49,7 +49,6 @@ def transform_old_record(source_record: ET.Element) -> ET.Element:
             create_group(
                 "recordInfo",
                 children=[
-                    create_text("id", value=source_record.findtext("./pid")),
                     create_group(
                         "validationType",
                         children=[
@@ -68,7 +67,7 @@ def transform_old_record(source_record: ET.Element) -> ET.Element:
                 ],
             ),
             create_text(
-                "recordXml", value=f"<![CDATA[{pretty_print_xml(source_record)}]]>"
+                "record", value=f"<![CDATA[{pretty_print_xml(source_record)}]]>"
             ),
         ],
     )
