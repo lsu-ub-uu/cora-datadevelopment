@@ -18,8 +18,8 @@ def test_update_relations_update_failed(mock_update_record):
         success=False, error="Update failed"
     )
 
-    (old_child, new_child) = _create_mock_record("1", "100", parents=["2"])
-    (old_parent, new_parent) = _create_mock_record("2", "200")
+    old_child, new_child = _create_mock_record("1", "100", parents=["2"])
+    old_parent, new_parent = _create_mock_record("2", "200")
 
     record_mapping: list[tuple[ET.Element, ET.Element | None]] = [
         (old_child, new_child),
@@ -40,8 +40,8 @@ def test_update_relations_update_failed(mock_update_record):
 
 @patch("db_to_cora.update_relations.update_record")
 def test_update_relations(mock_update_record):
-    (old_child, new_child) = _create_mock_record("1", "100", parents=["2"])
-    (old_parent, new_parent) = _create_mock_record("2", "200")
+    old_child, new_child = _create_mock_record("1", "100", parents=["2"])
+    old_parent, new_parent = _create_mock_record("2", "200")
 
     record_mapping: list[tuple[ET.Element, ET.Element | None]] = [
         (old_child, new_child),
@@ -64,30 +64,34 @@ def test_update_relations(mock_update_record):
     assert_equal_for_xml_and_xml_string(
         updated_record_xml,
         """
-            <foo>
-                <recordInfo>
-                    <id>100</id>
-                    <oldId>1</oldId>
-                </recordInfo>
-                <related type="parent" repeatId="0">
+             <record>
+                <data>
                     <foo>
-                        <linkedRecordType>diva-foo</linkedRecordType>
-                        <linkedRecordId>200</linkedRecordId>
+                        <recordInfo>
+                            <id>100</id>
+                            <oldId>1</oldId>
+                        </recordInfo>
+                        <related type="parent" repeatId="0">
+                            <foo>
+                                <linkedRecordType>diva-foo</linkedRecordType>
+                                <linkedRecordId>200</linkedRecordId>
+                            </foo>
+                        </related>
                     </foo>
-                </related>
-            </foo>
+                </data>
+            </record>
         """,
     )
 
 
 @patch("db_to_cora.update_relations.update_record")
 def test_update_relations_multiple(mock_update_record):
-    (old_child, new_child) = _create_mock_record(
+    old_child, new_child = _create_mock_record(
         "1", "100", parents=["2"], earlier=["3", "4"]
     )
-    (old_earlier1, new_earlier1) = _create_mock_record("3", "300")
-    (old_earlier2, new_earlier2) = _create_mock_record("4", "400")
-    (old_parent, new_parent) = _create_mock_record("2", "200")
+    old_earlier1, new_earlier1 = _create_mock_record("3", "300")
+    old_earlier2, new_earlier2 = _create_mock_record("4", "400")
+    old_parent, new_parent = _create_mock_record("2", "200")
 
     record_mapping: list[tuple[ET.Element, ET.Element | None]] = [
         (old_child, new_child),
@@ -117,30 +121,34 @@ def test_update_relations_multiple(mock_update_record):
     assert_equal_for_xml_and_xml_string(
         updated_record_xml,
         """
-            <foo>
-                <recordInfo>
-                    <id>100</id>
-                    <oldId>1</oldId>
-                </recordInfo>
-                <related type="parent" repeatId="0">
-                    <foo>
-                        <linkedRecordType>diva-foo</linkedRecordType>
-                        <linkedRecordId>200</linkedRecordId>
+        <record>
+            <data>
+                <foo>
+                    <recordInfo>
+                        <id>100</id>
+                        <oldId>1</oldId>
+                    </recordInfo>
+                        <related type="parent" repeatId="0">
+                            <foo>
+                                <linkedRecordType>diva-foo</linkedRecordType>
+                                <linkedRecordId>200</linkedRecordId>
+                            </foo>
+                        </related>
+                        <related type="earlier" repeatId="0">
+                            <foo>
+                                <linkedRecordType>diva-foo</linkedRecordType>
+                                <linkedRecordId>300</linkedRecordId>
+                            </foo>
+                        </related>
+                        <related type="earlier" repeatId="1">
+                            <foo>
+                                <linkedRecordType>diva-foo</linkedRecordType>
+                                <linkedRecordId>400</linkedRecordId>
+                            </foo>
+                        </related>
                     </foo>
-                </related>
-                <related type="earlier" repeatId="0">
-                    <foo>
-                        <linkedRecordType>diva-foo</linkedRecordType>
-                        <linkedRecordId>300</linkedRecordId>
-                    </foo>
-                </related>
-                <related type="earlier" repeatId="1">
-                    <foo>
-                        <linkedRecordType>diva-foo</linkedRecordType>
-                        <linkedRecordId>400</linkedRecordId>
-                    </foo>
-                </related>
-            </foo>
+                </data>
+            </record>
         """,
     )
 
@@ -151,13 +159,11 @@ def _create_mock_record(
     parents: list[str] = [],
     earlier: list[str] = [],
 ) -> tuple[ET.Element, ET.Element]:
-    old = ET.fromstring(
-        f"""
+    old = ET.fromstring(f"""
         <record>
             <old_id>{old_id}</old_id>
         </record>
-    """
-    )
+    """)
 
     if len(parents) > 0:
         parent_org = ET.Element("parent_id")
@@ -169,8 +175,7 @@ def _create_mock_record(
         earlier_org.text = ",".join(earlier)
         old.append(earlier_org)
 
-    new = ET.fromstring(
-        f"""
+    new = ET.fromstring(f"""
         <record>
             <data>
                 <foo>
@@ -181,7 +186,6 @@ def _create_mock_record(
                 </foo>
             </data>
         </record>
-    """
-    )
+    """)
 
     return old, new
