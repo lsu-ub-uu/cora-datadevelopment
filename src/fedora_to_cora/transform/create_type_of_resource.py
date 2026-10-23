@@ -19,7 +19,14 @@ map_media_type = {
 
 def create_type_of_resource(source_record: ET.Element) -> ET.Element | None:
     media_type = source_record.findtext("./mediaType/autoId")
+    publication_type_code = source_record.findtext(
+        "./publicationType/publicationTypeCode"
+    )
+
     if media_type is None:
+        return None
+
+    if media_type == "10" and publication_type_code == "report":
         return None
 
     return create_text(
