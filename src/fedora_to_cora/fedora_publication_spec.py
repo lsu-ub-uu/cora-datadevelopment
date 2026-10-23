@@ -425,6 +425,12 @@ fedora_publication_xml_spec: XMLSpec = {
             "relationships": {},  # Always empty for uncontrolled series
             "seriesNameUncontrolled": "$ANY_TEXT$",
             "controlled": "$ANY_TEXT$",
+            "seriesTitle": {
+                # In some cases, the uncontrolled title is in a seriesTitle group instead of seriesNameUncontrolled
+                "mainTitle": "$ANY_TEXT$",
+                "subTitle": "$ANY_TEXT$",
+                "locale": "$ANY_TEXT$",
+            },
         },
         "numberInSeries": "$ANY_TEXT$",
     },
