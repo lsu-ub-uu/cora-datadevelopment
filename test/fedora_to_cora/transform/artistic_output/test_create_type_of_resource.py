@@ -21,15 +21,13 @@ import pytest
     ],
 )
 def test_create_type_of_resource(media_type, expected):
-    source_record = ET.fromstring(
-        f"""
+    source_record = ET.fromstring(f"""
         <publication>
             <mediaType>
                 <autoId>{media_type}</autoId>
             </mediaType>
         </publication>
-        """
-    )
+        """)
 
     type_of_resource = create_type_of_resource(source_record)
 
@@ -42,12 +40,10 @@ def test_create_type_of_resource(media_type, expected):
 
 
 def test_missing_media_type():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
         </publication>
-        """
-    )
+        """)
 
     type_of_resource = create_type_of_resource(source_record)
 
@@ -55,15 +51,30 @@ def test_missing_media_type():
 
 
 def test_wrong_media_type():
-    source_record = ET.fromstring(
-        f"""
+    source_record = ET.fromstring(f"""
         <publication>
             <mediaType>
                 <autoId>999</autoId>
             </mediaType>
         </publication>
-        """
-    )
+        """)
 
     with pytest.raises(KeyError):
         create_type_of_resource(source_record)
+
+
+def test_skip_type_of_resource_of_type_text_when_validation_type_is_report():
+    source_record = ET.fromstring(f"""
+        <publication>
+            <publicationType>
+                <publicationTypeCode>report</publicationTypeCode>
+            </publicationType>
+            <mediaType>
+                <autoId>10</autoId>
+            </mediaType>
+        </publication>
+        """)
+
+    type_of_resource = create_type_of_resource(source_record)
+
+    assert type_of_resource is None
