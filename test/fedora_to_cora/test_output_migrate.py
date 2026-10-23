@@ -13,9 +13,12 @@ from fedora_to_cora.output_migration_result import OutputRelation
 
 
 @pytest.mark.parametrize("classic_quality", [False, True])
-def test_old_record_link_exists_before_validation_and_creation(monkeypatch, classic_quality):
+def test_old_record_link_exists_before_validation_and_creation(
+    monkeypatch, classic_quality
+):
     from unittest.mock import Mock
     from fedora_to_cora import output_migrate as module
+
     source_record = ET.fromstring("<publication><pid>diva2:123</pid></publication>")
     transformed = ET.fromstring("""
         <output><recordInfo>
@@ -24,21 +27,33 @@ def test_old_record_link_exists_before_validation_and_creation(monkeypatch, clas
         </recordInfo><dataQuality>2026</dataQuality></output>
     """)
     monkeypatch.setattr(module, "validate_xml", Mock())
-    monkeypatch.setattr(module, "transform_to_cora_output", Mock(return_value=transformed))
-    validate = Mock(return_value=(not classic_quality, ["Invalid field"] if classic_quality else []))
+    monkeypatch.setattr(
+        module, "transform_to_cora_output", Mock(return_value=transformed)
+    )
+    validate = Mock(
+        return_value=(not classic_quality, ["Invalid field"] if classic_quality else [])
+    )
     monkeypatch.setattr(module, "validate_record", validate)
     create = Mock(return_value=CreateRecordSuccessResult("output:123", transformed))
     monkeypatch.setattr(module, "create_record", create)
     old_migrate = Mock(side_effect=AssertionError("Must not create old records"))
-    monkeypatch.setattr("fedora_to_cora.migrate_old_record.old_record_migrate", old_migrate)
+    monkeypatch.setattr(
+        "fedora_to_cora.migrate_old_record.old_record_migrate", old_migrate
+    )
     update = Mock(side_effect=AssertionError("Must not update output for oldRecord"))
     monkeypatch.setattr("cora.update.update_record", update)
 
     result = output_migrate(source_record, MockContext(), apply=True)
 
     assert result.status == ("CLASSIC_QUALITY" if classic_quality else "SUCCESS")
-    assert validate.call_args.args[0].findtext("recordInfo/oldRecord/linkedRecordId") == "existing-old-record"
-    assert create.call_args.args[0].findtext("recordInfo/oldRecord/linkedRecordId") == "existing-old-record"
+    assert (
+        validate.call_args.args[0].findtext("recordInfo/oldRecord/linkedRecordId")
+        == "existing-old-record"
+    )
+    assert (
+        create.call_args.args[0].findtext("recordInfo/oldRecord/linkedRecordId")
+        == "existing-old-record"
+    )
     assert create.call_args.kwargs["record_type"] == "diva-output"
     old_migrate.assert_not_called()
     update.assert_not_called()
@@ -1164,3 +1179,28 @@ def test_migrate_input_validation_failed(
     mock_transform.assert_not_called()
     mock_validate.assert_not_called()
     mock_create.assert_not_called()
+
+
+@patch("fedora_to_cora.output_migrate.transform_to_cora_output")
+@patch("fedora_to_cora.output_migrate.validate_xml")
+def test_returns_failure_when_transform_to_cora_raises_exception(
+    mock_validate_xml, mock_transform
+):
+    mock_transform.side_effect = Exception("transform error")
+
+    mock_context = MockContext()
+
+    source_record = ET.fromstring("""
+        <publication>
+            <pid>12345</pid>
+            <title>Test Publication</title>
+        </publication>
+        """)
+
+    result = output_migrate(source_record, mock_context, apply=False)
+
+    assert result.status == "FAILED"
+    assert result.errors == ["Failed to transform to cora output: transform error"]
+    assert result.cora_id is None
+    assert result.relations == []
+    mock_transform.assert_called_once_with(source_record, mock_context)

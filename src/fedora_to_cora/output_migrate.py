@@ -44,7 +44,15 @@ def output_migrate(
             errors=[str(e)],
         )
 
-    cora_output = transform_to_cora_output(source_record, context)
+    try:
+        cora_output = transform_to_cora_output(source_record, context)
+    except Exception as e:
+        return OutputMigrationResult(
+            pid,
+            publication_type,
+            status="FAILED",
+            errors=[f"Failed to transform to cora output: {e}"],
+        )
 
     valid, errors = validate_record(
         cora_output,
