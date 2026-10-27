@@ -2,7 +2,15 @@ from fedora_to_cora.transform.binary.binary_record_transform import (
     binary_record_transform,
 )
 import xml.etree.ElementTree as ET
-from common.test_helper import assert_equal_for_xml_and_xml_string
+
+
+def _canonicalize_xml(element: ET.Element):
+    return (
+        element.tag,
+        tuple(sorted(element.attrib.items())),
+        (element.text or "").strip(),
+        tuple(sorted(_canonicalize_xml(child) for child in element)),
+    )
 
 
 def test_binary_record_transform():
@@ -68,19 +76,17 @@ def test_binary_record_transform():
 
     admin = binary_record_transform(source_record, host_record)
 
-    assert_equal_for_xml_and_xml_string(
-        admin,
-        """
+    expected = ET.fromstring("""
             <binary type="generic">
                 <recordInfo>
-                    <validationType>
-                        <linkedRecordType>validationType</linkedRecordType>
-                        <linkedRecordId>genericBinary</linkedRecordId>
-                    </validationType>
                     <dataDivider>
                         <linkedRecordType>system</linkedRecordType>
                         <linkedRecordId>divaData</linkedRecordId>
                     </dataDivider>
+                    <validationType>
+                        <linkedRecordType>validationType</linkedRecordType>
+                        <linkedRecordId>genericBinary</linkedRecordId>
+                    </validationType>
                     <visibility>published</visibility>
                     <hostRecord>
                         <linkedRecordType>someType</linkedRecordType>
@@ -92,5 +98,5 @@ def test_binary_record_transform():
                 <expectedFileSize>93598848</expectedFileSize>
                 <expectedChecksum>5d516c67a580b689fb27c49b388faf6c50575cdf2a98a1e4b028772801b7f76d1865f24d050dc3d3d835cf23d298f987f8b29c6fd394246b884f0b3554fcd0d4</expectedChecksum>
             </binary>
-        """,
-    )
+        """)
+    assert _canonicalize_xml(admin) == _canonicalize_xml(expected)

@@ -24,22 +24,36 @@ def old_record_migrate(
 ) -> MigrateOldRecordResult:
     old_record = transform_old_record(source_record)
     try:
-        result = create_record(
+        create_old_record_result = create_record(
             old_record, record_type="diva-oldRecord", context=context
         )
     except Exception as e:
         logger.error(f"Error transforming old record: {e}")
         return MigrateOldRecordResult("FAILED", None, str(e))
 
-    if is_success_result(result):
-        return MigrateOldRecordResult("CREATED", result.record_id, None)
+    if is_success_result(create_old_record_result):
+        return MigrateOldRecordResult(
+            "CREATED", create_old_record_result.record_id, None
+        )
+
+    binary_create_result = create_binary_record(
+        old_record, host_record_id=create_old_record_result.record_id
+    )
+
     old_id = source_record.findtext("./pid")
     duplicate_error = f"A record matching the unique rule with [key: oldId, value: {old_id}] already exists in the system"
-    if result.error is not None and duplicate_error in result.error:
+    if (
+        create_old_record_result.error is not None
+        and duplicate_error in create_old_record_result.error
+    ):
         return MigrateOldRecordResult(
             "SKIPPED", None, "Cora diva-oldRecord record already exists"
         )
-    return MigrateOldRecordResult("FAILED", None, result.error)
+    return MigrateOldRecordResult("FAILED", None, create_old_record_result.error)
+
+
+def create_binary_record(source_record: ET.Element, host_record_id: str):
+    pass
 
 
 def transform_old_record(source_record: ET.Element) -> ET.Element:
@@ -65,9 +79,6 @@ def transform_old_record(source_record: ET.Element) -> ET.Element:
                     ),
                     create_text("oldId", value=source_record.findtext("./pid")),
                 ],
-            ),
-            create_text(
-                "record", value=f"<![CDATA[{pretty_print_xml(source_record)}]]>"
             ),
         ],
     )

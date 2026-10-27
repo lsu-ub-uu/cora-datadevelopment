@@ -9,6 +9,12 @@ from common.test_helper import assert_equal_for_xml_and_xml_string
 xml_dir = "data/fedora_xml/polar/2026-10-22T09:00:07.862966"
 path_to_look_for = ".//authorityPid"
 
+"""""
+Find and log XML tags matching a specified path within source records.
+
+Usage: Edit the `xml_dir` and `path_to_look_for` variables to specify the directory containing XML files and the XML path to search for. Then run the script.
+"""
+
 
 def main():
     match_count = 0
