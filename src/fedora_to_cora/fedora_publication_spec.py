@@ -53,9 +53,11 @@ fedora_organisation_spec: XMLSpec = {
         "locale": "$ANY_TEXT$",
     },
     "organisationContacts": {
-        "organisationContactId": "$ANY_TEXT$",
-        "organisationContactType": "$ANY_TEXT$",
-        "organisationContactText": "$ANY_TEXT$",
+        "organisationContact": {
+            "organisationContactId": "$ANY_TEXT$",
+            "organisationContactType": "$ANY_TEXT$",
+            "organisationContactText": "$ANY_TEXT$",
+        },
     },
     "organisationCode": "$ANY_TEXT$",
     "organisationHomepage": "$ANY_TEXT$",
