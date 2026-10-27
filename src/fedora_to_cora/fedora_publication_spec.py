@@ -209,6 +209,8 @@ fedora_series_spec: XMLSpec = {
     "publicationType": fedora_publication_type_spec,
     "organisation": fedora_organisation_spec,
     "domain": "$ANY_TEXT$",
+    "oldDivaDb": "$IGNORE$",  # Not needed for diva-output migration
+    "oldDivaId": "$IGNORE$",  # Not needed for diva-output migration
     "closedDate": "$ANY_TEXT$",
     "controlled": "$ANY_TEXT$",
 }
@@ -253,6 +255,7 @@ fedora_subject_spec: XMLSpec = {
     },
     "subjectCode": "$ANY_TEXT$",
     "domain": "$ANY_TEXT$",
+    "closedDate": "$IGNORE$",  # Not needed for diva-output migration
     "notEligible": "$ANY_TEXT$",
     "oldDivaDb": "$ANY_TEXT$",
     "oldDivaId": "$ANY_TEXT$",
