@@ -458,7 +458,7 @@ fedora_publication_xml_spec: XMLSpec = {
     },
     "urls": {
         "url": {
-            "url": "$ANY_TEXT$",
+            "url": "$HTML$",  # We have observed links with &lt;
             "label": "$ANY_TEXT$",
             "openAccess": "$ANY_TEXT$",
         }

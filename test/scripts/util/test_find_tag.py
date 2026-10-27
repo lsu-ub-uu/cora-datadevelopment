@@ -35,7 +35,14 @@ def test_main_includes_empty_tag_count_in_summary(
     )
     mock_read_source_records.return_value = [record]
 
-    find_tag.main()
+    with patch(
+        "scripts.util.find_tag.path_to_look_for",
+        [
+            "./doi",
+            "./identifiers/entry[publicationIdentifierType='doi']/publicationIdentifier/value",
+        ],
+    ):
+        find_tag.main()
 
     output = capsys.readouterr().out
     assert "[record-1] Found match with text: text" in output

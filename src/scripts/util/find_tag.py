@@ -7,13 +7,9 @@ from common.xml_utils import pretty_print_xml
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 xml_dir = "data/fedora_xml/polar/2025-11-13T16:16:33.561276"
-# path_to_look_for = [
-#     "./doi",
-#     "./identifiers/entry[publicationIdentifierType='doi']/publicationIdentifier/value",
-# ]
 path_to_look_for = [
     "./doi",
-    "./identifiers/entry[publicationIdentifierType='doi']/publicationIdentifier/value",
+    "./identifiers/entry[pwerwercationIdentifier/value",
 ]
 
 
