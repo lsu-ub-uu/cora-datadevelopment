@@ -438,6 +438,7 @@ fedora_publication_xml_spec: XMLSpec = {
     "conference": "$ANY_TEXT$",
     "pages": "$ANY_TEXT$",
     "edition": "$ANY_TEXT$",
+    "doi": "$ANY_TEXT$",
     "volume": "$ANY_TEXT$",
     "issueNumber": "$ANY_TEXT$",
     "startPage": "$ANY_TEXT$",

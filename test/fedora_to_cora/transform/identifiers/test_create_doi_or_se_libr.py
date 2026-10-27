@@ -6,8 +6,7 @@ from fedora_to_cora.transform.identifiers.create_doi_se_libr import (
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-source_record = ET.fromstring(
-    """
+source_record = ET.fromstring("""
     <publication>
         <identifiers>
             <entry>
@@ -54,8 +53,7 @@ source_record = ET.fromstring(
             </entry>
         </identifiers>
     </publication>
-"""
-)
+""")
 
 
 def test_create_identifier_doi():
@@ -75,8 +73,7 @@ def test_create_identifier_se_libr():
 
 
 def test_create_identifier_se_libr_when_missing():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
             <publication>
                 <identifiers>
                     <entry>
@@ -89,8 +86,7 @@ def test_create_identifier_se_libr_when_missing():
                     </entry>
                 </identifiers>
             </publication>
-        """
-    )
+        """)
     libris = create_identifier_se_libr(source_record)
     assert len(libris) == 0
 
@@ -117,8 +113,7 @@ def test_create_multiple_identifier_se_libr():
 
 
 def test_create_identifier_doi_when_missing():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
             <publication>
                 <identifiers>
                     <entry>
@@ -136,7 +131,23 @@ def test_create_identifier_doi_when_missing():
                     </entry>
                 </identifiers>
             </publication>
-        """
-    )
+        """)
     doi_identifier = create_identifier_doi(source_record)
     assert doi_identifier is None
+
+
+def test_create_identifier_doi_from_legacy_doi_element():
+    source_record = ET.fromstring("""
+        <publication>
+            <doi>10.1234/example.doi</doi>
+        </publication>
+        """)
+
+    identifier = create_identifier_doi(source_record)
+
+    assert_equal_for_xml_and_xml_string(
+        identifier,
+        """
+        <identifier type="doi">10.1234/example.doi</identifier>
+        """,
+    )
