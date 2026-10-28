@@ -41,7 +41,9 @@ def test_get_old_record_id(requests_mock, record_id):
         text=create_mock_response(record_id) if record_id else "<dataList />",
     )
 
-    result = get_cora_id_by_old_id(old_id, record_type="diva-oldRecord", context=mock_context)
+    result = get_cora_id_by_old_id(
+        old_id, record_type="diva-oldRecord", context=mock_context
+    )
 
     assert result == (record_id or f"diva-oldRecord not found for old ID: {old_id}")
     assert requests_mock.call_count == 1
@@ -170,12 +172,32 @@ def test_logs_warning_and_returns_first_id_when_multiple_results(
     ) in [(record.levelname, record.getMessage()) for record in caplog.records]
 
 
+def test_get_cora_id_by_old_id_for_diva_person(requests_mock):
+    old_id = "diva2:878550"
+    expected_cora_id = "123"
+
+    requests_mock.get(
+        f"https://pre.diva-portal.org/rest/record/searchResult/diva-personSearch?searchData={create_generic_id_search_data(old_id)}",
+        request_headers={"Authtoken": test_token},
+        text=create_mock_response(expected_cora_id),
+    )
+
+    response = get_cora_id_by_old_id(
+        old_id,
+        record_type="diva-person",
+        context=mock_context,
+    )
+    assert requests_mock.called == True
+    assert requests_mock.call_count == 1
+    assert response == expected_cora_id
+
+
 def test_get_cora_id_by_old_id_for_diva_output(requests_mock):
     old_id = "diva2:878550"
     expected_cora_id = "123"
 
     requests_mock.get(
-        f"https://pre.diva-portal.org/rest/record/searchResult/outputPublicSearch?searchData={create_diva_output_search_data(old_id)}",
+        f"https://pre.diva-portal.org/rest/record/searchResult/outputPublicSearch?searchData={create_generic_id_search_data(old_id)}",
         request_headers={"Authtoken": test_token},
         text=create_mock_response(expected_cora_id),
     )
@@ -228,7 +250,7 @@ def create_search_data(old_id):
         """)
 
 
-def create_diva_output_search_data(old_id):
+def create_generic_id_search_data(old_id):
     return inline_xml_string(f"""
             <?xml version="1.0" encoding="UTF-8"?>
             <search>
