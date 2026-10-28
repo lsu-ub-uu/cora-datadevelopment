@@ -92,13 +92,3 @@ def migrate_old_records(
     )
     logger.info("Old-record migration completed: %s", summary.counts)
     return summary
-
-
-if __name__ == "__main__":
-    load_environment()
-    configure_logging()
-    migrate_old_records(
-        xml_dir=Path("data/fedora_xml/uu/2025-10-31T09:06:10.939513"),
-        cora_url="https://preview.diva.cora.epc.ub.uu.se",
-        workers=1,
-    )

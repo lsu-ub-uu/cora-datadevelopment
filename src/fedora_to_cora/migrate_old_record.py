@@ -32,6 +32,7 @@ def old_record_migrate(
     context: Context,
 ) -> MigrateOldRecordResult:
     old_id = source_record.findtext("./pid")
+
     # Transform to old record record
     old_record = _transform_old_record(source_record)
 

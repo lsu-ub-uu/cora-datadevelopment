@@ -1,39 +1,20 @@
 import requests
 import xml.etree.ElementTree as ET
 import logging
-from requests_toolbelt.multipart.encoder import MultipartEncoder
-from common.xml_utils import pretty_print_xml
-from cora.context import Context, CoraContext, MockContext
-from cora.create import create_record
+from cora.context import Context
 
 logger = logging.getLogger(__name__)
 
 
-def upload_binary(binary_record: ET.Element, file_name: str, data, context: Context):
-    upload_action_link = binary_record.find("./actionLinks/upload")
-    assert (
-        upload_action_link is not None
-    ), "Upload action link not found in binary record"
-
-    request_url = upload_action_link.findtext("./url")
-    assert request_url is not None, "Upload URL not found in action link"
-
-    multipart_data = MultipartEncoder(
-        fields={
-            "file": (
-                file_name,
-                data,
-                "application/octet-stream",
-            )
-        }
-    )
-
+def upload_binary(
+    binary_record: ET.Element, file_name: str, data: bytes, context: Context
+):
+    assert binary_record is not None, "Binary record must not be None"
     response = requests.post(
-        request_url,
-        data=multipart_data,
+        url=_get_upload_url(binary_record),
+        files={"file": (file_name, data, "application/octet-stream")},
         headers={
             "Authtoken": context.get_auth_token(),
-            "Content-Type": multipart_data.content_type,
         },
     )
 
@@ -44,6 +25,17 @@ def upload_binary(binary_record: ET.Element, file_name: str, data, context: Cont
         raise UploadError(
             f"Failed to upload binary file '{file_name}': {response.status_code} - {response.text}"
         )
+
+
+def _get_upload_url(binary_record: ET.Element) -> str:
+    upload_action_link = binary_record.find("./actionLinks/upload")
+    assert (
+        upload_action_link is not None
+    ), "Upload action link not found in binary record"
+
+    request_url = upload_action_link.findtext("./url")
+    assert request_url is not None, "Upload URL not found in action link"
+    return request_url
 
 
 class UploadError(Exception):
