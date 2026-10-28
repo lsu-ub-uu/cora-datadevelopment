@@ -14,12 +14,12 @@ def pretty_print_xml_string(xml_string: str) -> str:
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + "\n".join(lines)
 
 
-def pretty_print_xml(element: ET.Element) -> str:
+def pretty_print_xml(element: ET.Element, xml_declaration: bool = False) -> str:
     """
     Convert an XML Element to a pretty-printed XML string.
     """
     ET.indent(element)
-    return ET.tostring(element, encoding="unicode")
+    return ET.tostring(element, encoding="unicode", xml_declaration=xml_declaration)
 
 
 def inline_xml_string(xml: str) -> str:

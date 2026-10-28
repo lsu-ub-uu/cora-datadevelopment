@@ -5,6 +5,8 @@ from functools import partial
 from pathlib import Path
 
 from common.common_data import read_source_xml
+from common.environment import load_environment
+from common.logging_config import configure_logging
 from common.threads import run_with_threads
 from cora.context import Context, CoraContext
 from fedora_to_cora.migrate_old_record import MigrateOldRecordResult, old_record_migrate
@@ -67,8 +69,11 @@ def migrate_old_records(
         return summary
     try:
         context = CoraContext(
-            system=system, login_id=login_id, app_token=app_token,
-            workers=workers, cora_url=cora_url,
+            system=system,
+            login_id=login_id,
+            app_token=app_token,
+            workers=workers,
+            cora_url=cora_url,
         )
     except Exception as error:
         logger.error("Failed to initialize old-record migration context: %s", error)
@@ -79,7 +84,21 @@ def migrate_old_records(
         partial(_migrate_old_record, context=context),
         workers=workers,
         desc="Migrating old records",
-        status_order=[("CREATED", "\u2705"), ("SKIPPED", "\u27a1\ufe0f"), ("FAILED", "\u274c")],
+        status_order=[
+            ("CREATED", "\u2705"),
+            ("SKIPPED", "\u27a1\ufe0f"),
+            ("FAILED", "\u274c"),
+        ],
     )
     logger.info("Old-record migration completed: %s", summary.counts)
     return summary
+
+
+if __name__ == "__main__":
+    load_environment()
+    configure_logging()
+    migrate_old_records(
+        xml_dir=Path("data/fedora_xml/uu/2025-10-31T09:06:10.939513"),
+        cora_url="https://preview.diva.cora.epc.ub.uu.se",
+        workers=1,
+    )
