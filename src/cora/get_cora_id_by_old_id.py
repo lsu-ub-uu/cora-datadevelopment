@@ -69,8 +69,8 @@ def get_cora_id_by_old_id(
     }
 
     search_data = (
-        _create_diva_output_search_data(old_id)
-        if record_type == "diva-output"
+        _create_generic_id_search_data(old_id)
+        if record_type in ["diva-output", "diva-person"]
         else _create_search_data(old_id)
     )
     params = {"searchData": inline_xml_string(search_data)}
@@ -117,7 +117,7 @@ def _create_search_data(old_id: str) -> str:
     """
 
 
-def _create_diva_output_search_data(old_id: str) -> str:
+def _create_generic_id_search_data(old_id: str) -> str:
     return f"""
         <?xml version="1.0" encoding="UTF-8"?>
         <search>

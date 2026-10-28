@@ -1,4 +1,3 @@
-import os
 from xml.etree import ElementTree as ET
 
 from fedora_to_cora.output_migrate import OutputMigrationResult
@@ -35,8 +34,6 @@ def save_html_report(
     status_counts, errors = generate_report_data(results)
     grouped_error_pids = group_error_pids_by_publication_type(results)
     domain, timestamp, filepath = generate_setup_for_report(xml_dir, output_dir, "html")
-
-    os.makedirs(output_dir, exist_ok=True)
 
     target_system = resolve_target_system(system, cora_url)
     dry_run = format_yes_no(not apply)

@@ -84,14 +84,14 @@ def outputs_import(
         )
 
     # if apply:
-    # migrate_old_records(
-    #     xml_dir=Path(xml_dir),
-    #     system=system,
-    #     login_id=login_id,
-    #     app_token=app_token,
-    #     workers=processes,
-    #     cora_url=cora_url,
-    # )
+    #     migrate_old_records(
+    #         xml_dir=Path(xml_dir),
+    #         system=system,
+    #         login_id=login_id,
+    #         app_token=app_token,
+    #         workers=processes,
+    #         cora_url=cora_url,
+    #     )
 
     source_record_paths = _read_source_record_paths(xml_dir, limit)
 

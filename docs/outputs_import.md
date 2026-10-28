@@ -211,7 +211,7 @@ Below is specified how each field in the Cora diva-output metadata model is mapp
   - degreeLevel <- `studentDegree/thesisLevel/thesisLevelCode`
   - credits <- `studentDegree/universityPoints/hp`
   - course (link to migrated record) <- `studentDegree/undergraduateSubject/subjectId`
-  - programme (link to migrated record) <- `studentDegree/educationalProgramme/subjectId`
+  - programme (link to migrated record) <- `studentDegree/educationalProgram/subjectId`
 - externalCollaboration <- `externalCooperation`
   - namePart <- `partners/partner/name` If `external` is true and no partner name exists, a default text "Externt samarbete" is set.
 - name type="corporate" otherType="degreeGrantingInstitution" <- `defence/externalGrantingInstitution`

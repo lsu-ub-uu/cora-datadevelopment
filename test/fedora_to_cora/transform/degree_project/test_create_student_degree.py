@@ -152,9 +152,9 @@ def test_create_linked_programme(monkeypatch):
         <publication>
             <studentDegrees>
                 <studentDegree>
-                    <educationalProgramme>
+                    <educationalProgram>
                         <subjectId>{old_id}</subjectId>
-                    </educationalProgramme>
+                    </educationalProgram>
                 </studentDegree>
             </studentDegrees>
         </publication>

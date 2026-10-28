@@ -11,6 +11,7 @@ def create_identifier_doi(source_record):
                 value=entry.findtext("./publicationIdentifier/value"),
                 id_type="doi",
             )
+    return _create_identifier(value=source_record.findtext("./doi"), id_type="doi")
 
 
 def create_identifier_se_libr(source_record: ET.Element):

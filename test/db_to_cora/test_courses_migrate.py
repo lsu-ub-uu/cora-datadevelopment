@@ -11,8 +11,7 @@ from db_to_cora.courses_migrate import courses_migrate
     "db_to_cora.records_import.create_record",
 )
 def test_migrate_a_course_without_relations(mock_create_record, mock_get_courses):
-    mock_get_courses.return_value = ET.fromstring(
-        """
+    mock_get_courses.return_value = ET.fromstring("""
             <SELECT>
                 <DATA_RECORD>
                     <domain>somedomain</domain>
@@ -25,13 +24,11 @@ def test_migrate_a_course_without_relations(mock_create_record, mock_get_courses
                     <earlier_id></earlier_id>
                 </DATA_RECORD>
             </SELECT>
-    """
-    )
+    """)
 
     mock_create_record.return_value = CreateRecordSuccessResult(
         "diva-course:40103",
-        ET.fromstring(
-            """
+        ET.fromstring("""
               <record>
                 <data>
                     <recordInfo>
@@ -39,12 +36,17 @@ def test_migrate_a_course_without_relations(mock_create_record, mock_get_courses
                     </recordInfo>
                 </data> 
               </record>                   
-            """
-        ),
+            """),
     )
 
     number_of_records = courses_migrate(
-        MockContext(), "localhost", 5432, "auradb", "db_user", "db_password", "somedomain"
+        MockContext(),
+        "localhost",
+        5432,
+        "auradb",
+        "db_user",
+        "db_password",
+        "somedomain",
     )
 
     assert number_of_records == 1
@@ -89,8 +91,7 @@ def test_migrate_a_course_without_relations(mock_create_record, mock_get_courses
 def test_migrates_a_course_with_relations(
     mock_update_record, mock_create_record, mock_get_courses
 ):
-    mock_get_courses.return_value = ET.fromstring(
-        """
+    mock_get_courses.return_value = ET.fromstring("""
             <SELECT>
                 <DATA_RECORD>
                     <domain>somedomain</domain>
@@ -119,15 +120,13 @@ def test_migrates_a_course_with_relations(
                     <earlier_id></earlier_id>
                 </DATA_RECORD>
             </SELECT>
-    """
-    )
+    """)
 
     def create_record_side_effect(record, record_type, context):
         old_id = record.findtext(".//oldId")
         return CreateRecordSuccessResult(
             f"diva-course:{old_id}",
-            ET.fromstring(
-                f"""
+            ET.fromstring(f"""
                 <record>
                     <data>
                         <course>
@@ -138,14 +137,19 @@ def test_migrates_a_course_with_relations(
                         </course>
                     </data> 
                 </record>                   
-                """
-            ),
+                """),
         )
 
     mock_create_record.side_effect = create_record_side_effect
 
     number_of_records = courses_migrate(
-        MockContext(), "localhost", 5432, "auradb", "db_user", "db_password", "somedomain"
+        MockContext(),
+        "localhost",
+        5432,
+        "auradb",
+        "db_user",
+        "db_password",
+        "somedomain",
     )
 
     assert number_of_records == 3
@@ -154,23 +158,27 @@ def test_migrates_a_course_with_relations(
     assert_equal_for_xml_and_xml_string(
         mock_update_record.call_args_list[0].args[0],
         """
-        <course>
-            <recordInfo>
-                <id>diva-course:1</id>
-                <oldId>1</oldId>
-            </recordInfo>
-            <related type="broader" repeatId="0">
+        <record>
+            <data>
                 <course>
-                    <linkedRecordType>diva-course</linkedRecordType>
-                    <linkedRecordId>diva-course:2</linkedRecordId>
+                    <recordInfo>
+                        <id>diva-course:1</id>
+                        <oldId>1</oldId>
+                    </recordInfo>
+                    <related type="broader" repeatId="0">
+                        <course>
+                            <linkedRecordType>diva-course</linkedRecordType>
+                            <linkedRecordId>diva-course:2</linkedRecordId>
+                        </course>
+                    </related>
+                    <related type="earlier" repeatId="0">
+                        <course>
+                            <linkedRecordType>diva-course</linkedRecordType>
+                            <linkedRecordId>diva-course:3</linkedRecordId>
+                        </course>
+                    </related>
                 </course>
-            </related>
-            <related type="earlier" repeatId="0">
-                <course>
-                    <linkedRecordType>diva-course</linkedRecordType>
-                    <linkedRecordId>diva-course:3</linkedRecordId>
-                </course>
-            </related>
-        </course>
+            </data>
+        </record>
     """,
     )

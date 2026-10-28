@@ -66,35 +66,35 @@ def _create_related_items_from_uncontrolled_series(
     source_record: ET.Element,
 ) -> list[ET.Element | None]:
     uncontrolled_series_infos = source_record.findall("./uncontrolledSeriesInfo")
+
     return [
-        _create_uncontrolled_series(series_xml, f"uncontrolled{i}")
-        for i, series_xml in enumerate(uncontrolled_series_infos)
+        _create_uncontrolled_series(uncontrolled_series_info, f"uncontrolled{i}")
+        for i, uncontrolled_series_info in enumerate(uncontrolled_series_infos)
     ]
 
 
 def _create_uncontrolled_series(
-    series_xml: ET.Element, repeat_id: str
+    uncontrolled_series_info: ET.Element, repeat_id: str
 ) -> ET.Element | None:
-    """
-    Create a relatedItem element of type series with an uncontrolled series link.
-    """
     return create_group(
         "relatedItem",
         [
-            _create_title_info(series_xml.findtext("./series/seriesNameUncontrolled")),
+            _create_title_info(uncontrolled_series_info),
             create_identifier(
-                source_record=series_xml,
+                source_record=uncontrolled_series_info,
                 type="issn",
                 source_selector="./series/issn",
                 displayLabel="pissn",
             ),
             create_identifier(
-                source_record=series_xml,
+                source_record=uncontrolled_series_info,
                 type="issn",
                 source_selector="./series/eissn",
                 displayLabel="eissn",
             ),
-            create_text("partNumber", series_xml.findtext("numberInSeries")),
+            create_text(
+                "partNumber", uncontrolled_series_info.findtext("numberInSeries")
+            ),
         ],
         type="series",
         otherType="text",
@@ -102,13 +102,33 @@ def _create_uncontrolled_series(
     )
 
 
-def _create_title_info(title: str | None) -> ET.Element | None:
-    return create_group(
-        "titleInfo",
-        children=[
-            create_text(
-                "title",
-                title,
-            )
-        ],
+def _create_title_info(uncontrolled_series_info: ET.Element) -> ET.Element | None:
+    series_name_uncontrolled = uncontrolled_series_info.findtext(
+        "./series/seriesNameUncontrolled"
     )
+    series_title = uncontrolled_series_info.find("./series/seriesTitle")
+
+    if series_name_uncontrolled is not None:
+        return create_group(
+            "titleInfo",
+            children=[
+                create_text(
+                    "title",
+                    series_name_uncontrolled,
+                )
+            ],
+        )
+    elif series_title is not None:
+        return create_group(
+            "titleInfo",
+            children=[
+                create_text(
+                    "title",
+                    series_title.findtext("mainTitle"),
+                ),
+                create_text(
+                    "subtitle",
+                    series_title.findtext("subTitle"),
+                ),
+            ],
+        )

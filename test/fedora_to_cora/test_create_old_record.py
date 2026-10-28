@@ -27,7 +27,6 @@ def test_create_old_record():
         cora_record.find("./recordInfo"),
         f"""
         <recordInfo>
-            <id>{pid}</id>
             <validationType>
                 <linkedRecordType>validationType</linkedRecordType>
                 <linkedRecordId>diva-oldRecord</linkedRecordId>
@@ -39,7 +38,7 @@ def test_create_old_record():
             <oldId>{pid}</oldId>
         </recordInfo>""",
     )
-    assert cora_record.findtext("./recordXml") == (
+    assert cora_record.findtext("./record") == (
         f"<![CDATA[<record>   <pid>{pid}</pid>   <publicationType> "
         "    <publicationTypeCode>journal</publicationTypeCode>   "
         "</publicationType> </record>]]>"
@@ -57,7 +56,6 @@ def test_create_full_publication_old_record():
         cora_record.find("./recordInfo"),
         f"""
         <recordInfo>
-            <id>{pid}</id>
             <validationType>
                 <linkedRecordType>validationType</linkedRecordType>
                 <linkedRecordId>diva-oldRecord</linkedRecordId>
@@ -73,7 +71,7 @@ def test_create_full_publication_old_record():
     ET.indent(source_record)
     expected_source_xml = ET.tostring(source_record, encoding="unicode")
     expected_source_xml = expected_source_xml.replace("\n", " ").strip()
-    assert cora_record.findtext("./recordXml") == f"<![CDATA[{expected_source_xml}]]>"
+    assert cora_record.findtext("./record") == f"<![CDATA[{expected_source_xml}]]>"
 
 
 def test_old_record_migrate_returns_created_result(monkeypatch):
@@ -89,7 +87,9 @@ def test_old_record_migrate_returns_created_result(monkeypatch):
     )
 
     assert (result.status, result.cora_old_record_id, result.error) == (
-        "CREATED", "123", None
+        "CREATED",
+        "123",
+        None,
     )
 
 
@@ -104,7 +104,9 @@ def test_old_record_migrate_returns_failed_result(monkeypatch):
     )
 
     assert (result.status, result.cora_old_record_id, result.error) == (
-        "FAILED", None, "create failed"
+        "FAILED",
+        None,
+        "create failed",
     )
 
 
@@ -121,12 +123,18 @@ def test_old_record_migrate_returns_exception_as_error(monkeypatch):
     )
 
     assert (result.status, result.cora_old_record_id, result.error) == (
-        "FAILED", None, "create raised"
+        "FAILED",
+        None,
+        "create raised",
     )
 
 
-@pytest.mark.parametrize("pid, expected_status", [("123", "SKIPPED"), ("456", "FAILED")])
-def test_old_record_migrate_checks_duplicate_for_source_pid(monkeypatch, pid, expected_status):
+@pytest.mark.parametrize(
+    "pid, expected_status", [("123", "SKIPPED"), ("456", "FAILED")]
+)
+def test_old_record_migrate_checks_duplicate_for_source_pid(
+    monkeypatch, pid, expected_status
+):
     error = "A record matching the unique rule with [key: oldId, value: 123] already exists in the system"
     monkeypatch.setattr(
         "fedora_to_cora.migrate_old_record.create_record",
@@ -148,7 +156,9 @@ def test_old_record_migrate_failure_without_error(monkeypatch):
         lambda *args, **kwargs: CreateRecordFailureResult(None),
     )
 
-    result = old_record_migrate(ET.fromstring("<record><pid>123</pid></record>"), MagicMock())
+    result = old_record_migrate(
+        ET.fromstring("<record><pid>123</pid></record>"), MagicMock()
+    )
 
     assert result.status == "FAILED"
     assert result.error is None

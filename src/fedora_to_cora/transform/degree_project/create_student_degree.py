@@ -59,9 +59,7 @@ def _create_course(
 def _create_programme(
     source_student_degree: ET.Element, context: Context
 ) -> ET.Element | None:
-    programme_old_id = source_student_degree.findtext(
-        "./educationalProgramme/subjectId"
-    )
+    programme_old_id = source_student_degree.findtext("./educationalProgram/subjectId")
     if programme_old_id:
         cora_id = get_cora_id_by_old_id(
             context=context,
