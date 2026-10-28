@@ -39,15 +39,6 @@ def test_save_html_report_creates_expected_file(tmp_path):
     report_text = report_files[0].read_text(encoding="utf-8")
 
     assert report_text.startswith("<!DOCTYPE html>")
-    favicon_prefix = 'href="data:image/svg+xml;base64,'
-    encoded_favicon = report_text.split(favicon_prefix, maxsplit=1)[1].split(
-        '"', maxsplit=1
-    )[0]
-    source_favicon = (
-        Path(__file__).parents[4] / "src/scripts/util/outputs_import_report/favicon.svg"
-    )
-    assert base64.b64decode(encoded_favicon) == source_favicon.read_bytes()
-    assert not (tmp_path / "favicon.svg").exists()
     assert "Migration Report (" in report_text
     assert "Total records processed: 3" in report_text
     assert "Export date: 2026-09-21T14:37:18.299640" in report_text

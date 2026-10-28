@@ -1,5 +1,3 @@
-import base64
-import os
 from xml.etree import ElementTree as ET
 
 from fedora_to_cora.output_migrate import OutputMigrationResult
@@ -37,11 +35,6 @@ def save_html_report(
     grouped_error_pids = group_error_pids_by_publication_type(results)
     domain, timestamp, filepath = generate_setup_for_report(xml_dir, output_dir, "html")
 
-    os.makedirs(output_dir, exist_ok=True)
-    favicon_path = os.path.join(os.path.dirname(__file__), "favicon.svg")
-    with open(favicon_path, "rb") as favicon_file:
-        favicon_data = base64.b64encode(favicon_file.read()).decode("ascii")
-
     target_system = resolve_target_system(system, cora_url)
     dry_run = format_yes_no(not apply)
     with_binaries = format_yes_no(binaries)
@@ -52,15 +45,6 @@ def save_html_report(
     title = ET.SubElement(head, "title")
     title.text = f"Migration Report ({timestamp})"
     ET.SubElement(head, "meta", attrib={"charset": "utf-8"})
-    ET.SubElement(
-        head,
-        "link",
-        attrib={
-            "rel": "icon",
-            "type": "image/svg+xml",
-            "href": f"data:image/svg+xml;base64,{favicon_data}",
-        },
-    )
     style = ET.SubElement(head, "style")
     style.text = "body{font-family:sans-serif;}table{border-collapse:collapse;margin-bottom:2em;}th,td{border:1px solid #ccc;padding:6px;vertical-align:text-top;}th{background:#75598e;color:#fff;}"
 

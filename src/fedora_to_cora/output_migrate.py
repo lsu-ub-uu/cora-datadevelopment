@@ -151,6 +151,9 @@ def _handle_failed_cora_validation(
     fedora_url: str | None = "",
 ) -> OutputMigrationResult:
     if _has_duplicate_old_id(errors, pid):
+        logger.info(
+            f"➡️ Skipped record with oldId {pid} due to duplicate record found when creating classic quality record. Errors: {errors}"
+        )
         return OutputMigrationResult(
             pid,
             publication_type,
@@ -294,9 +297,7 @@ def _apply_classic_quality_migration(
 
 
 def _has_duplicate_old_id(errors: list[str] | None, old_id: str) -> bool:
-    logger.info(
-        f"➡️ Skipped record with oldId {old_id} due to duplicate record found when creating classic quality record. Errors: {errors}"
-    )
+
     return errors is not None and any(
         error
         == f"A record matching the unique rule with [key: oldId, value: {old_id}] already exists in the system"
