@@ -1,3 +1,6 @@
+import base64
+from pathlib import Path
+
 from fedora_to_cora.output_migrate import OutputMigrationResult
 from fedora_to_cora.output_relations_migrate import OutputRelationMigrationResult
 from scripts.util.outputs_import_report.html_report import save_html_report

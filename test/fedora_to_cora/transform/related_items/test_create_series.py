@@ -25,8 +25,7 @@ def test_create_controlled_series_link(monkeypatch):
         get_cora_id_by_old_id_mock,
     )
 
-    source_record = ET.fromstring(
-        f"""
+    source_record = ET.fromstring(f"""
         <publication>
             <seriesInfos>
                 <seriesInfo>
@@ -42,8 +41,7 @@ def test_create_controlled_series_link(monkeypatch):
                 </seriesInfo>
             </seriesInfos>
         </publication>
-        """
-    )
+        """)
 
     series_items = create_related_item_type_series(source_record, MockContext())
 
@@ -74,8 +72,7 @@ def test_create_controlled_series_link(monkeypatch):
 
 
 def test_create_uncontrolled_series():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <uncontrolledSeriesInfo>
                 <series>
@@ -87,8 +84,7 @@ def test_create_uncontrolled_series():
                 <numberInSeries>66</numberInSeries>
             </uncontrolledSeriesInfo>
         </publication>
-        """
-    )
+        """)
     series = create_related_item_type_series(source_record, MockContext())
 
     assert len(series) == 1
@@ -108,8 +104,7 @@ def test_create_uncontrolled_series():
 
 
 def test_create_uncontrolled_series_minimal():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <publication>
             <uncontrolledSeriesInfo>
                 <series>
@@ -118,8 +113,7 @@ def test_create_uncontrolled_series_minimal():
                 </series>
             </uncontrolledSeriesInfo>
         </publication>
-        """
-    )
+        """)
     series = create_related_item_type_series(source_record, MockContext())
 
     assert len(series) == 1
@@ -130,6 +124,44 @@ def test_create_uncontrolled_series_minimal():
             <titleInfo>
                 <title>Okontrollerad serie</title>
             </titleInfo>
+        </relatedItem>
+        """,
+    )
+
+
+def test_create_uncontrolled_series_alternative_title_format():
+    source_record = ET.fromstring("""
+        <publication>
+            <uncontrolledSeriesInfo>
+                <series>
+                    <seriesTitle>
+                        <mainTitle>Okontrollerad serie</mainTitle>
+                        <subTitle>Okontrollerad undertitel</subTitle>
+                        <locale>sv</locale>
+                    </seriesTitle>
+                    <seriesAlternativeTitles />
+                    <issn />
+                    <eissn />
+                    <subjects />
+                    <relationships />
+                    <controlled>false</controlled>
+                </series>
+                <numberInSeries>22</numberInSeries>
+            </uncontrolledSeriesInfo>
+        </publication>
+        """)
+    series = create_related_item_type_series(source_record, MockContext())
+
+    assert len(series) == 1
+    assert_equal_for_xml_and_xml_string(
+        series[0],
+        """
+         <relatedItem type="series" otherType="text" repeatId="uncontrolled0">
+            <titleInfo>
+                <title>Okontrollerad serie</title>
+                <subtitle>Okontrollerad undertitel</subtitle>
+            </titleInfo>
+            <partNumber>22</partNumber>
         </relatedItem>
         """,
     )

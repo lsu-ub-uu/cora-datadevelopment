@@ -46,10 +46,13 @@ def create_record_info(source_record: ET.Element, context: Context) -> ET.Elemen
         visibility=visibility,
         urn=source_record.findtext("./nbn"),
     )
-    old_record_id = get_cora_id_by_old_id(
-        old_id, record_type="diva-oldRecord", context=context
+    old_record_link = create_record_link(
+        "oldRecord",
+        "diva-oldRecord",
+        get_cora_id_by_old_id(old_id, record_type="diva-oldRecord", context=context),
     )
-    record_info.append(create_record_link("oldRecord", "diva-oldRecord", old_record_id))
+    assert old_record_link is not None
+    record_info.append(old_record_link)
     return record_info
 
 

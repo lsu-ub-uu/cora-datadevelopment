@@ -19,7 +19,7 @@ def test_upload_url_action_link_not_found(monkeypatch):
         upload_binary(
             binary_record,
             file_name="test_file.txt",
-            data=MagicMock(),
+            data=b"test file content",
             context=MockContext(),
         )
 
@@ -34,13 +34,6 @@ def test_error_uploading_file(monkeypatch):
         MagicMock(),
     )
 
-    mock_encoder = MagicMock()
-    mock_encoder.content_type = "multipart/form-data; boundary=something"
-    monkeypatch.setattr(
-        "cora.upload.MultipartEncoder",
-        MagicMock(return_value=mock_encoder),
-    )
-
     monkeypatch.setattr(
         "requests.post",
         MagicMock(
@@ -48,16 +41,14 @@ def test_error_uploading_file(monkeypatch):
         ),
     )
 
-    binary_record = ET.fromstring(
-        """
+    binary_record = ET.fromstring("""
         <binary>
             <actionLinks>
                 <upload>
                     <url>http://example.com/upload</url>
                 </upload>
             </actionLinks>
-        </binary>"""
-    )
+        </binary>""")
 
     with pytest.raises(
         UploadError, match="Failed to upload binary file 'test_file.txt'"
@@ -65,22 +56,20 @@ def test_error_uploading_file(monkeypatch):
         upload_binary(
             binary_record,
             file_name="test_file.txt",
-            data=MagicMock(),
+            data=b"test file content",
             context=MockContext(),
         )
 
 
 def test_successful_upload():
-    binary_record = ET.fromstring(
-        """
+    binary_record = ET.fromstring("""
         <binary>
             <actionLinks>
                 <upload>
                     <url>http://example.com/upload</url>
                 </upload>
             </actionLinks>
-        </binary>"""
-    )
+        </binary>""")
 
     test_data = b"test file content"
     test_context = MockContext(auth_token="test-auth-token")
@@ -105,7 +94,10 @@ def test_successful_upload():
         assert "Content-Type" in request.headers
         assert request.headers["Content-Type"].startswith("multipart/form-data")
 
-        body_str = request.body.read().decode("utf-8", errors="ignore")
+        request_body = request.body
+        if hasattr(request_body, "read"):
+            request_body = request_body.read()
+        body_str = request_body.decode("utf-8", errors="ignore")
         assert "test_file.txt" in body_str
         assert "test file content" in body_str
         assert "application/octet-stream" in body_str

@@ -1,24 +1,25 @@
+from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
 import pytest
 from common.xml_validate import XMLValidationError
+from cora.context import MockContext
 from db_to_cora.series_transform import transform_series
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
 
 def test_required_xml():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <DATA_RECORD>
             <domain>varldskulturmuseerna</domain>
             <old_id>1234</old_id>
             <title>Some title</title>
             <subtitle>Some subtitle</subtitle>
         </DATA_RECORD>       
-        """
-    )
+        """)
 
-    result = transform_series(source_record)
+    context = MockContext()
+    result = transform_series(source_record, context)
 
     expected_xml = """
         <series>
@@ -48,8 +49,7 @@ def test_required_xml():
 
 
 def test_complete_without_links_xml():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <DATA_RECORD>
             <domain>varldskulturmuseerna</domain>
             <old_id>1234</old_id>
@@ -64,11 +64,11 @@ def test_complete_without_links_xml():
             <internal_note>Some note</internal_note>
             <publication_type_id>59</publication_type_id>
         </DATA_RECORD>   
-        """
-    )
+        """)
 
-    result = transform_series(source_record)
-    secondResultSameRun = transform_series(source_record)
+    context = MockContext()
+    result = transform_series(source_record, context)
+    secondResultSameRun = transform_series(source_record, context)
 
     expected_xml = """
         <series>
@@ -116,9 +116,15 @@ def test_complete_without_links_xml():
     assert_equal_for_xml_and_xml_string(secondResultSameRun, expected_xml)
 
 
-def skip_test_complete_xml_with_series_links():
-    source_record = ET.fromstring(
-        """
+@patch("db_to_cora.series_transform.get_cora_id_by_old_id")
+def test_complete_xml_with_organisation_link(mock_get_cora_id_by_old_id):
+    context = MockContext()
+    mock_get_cora_id_by_old_id.side_effect = lambda old_id, *, record_type, context: (
+        "some-cora-org-id"
+        if record_type == "diva-organisation" and old_id == "123"
+        else None
+    )
+    source_record = ET.fromstring("""
         <DATA_RECORD>
             <domain>someDomain</domain>
             <old_id>1234</old_id>
@@ -136,10 +142,9 @@ def skip_test_complete_xml_with_series_links():
             <relative_id_preceding>diva-series:22116988688327947</relative_id_preceding>
             <organisation_id>123</organisation_id>
         </DATA_RECORD>  
-        """
-    )
+        """)
 
-    result = transform_series(source_record)
+    result = transform_series(source_record, context)
 
     expected_xml = """
         <series>
@@ -182,20 +187,8 @@ def skip_test_complete_xml_with_series_links():
             <genre repeatId="0" type="outputType">conference_paper</genre>
             <organisation>
                 <linkedRecordType>diva-organisation</linkedRecordType>
-                <linkedRecordId>123</linkedRecordId>
+                <linkedRecordId>some-cora-org-id</linkedRecordId>
             </organisation>
-            <related repeatId="1" type="host">
-                <series>
-                    <linkedRecordType>diva-series</linkedRecordType>
-                    <linkedRecordId>diva-series:22116988688327947</linkedRecordId>
-                </series>
-            </related>
-            <related repeatId="2" type="preceding">
-                <series>
-                    <linkedRecordType>diva-series</linkedRecordType>
-                    <linkedRecordId>diva-series:22116988688327947</linkedRecordId>
-                </series>
-            </related>
         </series>
     """
 
@@ -203,18 +196,17 @@ def skip_test_complete_xml_with_series_links():
 
 
 def test_no_title():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <DATA_RECORD>
             <domain>varldskulturmuseerna</domain>
             <old_id>1234</old_id>
             <title></title>
             <subtitle></subtitle>
         </DATA_RECORD>       
-        """
-    )
+        """)
 
-    result = transform_series(source_record)
+    context = MockContext()
+    result = transform_series(source_record, context)
 
     expected_xml = """
         <series>
@@ -240,8 +232,7 @@ def test_no_title():
 
 
 def test_raises_error_when_unknown_element():
-    source_record = ET.fromstring(
-        """
+    source_record = ET.fromstring("""
         <DATA_RECORD>
             <domain>someDomain</domain>
             <old_id>1234</old_id>
@@ -260,11 +251,11 @@ def test_raises_error_when_unknown_element():
             <organisation_id>123</organisation_id>
             <some_unknown_element>some unknown value</some_unknown_element>
         </DATA_RECORD>       
-        """
-    )
+        """)
+    context = MockContext()
 
     with pytest.raises(
         XMLValidationError,
         match="Unknown child element <some_unknown_element> found in <DATA_RECORD>",
     ):
-        transform_series(source_record)
+        transform_series(source_record, context)

@@ -170,7 +170,8 @@ def _create_name_identifier(old_person_data: dict):
             value = identifier["value"]
             if type == "localId" and value.strip():
                 value = f"{identifier['domain']}-{value}"
-
+            if type == "orcid":
+                value = value.replace("x", "X")
             name_identifier = create_text(
                 "nameIdentifier",
                 value=value,
