@@ -73,14 +73,14 @@ def test_binary_record_transform():
         """
             <binary type="generic">
                 <recordInfo>
-                    <validationType>
-                        <linkedRecordType>validationType</linkedRecordType>
-                        <linkedRecordId>genericBinary</linkedRecordId>
-                    </validationType>
                     <dataDivider>
                         <linkedRecordType>system</linkedRecordType>
                         <linkedRecordId>divaData</linkedRecordId>
                     </dataDivider>
+                    <validationType>
+                        <linkedRecordType>validationType</linkedRecordType>
+                        <linkedRecordId>genericBinary</linkedRecordId>
+                    </validationType>
                     <visibility>published</visibility>
                     <hostRecord>
                         <linkedRecordType>someType</linkedRecordType>

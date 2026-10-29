@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 from common.xml_utils import create_group
 from common.record_info_create import record_info_create
-from common.common_data import create_title_info
+from common.common_data import create_record_link, create_title_info
 from common.common_data import create_title_info_type_alternative
 from common.common_data import create_origin_info
 from common.common_data import create_identifiers_from_source_with_type_issn
@@ -9,6 +9,8 @@ from common.common_data import create_location
 from common.common_data import create_note
 from common.common_data import create_genre
 from common.xml_validate import XMLSpec, validate_xml
+from cora.context import Context
+from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 
 nameInData = "series"
 allowed_children: XMLSpec = {
@@ -37,7 +39,7 @@ allowed_children: XMLSpec = {
 }
 
 
-def transform_series(source_record: ET.Element) -> ET.Element:
+def transform_series(source_record: ET.Element, context: Context) -> ET.Element:
     """
     Create a Cora series element from a DB export series.
     """
@@ -59,6 +61,7 @@ def transform_series(source_record: ET.Element) -> ET.Element:
             _create_location(source_record),
             _create_note(source_record, note_type="internal"),
             _create_genre(source_record),
+            _create_organisation(source_record, context),
         ],
     )
     assert series is not None
@@ -129,6 +132,18 @@ def _create_note(source_record: ET.Element, note_type: str) -> ET.Element | None
     note = source_record.find(f"./internal_note")
     if note is not None and note.text:
         return create_note(note.text, note_type)
+
+
+def _create_organisation(source_record: ET.Element, context: Context) -> ET.Element | None:
+    organisation_id = source_record.findtext(f"./organisation_id")
+    if organisation_id:
+        return create_record_link(
+            "organisation",
+            "diva-organisation",
+            get_cora_id_by_old_id(
+                organisation_id, record_type="diva-organisation", context=context
+            ),
+        )
 
 
 def _create_genre(source_record: ET.Element) -> ET.Element | None:
