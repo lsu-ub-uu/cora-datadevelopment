@@ -15,15 +15,19 @@ def series_migrate(
     domain: str,
 ) -> int:
     classic_series = get_series(
-        db_host=db_host, db_port=db_port, db_name=db_name,
-        db_user=db_user, db_password=db_password, domain=domain,
+        db_host=db_host,
+        db_port=db_port,
+        db_name=db_name,
+        db_user=db_user,
+        db_password=db_password,
+        domain=domain,
     ).findall(".//DATA_RECORD")
 
     records_import(
         context,
         record_type="diva-series",
         source_records=classic_series,
-        transform_function=transform_series,
+        transform_function=lambda record: transform_series(record, context),
         relation_mappings=[
             RelationMapping(
                 old_relation_tag="relative_id_host",
