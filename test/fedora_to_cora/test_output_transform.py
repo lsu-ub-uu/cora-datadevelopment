@@ -94,6 +94,10 @@ def test_output_transform_ultimate(mock_diva_search_requests):
             <visibility>published</visibility>
             <oldId>diva2:1681782</oldId>
             <urn>urn:nbn:se:varldskulturmuseerna:diva-6</urn>
+            <oldRecord>
+                <linkedRecordType>diva-oldRecord</linkedRecordType>
+                <linkedRecordId>old-record-id</linkedRecordId>
+            </oldRecord>
         </recordInfo>
         <dataQuality>2026</dataQuality>
         <genre type="outputType">publication_other</genre>
@@ -266,6 +270,10 @@ def test_output_transform_book(mock_diva_search_requests):
                 <visibility>published</visibility>
                 <oldId>diva2:1179703</oldId>
                 <urn>urn:nbn:se:nordiskamuseet:diva-39</urn>
+                <oldRecord>
+                    <linkedRecordType>diva-oldRecord</linkedRecordType>
+                    <linkedRecordId>old-record-id</linkedRecordId>
+                </oldRecord>
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">publication_book</genre>
@@ -370,6 +378,10 @@ def test_output_transform_book_chapter(mock_diva_search_requests):
                 <visibility>published</visibility>
                 <oldId>diva2:1365846</oldId>
                 <urn>urn:nbn:se:nordiskamuseet:diva-2126</urn>
+                <oldRecord>
+                    <linkedRecordType>diva-oldRecord</linkedRecordType>
+                    <linkedRecordId>old-record-id</linkedRecordId>
+                </oldRecord>
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">publication_book-chapter</genre>
@@ -493,6 +505,10 @@ def test_output_transform_student_thesis(mock_diva_search_requests):
                 <visibility>published</visibility>
                 <oldId>diva2:1297418</oldId>
                 <urn>urn:nbn:se:nordiskamuseet:diva-1431</urn>
+                <oldRecord>
+                    <linkedRecordType>diva-oldRecord</linkedRecordType>
+                    <linkedRecordId>old-record-id</linkedRecordId>
+                </oldRecord>
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">diva_degree-project</genre>
@@ -597,6 +613,10 @@ def test_output_transform_conference_paper(mock_diva_search_requests):
                 <visibility>published</visibility>
                 <oldId>diva2:807059</oldId>
                 <urn>urn:nbn:se:uu:diva-249061</urn>
+                <oldRecord>
+                    <linkedRecordType>diva-oldRecord</linkedRecordType>
+                    <linkedRecordId>old-record-id</linkedRecordId>
+                </oldRecord>
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">conference_paper</genre>
@@ -724,6 +744,10 @@ def test_output_transform_minimal():
                 </permissionUnit>
                 <visibility>unpublished</visibility>
                 <oldId>diva2:1111</oldId>
+                <oldRecord>
+                    <linkedRecordType>diva-oldRecord</linkedRecordType>
+                    <linkedRecordId>old-record-id</linkedRecordId>
+                </oldRecord>
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">publication_journal-article</genre>
@@ -866,6 +890,10 @@ def test_output_transform_with_missing_data():
                 <visibility>published</visibility>
                 <oldId>diva2:1270748</oldId>
                 <urn>urn:nbn:se:nordiskamuseet:diva-1029</urn>
+                <oldRecord>
+                    <linkedRecordType>diva-oldRecord</linkedRecordType>
+                    <linkedRecordId>old-record-id</linkedRecordId>
+                </oldRecord>
             </recordInfo>
             <dataQuality>2026</dataQuality>
             <genre type="outputType">publication_book-chapter</genre>
