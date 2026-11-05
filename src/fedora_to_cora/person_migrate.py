@@ -31,7 +31,10 @@ def migrate_person(authority_pid: str, context: Context) -> MigratePersonResult:
             "SKIPPED", None, "Skipped non-public authority record"
         )
 
-    transformed_person = transform_person(person, context)
+    try:
+        transformed_person = transform_person(person, context)
+    except Exception as e:
+        return MigratePersonResult("FAILED", None, f"Failed to transform person: {e}")
 
     create_result = create_record(
         transformed_person, context=context, record_type="diva-person"

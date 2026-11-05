@@ -1,9 +1,12 @@
 from unittest.mock import Mock, patch
 import json
+import xml.etree.ElementTree as ET
+import requests
 from fedora_to_cora.transform_person import (
     transform_person,
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
+from cora.context import MockContext
 
 
 def test_transform_minimal_person():
@@ -19,7 +22,7 @@ def test_transform_minimal_person():
             }
         }""")
 
-    transformed_person = transform_person(minimal_old_person)
+    transformed_person = transform_person(minimal_old_person, MockContext())
 
     assert_equal_for_xml_and_xml_string(
         transformed_person,
@@ -61,7 +64,7 @@ def test_transform_person_with_only_swe_biography():
             }
         }""")
 
-    transformed_person = transform_person(minimal_old_person)
+    transformed_person = transform_person(minimal_old_person, MockContext())
 
     assert_equal_for_xml_and_xml_string(
         transformed_person,
@@ -114,7 +117,7 @@ def test_transform_person_ignores_identifier_without_value():
             }
         }""")
 
-    transformed_person = transform_person(minimal_old_person)
+    transformed_person = transform_person(minimal_old_person, MockContext())
 
     assert_equal_for_xml_and_xml_string(
         transformed_person,
@@ -163,7 +166,7 @@ def test_transform_person_replaces_lowercase_x_in_orcid():
             }
         }""")
 
-    transformed_person = transform_person(minimal_old_person)
+    transformed_person = transform_person(minimal_old_person, MockContext())
 
     assert_equal_for_xml_and_xml_string(
         transformed_person,
@@ -191,7 +194,8 @@ def test_transform_person_replaces_lowercase_x_in_orcid():
 
 
 @patch("fedora_to_cora.transform_person.get_cora_id_by_old_id")
-def test_transform_maximal_person(mock_get_cora_id_by_old_id):
+@patch("fedora_to_cora.transform_person.get_record")
+def test_transform_maximal_person(mock_get_record, mock_get_cora_id_by_old_id):
 
     mock_get_cora_id_by_old_id.side_effect = lambda old_id, **kwargs: "cora-" + old_id
 
@@ -224,27 +228,6 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
         "type": "LIBRIS",
         "domain": "",
         "value": "2541478441254",
-        "from": "",
-        "until": ""
-      },
-      {
-        "type": "LOCAL",
-        "domain": "kau",
-        "value": "test123",
-        "from": "",
-        "until": ""
-      },
-      {
-        "type": "LOCAL",
-        "domain": "smhi",
-        "value": "test123",
-        "from": "",
-        "until": ""
-      },
-      {
-        "type": "LOCAL",
-        "domain": "uu",
-        "value": "sarto903",
         "from": "",
         "until": ""
       },
@@ -565,7 +548,7 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
   }
 }""")
 
-    transformed_person = transform_person(maximal_old_person, context=Mock())
+    transformed_person = transform_person(maximal_old_person, MockContext())
 
     assert_equal_for_xml_and_xml_string(
         transformed_person,
@@ -611,9 +594,7 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
             </location>
             <note type="biographical" lang="eng" repeatId="eng">Min biografi, en jätte lång text med olika formateringar. På engelska.</note>
             <note type="biographical" lang="swe" repeatId="swe">Min biografi, en jätte lång text med olika formateringar. På svenska.</note>
-            <nameIdentifier type="localId" repeatId="0">kau-test123</nameIdentifier>
-            <nameIdentifier type="localId" repeatId="1">smhi-test123</nameIdentifier>
-            <nameIdentifier type="localId" repeatId="2">uu-sarto903</nameIdentifier>
+
             <nameIdentifier type="orcid" repeatId="0">0000-1111-2222-3333</nameIdentifier>
             <nameIdentifier repeatId="0" type="se-libr">2541478441254</nameIdentifier>
             <nameIdentifier type="viaf" repeatId="0">12aer458</nameIdentifier>
@@ -720,7 +701,27 @@ def test_transform_maximal_person(mock_get_cora_id_by_old_id):
     )
 
 
-def test_transform_person_prefixes_local_identifier_with_domain():
+@patch("fedora_to_cora.transform_person.get_record")
+def test_transform_person_with_local_identifier(get_record_mock):
+    mock_permission_unit = ET.fromstring("""
+          <record>
+            <data>
+              <permissionUnit>
+                <recordInfo>
+                  <id>uu</id>
+                </recordInfo>
+              </permissionUnit>
+            </data>
+          </record>""")
+
+    def get_record_side_effect(context, record_type, record_id):
+        if record_type == "permissionUnit" and record_id == "uu":
+            return mock_permission_unit
+        response = requests.Response()
+        response.status_code = 404
+        raise requests.HTTPError("404 Not Found", response=response)
+
+    get_record_mock.side_effect = get_record_side_effect
     old_person = {
         "authorityPerson": {
             "defaultName": {
@@ -731,23 +732,112 @@ def test_transform_person_prefixes_local_identifier_with_domain():
             "pid": "authority-person:11111",
             "identifiers": [
                 {"type": "LOCAL", "domain": "uu", "value": "sarto903"},
-                {"type": "ORCID", "domain": "", "value": "0000-1111-2222-3333"},
             ],
         }
     }
 
-    transformed_person = transform_person(old_person)
+    transformed_person = transform_person(old_person, MockContext())
 
-    assert (
-        transformed_person.findtext("nameIdentifier[@type='localId']") == "uu-sarto903"
+    assert_equal_for_xml_and_xml_string(
+        transformed_person,
+        """
+          <person>
+            <recordInfo>
+              <validationType>
+                <linkedRecordType>validationType</linkedRecordType>
+                <linkedRecordId>diva-person</linkedRecordId>
+              </validationType>
+              <dataDivider>
+                <linkedRecordType>system</linkedRecordType>
+                <linkedRecordId>divaData</linkedRecordId>
+              </dataDivider>
+              <oldId>authority-person:11111</oldId>
+            </recordInfo>
+            <authority>
+              <name type="personal">
+                <namePart type="given">Sara</namePart>
+                <namePart type="family">Andersson</namePart>
+              </name>
+            </authority>
+            <localId repeatId="0">
+              <nameIdentifier type="localId">sarto903</nameIdentifier>
+              <permissionUnit>
+                <linkedRecordType>permissionUnit</linkedRecordType>
+                <linkedRecordId>uu</linkedRecordId>
+              </permissionUnit>
+            </localId>
+         </person>
+        """,
     )
-    assert (
-        transformed_person.findtext("nameIdentifier[@type='orcid']")
-        == "0000-1111-2222-3333"
+
+
+@patch("fedora_to_cora.transform_person.get_record")
+def test_transform_person_ignores_local_identifier_when_permission_unit_not_found(
+    get_record_mock,
+):
+    mock_permission_unit = ET.fromstring("""
+          <record>
+            <data>
+              <permissionUnit>
+                <recordInfo>
+                  <id>uu</id>
+                </recordInfo>
+              </permissionUnit>
+            </data>
+          </record>""")
+
+    def get_record_side_effect(context, record_type, record_id):
+        if record_type == "permissionUnit" and record_id == "uu":
+            return mock_permission_unit
+        response = requests.Response()
+        response.status_code = 404
+        raise requests.HTTPError("404 Not Found", response=response)
+
+    get_record_mock.side_effect = get_record_side_effect
+    old_person = {
+        "authorityPerson": {
+            "defaultName": {
+                "firstname": "Sara",
+                "lastname": "Andersson",
+                "addition": "",
+            },
+            "pid": "authority-person:11111",
+            "identifiers": [
+                {"type": "LOCAL", "domain": "hkr", "value": "sarto903"},
+            ],
+        }
+    }
+
+    transformed_person = transform_person(old_person, MockContext())
+
+    assert_equal_for_xml_and_xml_string(
+        transformed_person,
+        """
+          <person>
+            <recordInfo>
+              <validationType>
+                <linkedRecordType>validationType</linkedRecordType>
+                <linkedRecordId>diva-person</linkedRecordId>
+              </validationType>
+              <dataDivider>
+                <linkedRecordType>system</linkedRecordType>
+                <linkedRecordId>divaData</linkedRecordId>
+              </dataDivider>
+              <oldId>authority-person:11111</oldId>
+            </recordInfo>
+            <authority>
+              <name type="personal">
+                <namePart type="given">Sara</namePart>
+                <namePart type="family">Andersson</namePart>
+              </name>
+            </authority>
+         </person>
+        """,
     )
 
 
-def test_transform_person_numbers_identifiers_per_type():
+@patch("fedora_to_cora.transform_person.get_record")
+def test_transform_person_numbers_identifiers_per_type(mock_get_record):
     old_person = {
         "authorityPerson": {
             "defaultName": {
@@ -769,16 +859,13 @@ def test_transform_person_numbers_identifiers_per_type():
         }
     }
 
-    transformed_person = transform_person(old_person)
+    transformed_person = transform_person(old_person, MockContext())
 
     identifiers = transformed_person.findall("nameIdentifier")
     assert [
         (identifier.attrib["type"], identifier.attrib["repeatId"])
         for identifier in identifiers
     ] == [
-        ("localId", "0"),
-        ("localId", "1"),
-        ("localId", "2"),
         ("orcid", "0"),
         ("orcid", "1"),
         ("se-libr", "0"),

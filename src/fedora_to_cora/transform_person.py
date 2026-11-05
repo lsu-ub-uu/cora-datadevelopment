@@ -6,19 +6,14 @@ from xml.etree import ElementTree as ET
 from common.common_data import create_record_link
 from common.xml_utils import create_group, create_text
 from cora.context import Context
-from cora.cora_json_utils import (
-    find_child_with_name_in_data,
-    get_first_atomic_value_with_name_in_data,
-)
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from fedora_to_cora.clean_rich_text import clean_rich_text
+from cora.get_record import get_record
 
 logger = logging.getLogger(__name__)
 
 
-def transform_person(
-    old_person_record: dict, context: Context | None = None
-) -> ET.Element:
+def transform_person(old_person_record: dict, context: Context) -> ET.Element:
     old_person = old_person_record["authorityPerson"]
     person = create_group(
         "person",
@@ -37,6 +32,7 @@ def transform_person(
             _create_location(old_person),
             _create_note(old_person, "eng"),
             _create_note(old_person, "swe"),
+            _create_local_ids(old_person, context),
             _create_name_identifier(old_person),
             _create_affiliation(old_person, context),
         ],
@@ -149,10 +145,49 @@ def _create_note(old_person: dict, lang: str):
     )
 
 
+def _create_local_ids(old_person_data: dict, context: Context):
+    old_local_ids = [
+        identifier
+        for identifier in old_person_data.get("identifiers", [])
+        if identifier.get("type") == "LOCAL" and identifier.get("value", "") != ""
+    ]
+    return [
+        _create_local_id(old_local_id, context, str(repeat_id))
+        for repeat_id, old_local_id in enumerate(old_local_ids)
+    ]
+
+
+def _create_local_id(old_local_id: dict, context: Context, repeat_id: str):
+    try:
+        permission_unit = get_record(
+            context=context,
+            record_type="permissionUnit",
+            record_id=old_local_id["domain"],
+        )
+    except requests.HTTPError as e:
+        if e.response.status_code == 404:
+            return None
+        raise e
+    permission_unit = get_record(
+        context=context,
+        record_type="permissionUnit",
+        record_id=old_local_id["domain"],
+    )
+    permission_unit_id = permission_unit.findtext("./data/permissionUnit/recordInfo/id")
+    assert permission_unit_id is not None, "Permission unit ID not found"
+    return create_group(
+        "localId",
+        repeatId=repeat_id,
+        children=[
+            create_text("nameIdentifier", type="localId", value=old_local_id["value"]),
+            create_record_link("permissionUnit", "permissionUnit", permission_unit_id),
+        ],
+    )
+
+
 def _create_name_identifier(old_person_data: dict):
     name_identifiers = []
     identifier_types = [
-        ("localId", "LOCAL"),
         ("orcid", "ORCID"),
         ("se-libr", "LIBRIS"),
         ("viaf", "VIAF"),
@@ -168,8 +203,8 @@ def _create_name_identifier(old_person_data: dict):
             if identifier["type"] != source_type:
                 continue
             value = identifier["value"]
-            if type == "localId" and value.strip():
-                value = f"{identifier['domain']}-{value}"
+            if type == "localId":
+                continue
             if type == "orcid":
                 value = value.replace("x", "X")
             name_identifier = create_text(

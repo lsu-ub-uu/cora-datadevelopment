@@ -195,3 +195,33 @@ def test_skips_non_public_record(mock_create_record, mock_get_authority_person):
     assert result.status == "SKIPPED"
     assert result.cora_person_id is None
     assert result.error == "Skipped non-public authority record"
+
+
+@patch("fedora_to_cora.person_migrate.get_authority_person")
+@patch("fedora_to_cora.person_migrate.create_record")
+@patch("fedora_to_cora.person_migrate.transform_person")
+def test_returns_failed_when_transform_person_raises_exception(
+    mock_transform_person, mock_create_record, mock_get_authority_person
+):
+    mock_get_authority_person.return_value = json.loads("""
+        {
+            "authorityPerson": {
+                "defaultName": {
+                    "lastname": "Andréasson",
+                    "firstname": "David",
+                    "addition": "",
+                    "number": ""
+                },
+                  "pid": "authority-person:11111",
+                  "publicRecord": true
+            }
+        }
+    """)
+    mock_transform_person.side_effect = Exception("Something went wrong")
+
+    result = migrate_person("authority-person:11111", MockContext())
+
+    assert result.status == "FAILED"
+    assert result.error == "Failed to transform person: Something went wrong"
+    assert result.cora_person_id is None
+    assert mock_create_record.call_count == 0
