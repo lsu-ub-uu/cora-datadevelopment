@@ -36,9 +36,7 @@ def main():
                     logging.info(pretty_print_xml(tag))
                 elif tag.text is not None:
                     match_count += 1
-                    msg = (
-                        f"[{record.findtext('pid')}] Found match at path {tag_path} with text: {tag.text}"
-                    )
+                    msg = f"[{record.findtext('pid')}] Found match at path {tag_path} with text: {tag.text}"
                     print(msg)
                     logging.info(msg)
                 elif _is_empty_tag(tag):
