@@ -1,6 +1,6 @@
 from datetime import date
 
-from scripts.one_off.authority_person_event_statistics import (
+from scripts.one_off.CORA_3879_get_person_statistics.authority_person_event_statistics import (
     aggregate_events,
     format_report,
     write_html_report,

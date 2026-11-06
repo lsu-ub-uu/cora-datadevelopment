@@ -6,11 +6,28 @@ import xml.etree.ElementTree as ET
 
 from common.threads import run_with_threads
 
-EVENT_TYPES = ("CREATE", "UPDATE")
+EVENT_TYPES = ("CREATE", "UPDATE", "DELETE")
 DEFAULT_XML_DIRECTORY = Path("data/fedora/authority_person_xml")
 
 
-def aggregate_events(
+def main() -> None:
+    if not DEFAULT_XML_DIRECTORY.is_dir():
+        raise SystemExit("Authority person XML directory does not exist")
+
+    monthly_counts, malformed_file_count, invalid_event_count = _aggregate_events(
+        DEFAULT_XML_DIRECTORY.glob("*.xml")
+    )
+    report_arguments = (
+        monthly_counts,
+        malformed_file_count,
+        invalid_event_count,
+    )
+    print(_format_report(*report_arguments))
+    html_report_path = _write_html_report(*report_arguments)
+    print(f"HTML report saved to {html_report_path}")
+
+
+def _aggregate_events(
     xml_paths: Iterable[Path],
 ) -> tuple[dict[tuple[int, int], dict[str, int]], int, int]:
     file_results = run_with_threads(
@@ -77,21 +94,21 @@ def _aggregate_file_events(
     return monthly_counts, 0, invalid_event_count
 
 
-def format_report(
+def _format_report(
     monthly_counts: dict[tuple[int, int], dict[str, int]],
     malformed_file_count: int,
     invalid_event_count: int,
 ) -> str:
     lines = [
         "Monthly authority person event counts across all years",
-        "Month     CREATE  UPDATE",
+        "Month     CREATE  UPDATE  DELETE",
     ]
     for year, month in _iter_months(monthly_counts):
         counts = monthly_counts.get(
             (year, month), {event_type: 0 for event_type in EVENT_TYPES}
         )
         lines.append(
-            f"{year}-{month:02d}  CREATE {counts['CREATE']}  UPDATE {counts['UPDATE']}"
+            f"{year}-{month:02d}  CREATE {counts['CREATE']}  UPDATE {counts['UPDATE']}  DELETE {counts['DELETE']}"
         )
     lines.extend(
         [
@@ -102,7 +119,7 @@ def format_report(
     return "\n".join(lines)
 
 
-def write_html_report(
+def _write_html_report(
     monthly_counts: dict[tuple[int, int], dict[str, int]],
     malformed_file_count: int,
     invalid_event_count: int,
@@ -125,7 +142,7 @@ def write_html_report(
     )
     table = ET.SubElement(body, "table")
     header = ET.SubElement(table, "tr")
-    for label in ("Month", "CREATE", "UPDATE"):
+    for label in ("Month", "CREATE", "UPDATE", "DELETE"):
         ET.SubElement(header, "th").text = label
     for year, month in _iter_months(monthly_counts):
         counts = monthly_counts.get(
@@ -135,6 +152,7 @@ def write_html_report(
         ET.SubElement(row, "td").text = f"{year}-{month:02d}"
         ET.SubElement(row, "td").text = str(counts["CREATE"])
         ET.SubElement(row, "td").text = str(counts["UPDATE"])
+        ET.SubElement(row, "td").text = str(counts["DELETE"])
 
     ET.SubElement(body, "p").text = (
         f"Malformed or unreadable files: {malformed_file_count}"
@@ -175,23 +193,6 @@ def _iter_months(
 def _child_text(element: ET.Element, child_name: str) -> str | None:
     text = element.findtext(f"./{child_name}")
     return text.strip() if text else None
-
-
-def main() -> None:
-    if not DEFAULT_XML_DIRECTORY.is_dir():
-        raise SystemExit("Authority person XML directory does not exist")
-
-    monthly_counts, malformed_file_count, invalid_event_count = aggregate_events(
-        DEFAULT_XML_DIRECTORY.glob("*.xml")
-    )
-    report_arguments = (
-        monthly_counts,
-        malformed_file_count,
-        invalid_event_count,
-    )
-    print(format_report(*report_arguments))
-    html_report_path = write_html_report(*report_arguments)
-    print(f"HTML report saved to {html_report_path}")
 
 
 if __name__ == "__main__":
