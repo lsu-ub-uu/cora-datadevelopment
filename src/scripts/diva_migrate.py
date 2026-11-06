@@ -21,6 +21,8 @@ from db_to_cora.subjects_migrate import subjects_migrate
 from db_to_cora.programmes_migrate import programmes_migrate
 from db_to_cora.courses_migrate import courses_migrate
 from db_to_cora.series_migrate import series_migrate
+from fedora_to_cora.persons_migrate import migrate_persons
+from scripts.outputs_import import outputs_import
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +47,14 @@ def main():
                 "help": "Comma-separated list of record types to migrate. Available types: publishers, funders, journals, organisations, subjects, series, programmes, courses. If not specified, all types are migrated.",
                 "type": str,
                 "default": None,
+            },
+            "--outputs": {
+                "help": "Include outputs in the migration",
+                "action": "store_true",
+            },
+            "--persons": {
+                "help": "Include persons in the migration",
+                "action": "store_true",
             },
         },
     )
@@ -131,7 +141,37 @@ $$$$$$$/  $$/     $/     $$/   $$/       $$/      $$/ $$/  $$$$$$$ |$$/       $$
             migrate_programmes(args, context)
         if "courses" in selected_types:
             migrate_courses(args, context)
-        # TODO Outputs
+
+        if args.persons:
+            if not args.xml_dir:
+                raise ValueError(
+                    "XML directory must be specified for migrating persons"
+                )
+            migrate_persons(
+                xml_dir=args.xml_dir,
+                system=args.system,
+                login_id=args.login_id,
+                app_token=args.app_token,
+                workers=args.workers,
+                cora_url=args.cora_url,
+            )
+        if args.outputs:
+            if not args.xml_dir:
+                raise ValueError(
+                    "XML directory must be specified for migrating outputs"
+                )
+            outputs_import(
+                xml_dir=args.xml_dir,
+                system=args.system,
+                login_id=args.login_id,
+                app_token=args.app_token,
+                processes=args.workers,
+                apply=True,
+                binaries=True,
+                fedora_url=args.fedora_url,
+                cora_url=args.cora_url,
+                persons=False,
+            )
 
         print(f"=== Data migration for {args.domain} domain completed ===")
     logger.info(f"=== Migration completed for {args.domain} to {args.system} ===")
