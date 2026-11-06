@@ -1,0 +1,68 @@
+authorityPerson
+    affiliations
+        affiliation [REPEATING]
+            active ("true")
+            alternativeName ("Department of Physics")
+            domain ("umu")
+            from ("2011")
+            name ("Institutionen för fysik")
+            organisationId ("866")
+            organisationNumber ("220")
+            parents
+                affiliation [REPEATING]
+                    active ("true")
+                    alternativeName ("Faculty of Science and Technology")
+                    domain ("umu")
+                    name ("Teknisk-naturvetenskapliga fakulteten")
+                    organisationId ("859")
+                    organisationNumber ("202100-3062")
+                    parents
+                        affiliation [REPEATING]
+                        active ("true")
+                        alternativeName ("Stockholm University")
+                        domain ("su")
+                        name ("Stockholms universitet")
+                        organisationId ("504")
+                        organisationNumber ("202100-3062") 
+            until ("2012")
+    alternativeNames
+        nameForm [REPEATING]
+            addition ("Associate Professor")
+            firstname ("Hanqing")
+            lastname ("Zhang")
+            number
+    biographies
+        entry [REPEATING]
+            string ("eng") [REPEATING]
+    birthYear ("1974")
+    deathYear ("2007")
+    defaultName
+        addition ("Associate Professor")
+        firstname ("O.")
+        lastname ("Margalef")
+        number
+    duplicateCheckDate ("2022-03-14T11:56:03+01:00")
+    email ("hanqing.zhang@umu.se")
+    identifiers
+        identifier [REPEATING]
+            domain ("umu")
+            from
+            type ("ORCID")
+            until
+            value ("0000-0002-3036-3182")
+    pid ("authority-person:100007") [REQUIRED]
+    publicRecord ("true")
+    recordInfo
+        events
+            event [REPEATING]
+                ip ("130.237.178.77")
+                name ("Alexandar Bobic")
+                timestamp ("2022-02-26T10:13:35.245Z") [REQUIRED]
+                type ("CREATE") [REQUIRED]
+                userId ("albo5064")
+        recordDeleted ("false") [REQUIRED]
+    type ("PERSON") [REQUIRED]
+    urls
+        url [REPEATING]
+            label ("Personal Website")
+            url ("https://ju.se/center/ja/om-oss/medarbetare/martin-rejler.html")

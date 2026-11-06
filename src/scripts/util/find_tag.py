@@ -6,16 +6,17 @@ from common.common_data import read_source_xml
 from common.xml_utils import pretty_print_xml
 from common.test_helper import assert_equal_for_xml_and_xml_string
 
-xml_dir = "data/fedora_xml/polar/2025-11-13T16:16:33.561276"
+xml_dir = "data/fedora/authority_person_xml"
 path_to_look_for = [
-    "./doi",
-    "./identifiers/entry[pwerwercationIdentifier/value",
+    "./biographies",
 ]
 
 
 def main():
     match_count = 0
     empty_tag_count = 0
+    non_empty_examples = []
+    empty_examples = []
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_file = f"logs/find_tag_{timestamp}.log"
     logging.basicConfig(filename=log_file, level=logging.INFO, format="%(message)s")
@@ -27,28 +28,36 @@ def main():
             tags_found = record.findall(path)
             for tag in tags_found:
                 tag_path = _get_element_path(tag, record, parent_map)
+                pid = record.findtext('pid')
                 if len(tag) > 0:
                     match_count += 1
+                    if len(non_empty_examples) < 3:
+                        non_empty_examples.append(pid)
                     logging.info(
-                        f"[{record.findtext('pid')}] Found match at path {tag_path} with child elements: {[child.tag for child in tag]}"
+                        f"[{pid}] Found match at path {tag_path} with child elements: {[child.tag for child in tag]}"
                     )
 
                     logging.info(pretty_print_xml(tag))
                 elif tag.text is not None:
                     match_count += 1
-                    msg = f"[{record.findtext('pid')}] Found match at path {tag_path} with text: {tag.text}"
+                    if len(non_empty_examples) < 3:
+                        non_empty_examples.append(pid)
+                    msg = f"[{pid}] Found match at path {tag_path} with text: {tag.text}"
                     print(msg)
                     logging.info(msg)
                 elif _is_empty_tag(tag):
                     empty_tag_count += 1
+                    if len(empty_examples) < 3:
+                        empty_examples.append(pid)
                 logging.info(f"Import source: {record.findtext('.//importSource') }")
                 logging.info(
                     f"PublicationType: {record.findtext('./publicationType/publicationTypeCode') }"
                 )
 
     summary = (
-        f"\nFound {match_count} non-empty tags matching paths {', '.join(path_to_look_for)}, "
-        f"and {empty_tag_count} empty tags"
+        f"\nFound {match_count} non-empty tags matching paths {', '.join(path_to_look_for)} "
+        f"(examples: {', '.join(non_empty_examples) if non_empty_examples else 'none'}), "
+        f"and {empty_tag_count} empty tags (examples: {', '.join(empty_examples) if empty_examples else 'none'})"
     )
     print(summary)
     logging.info(summary)
