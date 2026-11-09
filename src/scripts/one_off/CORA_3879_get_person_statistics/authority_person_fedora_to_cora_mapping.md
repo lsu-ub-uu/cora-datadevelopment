@@ -1,63 +1,77 @@
-| Classic | Cora |
-| -------- | ------- |
-| authorityPerson/defaultName/firstName | person/authority/name{type:personal}/namePart{type:given} |
-| authorityPerson/defaultName/lastname | person/authority/name{type:personal}/namePart{type:family} |
-| authorityPerson/defaultName/addition | person/authority/name{type:personal}/namePart{type:termsOfAddress} |
-| N/A | person/authority/name{type:personal}/namePart{type:date} |
-| authorityPerson/defaultName/number ** | N/A |
-| authorityPerson/alternativeNames/nameForm*/firstName | person/authority/name{type:personal}/namePart{type:given} |
-| authorityPerson/alternativeNames/nameForm*/lastname | person/authority/name{type:personal}/namePart{type:family} |
-| authorityPerson/alternativeNames/nameForm*/addition | N/A |
-| authorityPerson/alternativeNames/nameForm*/number | N/A |
-| authorityPerson/affiliations/affiliation*/active | N/A |
-| authorityPerson/affiliations/affiliation*/alternativeName | N/A |
-| authorityPerson/affiliations/affiliation*/domain | N/A |
-| authorityPerson/affiliations/affiliation*/from | person/affiliation*/startDate/year |
-| authorityPerson/affiliations/affiliation*/name | person/affiliation*/namePart † |
-| authorityPerson/affiliations/affiliation*/organisationId | person/affiliation*/organisation/linkedRecordId ‡ |
-| authorityPerson/affiliations/affiliation*/organisationNumber | N/A |
-| authorityPerson/affiliations/affiliation*/parents | N/A |
-| N/A | person/affiliation*/startDate/month |
-| N/A | person/affiliation*/startDate/day |
-| N/A | person/affiliation*/identifier{type:ror} |
-| authorityPerson/biographies/entry* | person/note{type:biographical}* ⹋ |
-| authorityPerson/birthYear | N/A |
-| authorityPerson/deathYear | N/A |
-| authorityPerson/duplicateCheckDate | N/A |
-| authorityPerson/email | person/email* |
-| authorityPerson/identifiers/identifier*/domain | N/A  |
-| authorityPerson/identifiers/identifier*/from ** | N/A|
-| authorityPerson/identifiers/identifier*[type=ORCID]/value | person/nameIdentifier{type:orcid}* |
-| authorityPerson/identifiers/identifier*[type=VIAF]/value | person/nameIdentifier{type:viaf}* |
-| authorityPerson/identifiers/identifier*[type=LIBRIS]/value | person/nameIdentifier {type:se-libr}* |
-| authorityPerson/identifiers/identifier*[type=LOCAL]/domain | person/localId*/permissionUnit/linkedRecordId ‡  |
-| authorityPerson/identifiers/identifier*[type=LOCAL]/value | person/localId*/nameIdentifier type:{localId} |
-| N/A | person/nameIdentifier{type:openAlex } |
-| N/A | person/nameIdentifier{type:scopus} |
-| N/A | person/nameIdentifier{type:wos} |
-| N/A | person/nameIdentifier{type:googleScholar} |
-| authorityPerson/identifiers/identifier*/until | N/A |
-| authorityPerson/identifiers/identifier*/from ** | N/A |
-| authorityPerson/publicRecord | N/A |
-| authorityPerson/type | N/A |
-| authorityPerson/urls/url*/label | person/location*/displayLabel |
-| authorityPerson/urls/url*/url | person/location*/url |
-| authorityPerson/recordInfo | N/A |
-| authorityPerson/pid | person/recordInfo/oldId |
-| authorityPerson/recordDeleted | person/recordInfo/inTrashBin (?) |
+| Classic (authorityPerson)                    | Cora (diva-person)                                           |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| defaultName/firstName                        | authority/name{type:personal}/namePart{type:given}           |
+| defaultName/lastname                         | authority/name{type:personal}/namePart{type:family}          |
+| defaultName/addition                         | authority/name{type:personal}/namePart{type:termsOfAddress}  |
+| defaultName/number **                        | N/A                                                          |
+| birthYear                                    | authority/name{type:personal}/namePart{type:date} ⁂         |
+| deathYear                                    | authority/name{type:personal}/namePart{type:date} ⁂         |
+| alternativeNames/nameForm*/firstName         | variant*/name{type:personal}/namePart{type:given}            |
+| alternativeNames/nameForm*/lastname          | variant*/name{type:personal}/namePart{type:family}           |
+| alternativeNames/nameForm*/addition          | N/A                                                          |
+| alternativeNames/nameForm*/number            | N/A                                                          |
+| affiliations/affiliation*/active             | N/A                                                          |
+| affiliations/affiliation*/alternativeName    | N/A                                                          |
+| affiliations/affiliation*/domain             | N/A                                                          |
+| affiliations/affiliation*/from               | affiliation*/startDate/year                                  |
+| N/A                                          | affiliation*/startDate/month                                 |
+| N/A                                          | affiliation*/startDate/day                                   |
+| affiliations/affiliation*/until              | affiliation*/endDate/year                                    |
+| N/A                                          | affiliation*/endDate/month?                                  |
+| N/A                                          | affiliation*/endDate/day?                                    |
+| affiliations/affiliation*/name               | affiliation*/namePart †                                      |
+| affiliations/affiliation*/organisationId     | affiliation*/organisation ‡                                  |
+| affiliations/affiliation*/organisationNumber | N/A                                                          |
+| affiliations/affiliation*/parents            | N/A                                                          |
+| N/A                                          | affiliation*/identifier{type:ror}                            |
+| N/A                                          | affiliation*/country                                         |
+| N/A                                          | affiliation*/description                                     |
+| biographies/entry*                           | note{type:biographical}* ⹋                                   |
+| duplicateCheckDate                           | N/A                                                          |
+| email                                        | email*                                                       |
+| identifiers/identifier*/domain               | N/A                                                          |
+| identifiers/identifier*/from**               | N/A                                                          |
+| identifiers/identifier*/until**              | N/A                                                          |
+| identifiers/identifier*[type=ORCID]/value    | nameIdentifier{type:orcid}*                                  |
+| identifiers/identifier*[type=VIAF]/value     | nameIdentifier{type:viaf}*                                   |
+| identifiers/identifier*[type=LIBRIS]/value   | nameIdentifier {type:se-libr}*                               |
+| identifiers/identifier*[type=LOCAL]/domain   | localId*/permissionUnit ‡                                    |
+| identifiers/identifier*[type=LOCAL]/value    | localId*/nameIdentifier{type:localId}                        |
+| N/A                                          | nameIdentifier{type:openAlex}*                               |
+| N/A                                          | nameIdentifier{type:scopus}*                                 |
+| N/A                                          | nameIdentifier{type:wos}*                                    |
+| N/A                                          | nameIdentifier{type:googleScholar}*                          |
+| identifiers/identifier*/until                | N/A                                                          |
+| publicRecord                                 | N/A                                                          |
+| type                                         | N/A                                                          |
+| urls/url*/label                              | location*/displayLabel                                       |
+| urls/url*/url                                | location*/url                                                |
+| recordInfo/events/event*/ip                  | N/A                                                          |
+| recordInfo/events/event*/name                | N/A                                                          |
+| recordInfo/events/event*/timestamp           | N/A                                                          |
+| recordInfo/events/event*/type                | N/A                                                          |
+| recordInfo/events/event*/userId              | N/A                                                          |
+| N/A                                          | recordInfo/id                                                |
+| N/A                                          | recordInfo/type                                              |
+| N/A                                          | recordInfo/validationType                                    |
+| N/A                                          | recordInfo/dataDivider                                       |
+| N/A                                          | recordInfo/createdBy                                         |
+| N/A                                          | recordInfo/tsCreated                                         |
+| N/A                                          | recordInfo/updated*/updatedBy                                |
+| N/A                                          | recordInfo/updated*/tsUpdated                                |
+| recordDeleted                                | recordInfo/inTrashBin (?)                                    |
+| pid                                          | recordInfo/oldId                                             |       
 
 
-
-
-
-* Repeating element
+\* Repeating element
 
 ** Always empty
 
+⁂ Birth year and death year are combined to one field in Cora model as follows:  Only birth year: "1930", Only death year: "-2010", Birth+death year: "1930-2010".
 
 † Only set if affiliation has no organisationId
 
-‡ The corresponding cora record id
+‡ Record link to the corresponding Cora record
 
 ⹋ Entries look like: `<entry><string>eng</string><string>&lt;p&gt;Some text&lt;/p&gt;</string>`. Need to strip HTML and map to `<note type="biographical" lang="eng">Some text</note>`
 

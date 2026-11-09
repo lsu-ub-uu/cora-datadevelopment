@@ -8,6 +8,7 @@ authorityPerson
             name ("Institutionen för fysik")
             organisationId ("866")
             organisationNumber ("220")
+            until ("2012")
             parents
                 affiliation [REPEATING]
                     active ("true")
@@ -24,7 +25,6 @@ authorityPerson
                         name ("Stockholms universitet")
                         organisationId ("504")
                         organisationNumber ("202100-3062") 
-            until ("2012")
     alternativeNames
         nameForm [REPEATING]
             addition ("Associate Professor")
