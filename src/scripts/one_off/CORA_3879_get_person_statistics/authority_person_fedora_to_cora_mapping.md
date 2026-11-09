@@ -9,7 +9,7 @@
 | alternativeNames/nameForm*/firstName         | variant*/name{type:personal}/namePart{type:given}            |
 | alternativeNames/nameForm*/lastname          | variant*/name{type:personal}/namePart{type:family}           |
 | alternativeNames/nameForm*/addition          | N/A                                                          |
-| alternativeNames/nameForm*/number            | N/A                                                          |
+| alternativeNames/nameForm*/number**          | N/A                                                          |
 | affiliations/affiliation*/active             | N/A                                                          |
 | affiliations/affiliation*/alternativeName    | N/A                                                          |
 | affiliations/affiliation*/domain             | N/A                                                          |
@@ -17,8 +17,8 @@
 | N/A                                          | affiliation*/startDate/month                                 |
 | N/A                                          | affiliation*/startDate/day                                   |
 | affiliations/affiliation*/until              | affiliation*/endDate/year                                    |
-| N/A                                          | affiliation*/endDate/month?                                  |
-| N/A                                          | affiliation*/endDate/day?                                    |
+| N/A                                          | affiliation*/endDate/month                                   |
+| N/A                                          | affiliation*/endDate/day                                     |
 | affiliations/affiliation*/name               | affiliation*/namePart †                                      |
 | affiliations/affiliation*/organisationId     | affiliation*/organisation ‡                                  |
 | affiliations/affiliation*/organisationNumber | N/A                                                          |
@@ -51,7 +51,8 @@
 | recordInfo/events/event*/timestamp           | N/A                                                          |
 | recordInfo/events/event*/type                | N/A                                                          |
 | recordInfo/events/event*/userId              | N/A                                                          |
-| recordInfo/recordDeleted                     | recordInfo/inTrashBin (?)                                    |
+| recordInfo/recordDeleted                     | N/A (do not sync)                                            |
+| N/A (do not sync)                            | recordInfo/inTrashBin                                        |
 | N/A                                          | recordInfo/id                                                |
 | N/A                                          | recordInfo/type                                              |
 | N/A                                          | recordInfo/validationType                                    |
