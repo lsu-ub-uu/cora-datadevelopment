@@ -51,6 +51,7 @@
 | recordInfo/events/event*/timestamp           | N/A                                                          |
 | recordInfo/events/event*/type                | N/A                                                          |
 | recordInfo/events/event*/userId              | N/A                                                          |
+| recordInfo/recordDeleted                     | recordInfo/inTrashBin (?)                                    |
 | N/A                                          | recordInfo/id                                                |
 | N/A                                          | recordInfo/type                                              |
 | N/A                                          | recordInfo/validationType                                    |
@@ -59,7 +60,6 @@
 | N/A                                          | recordInfo/tsCreated                                         |
 | N/A                                          | recordInfo/updated*/updatedBy                                |
 | N/A                                          | recordInfo/updated*/tsUpdated                                |
-| recordDeleted                                | recordInfo/inTrashBin (?)                                    |
 | pid                                          | recordInfo/oldId                                             |       
 
 
