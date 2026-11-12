@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 from functools import partial
 from pathlib import Path
 
+from cora_python_client import CoraClient
+
 from common.common_data import read_source_xml
 from common.environment import load_environment
 from common.logging_config import configure_logging
@@ -40,10 +42,12 @@ class OldRecordMigrationSummary:
         return {status: counts[status] for status in ("CREATED", "SKIPPED", "FAILED")}
 
 
-def _migrate_old_record(xml_path: Path, context: Context) -> OldRecordMigrationOutcome:
+def _migrate_old_record(
+    xml_path: Path, cora_client: CoraClient
+) -> OldRecordMigrationOutcome:
     try:
         source_record = read_source_xml(xml_path)
-        result = old_record_migrate(source_record, context)
+        result = old_record_migrate(source_record, cora_client)
     except Exception as error:
         result = MigrateOldRecordResult("FAILED", None, str(error))
     if result.status == "FAILED":
@@ -53,11 +57,10 @@ def _migrate_old_record(xml_path: Path, context: Context) -> OldRecordMigrationO
 
 def migrate_old_records(
     xml_dir: Path,
-    system: str | None = None,
-    login_id: str | None = None,
+    cora_url: str,
+    login_id: str,
     app_token: str | None = None,
     workers: int = 1,
-    cora_url: str | None = None,
 ) -> OldRecordMigrationSummary:
     if not xml_dir.is_dir():
         raise ValueError(f"Not a directory: {xml_dir}")
@@ -68,20 +71,15 @@ def migrate_old_records(
     if not xml_files:
         return summary
     try:
-        context = CoraContext(
-            system=system,
-            login_id=login_id,
-            app_token=app_token,
-            workers=workers,
-            cora_url=cora_url,
-        )
+        cora_client = CoraClient(cora_url)
+        cora_client.login_with_app_token(login_id=login_id, app_token=app_token)
     except Exception as error:
-        logger.error("Failed to initialize old-record migration context: %s", error)
+        logger.error("Failed to initialize cora client: %s", error)
         summary.initialization_error = str(error)
         return summary
     summary.outcomes = run_with_threads(
         xml_files,
-        partial(_migrate_old_record, context=context),
+        partial(_migrate_old_record, cora_client=cora_client),
         workers=workers,
         desc="Migrating old records",
         status_order=[

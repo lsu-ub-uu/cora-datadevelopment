@@ -1,13 +1,9 @@
 import logging
-import xml.etree.ElementTree as ET
 from common.threads import run_with_threads
 from common.xml_utils import create_text
 from common.logging_config import configure_logging
-from common.environment import load_environment
 from cora_python_client import CoraClient, CoraRecord
-from cora.list_records import list_records
 from common.arg_parser import create_argument_parser, common_arguments
-from cora.update import update_record
 
 logger = logging.getLogger(__name__)
 

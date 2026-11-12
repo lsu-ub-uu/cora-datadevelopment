@@ -36,7 +36,6 @@ def main():
     args = _parse_args()
     outputs_import(
         xml_dir=args.xml_dir,
-        system=resolve_cora_system(args.system),
         login_id=resolve_cora_login_id(args.login_id),
         app_token=args.app_token,
         processes=args.processes,
@@ -52,7 +51,6 @@ def main():
 
 def outputs_import(
     xml_dir: str,
-    system: str,
     login_id: str,
     app_token: str | None,
     processes: int,
@@ -68,7 +66,6 @@ def outputs_import(
         raise ValueError("--persons requires --apply")
     if (persons or apply) and processes < 1:
         raise ValueError("Processes must be a positive integer")
-    system = resolve_cora_system(system)
     login_id = resolve_cora_login_id(login_id)
     start_time = time.perf_counter()
 
@@ -76,7 +73,6 @@ def outputs_import(
     if persons:
         person_summary = migrate_persons(
             xml_dir=Path(xml_dir),
-            system=system,
             login_id=login_id,
             app_token=app_token,
             workers=processes,
@@ -86,7 +82,6 @@ def outputs_import(
     if apply:
         migrate_old_records(
             xml_dir=Path(xml_dir),
-            system=system,
             login_id=login_id,
             app_token=app_token,
             workers=processes,
@@ -100,9 +95,7 @@ def outputs_import(
             source_record_paths, pids
         )
 
-    print(
-        f"Starting migration of {len(source_record_paths)} records to {cora_url if cora_url else system}..."
-    )
+    print(f"Starting migration of {len(source_record_paths)} records to {cora_url}...")
 
     migration_results = _migrate_outputs(
         source_record_paths=source_record_paths,

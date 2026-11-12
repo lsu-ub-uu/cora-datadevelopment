@@ -92,7 +92,6 @@ def _migrate_person(authority_pid: str, context: Context) -> PersonMigrationOutc
 
 def migrate_persons(
     xml_dir: Path,
-    system: str | None = None,
     login_id: str | None = None,
     app_token: str | None = None,
     workers: int = 1,
@@ -117,7 +116,6 @@ def migrate_persons(
         return summary
     try:
         context = CoraContext(
-            system=system,
             login_id=login_id,
             app_token=app_token,
             workers=workers,
