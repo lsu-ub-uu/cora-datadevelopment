@@ -2,6 +2,7 @@
 name = "cora-datadevelopment"
 version = "1.0.0"
 dependencies = [
+    "cora-python-client @ git+https://github.com/lsu-ub-uu/cora-python-client.git@main",
     "requests",
     "requests-toolbelt",
     "requests-mock",

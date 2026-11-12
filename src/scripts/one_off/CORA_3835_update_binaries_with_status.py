@@ -4,7 +4,7 @@ from common.threads import run_with_threads
 from common.xml_utils import create_text
 from common.logging_config import configure_logging
 from common.environment import load_environment
-from cora.context import Context, CoraContext
+from cora_python_client import CoraClient, CoraRecord
 from cora.list_records import list_records
 from common.arg_parser import create_argument_parser, common_arguments
 from cora.update import update_record
@@ -16,41 +16,40 @@ def main():
     """
     Updates binary records by setting their status to "done" if not already set.
     """
-    load_environment()
     args = _parse_args()
     configure_logging()
 
     logger.info("==== Begin updating binary records ====")
 
-    context = CoraContext(
-        args.system, args.login_id, args.app_token, cora_url=args.cora_url
-    )
-    logger.info(f"==== system={context.get_system()} ====")
+    cora_client = CoraClient(args.cora_url)
+    cora_client.login_with_app_token(login_id=args.login_id, app_token=args.app_token)
 
-    fix_records(context)
+    logger.info(f"==== system={args.system} ====")
+
+    fix_records(cora_client, args.workers)
 
 
-def fix_records(context: Context):
-    binary_records = list_records(context, "binary")
-    logger.info(f"Number of binary records: {len(binary_records)}")
+def fix_records(cora_client: CoraClient, workers: int):
+    binary_record_list = cora_client.list_records(record_type="binary")
+    logger.info(f"Number of binary records: {len(binary_record_list.records)}")
 
     results = run_with_threads(
-        binary_records,
-        lambda record: fix_record(record, context),
-        context.get_workers(),
+        binary_record_list.records,
+        lambda record: fix_record(record, cora_client),
+        workers,
         "Updating binary records",
     )
 
     _log_summary(
-        len(binary_records),
+        len(binary_record_list.records),
         updated=results.count("updated"),
         failed=results.count("failed"),
         skipped=results.count("skipped"),
     )
 
 
-def fix_record(record: ET.Element, context: Context):
-    record_info = record.find("./data/binary/recordInfo")
+def fix_record(record: CoraRecord, cora_client: CoraClient):
+    record_info = record.data_group.find("./recordInfo")
     assert record_info is not None, "Binary recordInfo element not found"
 
     status = record_info.find("./status")
@@ -60,9 +59,12 @@ def fix_record(record: ET.Element, context: Context):
         record_info.append(status)
     else:
         return "skipped"
-
-    result = update_record(record, context)
-    return "updated" if result.success else "failed"
+    try:
+        cora_client.update_record(record)
+        return "updated"
+    except Exception as e:
+        logger.error(f"Failed to update record {record.id}: {e}")
+        return "failed"
 
 
 def _log_summary(total: int, updated: int, failed: int, skipped: int):
