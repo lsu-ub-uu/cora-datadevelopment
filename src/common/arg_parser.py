@@ -65,6 +65,7 @@ common_arguments: dict[str, ArgumentConfig] = {
     },
     "--cora-url": {
         "help": "Base URL for the target Cora system",
+        "required": True,
         "default": os.getenv("CORA_URL"),
     },
     "--system": {

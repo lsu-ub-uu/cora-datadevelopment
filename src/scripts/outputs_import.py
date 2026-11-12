@@ -52,6 +52,7 @@ def main():
 def outputs_import(
     xml_dir: str,
     login_id: str,
+    cora_url: str,
     app_token: str | None,
     processes: int,
     apply: bool,
@@ -59,7 +60,6 @@ def outputs_import(
     binaries: bool = False,
     pids: list[str] | None = None,
     fedora_url: str | None = None,
-    cora_url: str | None = None,
     persons: bool = False,
 ):
     if persons and not apply:
@@ -222,7 +222,6 @@ def _parse_args():
                 name: common_arguments[name]
                 for name in (
                     "--cora-url",
-                    "--system",
                     "--login-id",
                     "--app-token",
                     "--apply",

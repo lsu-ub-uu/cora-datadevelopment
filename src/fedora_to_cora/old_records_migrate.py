@@ -1,16 +1,12 @@
 import logging
 from collections import Counter
 from dataclasses import dataclass, field
-from functools import partial
 from pathlib import Path
 
 from cora_python_client import CoraClient
 
 from common.common_data import read_source_xml
-from common.environment import load_environment
-from common.logging_config import configure_logging
 from common.threads import run_with_threads
-from cora.context import Context, CoraContext
 from fedora_to_cora.migrate_old_record import MigrateOldRecordResult, old_record_migrate
 
 logger = logging.getLogger(__name__)
@@ -79,7 +75,7 @@ def migrate_old_records(
         return summary
     summary.outcomes = run_with_threads(
         xml_files,
-        partial(_migrate_old_record, cora_client=cora_client),
+        lambda xml_path: _migrate_old_record(xml_path, cora_client=cora_client),
         workers=workers,
         desc="Migrating old records",
         status_order=[
