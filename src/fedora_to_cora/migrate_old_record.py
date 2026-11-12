@@ -5,7 +5,7 @@ from typing import Literal
 from common.xml_utils import pretty_print_xml
 from common.xml_utils import create_group, create_text
 
-from cora_python_client import CoraClient, CoraConflictError, CoraRecord
+from cora_python_client import CoraClient, CoraConflictError, CoraRecord, CoraError
 
 logger = logging.getLogger(__name__)
 
@@ -36,9 +36,9 @@ def old_record_migrate(
             old_id,
             old_record.id,
         )
-    except Exception as exception:
-        logger.error(f"Failed to create old record for oldId {old_id}: %s", exception)
-        return _handle_failed_to_create_old_record(exception, source_record)
+    except CoraError as error:
+        logger.error(f"Failed to create old record for oldId {old_id}: %s", error)
+        return _handle_failed_to_create_old_record(error, source_record)
 
     try:
         binary_record = _create_and_upload_binary(
@@ -49,12 +49,12 @@ def old_record_migrate(
             old_id,
             binary_record.id,
         )
-    except Exception as exception:
+    except CoraError as error:
         logger.error(
             f"Failed to create and upload binary for old record with oldId {old_id}: %s",
-            exception,
+            error,
         )
-        return _create_failure_result("Failed to create and upload binary", exception)
+        return _create_failure_result("Failed to create and upload binary", error)
 
     # Update old record record with link to binary record
     try:
@@ -66,13 +66,13 @@ def old_record_migrate(
         logger.info(
             "Updated old record with binary link successfully for oldId %s", old_id
         )
-    except Exception as exception:
+    except CoraError as error:
         logger.error(
             f"Failed to update old record with binary link for oldId {old_id}: %s",
-            exception,
+            error,
         )
         return _create_failure_result(
-            "Failed to update oldRecord with binary link", exception
+            "Failed to update oldRecord with binary link", error
         )
 
     return MigrateOldRecordResult(
@@ -93,23 +93,21 @@ def _create_failure_result(
 
 
 def _handle_failed_to_create_old_record(
-    exception: Exception, source_record: ET.Element
+    error: CoraError, source_record: ET.Element
 ) -> MigrateOldRecordResult:
-    if isinstance(exception, CoraConflictError) and _is_duplicate_error(
-        exception.message, source_record
-    ):
+    if _is_duplicate_error(error, source_record):
         return MigrateOldRecordResult(
             "SKIPPED", None, "Cora diva-oldRecord record already exists"
         )
-    return _create_failure_result("Failed to create diva-oldRecord", exception)
+    return _create_failure_result("Failed to create diva-oldRecord", error)
 
 
-def _is_duplicate_error(error: str | None, source_record: ET.Element) -> bool:
-    if error is None:
+def _is_duplicate_error(error: CoraError, source_record: ET.Element) -> bool:
+    if not isinstance(error, CoraConflictError):
         return False
     old_id = source_record.findtext("./pid")
     duplicate_error = f"A record matching the unique rule with [key: oldId, value: {old_id}] already exists in the system"
-    return duplicate_error in error
+    return duplicate_error in error.message
 
 
 def _transform_old_record(source_record: ET.Element) -> ET.Element:
