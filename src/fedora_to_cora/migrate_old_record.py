@@ -31,22 +31,23 @@ def old_record_migrate(
         old_record = cora_client.create_record(
             old_record_data, record_type="diva-oldRecord"
         )
+        logger.info(
+            "Created old record with oldId %s and ID: %s",
+            old_id,
+            old_record.id,
+        )
     except Exception as exception:
         logger.error(f"Failed to create old record for oldId {old_id}: %s", exception)
         return _handle_failed_to_create_old_record(exception, source_record)
 
-    logger.info(
-        "Created old record with oldId %s and ID: %s",
-        old_id,
-        old_record.id,
-    )
-
     try:
-        binary_data = pretty_print_xml(source_record, xml_declaration=True).encode(
-            "utf-8"
-        )
         binary_record = _create_and_upload_binary(
-            old_record.id, source_record, binary_data, cora_client
+            old_record.id, source_record, cora_client
+        )
+        logger.info(
+            "Created binary record with oldId %s and ID: %s",
+            old_id,
+            binary_record.id,
         )
     except Exception as exception:
         logger.error(
@@ -55,18 +56,15 @@ def old_record_migrate(
         )
         return _create_failure_result("Failed to create and upload binary", exception)
 
-    logger.info(
-        "Created binary record with oldId %s and ID: %s",
-        old_id,
-        binary_record.id,
-    )
-
     # Update old record record with link to binary record
     try:
         _update_old_record_with_binary_link(
             old_record,
             binary_record.id,
             cora_client,
+        )
+        logger.info(
+            "Updated old record with binary link successfully for oldId %s", old_id
         )
     except Exception as exception:
         logger.error(
@@ -77,7 +75,6 @@ def old_record_migrate(
             "Failed to update oldRecord with binary link", exception
         )
 
-    logger.info("Updated old record with binary link successfully for oldId %s", old_id)
     return MigrateOldRecordResult(
         "CREATED",
         old_record.id,
@@ -148,7 +145,6 @@ def _transform_old_record(source_record: ET.Element) -> ET.Element:
 def _create_and_upload_binary(
     binary_record_id: str,
     source_record: ET.Element,
-    binary_data: bytes,
     cora_client: CoraClient,
 ):
     return cora_client.create_and_upload_binary(
@@ -156,7 +152,7 @@ def _create_and_upload_binary(
         host_record_type="diva-oldRecord",
         host_record_id=binary_record_id,
         original_file_name=f"{source_record.findtext('./pid')}.xml",
-        data=binary_data,
+        data=pretty_print_xml(source_record, xml_declaration=True).encode("utf-8"),
     )
 
 

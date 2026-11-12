@@ -18,24 +18,36 @@ def test_migrates_all_top_level_xml_files(tmp_path, monkeypatch, context):
         (tmp_path / f"{number}.xml").write_text(f"<record><pid>{number}</pid></record>")
     (tmp_path / "ignored.txt").write_text("ignored")
     (tmp_path / "directory.xml").mkdir()
-    migrate = Mock(side_effect=[
-        MigrateOldRecordResult("CREATED", "old:1", None),
-        MigrateOldRecordResult("SKIPPED", None, "Already exists"),
-        MigrateOldRecordResult("FAILED", None, "Rejected"),
-    ])
+    migrate = Mock(
+        side_effect=[
+            MigrateOldRecordResult("CREATED", "old:1", None),
+            MigrateOldRecordResult("SKIPPED", None, "Already exists"),
+            MigrateOldRecordResult("FAILED", None, "Rejected"),
+        ]
+    )
     monkeypatch.setattr(old_records_migrate, "old_record_migrate", migrate)
 
     summary = old_records_migrate.migrate_old_records(
-        tmp_path, system="pre", login_id="user", app_token="token",
-        workers=1, cora_url="https://example.org",
+        tmp_path,
+        login_id="user",
+        app_token="token",
+        workers=1,
+        cora_url="https://example.org",
     )
 
     assert summary.xml_files == 3
     assert summary.counts == {"CREATED": 1, "SKIPPED": 1, "FAILED": 1}
-    assert [call.args[0].findtext("pid") for call in migrate.call_args_list] == ["1", "2", "3"]
+    assert [call.args[0].findtext("pid") for call in migrate.call_args_list] == [
+        "1",
+        "2",
+        "3",
+    ]
     assert all(call.args[1] is context for call in migrate.call_args_list)
     old_records_migrate.CoraContext.assert_called_once_with(
-        system="pre", login_id="user", app_token="token", workers=1,
+        system="pre",
+        login_id="user",
+        app_token="token",
+        workers=1,
         cora_url="https://example.org",
     )
 
@@ -75,7 +87,9 @@ def test_context_failure_is_reported(tmp_path, monkeypatch, context):
 
 
 @pytest.mark.parametrize("failure", ["parse", "read", "migration"])
-def test_file_failure_does_not_abort_other_files(tmp_path, monkeypatch, context, failure):
+def test_file_failure_does_not_abort_other_files(
+    tmp_path, monkeypatch, context, failure
+):
     for number in (1, 2):
         (tmp_path / f"{number}.xml").write_text(f"<record><pid>{number}</pid></record>")
     if failure == "parse":
@@ -108,10 +122,16 @@ def test_file_failure_does_not_abort_other_files(tmp_path, monkeypatch, context,
 def test_repeated_pid_is_processed_and_skipped(tmp_path, monkeypatch, context):
     for name in ("first", "second"):
         (tmp_path / f"{name}.xml").write_text("<record><pid>1</pid></record>")
-    monkeypatch.setattr(old_records_migrate, "old_record_migrate", Mock(side_effect=[
-        MigrateOldRecordResult("CREATED", "old:1", None),
-        MigrateOldRecordResult("SKIPPED", None, "Already exists"),
-    ]))
+    monkeypatch.setattr(
+        old_records_migrate,
+        "old_record_migrate",
+        Mock(
+            side_effect=[
+                MigrateOldRecordResult("CREATED", "old:1", None),
+                MigrateOldRecordResult("SKIPPED", None, "Already exists"),
+            ]
+        ),
+    )
 
     summary = old_records_migrate.migrate_old_records(tmp_path)
 

@@ -1,4 +1,4 @@
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 from cora_python_client import (
     CoraClient,
     CoraHTTPError,
@@ -8,16 +8,15 @@ from cora_python_client import (
 )
 from common.test_helper import assert_equal_for_xml_and_xml_string
 from cora.context import MockContext
-from cora.create import CreateRecordFailureResult, CreateRecordSuccessResult
 import xml.etree.ElementTree as ET
-from cora.update import UpdateRecordResult
-from cora.upload import UploadError
 from fedora_to_cora.migrate_old_record import old_record_migrate
 
 
 def test_successfully_creates_old_record_with_binary():
     mock_cora_client = Mock(CoraClient)
-    mock_created_old_record = """<record>
+
+    mock_cora_client.create_record.return_value = CoraRecord(
+        xml=ET.fromstring("""<record>
         <data>
             <oldRecord>
                 <recordInfo>
@@ -34,10 +33,7 @@ def test_successfully_creates_old_record_with_binary():
                 </recordInfo>
             </oldRecord>
         </data>
-    </record>"""
-
-    mock_cora_client.create_record.return_value = CoraRecord(
-        xml=ET.fromstring(mock_created_old_record)
+    </record>""")
     )
 
     mock_cora_client.create_and_upload_binary.return_value = CoraRecord(
@@ -62,10 +58,13 @@ def test_successfully_creates_old_record_with_binary():
     assert result.cora_old_record_id == "old-record-123"
     assert result.error is None
 
-    mock_cora_client.create_record.assert_called_once()
-    created_old_record = mock_cora_client.create_record.call_args[0][0]
-
     # Assert create old record
+    mock_cora_client.create_record.assert_called_once()
+    assert (
+        mock_cora_client.create_record.call_args.kwargs["record_type"]
+        == "diva-oldRecord"
+    )
+    created_old_record = mock_cora_client.create_record.call_args.args[0]
     assert_equal_for_xml_and_xml_string(
         created_old_record,
         """
@@ -99,32 +98,28 @@ def test_successfully_creates_old_record_with_binary():
 
     # Assert update old record with link to binary record
     mock_cora_client.update_record.assert_called_once()
-    update_call = mock_cora_client.update_record.call_args
+    updated_record_data = mock_cora_client.update_record.call_args.args[0].data_group
     assert_equal_for_xml_and_xml_string(
-        update_call.args[0].xml,
+        updated_record_data,
         """
-        <record>
-            <data>
-                <oldRecord>
-                    <recordInfo>
-                        <id>old-record-123</id>
-                        <validationType>
-                            <linkedRecordType>validationType</linkedRecordType>
-                            <linkedRecordId>diva-oldRecord</linkedRecordId>
-                        </validationType>
-                        <dataDivider>
-                            <linkedRecordType>system</linkedRecordType>
-                            <linkedRecordId>divaData</linkedRecordId>
-                        </dataDivider>
-                        <oldId>somePid</oldId>
-                    </recordInfo>
-                    <record repeatId="0">
-                        <linkedRecordType>binary</linkedRecordType>
-                        <linkedRecordId>binary-record-123</linkedRecordId>
-                    </record>
-                </oldRecord>
-            </data>
-        </record>
+        <oldRecord>
+            <recordInfo>
+                <id>old-record-123</id>
+                <validationType>
+                    <linkedRecordType>validationType</linkedRecordType>
+                    <linkedRecordId>diva-oldRecord</linkedRecordId>
+                </validationType>
+                <dataDivider>
+                    <linkedRecordType>system</linkedRecordType>
+                    <linkedRecordId>divaData</linkedRecordId>
+                </dataDivider>
+                <oldId>somePid</oldId>
+            </recordInfo>
+            <record repeatId="0">
+                <linkedRecordType>binary</linkedRecordType>
+                <linkedRecordId>binary-record-123</linkedRecordId>
+            </record>
+        </oldRecord>
         """,
     )
 
@@ -212,7 +207,9 @@ def test_returns_failed_when_uploading_binary_fails():
 
 def test_returns_failed_when_updating_old_record_fails():
     mock_cora_client = Mock(CoraClient)
-    mock_created_old_record = """<record>
+
+    mock_cora_client.create_record.return_value = CoraRecord(
+        xml=ET.fromstring("""<record>
         <data>
             <oldRecord>
                 <recordInfo>
@@ -229,10 +226,7 @@ def test_returns_failed_when_updating_old_record_fails():
                 </recordInfo>
             </oldRecord>
         </data>
-    </record>"""
-
-    mock_cora_client.create_record.return_value = CoraRecord(
-        xml=ET.fromstring(mock_created_old_record)
+    </record>""")
     )
 
     mock_cora_client.create_and_upload_binary.return_value = CoraRecord(
