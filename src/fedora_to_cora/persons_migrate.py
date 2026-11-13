@@ -5,6 +5,8 @@ from functools import partial
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
+from cora_python_client import CoraClient
+
 from common.common_data import read_source_xml
 from common.threads import run_with_threads
 from cora.context import Context, CoraContext
@@ -80,9 +82,11 @@ def _read_authority_pids(xml_path: Path) -> tuple[Path, set[str], str | None]:
     return xml_path, authority_pids, None
 
 
-def _migrate_person(authority_pid: str, context: Context) -> PersonMigrationOutcome:
+def _migrate_person(
+    authority_pid: str, cora_client: CoraClient
+) -> PersonMigrationOutcome:
     try:
-        result = migrate_person(authority_pid, context)
+        result = migrate_person(authority_pid, cora_client)
     except Exception as error:
         result = MigratePersonResult("FAILED", None, str(error))
     if result.status == "FAILED":
@@ -92,10 +96,10 @@ def _migrate_person(authority_pid: str, context: Context) -> PersonMigrationOutc
 
 def migrate_persons(
     xml_dir: Path,
-    login_id: str | None = None,
+    cora_url: str,
+    login_id: str,
     app_token: str | None = None,
     workers: int = 1,
-    cora_url: str | None = None,
 ) -> PersonMigrationSummary:
     if not xml_dir.is_dir():
         raise ValueError(f"Not a directory: {xml_dir}")
@@ -115,19 +119,15 @@ def migrate_persons(
     if not authority_pids:
         return summary
     try:
-        context = CoraContext(
-            login_id=login_id,
-            app_token=app_token,
-            workers=workers,
-            cora_url=cora_url,
-        )
+        cora_client = CoraClient(cora_url)
+        cora_client.login_with_app_token(login_id=login_id, app_token=app_token)
     except Exception as error:
-        logger.error("Failed to initialize Cora context: %s", error)
+        logger.error("Failed to initialize Cora client: %s", error)
         summary.initialization_error = str(error)
         return summary
     summary.outcomes = run_with_threads(
         sorted(authority_pids),
-        partial(_migrate_person, context=context),
+        lambda authority_pid: _migrate_person(authority_pid, cora_client),
         workers=workers,
         desc="Migrating persons",
         status_order=[

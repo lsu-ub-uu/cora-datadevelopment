@@ -1,170 +1,139 @@
-from cora.get_cora_id_by_old_id import get_cora_id_by_old_id, _cache
-from common.xml_utils import inline_xml_string
+from xml.etree import ElementTree as ET
+
 import pytest
-from logging import Logger
-from unittest.mock import MagicMock
-from cora.context import MockContext
+from cora_python_client import CoraClient, CoraHTTPError, CoraRecord, CoraRecordList
+from unittest.mock import Mock
 
-base_url = "https://pre.diva-portal.org/rest/record/"
-test_token = "test-token"
-mock_context = MockContext(base_url, test_token)
-
-logger = Logger("test_logger")
+from common.test_helper import assert_equal_for_xml_and_xml_string
+from cora.get_cora_id_by_old_id import get_cora_id_by_old_id, _cache
 
 
-def test_get_cora_id_by_old_id(requests_mock):
+def test_get_cora_id_by_old_id():
+    mock_cora_client = Mock(CoraClient)
     old_id = "878550"
     expected_cora_id = "123"
 
-    requests_mock.get(
-        f"https://pre.diva-portal.org/rest/record/searchResult/diva-organisationSearch?searchData={create_search_data(old_id)}",
-        request_headers={"Authtoken": test_token},
-        text=create_mock_response(expected_cora_id),
+    mock_cora_client.search_records.return_value = create_mock_response(
+        expected_cora_id
     )
 
     response = get_cora_id_by_old_id(
         old_id,
         record_type="diva-organisation",
-        context=mock_context,
+        cora_client=mock_cora_client,
     )
-    assert requests_mock.called == True
-    assert requests_mock.call_count == 1
+    mock_cora_client.search_records.assert_called_once()
+    assert (
+        mock_cora_client.search_records.call_args.kwargs["search_id"]
+        == "diva-organisationSearch"
+    )
+    captured_search_data = mock_cora_client.search_records.call_args.kwargs[
+        "search_data"
+    ]
+    assert_equal_for_xml_and_xml_string(
+        captured_search_data, create_expected_search_data(old_id)
+    )
+
     assert response == expected_cora_id
 
 
 @pytest.mark.parametrize("record_id", ["old-record:123", None])
-def test_get_old_record_id(requests_mock, record_id):
+def test_get_old_record_id(record_id):
+    mock_cora_client = Mock(CoraClient)
     old_id = "diva2:123"
-    requests_mock.get(
-        f"{base_url}searchResult/diva-oldRecordSearch?searchData={create_search_data(old_id)}",
-        request_headers={"Authtoken": test_token},
-        text=create_mock_response(record_id) if record_id else "<dataList />",
-    )
+    mock_cora_client.search_records.return_value = create_mock_response(record_id)
 
     result = get_cora_id_by_old_id(
-        old_id, record_type="diva-oldRecord", context=mock_context
+        old_id, record_type="diva-oldRecord", cora_client=mock_cora_client
     )
 
     assert result == (record_id or f"diva-oldRecord not found for old ID: {old_id}")
-    assert requests_mock.call_count == 1
+    mock_cora_client.search_records.assert_called_once()
+    assert (
+        mock_cora_client.search_records.call_args.kwargs["search_id"]
+        == "diva-oldRecordSearch"
+    )
 
 
-def test_return_cache_when_id_exists(requests_mock):
+def test_return_cache_when_id_exists():
+    mock_cora_client = Mock(CoraClient)
     old_id = "878550"
     expected_cora_id = "123"
-    requests_mock.get(
-        f"https://pre.diva-portal.org/rest/record/searchResult/diva-organisationSearch?searchData={create_search_data(old_id)}",
-        request_headers={"Authtoken": test_token},
-        text=create_mock_response(expected_cora_id),
+    mock_cora_client.search_records.return_value = create_mock_response(
+        expected_cora_id
     )
 
     response1 = get_cora_id_by_old_id(
         old_id,
         record_type="diva-organisation",
-        context=mock_context,
+        cora_client=mock_cora_client,
     )
     response2 = get_cora_id_by_old_id(
         old_id,
         record_type="diva-organisation",
-        context=mock_context,
+        cora_client=mock_cora_client,
     )
-    assert requests_mock.call_count == 1
+    mock_cora_client.search_records.assert_called_once()
     assert response1 == response2 == expected_cora_id
 
 
-def test_get_two_different_organisations(requests_mock):
+def test_get_two_different_organisations():
+    mock_cora_client = Mock(CoraClient)
     old_id = "878550"
     old_id2 = "878551"
     expected_cora_id = "123"
     expected_cora_id2 = "456"
-
-    requests_mock.get(
-        f"https://pre.diva-portal.org/rest/record/searchResult/diva-organisationSearch?searchData={create_search_data(old_id)}",
-        request_headers={"Authtoken": test_token},
-        text=create_mock_response(expected_cora_id),
-    )
-
-    requests_mock.get(
-        f"https://pre.diva-portal.org/rest/record/searchResult/diva-organisationSearch?searchData={create_search_data(old_id2)}",
-        request_headers={"Authtoken": test_token},
-        text=create_mock_response(expected_cora_id2),
-    )
+    mock_cora_client.search_records.side_effect = [
+        create_mock_response(expected_cora_id),
+        create_mock_response(expected_cora_id2),
+    ]
 
     response1 = get_cora_id_by_old_id(
         old_id,
         record_type="diva-organisation",
-        context=mock_context,
+        cora_client=mock_cora_client,
     )
     response2 = get_cora_id_by_old_id(
         old_id2,
         record_type="diva-organisation",
-        context=mock_context,
+        cora_client=mock_cora_client,
     )
-    assert requests_mock.call_count == 2
+    assert mock_cora_client.search_records.call_count == 2
     assert response1 == expected_cora_id
     assert response2 == expected_cora_id2
 
 
-def test_returns_error_text_when_no_result(requests_mock):
+def test_returns_error_text_when_no_result():
+    mock_cora_client = Mock(CoraClient)
     old_id_not_found = "404404"
-
-    requests_mock.get(
-        f"https://pre.diva-portal.org/rest/record/searchResult/diva-organisationSearch?searchData={create_search_data(old_id_not_found)}",
-        request_headers={"Authtoken": test_token},
-        text="<dataList><data></data></dataList>",
-    )
+    mock_cora_client.search_records.return_value = CoraRecordList([])
 
     response = get_cora_id_by_old_id(
         old_id_not_found,
         record_type="diva-organisation",
-        context=mock_context,
+        cora_client=mock_cora_client,
     )
 
     assert response == "diva-organisation not found for old ID: 404404"
+    mock_cora_client.search_records.assert_called_once()
 
 
 def test_logs_warning_and_returns_first_id_when_multiple_results(
-    requests_mock,
     caplog,
 ):
+    mock_cora_client = Mock(CoraClient)
     old_id_multiple = "222222"
     expected_cora_id = "123"
-
-    requests_mock.get(
-        f"https://pre.diva-portal.org/rest/record/searchResult/diva-organisationSearch",
-        request_headers={"Authtoken": test_token},
-        text=f"""
-        <dataList>
-            <data>
-                <record>
-                    <data>
-                        <organisation>
-                            <recordInfo>
-                                <id>{expected_cora_id}</id>
-                            </recordInfo>
-                        </organisation>
-                    </data>
-                </record>
-                <record>
-                    <data>
-                        <organisation>
-                            <recordInfo>
-                                <id>000</id>
-                            </recordInfo>
-                        </organisation>
-                    </data>
-                </record>
-            </data>
-        </dataList>
-        """,
+    mock_cora_client.search_records.return_value = CoraRecordList(
+        [create_mock_record(expected_cora_id), create_mock_record("000")]
     )
 
     response = get_cora_id_by_old_id(
         old_id_multiple,
         record_type="diva-organisation",
-        context=mock_context,
+        cora_client=mock_cora_client,
     )
-    assert requests_mock.call_count == 1
+    mock_cora_client.search_records.assert_called_once()
     assert response == expected_cora_id
     assert (
         "WARNING",
@@ -172,63 +141,64 @@ def test_logs_warning_and_returns_first_id_when_multiple_results(
     ) in [(record.levelname, record.getMessage()) for record in caplog.records]
 
 
-def test_get_cora_id_by_old_id_for_diva_person(requests_mock):
+def test_get_cora_id_by_old_id_for_diva_person():
+    mock_cora_client = Mock(CoraClient)
     old_id = "diva2:878550"
     expected_cora_id = "123"
-
-    requests_mock.get(
-        f"https://pre.diva-portal.org/rest/record/searchResult/diva-personSearch?searchData={create_generic_id_search_data(old_id)}",
-        request_headers={"Authtoken": test_token},
-        text=create_mock_response(expected_cora_id),
+    mock_cora_client.search_records.return_value = create_mock_response(
+        expected_cora_id
     )
 
     response = get_cora_id_by_old_id(
         old_id,
         record_type="diva-person",
-        context=mock_context,
+        cora_client=mock_cora_client,
     )
-    assert requests_mock.called == True
-    assert requests_mock.call_count == 1
+    mock_cora_client.search_records.assert_called_once()
+    search_call = mock_cora_client.search_records.call_args.kwargs
+    assert search_call["search_id"] == "diva-personSearch"
+    assert_equal_for_xml_and_xml_string(
+        search_call["search_data"], create_generic_id_search_data(old_id)
+    )
     assert response == expected_cora_id
 
 
-def test_get_cora_id_by_old_id_for_diva_output(requests_mock):
+def test_get_cora_id_by_old_id_for_diva_output():
+    mock_cora_client = Mock(CoraClient)
     old_id = "diva2:878550"
     expected_cora_id = "123"
-
-    requests_mock.get(
-        f"https://pre.diva-portal.org/rest/record/searchResult/outputPublicSearch?searchData={create_generic_id_search_data(old_id)}",
-        request_headers={"Authtoken": test_token},
-        text=create_mock_response(expected_cora_id),
+    mock_cora_client.search_records.return_value = create_mock_response(
+        expected_cora_id
     )
 
     response = get_cora_id_by_old_id(
         old_id,
         record_type="diva-output",
-        context=mock_context,
+        cora_client=mock_cora_client,
     )
-    assert requests_mock.called == True
-    assert requests_mock.call_count == 1
+    mock_cora_client.search_records.assert_called_once()
+    search_call = mock_cora_client.search_records.call_args.kwargs
+    assert search_call["search_id"] == "outputPublicSearch"
+    assert_equal_for_xml_and_xml_string(
+        search_call["search_data"], create_generic_id_search_data(old_id)
+    )
     assert response == expected_cora_id
 
 
-def test_raises_error_when_not_ok_response(requests_mock):
+def test_propagates_cora_client_error():
+    mock_cora_client = Mock(CoraClient)
     old_id = "878550"
+    error = CoraHTTPError(code=500, message="Internal server error")
+    mock_cora_client.search_records.side_effect = error
 
-    requests_mock.get(
-        f"https://pre.diva-portal.org/rest/record/searchResult/diva-organisationSearch",
-        request_headers={"Authtoken": test_token},
-        status_code=500,  # Simulating a server error
-    )
-
-    with pytest.raises(Exception) as exc_info:
+    with pytest.raises(CoraHTTPError) as exc_info:
         get_cora_id_by_old_id(
             old_id,
             record_type="diva-organisation",
-            context=mock_context,
+            cora_client=mock_cora_client,
         )
-    assert "Failed to fetch diva-organisation ID: 500" in str(exc_info.value)
-    assert requests_mock.call_count == 1
+    assert exc_info.value is error
+    mock_cora_client.search_records.assert_called_once()
 
 
 @pytest.fixture(autouse=True)
@@ -237,9 +207,8 @@ def with_cache_clear():
     _cache.clear()
 
 
-def create_search_data(old_id):
-    return inline_xml_string(f"""
-            <?xml version="1.0" encoding="UTF-8"?>
+def create_expected_search_data(old_id: str) -> str:
+    return f"""
             <search>
                 <include>
                     <includePart>
@@ -247,12 +216,11 @@ def create_search_data(old_id):
                     </includePart>
                 </include>
             </search>
-        """)
+        """
 
 
-def create_generic_id_search_data(old_id):
-    return inline_xml_string(f"""
-            <?xml version="1.0" encoding="UTF-8"?>
+def create_generic_id_search_data(old_id: str) -> str:
+    return f"""
             <search>
                 <include>
                     <includePart>
@@ -260,22 +228,24 @@ def create_generic_id_search_data(old_id):
                     </includePart>
                 </include>
             </search>
-        """)
+        """
 
 
-def create_mock_response(expected_cora_id):
-    return f"""
-        <dataList>
-            <data>
+def create_mock_response(expected_cora_id: str | None) -> CoraRecordList:
+    if expected_cora_id is None:
+        return CoraRecordList([])
+    return CoraRecordList([create_mock_record(expected_cora_id)])
+
+
+def create_mock_record(record_id: str) -> CoraRecord:
+    return CoraRecord(xml=ET.fromstring(f"""
                 <record>
                     <data>
                         <organisation>
                             <recordInfo>
-                                <id>{expected_cora_id}</id>
+                                <id>{record_id}</id>
                             </recordInfo>
                         </organisation>
                     </data>
                 </record>
-            </data>
-        </dataList>
-    """
+    """))

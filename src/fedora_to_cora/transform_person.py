@@ -1,11 +1,10 @@
 import logging
-from typing import Any
+from cora_python_client import CoraClient, CoraError, CoraNotFoundError
 import requests
 from xml.etree import ElementTree as ET
 
 from common.common_data import create_record_link
 from common.xml_utils import create_group, create_text
-from cora.context import Context
 from cora.get_cora_id_by_old_id import get_cora_id_by_old_id
 from fedora_to_cora.clean_rich_text import clean_rich_text
 from cora.get_record import get_record
@@ -13,7 +12,7 @@ from cora.get_record import get_record
 logger = logging.getLogger(__name__)
 
 
-def transform_person(old_person_record: dict, context: Context) -> ET.Element:
+def transform_person(old_person_record: dict, cora_client: CoraClient) -> ET.Element:
     old_person = old_person_record["authorityPerson"]
     person = create_group(
         "person",
@@ -32,9 +31,9 @@ def transform_person(old_person_record: dict, context: Context) -> ET.Element:
             _create_location(old_person),
             _create_note(old_person, "eng"),
             _create_note(old_person, "swe"),
-            _create_local_ids(old_person, context),
+            _create_local_ids(old_person, cora_client),
             _create_name_identifier(old_person),
-            _create_affiliation(old_person, context),
+            _create_affiliation(old_person, cora_client),
         ],
     )
     assert person is not None
@@ -145,35 +144,28 @@ def _create_note(old_person: dict, lang: str):
     )
 
 
-def _create_local_ids(old_person_data: dict, context: Context):
+def _create_local_ids(old_person_data: dict, cora_client: CoraClient):
     old_local_ids = [
         identifier
         for identifier in old_person_data.get("identifiers", [])
         if identifier.get("type") == "LOCAL" and identifier.get("value", "") != ""
     ]
     return [
-        _create_local_id(old_local_id, context, str(repeat_id))
+        _create_local_id(old_local_id, cora_client, str(repeat_id))
         for repeat_id, old_local_id in enumerate(old_local_ids)
     ]
 
 
-def _create_local_id(old_local_id: dict, context: Context, repeat_id: str):
+def _create_local_id(old_local_id: dict, cora_client: CoraClient, repeat_id: str):
     try:
-        permission_unit = get_record(
-            context=context,
+        permission_unit = cora_client.get_record(
             record_type="permissionUnit",
             record_id=old_local_id["domain"],
         )
-    except requests.HTTPError as e:
-        if e.response.status_code == 404:
-            return None
-        raise e
-    permission_unit = get_record(
-        context=context,
-        record_type="permissionUnit",
-        record_id=old_local_id["domain"],
-    )
-    permission_unit_id = permission_unit.findtext("./data/permissionUnit/recordInfo/id")
+    except CoraNotFoundError:
+        return None
+
+    permission_unit_id = permission_unit.data_group.findtext("./recordInfo/id")
     assert permission_unit_id is not None, "Permission unit ID not found"
     return create_group(
         "localId",
@@ -221,7 +213,7 @@ def _create_name_identifier(old_person_data: dict):
     return name_identifiers
 
 
-def _create_affiliation(old_person_data: dict, context: Context | None = None):
+def _create_affiliation(old_person_data: dict, cora_client: CoraClient):
     affiliations = []
     for repeat_id, affiliation in enumerate(
         old_person_data["affiliations"] if "affiliations" in old_person_data else []
@@ -230,7 +222,7 @@ def _create_affiliation(old_person_data: dict, context: Context | None = None):
             affiliation["organisationId"] if "organisationId" in affiliation else None
         )
         if organisation_id is not None:
-            organisation_or_name = _create_organisation(organisation_id, context)
+            organisation_or_name = _create_organisation(organisation_id, cora_client)
         else:
             organisation_or_name = _create_name(affiliation)
 
@@ -268,18 +260,14 @@ def _create_affiliation(old_person_data: dict, context: Context | None = None):
     return affiliations
 
 
-def _create_organisation(organisation_id: int, context: Context | None):
-    if context is None:
-        raise ValueError(
-            "A Cora context is required to resolve organisation affiliations."
-        )
+def _create_organisation(organisation_id: int, cora_client: CoraClient):
     return create_record_link(
         "organisation",
         "diva-organisation",
         get_cora_id_by_old_id(
             str(organisation_id),
             record_type="diva-organisation",
-            context=context,
+            cora_client=cora_client,
         ),
     )
 

@@ -1,9 +1,10 @@
 import xml.etree.ElementTree as ET
 import logging
+from cora_python_client import CoraClient
 import requests
 from common.xml_utils import inline_xml_string
 from typing import Literal
-from cora.context import Context
+from cora_python_client import CoraClient
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +44,7 @@ def get_cora_id_by_old_id(
         "diva-output",
         "diva-oldRecord",
     ],
-    context: Context,
+    cora_client: CoraClient,
 ) -> str:
     """
     Fetch the Cora record ID using the old organisation ID.
@@ -59,54 +60,32 @@ def get_cora_id_by_old_id(
     if cache_key in _cache:
         return _cache[cache_key]
 
-    request_url = (
-        f"{context.get_base_url()}searchResult/{record_type_to_searchId[record_type]}"
-    )
-
-    headers = {
-        "accept": "application/vnd.cora.recordList+xml",
-        "Authtoken": context.get_auth_token(),
-    }
-
     search_data = (
         _create_generic_id_search_data(old_id)
         if record_type in ["diva-output", "diva-person"]
         else _create_search_data(old_id)
     )
-    params = {"searchData": inline_xml_string(search_data)}
 
-    response = requests.get(
-        request_url,
-        headers=headers,
-        params=params,
+    search_result = cora_client.search_records(
+        search_id=record_type_to_searchId[record_type], search_data=search_data
     )
+    result_records = search_result.records
 
-    if response.status_code != 200:
-        raise Exception(
-            f"Failed to fetch {record_type} ID: {response.status_code} {response.text}"
-        )
-    response_xml = ET.fromstring(response.text)
-    record_ids = response_xml.findall(".//recordInfo/id")
-
-    if len(record_ids) > 1:
+    if len(result_records) > 1:
         logger.warning(
             f"Warning: Multiple {record_type}s found for old ID '{old_id}'. Using the first one."
         )
-    elif len(record_ids) == 0:
+    elif len(result_records) == 0:
         return f"{record_type} not found for old ID: {old_id}"
 
-    record_id = record_ids[0]
-
-    result = record_id.text
-    assert result is not None
+    result = result_records[0].id
 
     _cache[cache_key] = result
     return result
 
 
-def _create_search_data(old_id: str) -> str:
-    return f"""
-        <?xml version="1.0" encoding="UTF-8"?>
+def _create_search_data(old_id: str) -> ET.Element:
+    return ET.fromstring(f"""
         <search>
             <include>
                 <includePart>
@@ -114,12 +93,11 @@ def _create_search_data(old_id: str) -> str:
                 </includePart>
             </include>
         </search>
-    """
+    """)
 
 
-def _create_generic_id_search_data(old_id: str) -> str:
-    return f"""
-        <?xml version="1.0" encoding="UTF-8"?>
+def _create_generic_id_search_data(old_id: str) -> ET.Element:
+    return ET.fromstring(f"""
         <search>
             <include>
                 <includePart>
@@ -127,4 +105,4 @@ def _create_generic_id_search_data(old_id: str) -> str:
                 </includePart>
             </include>
         </search>
-    """
+    """)
